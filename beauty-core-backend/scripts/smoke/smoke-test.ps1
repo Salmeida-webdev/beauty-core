@@ -1,7 +1,8 @@
 ﻿param(
   [string]$BaseUrl = "http://localhost:3000",
   [string]$TenantSlug = "",
-  [switch]$DocsEnabled
+  [switch]$DocsEnabled,
+  [string]$MetricsToken = $env:METRICS_TOKEN
 )
 
 $ErrorActionPreference = "Stop"
@@ -26,9 +27,14 @@ if ($TenantSlug -ne "") {
 
 foreach ($endpoint in $endpoints) {
   $url = "$BaseUrl$endpoint"
+  $headers = @{}
+
+  if ($endpoint -eq "/metrics" -and -not [string]::IsNullOrWhiteSpace($MetricsToken)) {
+    $headers["x-metrics-token"] = $MetricsToken
+  }
 
   try {
-    $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 20
+    $response = Invoke-WebRequest -Uri $url -Headers $headers -UseBasicParsing -TimeoutSec 20
     $status = [int]$response.StatusCode
 
     if ($status -lt 200 -or $status -ge 400) {
@@ -40,6 +46,11 @@ foreach ($endpoint in $endpoints) {
   catch {
     Write-Host "FAIL $endpoint" -ForegroundColor Red
     Write-Host $_.Exception.Message -ForegroundColor Red
+
+    if ($endpoint -eq "/metrics" -and [string]::IsNullOrWhiteSpace($MetricsToken)) {
+      Write-Host "Dica: defina METRICS_TOKEN no ambiente ou informe -MetricsToken para validar /metrics protegido." -ForegroundColor Yellow
+    }
+
     exit 1
   }
 }
