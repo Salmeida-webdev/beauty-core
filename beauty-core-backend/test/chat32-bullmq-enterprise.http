@@ -1,0 +1,48 @@
+@baseUrl = http://localhost:3000
+@token = COLE_TOKEN_SUPER_ADMIN_AQUI
+
+### Health Redis com latência e filas
+GET {{baseUrl}}/health/redis
+
+### Health Queues
+GET {{baseUrl}}/health/queues
+
+### Queue Status
+GET {{baseUrl}}/queues/status
+Authorization: Bearer {{token}}
+
+### Queue Metrics
+GET {{baseUrl}}/queues/metrics
+Authorization: Bearer {{token}}
+
+### Listar DLQ
+GET {{baseUrl}}/queues/dlq?limit=50
+Authorization: Bearer {{token}}
+
+### Reprocessar job da DLQ
+POST {{baseUrl}}/queues/dlq/COLE_JOB_ID_AQUI/reprocessar
+Authorization: Bearer {{token}}
+
+### Scheduler Status
+GET {{baseUrl}}/scheduler/status
+Authorization: Bearer {{token}}
+
+### Teste scheduler aniversários
+POST {{baseUrl}}/scheduler/teste/aniversarios
+Authorization: Bearer {{token}}
+
+### Teste scheduler lembretes
+POST {{baseUrl}}/scheduler/teste/lembretes
+Authorization: Bearer {{token}}
+
+### Teste scheduler pacotes vencidos
+POST {{baseUrl}}/scheduler/teste/pacotes-vencidos
+Authorization: Bearer {{token}}
+
+### Teste scheduler campanhas
+POST {{baseUrl}}/scheduler/teste/campanhas
+Authorization: Bearer {{token}}
+
+### Teste scheduler relatórios
+POST {{baseUrl}}/scheduler/teste/relatorios
+Authorization: Bearer {{token}}

@@ -1,0 +1,40 @@
+### Beauty Core 1.0 — Chat 36
+### Backup Enterprise + Restore + LGPD + Disaster Recovery
+
+@baseUrl = http://localhost:3000
+@adminToken = COLE_TOKEN_ADMIN_AQUI
+@clienteId = COLE_CLIENTE_ID_AQUI
+
+### Health básico
+GET {{baseUrl}}/health
+
+### Health full com backup/recovery
+GET {{baseUrl}}/health/full
+
+### Status operacional de backup e recovery
+GET {{baseUrl}}/backup/status
+Authorization: Bearer {{adminToken}}
+
+### Registrar/simular backup PostgreSQL
+POST {{baseUrl}}/backup/executar/postgres
+Authorization: Bearer {{adminToken}}
+
+### Registrar/simular backup Uploads
+POST {{baseUrl}}/backup/executar/uploads
+Authorization: Bearer {{adminToken}}
+
+### Registrar/simular backup completo
+POST {{baseUrl}}/backup/executar/completo
+Authorization: Bearer {{adminToken}}
+
+### Executar limpeza operacional
+POST {{baseUrl}}/backup/limpeza
+Authorization: Bearer {{adminToken}}
+
+### Exportação LGPD de cliente
+GET {{baseUrl}}/lgpd/exportar-cliente/{{clienteId}}
+Authorization: Bearer {{adminToken}}
+
+### Anonimização LGPD de cliente
+POST {{baseUrl}}/lgpd/anonimizar-cliente/{{clienteId}}
+Authorization: Bearer {{adminToken}}

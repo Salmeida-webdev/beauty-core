@@ -1,0 +1,128 @@
+﻿name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-build-test:
+    name: Validate, Build, Test and Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: beauty_core_ci_test_password
+          POSTGRES_DB: beauty_core_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d beauty_core_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+      redis:
+        image: redis:7
+        ports:
+          - 6380:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      NODE_ENV: test
+      APP_ENV: test
+      PORT: 3000
+
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5433/beauty_core_test?schema=public
+      DATABASE_URL_TEST: postgresql://postgres:postgres@127.0.0.1:5433/beauty_core_test?schema=public
+
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6380
+      REDIS_PASSWORD: redis_test_password
+      REDIS_URL: redis://:redis_test_password@127.0.0.1:6380/0
+      BULLMQ_REDIS_URL: redis://:redis_test_password@127.0.0.1:6380/0
+
+      JWT_SECRET: ci_jwt_secret_change_me_1234567890_abcdef
+      JWT_CLIENT_SECRET: ci_jwt_client_secret_change_me_1234567890_abcdef
+      JWT_REFRESH_SECRET: ci_jwt_refresh_secret_change_me_1234567890_abcdef
+      JWT_CLIENT_REFRESH_SECRET: ci_jwt_client_refresh_secret_change_me_1234567890_abcdef
+
+      JWT_EXPIRES_IN: 8h
+      JWT_CLIENT_EXPIRES_IN: 7d
+      JWT_REFRESH_EXPIRES_IN: 30d
+      JWT_CLIENT_REFRESH_EXPIRES_IN: 30d
+
+      SCHEDULER_ENABLED: "false"
+      SWAGGER_ENABLED: "false"
+      STORAGE_PROVIDER: LOCAL
+
+      THROTTLE_TTL: 60
+      THROTTLE_LIMIT: 1000
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Secure Redis service with password
+        run: |
+          docker exec "${{ job.services.redis.id }}" redis-cli CONFIG SET requirepass redis_test_password
+          docker exec "${{ job.services.redis.id }}" redis-cli -a redis_test_password ping
+
+      - name: Prisma validate
+        run: npm run prisma:validate
+
+      - name: Prisma generate
+        run: npm run prisma:generate
+
+      - name: Prisma migrate deploy
+        run: npm run prisma:migrate:deploy
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: E2E tests
+        run: npm run test:e2e
+
+      - name: Coverage
+        run: npm run test:all:cov
+
+      - name: Coverage quality gate
+        run: npm run coverage:check
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,87 @@
+﻿name: Production Pipeline
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  production-preflight:
+    name: Production Preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    environment: production
+
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate production secrets presence
+        env:
+          DATABASE_URL_PRODUCTION: ${{ secrets.DATABASE_URL_PRODUCTION }}
+          REDIS_URL_PRODUCTION: ${{ secrets.REDIS_URL_PRODUCTION }}
+
+          JWT_SECRET_REAL: ${{ secrets.JWT_SECRET }}
+          JWT_CLIENT_SECRET_REAL: ${{ secrets.JWT_CLIENT_SECRET }}
+          JWT_REFRESH_SECRET_REAL: ${{ secrets.JWT_REFRESH_SECRET }}
+          JWT_CLIENT_REFRESH_SECRET_REAL: ${{ secrets.JWT_CLIENT_REFRESH_SECRET }}
+
+          PRODUCTION_HOST: ${{ secrets.PRODUCTION_HOST }}
+          PRODUCTION_USER: ${{ secrets.PRODUCTION_USER }}
+          PRODUCTION_SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+        run: |
+          test -n "$DATABASE_URL_PRODUCTION"
+          test -n "$REDIS_URL_PRODUCTION"
+          test -n "$JWT_SECRET_REAL"
+          test -n "$JWT_CLIENT_SECRET_REAL"
+          test -n "$JWT_REFRESH_SECRET_REAL"
+          test -n "$JWT_CLIENT_REFRESH_SECRET_REAL"
+          test -n "$PRODUCTION_HOST"
+          test -n "$PRODUCTION_USER"
+          test -n "$PRODUCTION_SSH_KEY"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prisma validate
+        run: npm run prisma:validate
+
+      - name: Prisma generate
+        run: npm run prisma:generate
+
+      - name: Build
+        run: npm run build
+
+      - name: Docker build
+        run: docker build -t beauty-core-api:production-candidate .
+
+      - name: Create production candidate artifact
+        run: git archive --format=tar.gz HEAD -o beauty-core-production-source.tar.gz
+
+      - name: Upload production artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: beauty-core-production-source
+          path: beauty-core-production-source.tar.gz
+          retention-days: 7
+
+      # Deploy real futuro:
+      #
+      # 1. Exigir aprovação manual via GitHub Environment production.
+      # 2. Fazer backup antes de qualquer migration real.
+      # 3. Rodar: npx prisma migrate deploy.
+      # 4. Nunca rodar: npx prisma db push.
+      # 5. Nunca rodar seed automatico em production.
+      # 6. Subir nova imagem/container.
+      # 7. Executar smoke tests.
+      # 8. Executar rollback se health check falhar.

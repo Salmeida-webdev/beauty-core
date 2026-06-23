@@ -1,0 +1,1339 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  GERENTE
+  RECEPCAO
+  PROFISSIONAL
+  CLIENTE
+}
+
+enum StatusAgendamento {
+  PENDENTE
+  CONFIRMADO
+  EM_ANDAMENTO
+  CONCLUIDO
+  CANCELADO
+  FALTOU
+}
+
+enum PlanoEmpresa {
+  STARTER
+  PRO
+  PREMIUM
+}
+
+enum TipoArquivo {
+  LOGO_EMPRESA
+  FOTO_CLIENTE
+  FOTO_USUARIO
+  FOTO_PROFISSIONAL
+  IMAGEM_SERVICO
+  GALERIA_EMPRESA
+  DOCUMENTO
+  OUTRO
+}
+
+enum StatusArquivo {
+  ATIVO
+  INATIVO
+  EXCLUIDO
+}
+
+enum TipoMovimentacaoPontos {
+  GANHO
+  RESGATE
+  AJUSTE
+  EXPIRACAO
+}
+
+enum TipoCupom {
+  PERCENTUAL
+  VALOR_FIXO
+}
+
+enum StatusClientePacote {
+  ATIVO
+  FINALIZADO
+  VENCIDO
+  CANCELADO
+}
+
+enum TipoMovimentacaoFinanceira {
+  RECEITA
+  DESPESA
+}
+
+enum FormaPagamento {
+  DINHEIRO
+  PIX
+  CARTAO_CREDITO
+  CARTAO_DEBITO
+  TRANSFERENCIA
+  BOLETO
+  OUTRO
+}
+
+enum StatusPagamento {
+  PENDENTE
+  PAGO
+  CANCELADO
+  ESTORNADO
+}
+
+enum CategoriaFinanceiraTipo {
+  RECEITA
+  DESPESA
+}
+
+enum TipoNotificacao {
+  SISTEMA
+  AGENDAMENTO
+  FINANCEIRO
+  FIDELIDADE
+  PACOTE
+  CLIENTE
+  MARKETING
+}
+
+enum StatusNotificacao {
+  NAO_LIDA
+  LIDA
+  ARQUIVADA
+}
+
+enum TipoMensagemWhatsApp {
+  LEMBRETE_AGENDAMENTO
+  CONFIRMACAO_AGENDAMENTO
+  CANCELAMENTO_AGENDAMENTO
+  ANIVERSARIO
+  FIDELIDADE
+  BENEFICIO
+  PACOTE
+  FINANCEIRO
+  CAMPANHA
+  SISTEMA
+}
+
+enum StatusMensagemWhatsApp {
+  PENDENTE
+  ENVIADA
+  FALHOU
+  CANCELADA
+  SIMULADA
+}
+
+enum CanalWhatsApp {
+  WHATSAPP_BUSINESS_GRATUITO
+  API_OFICIAL
+  PROVEDOR_EXTERNO
+  MODO_DEMONSTRACAO
+}
+
+enum TipoEventoSistema {
+  PONTOS_ADICIONADOS
+  PONTOS_RESGATADOS
+  BENEFICIO_LIBERADO
+  AGENDAMENTO_CRIADO
+  AGENDAMENTO_CONFIRMADO
+  AGENDAMENTO_CANCELADO
+  AGENDAMENTO_CONCLUIDO
+  PACOTE_CRIADO
+  PACOTE_FINALIZADO
+  PACOTE_VENCIDO
+  MOVIMENTACAO_FINANCEIRA
+  COMISSAO_GERADA
+  COMISSAO_PAGA
+  NOTIFICACAO_CRIADA
+  WHATSAPP_MENSAGEM_CRIADA
+  WHATSAPP_CAMPANHA_CRIADA
+  AUTOMACAO_EXECUTADA
+  SISTEMA
+}
+
+enum ModuloEventoSistema {
+  FIDELIDADE
+  AGENDAMENTOS
+  CLIENTES_PACOTES
+  FINANCEIRO
+  COMISSOES
+  NOTIFICACOES
+  WHATSAPP
+  AUTOMACOES
+  SISTEMA
+}
+
+enum StatusAutomacaoSistema {
+  ATIVA
+  INATIVA
+  PAUSADA
+}
+
+enum GatilhoAutomacaoSistema {
+  ANIVERSARIO_CLIENTE
+  AGENDAMENTO_CRIADO
+  AGENDAMENTO_CONFIRMADO
+  AGENDAMENTO_CANCELADO
+  AGENDAMENTO_CONCLUIDO
+  PACOTE_VENCENDO
+  PACOTE_FINALIZADO
+  PONTOS_ADICIONADOS
+  BENEFICIO_LIBERADO
+  FINANCEIRO_PENDENTE
+  CAMPANHA_WHATSAPP
+  MANUAL
+}
+
+enum TipoUsuarioAuditoria {
+  SUPER_ADMIN
+  ADMIN
+  GERENTE
+  RECEPCAO
+  PROFISSIONAL
+  CLIENTE
+  SISTEMA
+}
+
+enum StatusAuditoria {
+  SUCESSO
+  FALHA
+}
+
+enum AcaoAuditoria {
+  LOGIN_ADMIN
+  LOGIN_CLIENTE
+
+  LOGOUT
+
+  SOLICITAR_CODIGO
+  VERIFICAR_CODIGO
+  ACEITAR_TERMOS
+
+  CRIAR
+  ATUALIZAR
+  INATIVAR
+  EXCLUIR
+
+  CRIAR_SUPER_ADMIN
+  CRIAR_ADMIN
+  ALTERAR_ROLE
+  BLOQUEAR_ESCALACAO_ROLE
+  ACESSO_NEGADO_EMPRESAS
+  FALHA_VALIDACAO_TENANT
+
+  CANCELAR
+  CONCLUIR
+  PAGAR
+
+  UPLOAD
+  DOWNLOAD
+
+  LIMPEZA_ARQUIVOS
+  ARQUIVO_ORFAO
+  URL_ASSINADA
+  DELETE_ARQUIVO
+  DOWNLOAD_ARQUIVO
+  UPLOAD_ARQUIVO
+  VISUALIZAR
+  GERAR_RELATORIO
+
+  PROCESSAR_JOB
+
+  JOB_INICIADO
+  JOB_CONCLUIDO
+  JOB_FALHOU
+
+  CRON_EXECUTADO
+  CRON_FALHOU
+  REFRESH_ADMIN
+  REFRESH_CLIENTE
+  LOGOUT_ADMIN
+  LOGOUT_CLIENTE
+  LOGOUT_ALL_ADMIN
+  LOGOUT_ALL_CLIENTE
+  SESSAO_REVOGADA
+  LIMPEZA_SESSOES_EXPIRADAS
+
+  OUTRO
+
+  JOB_FALHA
+  JOB_DLQ
+  JOB_REPROCESSADO
+
+  BACKUP_INICIADO
+  BACKUP_CONCLUIDO
+  BACKUP_FALHA
+  RESTORE_INICIADO
+  RESTORE_CONCLUIDO
+  RESTORE_FALHA
+  LGPD_EXPORTACAO
+  LGPD_ANONIMIZACAO
+
+  LIMPEZA_AUTOMATICA
+  RETENCAO_EXECUTADA
+}
+
+model Empresa {
+  id String @id @default(uuid())
+
+  nome String
+  slug String @unique
+
+  telefone String?
+  email    String?
+
+  logo        String?
+  corPrimaria String?
+
+  dominio String?
+
+  plano PlanoEmpresa @default(STARTER)
+
+  ativo Boolean @default(true)
+
+  unidades               Unidade[]
+  usuarios               Usuario[]
+  clientes               Cliente[]
+  agendamentos           Agendamento[]
+  servicos               Servico[]
+  arquivos               Arquivo[]
+  fidelidades            Fidelidade[]
+  movimentacoesPontos    MovimentacaoPontos[]
+  cupons                 Cupom[]
+  beneficios             Beneficio[]
+  niveisFidelidade       NivelFidelidade[]
+  configuracaoFidelidade ConfiguracaoFidelidade?
+  pacotes                Pacote[]
+  clientesPacotes        ClientePacote[]
+
+  categoriasFinanceiras    CategoriaFinanceira[]
+  movimentacoesFinanceiras MovimentacaoFinanceira[]
+  comissoesProfissionais   ComissaoProfissional[]
+
+  notificacoes            Notificacao[]
+  configuracaoNotificacao ConfiguracaoNotificacao?
+
+  configuracaoWhatsApp ConfiguracaoWhatsApp?
+  templatesWhatsApp    TemplateWhatsApp[]
+  mensagensWhatsApp    MensagemWhatsApp[]
+  campanhasWhatsApp    CampanhaWhatsApp[]
+
+  eventosSistema    EventoSistema[]
+  automacoesSistema AutomacaoSistema[]
+  auditorias        AuditoriaSistema[]
+
+  codigosAcessoCliente CodigoAcessoCliente[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sessoes   Sessao[]
+
+  @@index([ativo])
+  @@index([plano])
+  @@index([createdAt])
+  @@index([updatedAt])
+}
+
+model Unidade {
+  id String @id @default(uuid())
+
+  empresaId String
+  nome      String
+
+  telefone String?
+  email    String?
+
+  endereco String?
+
+  ativa Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa      Empresa       @relation(fields: [empresaId], references: [id])
+  agendamentos Agendamento[]
+  arquivos     Arquivo[]
+
+  @@index([empresaId])
+  @@index([empresaId, ativa])
+  @@index([empresaId, nome])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model Usuario {
+  id String @id @default(uuid())
+
+  empresaId String?
+
+  nome     String
+  telefone String?
+  email    String  @unique
+  senha    String
+
+  foto String?
+  role Role
+
+  ativo Boolean @default(true)
+
+  ultimoLogin DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa      Empresa?      @relation(fields: [empresaId], references: [id])
+  agendamentos Agendamento[]
+  arquivos     Arquivo[]
+
+  comissoesProfissionais ComissaoProfissional[]
+
+  notificacoes Notificacao[]
+
+  auditorias AuditoriaSistema[]
+
+  mensagensWhatsApp MensagemWhatsApp[]
+  sessoes           Sessao[]
+
+  @@index([empresaId])
+  @@index([role])
+  @@index([ativo])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([empresaId, ativo])
+  @@index([empresaId, role])
+  @@index([empresaId, email])
+  @@index([empresaId, ultimoLogin])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model Cliente {
+  id String @id @default(uuid())
+
+  empresaId String
+
+  nome     String
+  telefone String
+  email    String?
+
+  foto String?
+
+  dataNascimento DateTime?
+
+  observacoes String?
+
+  ativo Boolean @default(true)
+
+  ultimoAcessoPortal DateTime?
+  aceitouTermos      Boolean   @default(false)
+  dataAceiteTermos   DateTime?
+  ativoPortal        Boolean   @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa             Empresa              @relation(fields: [empresaId], references: [id])
+  agendamentos        Agendamento[]
+  arquivos            Arquivo[]
+  fidelidades         Fidelidade[]
+  movimentacoesPontos MovimentacaoPontos[]
+  clientesPacotes     ClientePacote[]
+
+  movimentacoesFinanceiras MovimentacaoFinanceira[]
+
+  mensagensWhatsApp MensagemWhatsApp[]
+
+  notificacoes Notificacao[]
+
+  auditorias AuditoriaSistema[]
+
+  codigosAcesso CodigoAcessoCliente[]
+  sessoes       Sessao[]
+
+  @@unique([empresaId, telefone])
+  @@index([empresaId])
+  @@index([telefone])
+  @@index([email])
+  @@index([ativoPortal])
+  @@index([ultimoAcessoPortal])
+  @@index([empresaId, ativo])
+  @@index([empresaId, ativoPortal])
+  @@index([empresaId, nome])
+  @@index([empresaId, email])
+  @@index([empresaId, dataNascimento])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model CodigoAcessoCliente {
+  id String @id @default(uuid())
+
+  empresaId String
+  clienteId String
+
+  telefone String
+  codigo   String
+  codigoHash String?
+
+  expiraEm DateTime
+  usado    Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+  cliente Cliente @relation(fields: [clienteId], references: [id])
+
+  @@index([empresaId])
+  @@index([clienteId])
+  @@index([telefone])
+  @@index([empresaId, clienteId])
+  @@index([empresaId, telefone])
+  @@index([empresaId, codigoHash])
+  @@index([empresaId, telefone, codigoHash, usado])
+  @@index([empresaId, usado])
+  @@index([empresaId, expiraEm])
+}
+
+model Agendamento {
+  id String @id @default(uuid())
+
+  empresaId      String
+  unidadeId      String
+  clienteId      String
+  profissionalId String
+  servicoId      String
+
+  dataHoraInicio DateTime
+  dataHoraFim    DateTime
+
+  status StatusAgendamento @default(PENDENTE)
+
+  observacoes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa      Empresa @relation(fields: [empresaId], references: [id])
+  unidade      Unidade @relation(fields: [unidadeId], references: [id])
+  cliente      Cliente @relation(fields: [clienteId], references: [id])
+  profissional Usuario @relation(fields: [profissionalId], references: [id])
+  servico      Servico @relation(fields: [servicoId], references: [id])
+
+  movimentacoesFinanceiras MovimentacaoFinanceira[]
+  comissoesProfissionais   ComissaoProfissional[]
+
+  @@index([empresaId])
+  @@index([unidadeId])
+  @@index([clienteId])
+  @@index([profissionalId])
+  @@index([servicoId])
+  @@index([status])
+  @@index([dataHoraInicio])
+  @@index([empresaId, status])
+  @@index([empresaId, dataHoraInicio])
+  @@index([empresaId, dataHoraFim])
+  @@index([empresaId, clienteId])
+  @@index([empresaId, profissionalId])
+  @@index([empresaId, unidadeId])
+  @@index([empresaId, servicoId])
+  @@index([empresaId, status, dataHoraInicio])
+  @@index([empresaId, clienteId, dataHoraInicio])
+  @@index([empresaId, profissionalId, dataHoraInicio])
+  @@index([empresaId, updatedAt])
+}
+
+model Servico {
+  id String @id @default(uuid())
+
+  empresaId String
+
+  nome String
+
+  descricao String?
+
+  duracaoMinutos Int
+
+  preco Decimal @db.Decimal(10, 2)
+
+  imagem String?
+
+  ativo Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa      Empresa       @relation(fields: [empresaId], references: [id])
+  agendamentos Agendamento[]
+  arquivos     Arquivo[]
+
+  @@index([empresaId])
+  @@index([empresaId, ativo])
+  @@index([empresaId, nome])
+  @@index([empresaId, preco])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model Arquivo {
+  id String @id @default(uuid())
+
+  empresaId String
+  clienteId String?
+  usuarioId String?
+  servicoId String?
+  unidadeId String?
+
+  tipo TipoArquivo
+
+  nomeOriginal String
+  nomeArquivo  String
+
+  mimeType     String
+  tamanhoBytes Int
+
+  caminho String
+  url     String?
+
+  status StatusArquivo @default(ATIVO)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa          Empresa             @relation(fields: [empresaId], references: [id])
+  cliente          Cliente?            @relation(fields: [clienteId], references: [id])
+  usuario          Usuario?            @relation(fields: [usuarioId], references: [id])
+  servico          Servico?            @relation(fields: [servicoId], references: [id])
+  unidade          Unidade?            @relation(fields: [unidadeId], references: [id])
+  visibilidade     ArquivoVisibilidade @default(PUBLICO)
+  armazenamento    TipoArmazenamento   @default(LOCAL)
+  checksum         String?
+  downloadCount    Int                 @default(0)
+  ultimoDownloadEm DateTime?
+  expiraEm         DateTime?
+  privado          Boolean             @default(false)
+
+  @@index([empresaId])
+  @@index([clienteId])
+  @@index([usuarioId])
+  @@index([servicoId])
+  @@index([unidadeId])
+  @@index([tipo])
+  @@index([status])
+  @@index([createdAt])
+  @@index([empresaId, status])
+  @@index([empresaId, tipo])
+  @@index([empresaId, clienteId])
+  @@index([empresaId, usuarioId])
+  @@index([empresaId, servicoId])
+  @@index([empresaId, unidadeId])
+  @@index([empresaId, tipo, status])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+  @@index([empresaId, visibilidade])
+  @@index([empresaId, armazenamento])
+  @@index([empresaId, privado])
+  @@index([empresaId, checksum])
+  @@index([empresaId, expiraEm])
+}
+
+model Fidelidade {
+  id String @id @default(uuid())
+
+  clienteId String
+  empresaId String
+
+  saldoPontos Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cliente Cliente @relation(fields: [clienteId], references: [id])
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@unique([clienteId, empresaId])
+  @@index([empresaId])
+  @@index([clienteId])
+  @@index([empresaId, clienteId])
+  @@index([empresaId, saldoPontos])
+  @@index([empresaId, updatedAt])
+}
+
+model MovimentacaoPontos {
+  id String @id @default(uuid())
+
+  clienteId String
+  empresaId String
+
+  tipo TipoMovimentacaoPontos
+
+  pontos Int
+
+  descricao String?
+
+  createdAt DateTime @default(now())
+
+  cliente Cliente @relation(fields: [clienteId], references: [id])
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@index([empresaId])
+  @@index([clienteId])
+  @@index([tipo])
+  @@index([createdAt])
+  @@index([empresaId, clienteId])
+  @@index([empresaId, tipo])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, clienteId, createdAt])
+}
+
+model Cupom {
+  id String @id @default(uuid())
+
+  empresaId String
+
+  codigo    String
+  nome      String  @default("Cupom")
+  descricao String?
+
+  tipo  TipoCupom
+  valor Decimal   @db.Decimal(10, 2)
+
+  dataInicio DateTime?
+  dataFim    DateTime?
+
+  quantidadeMaxima    Int?
+  quantidadeUtilizada Int  @default(0)
+
+  ativo Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@unique([empresaId, codigo])
+  @@index([empresaId])
+  @@index([empresaId, ativo])
+  @@index([empresaId, tipo])
+  @@index([empresaId, dataInicio])
+  @@index([empresaId, dataFim])
+  @@index([empresaId, ativo, dataInicio, dataFim])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model Pacote {
+  id String @id @default(uuid())
+
+  empresaId String
+
+  nome      String
+  descricao String?
+
+  valor Decimal @db.Decimal(10, 2)
+
+  quantidadeSessoes Int
+  validadeDias      Int?
+
+  ativo Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa         Empresa         @relation(fields: [empresaId], references: [id])
+  clientesPacotes ClientePacote[]
+
+  @@index([empresaId])
+  @@index([empresaId, ativo])
+  @@index([empresaId, nome])
+  @@index([empresaId, valor])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model ClientePacote {
+  id String @id @default(uuid())
+
+  empresaId String
+  clienteId String
+  pacoteId  String
+
+  sessoesTotal     Int
+  sessoesUsadas    Int @default(0)
+  sessoesRestantes Int
+
+  dataCompra   DateTime  @default(now())
+  dataValidade DateTime?
+
+  status StatusClientePacote @default(ATIVO)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+  cliente Cliente @relation(fields: [clienteId], references: [id])
+  pacote  Pacote  @relation(fields: [pacoteId], references: [id])
+
+  @@index([empresaId])
+  @@index([clienteId])
+  @@index([pacoteId])
+  @@index([status])
+  @@index([dataValidade])
+  @@index([empresaId, clienteId])
+  @@index([empresaId, pacoteId])
+  @@index([empresaId, status])
+  @@index([empresaId, dataCompra])
+  @@index([empresaId, dataValidade])
+  @@index([empresaId, clienteId, status])
+  @@index([empresaId, status, dataValidade])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model Beneficio {
+  id String @id @default(uuid())
+
+  empresaId String
+
+  nome String
+
+  descricao String?
+
+  pontosNecessarios Int
+
+  ativo Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@index([empresaId])
+  @@index([ativo])
+  @@index([pontosNecessarios])
+  @@index([empresaId, ativo])
+  @@index([empresaId, pontosNecessarios])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model NivelFidelidade {
+  id String @id @default(uuid())
+
+  empresaId String
+
+  nome String
+
+  pontosMinimos Int
+
+  beneficios String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@unique([empresaId, nome])
+  @@index([empresaId])
+  @@index([pontosMinimos])
+  @@index([empresaId, pontosMinimos])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model ConfiguracaoFidelidade {
+  id String @id @default(uuid())
+
+  empresaId String @unique
+
+  fidelidadeAtiva Boolean @default(true)
+
+  pontuacaoAutomatica Boolean @default(false)
+
+  pontosPorReal Float @default(1)
+
+  reaisPorPonto Float @default(0.1)
+
+  pontosParaResgate Int @default(100)
+
+  valorResgate Float @default(10)
+
+  niveisAtivos Boolean @default(false)
+
+  beneficiosAutomaticos Boolean @default(false)
+
+  cupomAniversarioAtivo Boolean @default(false)
+
+  cupomAniversarioCodigo String?
+  cupomAniversarioValor  Float?
+
+  bonusAniversarioAtivo  Boolean @default(false)
+  bonusAniversarioPontos Int     @default(50)
+
+  automacoesAtivas Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@index([empresaId])
+  @@index([empresaId, updatedAt])
+}
+
+model CategoriaFinanceira {
+  id String @id @default(uuid())
+
+  empresaId String
+
+  nome String
+  tipo CategoriaFinanceiraTipo
+
+  ativo Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  movimentacoesFinanceiras MovimentacaoFinanceira[]
+
+  @@index([empresaId])
+  @@index([tipo])
+  @@index([empresaId, tipo])
+  @@index([empresaId, ativo])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model MovimentacaoFinanceira {
+  id String @id @default(uuid())
+
+  empresaId String
+
+  categoriaId   String
+  clienteId     String?
+  agendamentoId String?
+
+  descricao String
+
+  tipo TipoMovimentacaoFinanceira
+
+  valor Decimal @db.Decimal(10, 2)
+
+  formaPagamento FormaPagamento
+  status         StatusPagamento @default(PENDENTE)
+
+  dataMovimentacao DateTime @default(now())
+
+  observacoes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  categoria CategoriaFinanceira @relation(fields: [categoriaId], references: [id])
+
+  cliente Cliente? @relation(fields: [clienteId], references: [id])
+
+  agendamento Agendamento? @relation(fields: [agendamentoId], references: [id])
+
+  @@index([empresaId])
+  @@index([categoriaId])
+  @@index([clienteId])
+  @@index([agendamentoId])
+  @@index([tipo])
+  @@index([status])
+  @@index([dataMovimentacao])
+  @@index([empresaId, categoriaId])
+  @@index([empresaId, clienteId])
+  @@index([empresaId, agendamentoId])
+  @@index([empresaId, tipo])
+  @@index([empresaId, status])
+  @@index([empresaId, dataMovimentacao])
+  @@index([empresaId, tipo, status])
+  @@index([empresaId, tipo, status, dataMovimentacao])
+  @@index([empresaId, status, dataMovimentacao])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model ComissaoProfissional {
+  id String @id @default(uuid())
+
+  empresaId String
+
+  profissionalId String
+  agendamentoId  String
+
+  valorServico Decimal @db.Decimal(10, 2)
+  percentual   Decimal @db.Decimal(5, 2)
+
+  valorComissao Decimal @db.Decimal(10, 2)
+
+  status StatusPagamento @default(PENDENTE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  profissional Usuario @relation(fields: [profissionalId], references: [id])
+
+  agendamento Agendamento @relation(fields: [agendamentoId], references: [id])
+
+  @@index([empresaId])
+  @@index([profissionalId])
+  @@index([agendamentoId])
+  @@index([status])
+  @@index([empresaId, profissionalId])
+  @@index([empresaId, agendamentoId])
+  @@index([empresaId, status])
+  @@index([empresaId, profissionalId, status])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model Notificacao {
+  id String @id @default(uuid())
+
+  empresaId String
+  usuarioId String?
+  clienteId String?
+
+  tipo TipoNotificacao
+
+  titulo   String
+  mensagem String
+
+  status StatusNotificacao @default(NAO_LIDA)
+
+  dataLeitura DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa  @relation(fields: [empresaId], references: [id])
+  usuario Usuario? @relation(fields: [usuarioId], references: [id])
+  cliente Cliente? @relation(fields: [clienteId], references: [id])
+
+  @@index([empresaId])
+  @@index([usuarioId])
+  @@index([clienteId])
+  @@index([tipo])
+  @@index([status])
+  @@index([createdAt])
+  @@index([empresaId, usuarioId])
+  @@index([empresaId, clienteId])
+  @@index([empresaId, tipo])
+  @@index([empresaId, status])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, clienteId, status])
+  @@index([empresaId, usuarioId, status])
+  @@index([empresaId, status, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model ConfiguracaoNotificacao {
+  id String @id @default(uuid())
+
+  empresaId String @unique
+
+  notificarAgendamentos Boolean @default(true)
+  notificarFinanceiro   Boolean @default(true)
+  notificarFidelidade   Boolean @default(true)
+  notificarPacotes      Boolean @default(true)
+  notificarClientes     Boolean @default(true)
+  notificarMarketing    Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@index([empresaId])
+}
+
+model ConfiguracaoWhatsApp {
+  id                   String        @id @default(uuid())
+  empresaId            String        @unique
+  ativo                Boolean       @default(true)
+  canal                CanalWhatsApp @default(MODO_DEMONSTRACAO)
+  numeroWhatsApp       String?
+  mensagemSaudacao     String?
+  mensagemAusencia     String?
+  usarModoDemonstracao Boolean       @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@index([empresaId])
+}
+
+model TemplateWhatsApp {
+  id        String               @id @default(uuid())
+  empresaId String
+  nome      String
+  tipo      TipoMensagemWhatsApp
+  titulo    String
+  mensagem  String
+  ativo     Boolean              @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa   Empresa            @relation(fields: [empresaId], references: [id])
+  mensagens MensagemWhatsApp[]
+
+  @@index([empresaId])
+  @@index([tipo])
+  @@index([ativo])
+  @@index([empresaId, tipo])
+  @@index([empresaId, ativo])
+  @@index([empresaId, tipo, ativo])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model MensagemWhatsApp {
+  id           String                 @id @default(uuid())
+  empresaId    String
+  clienteId    String?
+  usuarioId    String?
+  templateId   String?
+  tipo         TipoMensagemWhatsApp
+  destinatario String
+  mensagem     String
+  status       StatusMensagemWhatsApp @default(PENDENTE)
+  erro         String?
+  dataEnvio    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa  Empresa           @relation(fields: [empresaId], references: [id])
+  cliente  Cliente?          @relation(fields: [clienteId], references: [id])
+  usuario  Usuario?          @relation(fields: [usuarioId], references: [id])
+  template TemplateWhatsApp? @relation(fields: [templateId], references: [id])
+
+  @@index([empresaId])
+  @@index([clienteId])
+  @@index([usuarioId])
+  @@index([templateId])
+  @@index([tipo])
+  @@index([status])
+  @@index([createdAt])
+  @@index([empresaId, clienteId])
+  @@index([empresaId, usuarioId])
+  @@index([empresaId, templateId])
+  @@index([empresaId, tipo])
+  @@index([empresaId, status])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, clienteId, createdAt])
+  @@index([empresaId, status, createdAt])
+  @@index([empresaId, tipo, status])
+  @@index([empresaId, updatedAt])
+}
+
+model CampanhaWhatsApp {
+  id                 String                 @id @default(uuid())
+  empresaId          String
+  nome               String
+  descricao          String?
+  tipo               TipoMensagemWhatsApp
+  mensagem           String
+  status             StatusMensagemWhatsApp @default(SIMULADA)
+  totalDestinatarios Int                    @default(0)
+  totalEnviadas      Int                    @default(0)
+  totalFalhas        Int                    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@index([empresaId])
+  @@index([tipo])
+  @@index([status])
+  @@index([empresaId, tipo])
+  @@index([empresaId, status])
+  @@index([empresaId, tipo, status])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model EventoSistema {
+  id String @id @default(uuid())
+
+  empresaId String
+
+  tipo   TipoEventoSistema
+  modulo ModuloEventoSistema
+
+  titulo    String
+  descricao String?
+
+  entidade   String?
+  entidadeId String?
+
+  payload Json?
+
+  createdAt DateTime @default(now())
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@index([empresaId])
+  @@index([tipo])
+  @@index([modulo])
+  @@index([createdAt])
+  @@index([empresaId, tipo])
+  @@index([empresaId, modulo])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, tipo, createdAt])
+  @@index([empresaId, modulo, createdAt])
+}
+
+model AutomacaoSistema {
+  id String @id @default(uuid())
+
+  empresaId String
+
+  nome      String
+  descricao String?
+
+  gatilho GatilhoAutomacaoSistema
+  status  StatusAutomacaoSistema  @default(ATIVA)
+
+  ativa Boolean @default(true)
+
+  totalExecucoes Int @default(0)
+  totalSucessos  Int @default(0)
+  totalFalhas    Int @default(0)
+
+  ultimaExecucao DateTime?
+
+  configuracao Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@index([empresaId])
+  @@index([gatilho])
+  @@index([status])
+  @@index([ativa])
+  @@index([empresaId, gatilho])
+  @@index([empresaId, status])
+  @@index([empresaId, ativa])
+  @@index([empresaId, status, ativa])
+  @@index([empresaId, ultimaExecucao])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, updatedAt])
+}
+
+model AuditoriaSistema {
+  id String @id @default(uuid())
+
+  empresaId String?
+  usuarioId String?
+  clienteId String?
+
+  tipoUsuario TipoUsuarioAuditoria?
+  acao        AcaoAuditoria
+  modulo      String
+
+  rota       String?
+  metodoHttp String?
+  ip         String?
+  userAgent  String?
+
+  recurso   String?
+  recursoId String?
+
+  dadosAntes  Json?
+  dadosDepois Json?
+  metadata    Json?
+
+  status   StatusAuditoria @default(SUCESSO)
+  mensagem String?
+
+  createdAt DateTime @default(now())
+
+  empresa Empresa? @relation(fields: [empresaId], references: [id])
+  usuario Usuario? @relation(fields: [usuarioId], references: [id])
+  cliente Cliente? @relation(fields: [clienteId], references: [id])
+
+  @@index([empresaId])
+  @@index([usuarioId])
+  @@index([clienteId])
+  @@index([acao])
+  @@index([modulo])
+  @@index([status])
+  @@index([createdAt])
+  @@index([empresaId, createdAt])
+  @@index([empresaId, acao])
+  @@index([empresaId, modulo])
+  @@index([empresaId, status])
+  @@index([recurso, recursoId])
+}
+
+model Sessao {
+  id String @id @default(uuid())
+
+  empresaId String?
+
+  usuarioId String?
+  clienteId String?
+
+  refreshTokenHash String
+
+  dispositivo        String?
+  sistemaOperacional String?
+  navegador          String?
+  userAgent          String?
+  ip                 String?
+
+  ultimaAtividade DateTime @default(now())
+
+  expiraEm DateTime
+
+  revogada Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa? @relation(fields: [empresaId], references: [id], onDelete: SetNull)
+  usuario Usuario? @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  cliente Cliente? @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+
+  @@index([empresaId])
+  @@index([usuarioId])
+  @@index([clienteId])
+  @@index([revogada])
+  @@index([expiraEm])
+  @@index([ultimaAtividade])
+}
+
+enum ArquivoVisibilidade {
+  PUBLICO
+  PRIVADO
+}
+
+enum TipoArmazenamento {
+  LOCAL
+  S3
+  CLOUDINARY
+}
+

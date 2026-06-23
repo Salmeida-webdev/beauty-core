@@ -1,0 +1,99 @@
+﻿groups:
+  - name: beauty-core-api-alerts
+    interval: 15s
+    rules:
+      - alert: BeautyCoreApiDown
+        expr: up{job="beauty-core-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: beauty-core-api
+        annotations:
+          summary: "Beauty Core API down"
+          description: "O target beauty-core-api nao esta respondendo ao Prometheus por mais de 1 minuto."
+
+      - alert: BeautyCoreHighHttp5xxRate
+        expr: sum(rate(beauty_core_http_errors_total{status_code=~"5.."}[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          service: beauty-core-api
+        annotations:
+          summary: "Alta taxa de erros 5xx"
+          description: "A API esta gerando erros 5xx acima do limite esperado."
+
+      - alert: BeautyCoreHighHttpLatencyP95
+        expr: histogram_quantile(0.95, sum(rate(beauty_core_http_request_duration_seconds_bucket[5m])) by (le)) > 2
+        for: 3m
+        labels:
+          severity: warning
+          service: beauty-core-api
+        annotations:
+          summary: "Latencia HTTP P95 alta"
+          description: "A latencia P95 da API passou de 2 segundos por mais de 3 minutos."
+
+      - alert: BeautyCoreDatabaseDown
+        expr: beauty_core_dependency_health{dependency="database"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: beauty-core-api
+          dependency: database
+        annotations:
+          summary: "Database indisponivel"
+          description: "O health check do PostgreSQL esta retornando falha."
+
+      - alert: BeautyCoreRedisDown
+        expr: beauty_core_dependency_health{dependency="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: beauty-core-api
+          dependency: redis
+        annotations:
+          summary: "Redis indisponivel"
+          description: "O health check do Redis esta retornando falha."
+
+      - alert: BeautyCoreBullmqDown
+        expr: beauty_core_dependency_health{dependency="bullmq"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: beauty-core-api
+          dependency: bullmq
+        annotations:
+          summary: "BullMQ indisponivel"
+          description: "O health check das filas BullMQ esta retornando falha."
+
+      - alert: BeautyCoreSchedulerDegraded
+        expr: beauty_core_dependency_health{dependency="scheduler"} == 0
+        for: 5m
+        labels:
+          severity: warning
+          service: beauty-core-api
+          dependency: scheduler
+        annotations:
+          summary: "Scheduler degradado"
+          description: "O scheduler esta retornando estado nao saudavel por mais de 5 minutos."
+
+      - alert: BeautyCoreBullmqFailedJobs
+        expr: sum(beauty_core_queue_jobs{state="failed"}) > 0
+        for: 5m
+        labels:
+          severity: warning
+          service: beauty-core-api
+          dependency: bullmq
+        annotations:
+          summary: "Jobs falhados em filas BullMQ"
+          description: "Existem jobs falhados nas filas BullMQ."
+
+      - alert: BeautyCoreBullmqQueueBacklog
+        expr: sum(beauty_core_queue_jobs{state=~"waiting|delayed"}) > 100
+        for: 10m
+        labels:
+          severity: warning
+          service: beauty-core-api
+          dependency: bullmq
+        annotations:
+          summary: "Backlog alto em filas BullMQ"
+          description: "Existem mais de 100 jobs aguardando ou atrasados nas filas BullMQ."

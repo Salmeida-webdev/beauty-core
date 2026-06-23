@@ -1,0 +1,438 @@
+﻿### ============================================================
+### Beauty Core 1.0 — Chat 30
+### Refresh Token + Sessões + Logout Enterprise
+### Admin + Cliente + Público por Slug + Scheduler
+### ============================================================
+
+@baseUrl = http://localhost:3000
+@adminEmail = admin@beautycore.com
+@adminSenha = 123456
+@tenantSlug = beauty-core-demo
+@clienteTelefone = 83988887777
+
+### ============================================================
+### ADMIN — LOGIN
+### ============================================================
+
+# @name adminLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "senha": "{{adminSenha}}"
+}
+
+###
+
+@adminAccess = {{adminLogin.response.body.access_token}}
+@adminRefresh = {{adminLogin.response.body.refresh_token}}
+
+### ============================================================
+### ADMIN — ME COM SESSÃO
+### Esperado: retorna sessaoId
+### ============================================================
+
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{adminAccess}}
+
+### ============================================================
+### ADMIN — LISTAR SESSÕES
+### Esperado: lista sessões sem refreshTokenHash
+### ============================================================
+
+GET {{baseUrl}}/auth/sessoes
+Authorization: Bearer {{adminAccess}}
+
+### ============================================================
+### ADMIN — REFRESH TOKEN ROTATION
+### Esperado: novo access_token + novo refresh_token
+### ============================================================
+
+# @name adminRefreshResponse
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{adminRefresh}}"
+}
+
+###
+
+@adminAccess2 = {{adminRefreshResponse.response.body.access_token}}
+@adminRefresh2 = {{adminRefreshResponse.response.body.refresh_token}}
+
+### ============================================================
+### ADMIN — ME COM TOKEN ROTACIONADO
+### Esperado: sucesso
+### ============================================================
+
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{adminAccess2}}
+
+### ============================================================
+### ADMIN — REUSO DO REFRESH ANTIGO
+### Esperado: 401 e sessão revogada por segurança
+### ============================================================
+
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{adminRefresh}}"
+}
+
+### ============================================================
+### ADMIN — NOVO LOGIN PARA TESTAR LOGOUT
+### ============================================================
+
+# @name adminLoginLogout
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "senha": "{{adminSenha}}"
+}
+
+###
+
+@adminAccessLogout = {{adminLoginLogout.response.body.access_token}}
+@adminRefreshLogout = {{adminLoginLogout.response.body.refresh_token}}
+
+### ============================================================
+### ADMIN — LOGOUT DA SESSÃO ATUAL
+### Esperado: message = Logout realizado com sucesso.
+### ============================================================
+
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{adminAccessLogout}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{adminRefreshLogout}}"
+}
+
+### ============================================================
+### ADMIN — REFRESH APÓS LOGOUT
+### Esperado: 401
+### ============================================================
+
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{adminRefreshLogout}}"
+}
+
+### ============================================================
+### ADMIN — LOGOUT ALL
+### ============================================================
+
+# @name adminLoginA
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "senha": "{{adminSenha}}"
+}
+
+###
+
+# @name adminLoginB
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "senha": "{{adminSenha}}"
+}
+
+###
+
+@adminAccessA = {{adminLoginA.response.body.access_token}}
+@adminAccessB = {{adminLoginB.response.body.access_token}}
+
+POST {{baseUrl}}/auth/logout-all
+Authorization: Bearer {{adminAccessB}}
+
+### ============================================================
+### ADMIN — TOKEN ANTIGO APÓS LOGOUT ALL
+### Esperado: 401
+### ============================================================
+
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{adminAccessA}}
+
+### ============================================================
+### ADMIN — AUDITORIA REFRESH_ADMIN
+### Faça novo login porque logout-all invalida as sessões anteriores.
+### ============================================================
+
+# @name adminLoginAuditoria
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "senha": "{{adminSenha}}"
+}
+
+###
+
+@adminAuditAccess = {{adminLoginAuditoria.response.body.access_token}}
+
+GET {{baseUrl}}/auditoria/acao/REFRESH_ADMIN
+Authorization: Bearer {{adminAuditAccess}}
+
+### ============================================================
+### CLIENTE — SOLICITAR OTP LEGADO
+### ============================================================
+
+# @name clienteOtp
+POST {{baseUrl}}/auth-cliente/solicitar-codigo
+Content-Type: application/json
+
+{
+  "telefone": "{{clienteTelefone}}",
+  "slug": "{{tenantSlug}}"
+}
+
+###
+
+@clienteCodigo = {{clienteOtp.response.body.codigoDesenvolvimento}}
+
+### ============================================================
+### CLIENTE — LOGIN OTP LEGADO
+### Esperado: access_token + refresh_token + expires_in + cliente
+### ============================================================
+
+# @name clienteLogin
+POST {{baseUrl}}/auth-cliente/verificar-codigo
+Content-Type: application/json
+
+{
+  "telefone": "{{clienteTelefone}}",
+  "codigo": "{{clienteCodigo}}",
+  "slug": "{{tenantSlug}}"
+}
+
+###
+
+@clienteAccess = {{clienteLogin.response.body.access_token}}
+@clienteRefresh = {{clienteLogin.response.body.refresh_token}}
+
+### ============================================================
+### CLIENTE — ME
+### ============================================================
+
+GET {{baseUrl}}/auth-cliente/me
+Authorization: Bearer {{clienteAccess}}
+
+### ============================================================
+### CLIENTE — SESSÕES
+### ============================================================
+
+GET {{baseUrl}}/auth-cliente/sessoes
+Authorization: Bearer {{clienteAccess}}
+
+### ============================================================
+### CLIENTE — REFRESH TOKEN ROTATION
+### ============================================================
+
+# @name clienteRefreshResponse
+POST {{baseUrl}}/auth-cliente/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{clienteRefresh}}"
+}
+
+###
+
+@clienteAccess2 = {{clienteRefreshResponse.response.body.access_token}}
+@clienteRefresh2 = {{clienteRefreshResponse.response.body.refresh_token}}
+
+### ============================================================
+### CLIENTE — ME COM TOKEN ROTACIONADO
+### ============================================================
+
+GET {{baseUrl}}/auth-cliente/me
+Authorization: Bearer {{clienteAccess2}}
+
+### ============================================================
+### CLIENTE — REUSO DO REFRESH ANTIGO
+### Esperado: 401 e sessão revogada
+### ============================================================
+
+POST {{baseUrl}}/auth-cliente/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{clienteRefresh}}"
+}
+
+### ============================================================
+### CLIENTE — NOVO LOGIN PARA TESTAR LOGOUT
+### ============================================================
+
+# @name clienteOtpLogout
+POST {{baseUrl}}/auth-cliente/solicitar-codigo
+Content-Type: application/json
+
+{
+  "telefone": "{{clienteTelefone}}",
+  "slug": "{{tenantSlug}}"
+}
+
+###
+
+@clienteCodigoLogout = {{clienteOtpLogout.response.body.codigoDesenvolvimento}}
+
+# @name clienteLoginLogout
+POST {{baseUrl}}/auth-cliente/verificar-codigo
+Content-Type: application/json
+
+{
+  "telefone": "{{clienteTelefone}}",
+  "codigo": "{{clienteCodigoLogout}}",
+  "slug": "{{tenantSlug}}"
+}
+
+###
+
+@clienteAccessLogout = {{clienteLoginLogout.response.body.access_token}}
+@clienteRefreshLogout = {{clienteLoginLogout.response.body.refresh_token}}
+
+### ============================================================
+### CLIENTE — LOGOUT
+### ============================================================
+
+POST {{baseUrl}}/auth-cliente/logout
+Authorization: Bearer {{clienteAccessLogout}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{clienteRefreshLogout}}"
+}
+
+### ============================================================
+### CLIENTE — REFRESH APÓS LOGOUT
+### Esperado: 401
+### ============================================================
+
+POST {{baseUrl}}/auth-cliente/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{clienteRefreshLogout}}"
+}
+
+### ============================================================
+### PÚBLICO POR SLUG — SOLICITAR OTP
+### ============================================================
+
+# @name publicOtp
+POST {{baseUrl}}/public/{{tenantSlug}}/auth-cliente/solicitar-codigo
+Content-Type: application/json
+
+{
+  "telefone": "{{clienteTelefone}}"
+}
+
+###
+
+@publicCodigo = {{publicOtp.response.body.codigoDesenvolvimento}}
+
+### ============================================================
+### PÚBLICO POR SLUG — LOGIN
+### Esperado: access_token + refresh_token + expires_in
+### ============================================================
+
+# @name publicLogin
+POST {{baseUrl}}/public/{{tenantSlug}}/auth-cliente/verificar-codigo
+Content-Type: application/json
+
+{
+  "telefone": "{{clienteTelefone}}",
+  "codigo": "{{publicCodigo}}"
+}
+
+###
+
+@publicAccess = {{publicLogin.response.body.access_token}}
+@publicRefresh = {{publicLogin.response.body.refresh_token}}
+
+### ============================================================
+### PÚBLICO POR SLUG — TOKEN ACESSA CLIENTE AREA
+### ============================================================
+
+GET {{baseUrl}}/cliente-area/me
+Authorization: Bearer {{publicAccess}}
+
+### ============================================================
+### PÚBLICO POR SLUG — REFRESH
+### ============================================================
+
+# @name publicRefreshResponse
+POST {{baseUrl}}/auth-cliente/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{publicRefresh}}"
+}
+
+###
+
+@publicAccess2 = {{publicRefreshResponse.response.body.access_token}}
+@publicRefresh2 = {{publicRefreshResponse.response.body.refresh_token}}
+
+### ============================================================
+### PÚBLICO POR SLUG — REUSO DO REFRESH ANTIGO
+### Esperado: 401
+### ============================================================
+
+POST {{baseUrl}}/auth-cliente/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{publicRefresh}}"
+}
+
+### ============================================================
+### PÚBLICO POR SLUG — TOKEN DA SESSÃO COMPROMETIDA
+### Esperado: 401
+### ============================================================
+
+GET {{baseUrl}}/cliente-area/me
+Authorization: Bearer {{publicAccess2}}
+
+### ============================================================
+### SCHEDULER — STATUS
+### ============================================================
+
+GET {{baseUrl}}/scheduler/status
+Authorization: Bearer {{adminAuditAccess}}
+
+### ============================================================
+### SCHEDULER — TESTAR LIMPEZA DE SESSÕES
+### Esperado: success true
+### ============================================================
+
+POST {{baseUrl}}/scheduler/teste/limpeza-sessoes
+Authorization: Bearer {{adminAuditAccess}}
+
+### ============================================================
+### HEALTH
+### ============================================================
+
+GET {{baseUrl}}/health
+
+###
+
+GET {{baseUrl}}/health/database
+
+###
+
+GET {{baseUrl}}/health/redis

@@ -1,0 +1,107 @@
+@BASE_URL=http://localhost:3000
+
+@TOKEN_ADMIN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMmUzN2UzZi02MTk2LTQ2YjYtYmFhYy1iZGZhMjliYjA0OTUiLCJlbWFpbCI6ImFkbWluQGJlYXV0eWNvcmUuY29tIiwicm9sZSI6IkFETUlOIiwiZW1wcmVzYUlkIjoiNWE4YzdjY2QtMjk3Ni00ODgzLTg4ZWEtZWFmNzcyODMyNWQ3IiwiaWF0IjoxNzgxMjg4NDIzLCJleHAiOjE3ODEzNzQ4MjN9.7B8HGLskvYKsT07WPUTIWhrE_M5bJqT8gH65ACDdWNk
+
+@TOKEN_CLIENTE=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMTZlYzllOS03N2ViLTRjNzQtYjA0YS1iZTdkNzExNGUxMmIiLCJ0ZWxlZm9uZSI6IjgzOTk5OTk5OTk5Iiwicm9sZSI6IkNMSUVOVEUiLCJlbXByZXNhSWQiOiI1YThjN2NjZC0yOTc2LTQ4ODMtODhlYS1lYWY3NzI4MzI1ZDciLCJpYXQiOjE3ODEyOTE2NDAsImV4cCI6MTc4MTg5NjQ0MH0.VgECDd_RHdaejz6NOaMFEMHzO0aQQOwoYzoCM3HVvyM
+
+@CLIENTE_ID=d16ec9e9-77eb-4c74-b04a-be7d7114e12b
+@TELEFONE_CLIENTE=83999999999
+@TELEFONE_INEXISTENTE=83000000000
+@CODIGO=539398
+### 1. Solicitar código para cliente existente
+POST {{BASE_URL}}/auth-cliente/solicitar-codigo
+Authorization: Bearer {{TOKEN_ADMIN}}
+Content-Type: application/json
+
+{
+  "telefone": "{{TELEFONE_CLIENTE}}"
+}
+
+### 2. Solicitar código para telefone inexistente
+POST {{BASE_URL}}/auth-cliente/solicitar-codigo
+Authorization: Bearer {{TOKEN_ADMIN}}
+Content-Type: application/json
+
+{
+  "telefone": "{{TELEFONE_INEXISTENTE}}"
+}
+
+### 3. Verificar código correto
+POST {{BASE_URL}}/auth-cliente/verificar-codigo
+Authorization: Bearer {{TOKEN_ADMIN}}
+Content-Type: application/json
+
+{
+  "telefone": "{{TELEFONE_CLIENTE}}",
+  "codigo": "{{CODIGO}}"
+}
+
+### 4. Verificar código incorreto
+POST {{BASE_URL}}/auth-cliente/verificar-codigo
+Authorization: Bearer {{TOKEN_ADMIN}}
+Content-Type: application/json
+
+{
+  "telefone": "{{TELEFONE_CLIENTE}}",
+  "codigo": "000000"
+}
+
+### 5. Reutilizar código usado
+POST {{BASE_URL}}/auth-cliente/verificar-codigo
+Authorization: Bearer {{TOKEN_ADMIN}}
+Content-Type: application/json
+
+{
+  "telefone": "{{TELEFONE_CLIENTE}}",
+  "codigo": "{{CODIGO}}"
+}
+
+### 6. Acessar ME do cliente
+GET {{BASE_URL}}/auth-cliente/me
+Authorization: Bearer {{TOKEN_CLIENTE}}
+
+### 7. Aceitar termos
+POST {{BASE_URL}}/auth-cliente/aceitar-termos
+Authorization: Bearer {{TOKEN_CLIENTE}}
+Content-Type: application/json
+
+{
+  "aceitouTermos": true
+}
+
+### 8. Login após aceite
+### Primeiro solicite um novo código no teste 1 e atualize a variável @CODIGO.
+POST {{BASE_URL}}/auth-cliente/verificar-codigo
+Authorization: Bearer {{TOKEN_ADMIN}}
+Content-Type: application/json
+
+{
+  "telefone": "{{TELEFONE_CLIENTE}}",
+  "codigo": "{{CODIGO}}"
+}
+
+### 9. Código expirado
+### Para testar:
+### 1. Solicite um novo código no teste 1.
+### 2. Altere expiraEm no banco para uma data passada.
+### 3. Coloque esse código em @CODIGO.
+POST {{BASE_URL}}/auth-cliente/verificar-codigo
+Authorization: Bearer {{TOKEN_ADMIN}}
+Content-Type: application/json
+
+{
+  "telefone": "{{TELEFONE_CLIENTE}}",
+  "codigo": "{{CODIGO}}"
+}
+
+### 10. Cliente com portal bloqueado
+### Para testar:
+### 1. Altere ativoPortal=false no cliente.
+### 2. Execute este teste.
+POST {{BASE_URL}}/auth-cliente/solicitar-codigo
+Authorization: Bearer {{TOKEN_ADMIN}}
+Content-Type: application/json
+
+{
+  "telefone": "{{TELEFONE_CLIENTE}}"
+}

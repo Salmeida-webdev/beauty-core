@@ -1,0 +1,165 @@
+@TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMmUzN2UzZi02MTk2LTQ2YjYtYmFhYy1iZGZhMjliYjA0OTUiLCJlbWFpbCI6ImFkbWluQGJlYXV0eWNvcmUuY29tIiwicm9sZSI6IkFETUlOIiwiZW1wcmVzYUlkIjoiNWE4YzdjY2QtMjk3Ni00ODgzLTg4ZWEtZWFmNzcyODMyNWQ3IiwiaWF0IjoxNzgxMjgyOTc0LCJleHAiOjE3ODEzNjkzNzR9.bKQ39BUacv6KHV__B6rweVFH67rWf-ipQ63SiRTIBvg
+
+### DASHBOARD
+
+GET http://localhost:3000/analytics/dashboard
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### CLIENTES
+
+GET http://localhost:3000/analytics/clientes
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### AGENDAMENTOS
+
+GET http://localhost:3000/analytics/agendamentos
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### FINANCEIRO
+
+GET http://localhost:3000/analytics/financeiro
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### SERVICOS
+
+GET http://localhost:3000/analytics/servicos
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### PROFISSIONAIS
+
+GET http://localhost:3000/analytics/profissionais
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### UNIDADES
+
+GET http://localhost:3000/analytics/unidades
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### FIDELIDADE
+
+GET http://localhost:3000/analytics/fidelidade
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### PACOTES
+
+GET http://localhost:3000/analytics/pacotes
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### WHATSAPP
+
+GET http://localhost:3000/analytics/whatsapp
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### NOTIFICACOES
+
+GET http://localhost:3000/analytics/notificacoes
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### EVENTOS
+
+GET http://localhost:3000/analytics/eventos
+Authorization: Bearer {{TOKEN}}
+
+### DASHBOARD
+
+GET http://localhost:3000/analytics/dashboard
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### CLIENTES
+
+GET http://localhost:3000/analytics/clientes
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### AGENDAMENTOS
+
+GET http://localhost:3000/analytics/agendamentos
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### FINANCEIRO
+
+GET http://localhost:3000/analytics/financeiro
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### SERVICOS
+
+GET http://localhost:3000/analytics/servicos
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### PROFISSIONAIS
+
+GET http://localhost:3000/analytics/profissionais
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### UNIDADES
+
+GET http://localhost:3000/analytics/unidades
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### FIDELIDADE
+
+GET http://localhost:3000/analytics/fidelidade
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### PACOTES
+
+GET http://localhost:3000/analytics/pacotes
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### WHATSAPP
+
+GET http://localhost:3000/analytics/whatsapp
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### NOTIFICACOES
+
+GET http://localhost:3000/analytics/notificacoes
+Authorization: Bearer {{TOKEN}}
+
+###
+
+### EVENTOS
+
+GET http://localhost:3000/analytics/eventos
+Authorization: Bearer {{TOKEN}}
