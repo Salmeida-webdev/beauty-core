@@ -1,4 +1,4 @@
-﻿FROM node:20-alpine AS deps
+FROM node:20-alpine AS deps
 
 WORKDIR /app
 
@@ -52,8 +52,11 @@ COPY --chown=appuser:appgroup package*.json ./
 RUN mkdir -p /app/uploads/public /app/uploads/private /app/uploads/temp \
   && chown -R appuser:appgroup /app/uploads
 
-USER appuser
 
+# Chat 43 - runtime writable directories for backup/recovery operations
+RUN mkdir -p /app/backups/postgres /app/backups/redis /app/backups/uploads /app/logs/backups \
+  && chown -R appuser:appgroup /app/backups /app/logs
+USER appuser
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s \

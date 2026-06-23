@@ -1,4 +1,4 @@
-﻿import {
+import {
   Controller,
   Get,
   UseGuards,
@@ -15,7 +15,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { HealthService } from './health.service';
 
 @ApiTags('Health')
-@UseGuards(JwtAuthGuard)
 @Controller('health')
 export class HealthController {
   constructor(private readonly healthService: HealthService) {}
@@ -42,6 +41,8 @@ export class HealthController {
   checkHealth() {
     return this.healthService.checkHealth();
   }
+
+  @UseGuards(JwtAuthGuard)
 
   @Get('database')
   @ApiOperation({
@@ -71,6 +72,8 @@ export class HealthController {
     return this.healthService.checkDatabase();
   }
 
+  @UseGuards(JwtAuthGuard)
+
   @Get('redis')
   @ApiOperation({
     summary: 'Verificar status do Redis',
@@ -98,6 +101,8 @@ export class HealthController {
   checkRedis() {
     return this.healthService.checkRedis();
   }
+
+  @UseGuards(JwtAuthGuard)
 
   @Get('summary')
   @ApiOperation({
@@ -136,11 +141,12 @@ export class HealthController {
   }
 
 
+  @UseGuards(JwtAuthGuard)
+
+
   @Get('queues')
   healthQueues() {
     return this.healthService.checkQueues();
   }
 
 }
-
-
