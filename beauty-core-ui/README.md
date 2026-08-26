@@ -150,3 +150,33 @@ O backend permanece congelado na versão 1.0 durante o Chat 44.
 ## Próxima fase
 
 O Chat 45 desenvolverá o Design System premium e a identidade visual definitiva, sem alterar as decisões estruturais consolidadas nesta fundação.
+
+<!-- CHAT45_DESIGN_SYSTEM_START -->
+
+## Design System administrativo — Chat 45
+
+A fundação visual e estrutural do painel administrativo está disponível na rota /design-system.
+
+Principais entregas:
+
+- design tokens semânticos para light/dark
+- branding white-label integrado ao tenant
+- Sidebar desktop, recolhida e mobile
+- Topbar e Theme Toggle
+- AppShell administrativo
+- navegação visual por role
+- Breadcrumbs, PageHeader e containers
+- KPIs e status semânticos
+- fundação de formulários
+- fundação de tabelas responsivas
+- Dialog, confirmação, Dropdown e Drawer
+- Loading, Empty, Error e Permission states
+- testes unitários e E2E
+
+A rota /design-system é uma demonstração técnica e não cria usuário, sessão, token ou permissão fictícia.
+
+Relatório técnico: docs/chat45-design-system-layout-report.md
+
+Quality gate consolidado: npm run validate — aprovado no fechamento do Chat 45
+
+<!-- CHAT45_DESIGN_SYSTEM_END -->

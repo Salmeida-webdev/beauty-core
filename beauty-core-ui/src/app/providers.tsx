@@ -1,6 +1,8 @@
-﻿"use client";
+"use client";
 
 import type { ReactNode } from "react";
+
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { AuthProvider } from "@/providers/auth-provider";
 import { QueryProvider } from "@/providers/query-provider";
@@ -20,13 +22,15 @@ export function AppProviders({ children }: AppProvidersProps) {
       disableTransitionOnChange
       enableSystem
     >
-      <TenantProvider>
-        <QueryProvider>
-          <AuthProvider>{children}</AuthProvider>
-        </QueryProvider>
+      <TooltipProvider delayDuration={250}>
+        <TenantProvider>
+          <QueryProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </QueryProvider>
 
-        <ToasterProvider />
-      </TenantProvider>
+          <ToasterProvider />
+        </TenantProvider>
+      </TooltipProvider>
     </ThemeProvider>
   );
 }
