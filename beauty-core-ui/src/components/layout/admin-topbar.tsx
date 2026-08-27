@@ -2,14 +2,19 @@
 
 import {
   Building2,
-  CircleUserRound,
   Menu,
   ShieldCheck,
 } from "lucide-react";
 
+import {
+  AdminUserMenu,
+} from "@/features/auth/components/admin-user-menu";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import type { AdminRole } from "@/constants/roles";
+import {
+  getAdminRoleLabel,
+} from "@/features/auth/presentation/admin-role-label";
 import { useTenant } from "@/providers/tenant-provider";
 import { useAuthStore } from "@/stores/auth-store";
 import { useUiStore } from "@/stores/ui-store";
@@ -18,48 +23,33 @@ type AdminTopbarProps = {
   role: AdminRole;
 };
 
-const ROLE_LABELS: Record<AdminRole, string> = {
-  SUPER_ADMIN: "Super Admin",
-  ADMIN: "Administrador",
-  GERENTE: "Gerente",
-  RECEPCAO: "Recepção",
-  PROFISSIONAL: "Profissional",
-};
-
-export function AdminTopbar({ role }: AdminTopbarProps) {
+export function AdminTopbar({
+  role,
+}: AdminTopbarProps) {
   const { tenant } = useTenant();
-  const status = useAuthStore((state) => state.status);
-  const user = useAuthStore((state) => state.user);
-  const setMobileSidebarOpen = useUiStore(
-    (state) => state.setMobileSidebarOpen,
+
+  const status = useAuthStore(
+    (state) => state.status,
   );
 
+  const user = useAuthStore(
+    (state) => state.user,
+  );
+
+  const setMobileSidebarOpen =
+    useUiStore(
+      (state) =>
+        state.setMobileSidebarOpen,
+    );
+
   const hasAuthenticatedUser =
-    status === "authenticated" && user !== null;
+    status === "authenticated" &&
+    user !== null;
 
-  const displayedRole = hasAuthenticatedUser
-    ? user.role
-    : role;
-
-  const displayName = hasAuthenticatedUser
-    ? user.nome ?? user.email
-    : "Modo técnico";
-
-  const secondaryText = (() => {
-    if (hasAuthenticatedUser) {
-      return user.email;
-    }
-
-    if (status === "restoring") {
-      return "Restaurando sessão";
-    }
-
-    if (status === "idle") {
-      return "Inicializando sessão";
-    }
-
-    return "Sessão não autenticada";
-  })();
+  const displayedRole =
+    hasAuthenticatedUser
+      ? user.role
+      : role;
 
   return (
     <header
@@ -74,7 +64,9 @@ export function AdminTopbar({ role }: AdminTopbarProps) {
           aria-label="Abrir navegação"
           className="lg:hidden"
           onClick={() => {
-            setMobileSidebarOpen(true);
+            setMobileSidebarOpen(
+              true,
+            );
           }}
         >
           <Menu aria-hidden="true" />
@@ -85,6 +77,7 @@ export function AdminTopbar({ role }: AdminTopbarProps) {
             aria-hidden="true"
             className="size-4 shrink-0 text-text-muted"
           />
+
           <span className="truncate text-sm font-medium text-text-secondary">
             {tenant.name}
           </span>
@@ -96,33 +89,17 @@ export function AdminTopbar({ role }: AdminTopbarProps) {
               aria-hidden="true"
               className="size-3.5 text-text-muted"
             />
+
             <span className="text-caption font-semibold text-text-secondary">
-              {ROLE_LABELS[displayedRole]}
+              {getAdminRoleLabel(
+                displayedRole,
+              )}
             </span>
           </div>
 
           <ThemeToggle />
 
-          <div
-            aria-label="Contexto da sessão administrativa"
-            className="flex min-w-0 items-center gap-2 border-l border-border-subtle pl-3"
-          >
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-subtle">
-              <CircleUserRound
-                aria-hidden="true"
-                className="size-4 text-text-secondary"
-              />
-            </div>
-
-            <div className="hidden min-w-0 sm:block">
-              <p className="max-w-48 truncate text-sm font-semibold text-text-primary">
-                {displayName}
-              </p>
-              <p className="max-w-48 truncate text-caption text-text-muted">
-                {secondaryText}
-              </p>
-            </div>
-          </div>
+          <AdminUserMenu />
         </div>
       </div>
     </header>

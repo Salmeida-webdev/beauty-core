@@ -1,4 +1,4 @@
-﻿import axios, {
+import axios, {
   AxiosHeaders,
   type AxiosError,
   type AxiosInstance,
@@ -6,6 +6,7 @@
 } from "axios";
 
 import { getPublicEnv } from "@/config/env";
+import { dispatchAdminForbiddenEvent } from "@/services/auth/access-events";
 import { refreshAccessToken } from "@/services/auth/refresh-coordinator";
 import { tokenStorage } from "@/services/auth/token-storage";
 
@@ -78,6 +79,27 @@ function installAuthenticationRefresh(
       const originalRequest =
         error.config as RetryableRequestConfig | undefined;
 
+      const requestUrl =
+        originalRequest?.url ?? "";
+
+      const forbiddenRedirectExcludedRoutes =
+        new Set([
+          "/auth/login",
+          "/auth/refresh",
+          "/auth/logout",
+          "/auth/logout-all",
+        ]);
+
+      if (
+        error.response?.status === 403 &&
+        !forbiddenRedirectExcludedRoutes.has(
+          requestUrl,
+        )
+      ) {
+        dispatchAdminForbiddenEvent();
+
+        return Promise.reject(error);
+      }
       if (
         error.response?.status !== 401 ||
         !originalRequest ||
@@ -176,4 +198,3 @@ export function getApiClient(): AxiosInstance {
 
   return authenticatedApiClient;
 }
-
