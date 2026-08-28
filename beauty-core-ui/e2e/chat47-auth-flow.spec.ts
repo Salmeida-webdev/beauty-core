@@ -281,9 +281,9 @@ test.describe(
         );
 
         await expect(
-          page.getByTestId(
-            "dashboard-placeholder",
-          ),
+          page.getByRole("heading", {
+            name: "Dashboard Executivo",
+          }),
         ).toBeVisible();
 
         await expect(

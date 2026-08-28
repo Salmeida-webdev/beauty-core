@@ -1,4 +1,7 @@
-import type { ReactNode } from "react";
+import {
+  useId,
+  type ReactNode,
+} from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -17,24 +20,43 @@ export function PageSection({
   actions,
   className,
 }: PageSectionProps) {
+  const titleId = useId();
+  const descriptionId = useId();
+
   return (
     <section
+      aria-labelledby={
+        title
+          ? titleId
+          : undefined
+      }
+      aria-describedby={
+        description
+          ? descriptionId
+          : undefined
+      }
       className={cn(
-        "space-y-section",
+        "min-w-0 space-y-section",
         className,
       )}
     >
       {(title || description || actions) && (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="min-w-0">
             {title && (
-              <h2 className="text-heading-3 font-semibold text-text-primary">
+              <h2
+                id={titleId}
+                className="text-heading-3 font-semibold text-text-primary"
+              >
                 {title}
               </h2>
             )}
 
             {description && (
-              <p className="mt-1 max-w-3xl text-body-small text-text-muted">
+              <p
+                id={descriptionId}
+                className="mt-1 max-w-3xl text-body-small text-text-muted"
+              >
                 {description}
               </p>
             )}
@@ -48,7 +70,9 @@ export function PageSection({
         </div>
       )}
 
-      <div>{children}</div>
+      <div className="min-w-0">
+        {children}
+      </div>
     </section>
   );
 }
@@ -65,7 +89,7 @@ export function ResponsiveGrid({
   return (
     <div
       className={cn(
-        "grid grid-cols-1 gap-grid sm:grid-cols-2 xl:grid-cols-4",
+        "grid min-w-0 grid-cols-1 gap-grid sm:grid-cols-2 xl:grid-cols-4",
         className,
       )}
     >
@@ -86,7 +110,7 @@ export function ContentToolbar({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-large border border-border-subtle bg-surface-elevated p-card shadow-subtle sm:flex-row sm:items-center sm:justify-between",
+        "flex min-w-0 flex-col gap-3 rounded-large border border-border-subtle bg-surface-elevated p-card shadow-subtle sm:flex-row sm:items-center sm:justify-between",
         className,
       )}
     >

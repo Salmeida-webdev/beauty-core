@@ -30,7 +30,7 @@ export function KpiCard({
               {label}
             </p>
 
-            <p className="mt-3 text-kpi font-semibold tracking-tight text-text-primary">
+            <p className="mt-3 max-w-full text-kpi font-semibold tracking-tight text-text-primary [overflow-wrap:anywhere]">
               {value}
             </p>
           </div>
