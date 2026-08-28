@@ -69,6 +69,46 @@ describe("navegação administrativa", () => {
     }
   });
 
+  it("disponibiliza Clientes somente às roles do controller", () => {
+    for (
+      const role
+      of [
+        "ADMIN",
+        "GERENTE",
+        "RECEPCAO",
+        "PROFISSIONAL",
+      ] as const
+    ) {
+      const clientsItem = flattenItems(
+        getNavigationForRole(role),
+      ).find(
+        (item) =>
+          item.id === "clients",
+      );
+
+      expect(clientsItem?.href).toBe(
+        "/clientes",
+      );
+      expect(clientsItem?.state).toBe(
+        "available",
+      );
+    }
+
+    const superAdminClients =
+      flattenItems(
+        getNavigationForRole(
+          "SUPER_ADMIN",
+        ),
+      ).find(
+        (item) =>
+          item.id === "clients",
+      );
+
+    expect(
+      superAdminClients,
+    ).toBeUndefined();
+  });
+
   it("não inclui CLIENTE nas regras administrativas", () => {
     const configuredRoles = ADMIN_NAVIGATION.flatMap(
       (group) => group.items.flatMap((item) => item.roles),
@@ -87,12 +127,17 @@ describe("navegação administrativa", () => {
     );
 
     expect(availableItems.map((item) => item.id)).toEqual([
+      "dashboard",
       "design-system",
+      "clients",
     ]);
     expect(developmentItems.length).toBeGreaterThan(0);
     expect(
       developmentItems.every(
-        (item) => item.id !== "design-system",
+        (item) =>
+          item.id !== "dashboard" &&
+          item.id !== "design-system" &&
+          item.id !== "clients",
       ),
     ).toBe(true);
   });

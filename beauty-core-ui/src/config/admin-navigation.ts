@@ -53,6 +53,13 @@ const ALL_ADMIN_ROLES = [
   "PROFISSIONAL",
 ] as const satisfies readonly AdminRole[];
 
+const CLIENTS_ROLES = [
+  "ADMIN",
+  "GERENTE",
+  "RECEPCAO",
+  "PROFISSIONAL",
+] as const satisfies readonly AdminRole[];
+
 const MANAGEMENT_ROLES = [
   "SUPER_ADMIN",
   "ADMIN",
@@ -75,7 +82,7 @@ export const ADMIN_NAVIGATION = [
         href: "/dashboard",
         icon: LayoutDashboard,
         roles: ALL_ADMIN_ROLES,
-        state: "development",
+        state: "available",
       },
       {
         id: "design-system",
@@ -97,8 +104,8 @@ export const ADMIN_NAVIGATION = [
         label: "Clientes",
         href: "/clientes",
         icon: Users,
-        roles: ALL_ADMIN_ROLES,
-        state: "development",
+        roles: CLIENTS_ROLES,
+        state: "available",
       },
       {
         id: "schedule",
