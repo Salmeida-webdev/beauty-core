@@ -129,6 +129,7 @@ describe("navegação administrativa", () => {
       "dashboard",
       "design-system",
       "clients",
+      "schedule",
       "services",
       "units",
       "professionals",

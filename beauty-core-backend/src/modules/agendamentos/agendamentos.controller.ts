@@ -27,7 +27,7 @@ import {
 } from '@nestjs/swagger';
 
 import { Roles } from '../../shared/decorators/roles.decorator';
-import { PaginationDto } from '../../shared/dto/pagination.dto';
+import { ListAgendamentosQueryDto } from './dto/list-agendamentos-query.dto';
 import { getEmpresaId } from '../../shared/utils/get-empresa-id';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -68,7 +68,7 @@ export class AgendamentosController {
         unidadeId: '550e8400-e29b-41d4-a716-446655440000',
         dataHoraInicio: '2026-06-14T14:00:00.000Z',
         dataHoraFim: '2026-06-14T15:00:00.000Z',
-        status: 'AGENDADO',
+        status: 'PENDENTE',
         observacoes: 'Cliente prefere atendimento no período da tarde.',
         createdAt: '2026-06-14T10:00:00.000Z',
         updatedAt: '2026-06-14T10:00:00.000Z',
@@ -128,7 +128,7 @@ export class AgendamentosController {
             unidadeId: '550e8400-e29b-41d4-a716-446655440000',
             dataHoraInicio: '2026-06-14T14:00:00.000Z',
             dataHoraFim: '2026-06-14T15:00:00.000Z',
-            status: 'AGENDADO',
+            status: 'PENDENTE',
             observacoes: 'Cliente prefere atendimento no período da tarde.',
             createdAt: '2026-06-14T10:00:00.000Z',
           },
@@ -151,7 +151,7 @@ export class AgendamentosController {
   })
   findAll(
     @Request() req: any,
-    @Query() query: PaginationDto,
+    @Query() query: ListAgendamentosQueryDto,
   ) {
     return this.agendamentosService.findAll(
       getEmpresaId(req),
@@ -159,6 +159,43 @@ export class AgendamentosController {
     );
   }
 
+  @Get('opcoes/profissionais')
+  @Roles('ADMIN', 'GERENTE', 'RECEPCAO', 'PROFISSIONAL')
+  @ApiOperation({
+    summary: 'Listar profissionais disponiveis para a agenda',
+  })
+  @ApiOkResponse({
+    description:
+      'Retorna somente id e nome de profissionais ativos da empresa autenticada.',
+  })
+  listarProfissionaisDisponiveis(
+    @Request() req: any,
+    @Query('search') search?: string,
+  ) {
+    return this.agendamentosService.listarProfissionaisDisponiveis(
+      getEmpresaId(req),
+      search,
+    );
+  }
+
+  @Get('opcoes/unidades')
+  @Roles('ADMIN', 'GERENTE', 'RECEPCAO', 'PROFISSIONAL')
+  @ApiOperation({
+    summary: 'Listar unidades disponiveis para a agenda',
+  })
+  @ApiOkResponse({
+    description:
+      'Retorna somente id e nome de unidades ativas da empresa autenticada.',
+  })
+  listarUnidadesDisponiveis(
+    @Request() req: any,
+    @Query('search') search?: string,
+  ) {
+    return this.agendamentosService.listarUnidadesDisponiveis(
+      getEmpresaId(req),
+      search,
+    );
+  }
   @Get(':id')
   @Roles('ADMIN', 'GERENTE', 'RECEPCAO', 'PROFISSIONAL')
   @ApiOperation({
@@ -184,7 +221,7 @@ export class AgendamentosController {
         unidadeId: '550e8400-e29b-41d4-a716-446655440000',
         dataHoraInicio: '2026-06-14T14:00:00.000Z',
         dataHoraFim: '2026-06-14T15:00:00.000Z',
-        status: 'AGENDADO',
+        status: 'PENDENTE',
         observacoes: 'Cliente prefere atendimento no período da tarde.',
         createdAt: '2026-06-14T10:00:00.000Z',
         updatedAt: '2026-06-14T10:00:00.000Z',

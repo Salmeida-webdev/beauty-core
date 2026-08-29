@@ -10,7 +10,7 @@ import {
 } from '@prisma/client';
 
 import { PrismaService } from '../../database/prisma/prisma.service';
-import { PaginationDto } from '../../shared/dto/pagination.dto';
+import { ListAgendamentosQueryDto } from './dto/list-agendamentos-query.dto';
 import { TenantValidatorService } from '../../shared/tenant';
 import {
   buildPaginatedResponse,
@@ -113,7 +113,7 @@ export class AgendamentosService {
 
   async findAll(
     empresaId: string,
-    query: PaginationDto,
+    query: ListAgendamentosQueryDto,
   ) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
@@ -135,19 +135,19 @@ export class AgendamentosService {
 
     const orderDirection = query.orderDirection ?? 'asc';
 
-    const dataInicio = query['dataInicio']
-      ? new Date(query['dataInicio'])
+    const dataInicio = query.dataInicio
+      ? new Date(query.dataInicio)
       : undefined;
 
-    const dataFim = query['dataFim']
-      ? new Date(query['dataFim'])
+    const dataFim = query.dataFim
+      ? new Date(query.dataFim)
       : undefined;
 
-    const status = query['status'] as StatusAgendamento | undefined;
-    const clienteId = query['clienteId'];
-    const profissionalId = query['profissionalId'];
-    const servicoId = query['servicoId'];
-    const unidadeId = query['unidadeId'];
+    const status = query.status;
+    const clienteId = query.clienteId;
+    const profissionalId = query.profissionalId;
+    const servicoId = query.servicoId;
+    const unidadeId = query.unidadeId;
 
     await this.validarFiltrosRelacionados(
       empresaId,
@@ -265,6 +265,70 @@ export class AgendamentosService {
     );
   }
 
+  async listarProfissionaisDisponiveis(
+    empresaId: string,
+    search?: string,
+  ) {
+    await this.tenantValidator.validarEmpresaAtiva(empresaId);
+
+    const normalizedSearch = search?.trim().slice(0, 100);
+
+    return this.prisma.usuario.findMany({
+      where: {
+        empresaId,
+        role: 'PROFISSIONAL',
+        ativo: true,
+        ...(normalizedSearch
+          ? {
+              nome: {
+                contains: normalizedSearch,
+                mode: 'insensitive',
+              },
+            }
+          : {}),
+      },
+      select: {
+        id: true,
+        nome: true,
+      },
+      orderBy: {
+        nome: 'asc',
+      },
+      take: 30,
+    });
+  }
+
+  async listarUnidadesDisponiveis(
+    empresaId: string,
+    search?: string,
+  ) {
+    await this.tenantValidator.validarEmpresaAtiva(empresaId);
+
+    const normalizedSearch = search?.trim().slice(0, 100);
+
+    return this.prisma.unidade.findMany({
+      where: {
+        empresaId,
+        ativa: true,
+        ...(normalizedSearch
+          ? {
+              nome: {
+                contains: normalizedSearch,
+                mode: 'insensitive',
+              },
+            }
+          : {}),
+      },
+      select: {
+        id: true,
+        nome: true,
+      },
+      orderBy: {
+        nome: 'asc',
+      },
+      take: 50,
+    });
+  }
   async findOne(
     id: string,
     empresaId: string,

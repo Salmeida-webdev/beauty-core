@@ -120,8 +120,13 @@ export const ADMIN_NAVIGATION = [
         label: "Agenda",
         href: "/agenda",
         icon: CalendarDays,
-        roles: ALL_ADMIN_ROLES,
-        state: "development",
+        roles: [
+          "ADMIN",
+          "GERENTE",
+          "RECEPCAO",
+          "PROFISSIONAL",
+        ],
+        state: "available",
       },
       {
         id: "services",
