@@ -20,10 +20,7 @@ import {
 
 import type { AdminRole } from "@/constants/roles";
 
-export type NavigationItemState =
-  | "available"
-  | "development"
-  | "disabled";
+export type NavigationItemState = "available" | "development" | "disabled";
 
 export type NavigationPermission = string;
 
@@ -60,6 +57,11 @@ const CLIENTS_ROLES = [
   "PROFISSIONAL",
 ] as const satisfies readonly AdminRole[];
 
+const TENANT_MANAGEMENT_ROLES = [
+  "ADMIN",
+  "GERENTE",
+] as const satisfies readonly AdminRole[];
+
 const MANAGEMENT_ROLES = [
   "SUPER_ADMIN",
   "ADMIN",
@@ -71,6 +73,12 @@ const ADMINISTRATION_ROLES = [
   "ADMIN",
 ] as const satisfies readonly AdminRole[];
 
+const SERVICES_ACCESS_ROLES = [
+  "ADMIN",
+  "GERENTE",
+  "RECEPCAO",
+  "PROFISSIONAL",
+] as const satisfies readonly AdminRole[];
 export const ADMIN_NAVIGATION = [
   {
     id: "overview",
@@ -120,16 +128,16 @@ export const ADMIN_NAVIGATION = [
         label: "Serviços",
         href: "/servicos",
         icon: Sparkles,
-        roles: MANAGEMENT_ROLES,
-        state: "development",
+        roles: SERVICES_ACCESS_ROLES,
+        state: "available",
       },
       {
         id: "units",
         label: "Unidades",
         href: "/unidades",
         icon: Store,
-        roles: MANAGEMENT_ROLES,
-        state: "development",
+        roles: TENANT_MANAGEMENT_ROLES,
+        state: "available",
       },
       {
         id: "professionals",
@@ -137,7 +145,7 @@ export const ADMIN_NAVIGATION = [
         href: "/profissionais",
         icon: UserRoundSearch,
         roles: MANAGEMENT_ROLES,
-        state: "development",
+        state: "available",
       },
     ],
   },
@@ -210,8 +218,8 @@ export const ADMIN_NAVIGATION = [
         label: "Usuários",
         href: "/usuarios",
         icon: UserRoundCog,
-        roles: ADMINISTRATION_ROLES,
-        state: "development",
+        roles: MANAGEMENT_ROLES,
+        state: "available",
       },
       {
         id: "audit",

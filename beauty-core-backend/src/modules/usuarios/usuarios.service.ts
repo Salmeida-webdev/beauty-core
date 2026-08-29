@@ -5,15 +5,11 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import {
-  Prisma,
-  Role,
-  TipoUsuarioAuditoria,
-} from '@prisma/client';
+import { Prisma, Role, TipoUsuarioAuditoria } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '../../database/prisma/prisma.service';
-import { PaginationDto } from '../../shared/dto/pagination.dto';
+
 import {
   buildPaginatedResponse,
   getPaginationParams,
@@ -22,6 +18,7 @@ import {
 import { AuditoriaService } from '../auditoria/auditoria.service';
 
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
+import { ListUsuariosQueryDto } from './dto/list-usuarios-query.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { UsuarioRolePolicy } from './policies/usuario-role.policy';
 
@@ -68,27 +65,15 @@ export class UsuariosService {
     private readonly auditoriaService: AuditoriaService,
   ) {}
 
-  async create(
-    createUsuarioDto: CreateUsuarioDto,
-    actor: UsuarioActor,
-  ) {
+  async create(createUsuarioDto: CreateUsuarioDto, actor: UsuarioActor) {
     const startedAt = Date.now();
     const payload = createUsuarioDto as CreateUsuarioPayload;
 
-    UsuarioRolePolicy.assertAdminUserHasEmpresa(
-      actor.role,
-      actor.empresaId,
-    );
+    UsuarioRolePolicy.assertAdminUserHasEmpresa(actor.role, actor.empresaId);
 
-    UsuarioRolePolicy.assertCanCreateUser(
-      actor.role,
-      payload.role,
-    );
+    UsuarioRolePolicy.assertCanCreateUser(actor.role, payload.role);
 
-    const empresaIdFinal = this.resolverEmpresaIdParaCriacao(
-      actor,
-      payload,
-    );
+    const empresaIdFinal = this.resolverEmpresaIdParaCriacao(actor, payload);
 
     UsuarioRolePolicy.assertSuperAdminHasNoEmpresa(
       payload.role,
@@ -155,17 +140,10 @@ export class UsuariosService {
     return usuario;
   }
 
-  async findAll(
-    actor: UsuarioActor,
-    query: PaginationDto,
-  ) {
-    UsuarioRolePolicy.assertAdminUserHasEmpresa(
-      actor.role,
-      actor.empresaId,
-    );
+  async findAll(actor: UsuarioActor, query: ListUsuariosQueryDto) {
+    UsuarioRolePolicy.assertAdminUserHasEmpresa(actor.role, actor.empresaId);
 
-    const { page, limit, skip, take } =
-      getPaginationParams(query);
+    const { page, limit, skip, take } = getPaginationParams(query);
 
     const orderByPermitidos = [
       'nome',
@@ -204,17 +182,19 @@ export class UsuariosService {
       });
     }
 
+    if (query.role) {
+      andFilters.push({
+        role: query.role,
+      });
+    }
+
     if (actor.role === Role.ADMIN) {
       andFilters.push({
         OR: [
           { id: actor.id },
           {
             role: {
-              in: [
-                Role.GERENTE,
-                Role.RECEPCAO,
-                Role.PROFISSIONAL,
-              ],
+              in: [Role.GERENTE, Role.RECEPCAO, Role.PROFISSIONAL],
             },
           },
         ],
@@ -227,10 +207,7 @@ export class UsuariosService {
           { id: actor.id },
           {
             role: {
-              in: [
-                Role.RECEPCAO,
-                Role.PROFISSIONAL,
-              ],
+              in: [Role.RECEPCAO, Role.PROFISSIONAL],
             },
           },
         ],
@@ -244,16 +221,12 @@ export class UsuariosService {
             role: {
               not: Role.CLIENTE,
             },
-            ...(andFilters.length > 0
-              ? { AND: andFilters }
-              : {}),
+            ...(andFilters.length > 0 ? { AND: andFilters } : {}),
           }
         : {
             empresaId: actor.empresaId,
             ativo: true,
-            ...(andFilters.length > 0
-              ? { AND: andFilters }
-              : {}),
+            ...(andFilters.length > 0 ? { AND: andFilters } : {}),
           };
 
     const [data, total] = await Promise.all([
@@ -274,15 +247,8 @@ export class UsuariosService {
     return buildPaginatedResponse(data, total, page, limit);
   }
 
-  async findOne(
-    id: string,
-    actor: UsuarioActor,
-  ) {
-    const usuario = await this.buscarUsuarioPermitidoOuFalhar(
-      id,
-      actor,
-      true,
-    );
+  async findOne(id: string, actor: UsuarioActor) {
+    const usuario = await this.buscarUsuarioPermitidoOuFalhar(id, actor, true);
 
     return usuario;
   }
@@ -317,10 +283,7 @@ export class UsuariosService {
         payload.role,
       );
     } else if (actor.id !== usuarioAntes.id) {
-      UsuarioRolePolicy.assertCanManageUser(
-        actor.role,
-        usuarioAntes.role,
-      );
+      UsuarioRolePolicy.assertCanManageUser(actor.role, usuarioAntes.role);
     }
 
     const empresaIdFinal = this.resolverEmpresaIdParaAtualizacao(
@@ -330,15 +293,9 @@ export class UsuariosService {
       payload,
     );
 
-    UsuarioRolePolicy.assertSuperAdminHasNoEmpresa(
-      novaRole,
-      empresaIdFinal,
-    );
+    UsuarioRolePolicy.assertSuperAdminHasNoEmpresa(novaRole, empresaIdFinal);
 
-    UsuarioRolePolicy.assertTargetRoleHasValidEmpresa(
-      novaRole,
-      empresaIdFinal,
-    );
+    UsuarioRolePolicy.assertTargetRoleHasValidEmpresa(novaRole, empresaIdFinal);
 
     if (empresaIdFinal) {
       await this.validarEmpresaAtiva(empresaIdFinal);
@@ -414,10 +371,7 @@ export class UsuariosService {
     return usuarioDepois;
   }
 
-  async inativar(
-    id: string,
-    actor: UsuarioActor,
-  ) {
+  async inativar(id: string, actor: UsuarioActor) {
     const startedAt = Date.now();
 
     if (actor.id === id) {
@@ -432,10 +386,7 @@ export class UsuariosService {
       false,
     );
 
-    UsuarioRolePolicy.assertCanManageUser(
-      actor.role,
-      usuarioAntes.role,
-    );
+    UsuarioRolePolicy.assertCanManageUser(actor.role, usuarioAntes.role);
 
     const usuarioDepois = await this.prisma.usuario.update({
       where: {
@@ -495,10 +446,7 @@ export class UsuariosService {
     actor: UsuarioActor,
     permitirProprioUsuario: boolean,
   ) {
-    UsuarioRolePolicy.assertAdminUserHasEmpresa(
-      actor.role,
-      actor.empresaId,
-    );
+    UsuarioRolePolicy.assertAdminUserHasEmpresa(actor.role, actor.empresaId);
 
     const usuario =
       actor.role === Role.SUPER_ADMIN
@@ -533,10 +481,7 @@ export class UsuariosService {
     }
 
     if (!isProprioUsuario) {
-      UsuarioRolePolicy.assertCanManageUser(
-        actor.role,
-        usuario.role,
-      );
+      UsuarioRolePolicy.assertCanManageUser(actor.role, usuario.role);
     }
 
     if (isProprioUsuario && !permitirProprioUsuario) {
@@ -608,9 +553,7 @@ export class UsuariosService {
     });
 
     if (!empresa) {
-      throw new NotFoundException(
-        'Empresa não encontrada ou inativa.',
-      );
+      throw new NotFoundException('Empresa não encontrada ou inativa.');
     }
   }
 

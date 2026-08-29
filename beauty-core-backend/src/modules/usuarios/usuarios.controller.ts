@@ -29,11 +29,12 @@ import {
 import { Role } from '@prisma/client';
 
 import { Roles } from '../../shared/decorators/roles.decorator';
-import { PaginationDto } from '../../shared/dto/pagination.dto';
+
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
+import { ListUsuariosQueryDto } from './dto/list-usuarios-query.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { UsuariosService } from './usuarios.service';
 
@@ -136,6 +137,20 @@ export class UsuariosController {
     example: 'desc',
     description: 'Direção da ordenação: asc ou desc.',
   })
+  @ApiQuery({
+    name: 'role',
+    required: false,
+    enum: [
+      Role.SUPER_ADMIN,
+      Role.ADMIN,
+      Role.GERENTE,
+      Role.RECEPCAO,
+      Role.PROFISSIONAL,
+    ],
+    example: Role.PROFISSIONAL,
+    description:
+      'Filtra usuários administrativos pela role solicitada. CLIENTE não é aceito.',
+  })
   @ApiOkResponse({
     description: 'Usuários retornados com sucesso.',
     schema: {
@@ -170,7 +185,7 @@ export class UsuariosController {
   })
   findAll(
     @Request() req: AuthenticatedAdminRequest,
-    @Query() query: PaginationDto,
+    @Query() query: ListUsuariosQueryDto,
   ) {
     return this.usuariosService.findAll(req.user, query);
   }
