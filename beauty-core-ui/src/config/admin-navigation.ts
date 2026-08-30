@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 import type { AdminRole } from "@/constants/roles";
+import { FINANCEIRO_MODULE_ROLES } from "@/features/financeiro/permissions/financeiro-permissions";
 
 export type NavigationItemState = "available" | "development" | "disabled";
 
@@ -120,12 +121,7 @@ export const ADMIN_NAVIGATION = [
         label: "Agenda",
         href: "/agenda",
         icon: CalendarDays,
-        roles: [
-          "ADMIN",
-          "GERENTE",
-          "RECEPCAO",
-          "PROFISSIONAL",
-        ],
+        roles: ["ADMIN", "GERENTE", "RECEPCAO", "PROFISSIONAL"],
         state: "available",
       },
       {
@@ -163,8 +159,8 @@ export const ADMIN_NAVIGATION = [
         label: "Financeiro",
         href: "/financeiro",
         icon: CircleDollarSign,
-        roles: MANAGEMENT_ROLES,
-        state: "development",
+        roles: FINANCEIRO_MODULE_ROLES,
+        state: "available",
       },
     ],
   },

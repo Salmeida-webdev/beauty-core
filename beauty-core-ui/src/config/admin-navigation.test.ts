@@ -133,6 +133,7 @@ describe("navegação administrativa", () => {
       "services",
       "units",
       "professionals",
+      "financial",
       "users",
     ]);
     expect(developmentItems.length).toBeGreaterThan(0);

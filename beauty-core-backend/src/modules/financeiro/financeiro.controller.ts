@@ -21,7 +21,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 
 import { Roles } from '../../shared/decorators/roles.decorator';
-import { PaginationDto } from '../../shared/dto/pagination.dto';
+import { ListMovimentacoesQueryDto } from './dto/list-movimentacoes-query.dto';
 import { getEmpresaId } from '../../shared/utils/get-empresa-id';
 
 @Controller('financeiro')
@@ -58,49 +58,27 @@ export class FinanceiroController {
 
   @Get('receitas-mes')
   receitasMes(@Req() req: any) {
-    return this.financeiroService.receitasMes(
-      getEmpresaId(req),
-    );
+    return this.financeiroService.receitasMes(getEmpresaId(req));
   }
 
   @Get('despesas-mes')
   despesasMes(@Req() req: any) {
-    return this.financeiroService.despesasMes(
-      getEmpresaId(req),
-    );
+    return this.financeiroService.despesasMes(getEmpresaId(req));
   }
 
   @Post()
-  create(
-    @Req() req: any,
-    @Body() dto: CreateMovimentacaoDto,
-  ) {
-    return this.financeiroService.create(
-      getEmpresaId(req),
-      dto,
-    );
+  create(@Req() req: any, @Body() dto: CreateMovimentacaoDto) {
+    return this.financeiroService.create(getEmpresaId(req), dto);
   }
 
   @Get()
-  findAll(
-    @Req() req: any,
-    @Query() query: PaginationDto,
-  ) {
-    return this.financeiroService.findAll(
-      getEmpresaId(req),
-      query,
-    );
+  findAll(@Req() req: any, @Query() query: ListMovimentacoesQueryDto) {
+    return this.financeiroService.findAll(getEmpresaId(req), query);
   }
 
   @Get(':id')
-  findOne(
-    @Req() req: any,
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
-    return this.financeiroService.findOne(
-      getEmpresaId(req),
-      id,
-    );
+  findOne(@Req() req: any, @Param('id', ParseUUIDPipe) id: string) {
+    return this.financeiroService.findOne(getEmpresaId(req), id);
   }
 
   @Patch(':id')
@@ -109,22 +87,12 @@ export class FinanceiroController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateMovimentacaoDto,
   ) {
-    return this.financeiroService.update(
-      getEmpresaId(req),
-      id,
-      dto,
-    );
+    return this.financeiroService.update(getEmpresaId(req), id, dto);
   }
 
   @Patch(':id/cancelar')
-  cancelar(
-    @Req() req: any,
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
-    return this.financeiroService.cancelar(
-      getEmpresaId(req),
-      id,
-    );
+  cancelar(@Req() req: any, @Param('id', ParseUUIDPipe) id: string) {
+    return this.financeiroService.cancelar(getEmpresaId(req), id);
   }
 
   @Patch(':id/pagar')
@@ -133,10 +101,6 @@ export class FinanceiroController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: RegistrarPagamentoDto,
   ) {
-    return this.financeiroService.pagar(
-      getEmpresaId(req),
-      id,
-      dto,
-    );
+    return this.financeiroService.pagar(getEmpresaId(req), id, dto);
   }
 }
