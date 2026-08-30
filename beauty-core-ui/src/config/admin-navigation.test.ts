@@ -134,6 +134,8 @@ describe("navegação administrativa", () => {
       "units",
       "professionals",
       "financial",
+      "loyalty",
+      "packages",
       "users",
     ]);
     expect(developmentItems.length).toBeGreaterThan(0);
