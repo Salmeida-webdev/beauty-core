@@ -6,7 +6,9 @@ import {
   FileText,
   Gift,
   LayoutDashboard,
+  Bell,
   MessageCircle,
+  Workflow,
   Package,
   Palette,
   Settings,
@@ -79,6 +81,23 @@ const SERVICES_ACCESS_ROLES = [
   "GERENTE",
   "RECEPCAO",
   "PROFISSIONAL",
+] as const satisfies readonly AdminRole[];
+const WHATSAPP_ROLES = [
+  "ADMIN",
+  "GERENTE",
+  "RECEPCAO",
+] as const satisfies readonly AdminRole[];
+
+const NOTIFICATION_ROLES = [
+  "ADMIN",
+  "GERENTE",
+  "RECEPCAO",
+  "PROFISSIONAL",
+] as const satisfies readonly AdminRole[];
+
+const AUTOMATION_ROLES = [
+  "ADMIN",
+  "GERENTE",
 ] as const satisfies readonly AdminRole[];
 export const ADMIN_NAVIGATION = [
   {
@@ -189,8 +208,24 @@ export const ADMIN_NAVIGATION = [
         label: "WhatsApp",
         href: "/whatsapp",
         icon: MessageCircle,
-        roles: MANAGEMENT_ROLES,
-        state: "development",
+        roles: WHATSAPP_ROLES,
+        state: "available",
+      },
+      {
+        id: "notifications",
+        label: "Notificações",
+        href: "/notificacoes",
+        icon: Bell,
+        roles: NOTIFICATION_ROLES,
+        state: "available",
+      },
+      {
+        id: "automations",
+        label: "Automações",
+        href: "/automacoes",
+        icon: Workflow,
+        roles: AUTOMATION_ROLES,
+        state: "available",
       },
       {
         id: "files",

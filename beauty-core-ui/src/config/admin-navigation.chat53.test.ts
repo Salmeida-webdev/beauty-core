@@ -57,7 +57,7 @@ function roleItemIds(
 }
 
 describe("Chat53 navigation", () => {
-  it("libera Fidelidade e Pacotes sem liberar WhatsApp", () => {
+  it("libera Fidelidade e Pacotes", () => {
     expect(
       findNavigationItem(
         "loyalty",
@@ -70,11 +70,6 @@ describe("Chat53 navigation", () => {
       )?.state,
     ).toBe("available");
 
-    expect(
-      findNavigationItem(
-        "whatsapp",
-      )?.state,
-    ).toBe("development");
   });
 
   it.each([

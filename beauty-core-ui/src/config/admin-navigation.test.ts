@@ -110,6 +110,82 @@ describe("navegação administrativa", () => {
       expect(getItemIds(role)).not.toContain("users");
     }
   });
+  it("alinha WhatsApp às roles tenant reais", () => {
+    for (const role of [
+      "ADMIN",
+      "GERENTE",
+      "RECEPCAO",
+    ] as const) {
+      const item = flattenItems(
+        getNavigationForRole(role),
+      ).find(
+        (navigationItem) =>
+          navigationItem.id === "whatsapp",
+      );
+
+      expect(item?.href).toBe("/whatsapp");
+      expect(item?.state).toBe("available");
+    }
+
+    for (const role of [
+      "SUPER_ADMIN",
+      "PROFISSIONAL",
+    ] as const) {
+      expect(
+        getItemIds(role),
+      ).not.toContain("whatsapp");
+    }
+  });
+
+  it("alinha Notificações às quatro roles tenant", () => {
+    for (const role of [
+      "ADMIN",
+      "GERENTE",
+      "RECEPCAO",
+      "PROFISSIONAL",
+    ] as const) {
+      const item = flattenItems(
+        getNavigationForRole(role),
+      ).find(
+        (navigationItem) =>
+          navigationItem.id === "notifications",
+      );
+
+      expect(item?.href).toBe("/notificacoes");
+      expect(item?.state).toBe("available");
+    }
+
+    expect(
+      getItemIds("SUPER_ADMIN"),
+    ).not.toContain("notifications");
+  });
+
+  it("alinha Automações somente a ADMIN e GERENTE", () => {
+    for (const role of [
+      "ADMIN",
+      "GERENTE",
+    ] as const) {
+      const item = flattenItems(
+        getNavigationForRole(role),
+      ).find(
+        (navigationItem) =>
+          navigationItem.id === "automations",
+      );
+
+      expect(item?.href).toBe("/automacoes");
+      expect(item?.state).toBe("available");
+    }
+
+    for (const role of [
+      "SUPER_ADMIN",
+      "RECEPCAO",
+      "PROFISSIONAL",
+    ] as const) {
+      expect(
+        getItemIds(role),
+      ).not.toContain("automations");
+    }
+  });
   it("não inclui CLIENTE nas regras administrativas", () => {
     const configuredRoles = ADMIN_NAVIGATION.flatMap((group) =>
       group.items.flatMap((item) => item.roles),
@@ -136,6 +212,9 @@ describe("navegação administrativa", () => {
       "financial",
       "loyalty",
       "packages",
+      "whatsapp",
+      "notifications",
+      "automations",
       "users",
     ]);
     expect(developmentItems.length).toBeGreaterThan(0);
