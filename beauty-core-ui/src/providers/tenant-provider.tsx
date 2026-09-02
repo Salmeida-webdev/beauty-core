@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   createContext,
@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { getTenantRuntimeBranding } from "@/features/configuracoes/utils/tenant-runtime-branding";
 import { DEFAULT_TENANT } from "@/features/tenant/config/default-tenant";
 import { parseTenantPublicConfig } from "@/features/tenant/schemas/tenant.schema";
 import type { TenantPublicConfig } from "@/features/tenant/types/tenant.types";
@@ -27,48 +28,17 @@ type TenantProviderProps = {
 
 const TenantContext = createContext<TenantContextValue | null>(null);
 
-function applyTenantVisualTokens(
-  tenant: TenantPublicConfig,
-): void {
+function applyTenantVisualTokens(tenant: TenantPublicConfig): void {
   const root = document.documentElement;
+  const runtimeBranding = getTenantRuntimeBranding(tenant);
 
-  root.dataset.tenant = tenant.slug;
-  root.style.setProperty(
-    "--tenant-primary",
-    tenant.branding.primaryColor,
-  );
-  root.style.setProperty(
-    "--tenant-secondary",
-    tenant.branding.secondaryColor,
-  );
-  root.style.setProperty(
-    "--tenant-accent",
-    tenant.branding.accentColor,
-  );
-}
+  root.dataset.tenant = runtimeBranding.slug;
 
-function applyTenantFavicon(
-  faviconUrl: string | null,
-): void {
-  const selector = 'link[data-tenant-favicon="true"]';
-  const currentLink = document.head.querySelector<HTMLLinkElement>(
-    selector,
-  );
+  root.style.setProperty("--tenant-primary", runtimeBranding.primaryColor);
 
-  if (!faviconUrl) {
-    currentLink?.remove();
-    return;
-  }
+  root.style.setProperty("--tenant-secondary", runtimeBranding.secondaryColor);
 
-  const faviconLink = currentLink ?? document.createElement("link");
-
-  faviconLink.rel = "icon";
-  faviconLink.href = faviconUrl;
-  faviconLink.dataset.tenantFavicon = "true";
-
-  if (!currentLink) {
-    document.head.appendChild(faviconLink);
-  }
+  root.style.setProperty("--tenant-accent", runtimeBranding.accentColor);
 }
 
 export function TenantProvider({
@@ -89,7 +59,6 @@ export function TenantProvider({
 
   useEffect(() => {
     applyTenantVisualTokens(tenant);
-    applyTenantFavicon(tenant.branding.faviconUrl);
   }, [tenant]);
 
   const contextValue = useMemo<TenantContextValue>(
@@ -112,9 +81,7 @@ export function useTenant(): TenantContextValue {
   const context = useContext(TenantContext);
 
   if (!context) {
-    throw new Error(
-      "useTenant deve ser utilizado dentro de TenantProvider.",
-    );
+    throw new Error("useTenant deve ser utilizado dentro de TenantProvider.");
   }
 
   return context;

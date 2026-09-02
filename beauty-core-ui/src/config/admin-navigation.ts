@@ -71,11 +71,6 @@ const MANAGEMENT_ROLES = [
   "GERENTE",
 ] as const satisfies readonly AdminRole[];
 
-const ADMINISTRATION_ROLES = [
-  "SUPER_ADMIN",
-  "ADMIN",
-] as const satisfies readonly AdminRole[];
-
 const SERVICES_ACCESS_ROLES = [
   "ADMIN",
   "GERENTE",
@@ -232,8 +227,8 @@ export const ADMIN_NAVIGATION = [
         label: "Arquivos",
         href: "/arquivos",
         icon: FileText,
-        roles: ALL_ADMIN_ROLES,
-        state: "development",
+        roles: ["ADMIN", "GERENTE"],
+        state: "available",
       },
     ],
   },
@@ -246,8 +241,8 @@ export const ADMIN_NAVIGATION = [
         label: "Configurações",
         href: "/configuracoes",
         icon: Settings,
-        roles: ADMINISTRATION_ROLES,
-        state: "development",
+        roles: ["ADMIN", "GERENTE"],
+        state: "available",
       },
       {
         id: "users",
