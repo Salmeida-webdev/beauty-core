@@ -18,31 +18,18 @@ import type { Cupom } from "./cupom.types";
 type Props = {
   cupom?: Cupom | null;
   isSubmitting: boolean;
-  onSubmit: (
-    payload: CupomPayload,
-  ) => Promise<void>;
+  onSubmit: (payload: CupomPayload) => Promise<void>;
   onCancel?: () => void;
 };
 
-export function CupomForm({
-  cupom,
-  isSubmitting,
-  onSubmit,
-  onCancel,
-}: Props) {
+export function CupomForm({ cupom, isSubmitting, onSubmit, onCancel }: Props) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<
-    CupomFormInput,
-    unknown,
-    CupomFormValues
-  >({
+  } = useForm<CupomFormInput, unknown, CupomFormValues>({
     resolver: zodResolver(cupomFormSchema),
-    defaultValues: cupom
-      ? cupomToFormValues(cupom)
-      : emptyCupomFormValues(),
+    defaultValues: cupom ? cupomToFormValues(cupom) : emptyCupomFormValues(),
   });
 
   return (
@@ -50,18 +37,20 @@ export function CupomForm({
       className="grid gap-4 rounded-lg border bg-muted/20 p-4"
       noValidate
       onSubmit={handleSubmit(async (values) => {
-        await onSubmit(
-          toCupomPayload(values),
-        );
+        await onSubmit(toCupomPayload(values));
       })}
     >
       <div className="grid gap-2">
-        <label htmlFor={`cupom-codigo-${cupom?.id ?? "novo"}`}>
-          Código
-        </label>
+        <label htmlFor={`cupom-codigo-${cupom?.id ?? "novo"}`}>Código</label>
 
         <input
           id={`cupom-codigo-${cupom?.id ?? "novo"}`}
+          aria-invalid={Boolean(errors.codigo)}
+          aria-describedby={
+            errors.codigo
+              ? `cupom-codigo-${cupom?.id ?? "novo"}-error`
+              : undefined
+          }
           maxLength={40}
           autoCapitalize="characters"
           {...register("codigo")}
@@ -69,26 +58,36 @@ export function CupomForm({
         />
 
         {errors.codigo ? (
-          <p className="text-sm text-destructive">
+          <p
+            id={`cupom-codigo-${cupom?.id ?? "novo"}-error`}
+            role="alert"
+            className="text-sm text-destructive"
+          >
             {errors.codigo.message}
           </p>
         ) : null}
       </div>
 
       <div className="grid gap-2">
-        <label htmlFor={`cupom-nome-${cupom?.id ?? "novo"}`}>
-          Nome
-        </label>
+        <label htmlFor={`cupom-nome-${cupom?.id ?? "novo"}`}>Nome</label>
 
         <input
           id={`cupom-nome-${cupom?.id ?? "novo"}`}
+          aria-invalid={Boolean(errors.nome)}
+          aria-describedby={
+            errors.nome ? `cupom-nome-${cupom?.id ?? "novo"}-error` : undefined
+          }
           maxLength={120}
           {...register("nome")}
           className="min-h-10 rounded-md border bg-background px-3 py-2"
         />
 
         {errors.nome ? (
-          <p className="text-sm text-destructive">
+          <p
+            id={`cupom-nome-${cupom?.id ?? "novo"}-error`}
+            role="alert"
+            className="text-sm text-destructive"
+          >
             {errors.nome.message}
           </p>
         ) : null}
@@ -101,6 +100,12 @@ export function CupomForm({
 
         <textarea
           id={`cupom-descricao-${cupom?.id ?? "novo"}`}
+          aria-invalid={Boolean(errors.descricao)}
+          aria-describedby={
+            errors.descricao
+              ? `cupom-descricao-${cupom?.id ?? "novo"}-error`
+              : undefined
+          }
           maxLength={500}
           rows={3}
           {...register("descricao")}
@@ -108,7 +113,11 @@ export function CupomForm({
         />
 
         {errors.descricao ? (
-          <p className="text-sm text-destructive">
+          <p
+            id={`cupom-descricao-${cupom?.id ?? "novo"}-error`}
+            role="alert"
+            className="text-sm text-destructive"
+          >
             {errors.descricao.message}
           </p>
         ) : null}
@@ -116,43 +125,50 @@ export function CupomForm({
 
       <div className="grid gap-2 sm:grid-cols-2">
         <div className="grid gap-2">
-          <label htmlFor={`cupom-tipo-${cupom?.id ?? "novo"}`}>
-            Tipo
-          </label>
+          <label htmlFor={`cupom-tipo-${cupom?.id ?? "novo"}`}>Tipo</label>
 
           <select
             id={`cupom-tipo-${cupom?.id ?? "novo"}`}
+            aria-invalid={Boolean(errors.tipo)}
+            aria-describedby={
+              errors.tipo
+                ? `cupom-tipo-${cupom?.id ?? "novo"}-error`
+                : undefined
+            }
             {...register("tipo")}
             className="min-h-10 rounded-md border bg-background px-3 py-2"
           >
-            <option value="">
-              Selecione
-            </option>
+            <option value="">Selecione</option>
 
             {cupomTipoValues.map((tipo) => (
-              <option
-                key={tipo}
-                value={tipo}
-              >
+              <option key={tipo} value={tipo}>
                 {tipo}
               </option>
             ))}
           </select>
 
           {errors.tipo ? (
-            <p className="text-sm text-destructive">
+            <p
+              id={`cupom-tipo-${cupom?.id ?? "novo"}-error`}
+              role="alert"
+              className="text-sm text-destructive"
+            >
               {errors.tipo.message}
             </p>
           ) : null}
         </div>
 
         <div className="grid gap-2">
-          <label htmlFor={`cupom-valor-${cupom?.id ?? "novo"}`}>
-            Valor
-          </label>
+          <label htmlFor={`cupom-valor-${cupom?.id ?? "novo"}`}>Valor</label>
 
           <input
             id={`cupom-valor-${cupom?.id ?? "novo"}`}
+            aria-invalid={Boolean(errors.valor)}
+            aria-describedby={
+              errors.valor
+                ? `cupom-valor-${cupom?.id ?? "novo"}-error`
+                : undefined
+            }
             type="number"
             min="0"
             step="any"
@@ -165,7 +181,11 @@ export function CupomForm({
           </p>
 
           {errors.valor ? (
-            <p className="text-sm text-destructive">
+            <p
+              id={`cupom-valor-${cupom?.id ?? "novo"}-error`}
+              role="alert"
+              className="text-sm text-destructive"
+            >
               {errors.valor.message}
             </p>
           ) : null}
@@ -180,13 +200,23 @@ export function CupomForm({
 
           <input
             id={`cupom-inicio-${cupom?.id ?? "novo"}`}
+            aria-invalid={Boolean(errors.dataInicio)}
+            aria-describedby={
+              errors.dataInicio
+                ? `cupom-inicio-${cupom?.id ?? "novo"}-error`
+                : undefined
+            }
             type="datetime-local"
             {...register("dataInicio")}
             className="min-h-10 rounded-md border bg-background px-3 py-2"
           />
 
           {errors.dataInicio ? (
-            <p className="text-sm text-destructive">
+            <p
+              id={`cupom-inicio-${cupom?.id ?? "novo"}-error`}
+              role="alert"
+              className="text-sm text-destructive"
+            >
               {errors.dataInicio.message}
             </p>
           ) : null}
@@ -199,13 +229,23 @@ export function CupomForm({
 
           <input
             id={`cupom-fim-${cupom?.id ?? "novo"}`}
+            aria-invalid={Boolean(errors.dataFim)}
+            aria-describedby={
+              errors.dataFim
+                ? `cupom-fim-${cupom?.id ?? "novo"}-error`
+                : undefined
+            }
             type="datetime-local"
             {...register("dataFim")}
             className="min-h-10 rounded-md border bg-background px-3 py-2"
           />
 
           {errors.dataFim ? (
-            <p className="text-sm text-destructive">
+            <p
+              id={`cupom-fim-${cupom?.id ?? "novo"}-error`}
+              role="alert"
+              className="text-sm text-destructive"
+            >
               {errors.dataFim.message}
             </p>
           ) : null}
@@ -219,6 +259,12 @@ export function CupomForm({
 
         <input
           id={`cupom-limite-${cupom?.id ?? "novo"}`}
+          aria-invalid={Boolean(errors.quantidadeMaxima)}
+          aria-describedby={
+            errors.quantidadeMaxima
+              ? `cupom-limite-${cupom?.id ?? "novo"}-error`
+              : undefined
+          }
           type="number"
           min="1"
           step="1"
@@ -231,7 +277,11 @@ export function CupomForm({
         </p>
 
         {errors.quantidadeMaxima ? (
-          <p className="text-sm text-destructive">
+          <p
+            id={`cupom-limite-${cupom?.id ?? "novo"}-error`}
+            role="alert"
+            className="text-sm text-destructive"
+          >
             {errors.quantidadeMaxima.message}
           </p>
         ) : null}

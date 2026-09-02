@@ -18,21 +18,15 @@ type Props = {
   onSubmit: (codigo: string) => Promise<void>;
 };
 
-export function CupomValidacaoForm({
-  isSubmitting,
-  onSubmit,
-}: Props) {
-  const [confirmed, setConfirmed] =
-    useState(false);
+export function CupomValidacaoForm({ isSubmitting, onSubmit }: Props) {
+  const [confirmed, setConfirmed] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<CupomValidacaoValues>({
-    resolver: zodResolver(
-      cupomValidacaoSchema,
-    ),
+    resolver: zodResolver(cupomValidacaoSchema),
     defaultValues: {
       codigo: "",
     },
@@ -43,32 +37,33 @@ export function CupomValidacaoForm({
       className="grid gap-3 rounded-lg border bg-muted/20 p-4"
       noValidate
       onSubmit={handleSubmit(async (values) => {
-        if (
-          cupomValidationConsumesUsage &&
-          !confirmed
-        ) {
+        if (cupomValidationConsumesUsage && !confirmed) {
           return;
         }
 
-        await onSubmit(
-          values.codigo.trim(),
-        );
+        await onSubmit(values.codigo.trim());
       })}
     >
       <div className="grid gap-2">
-        <label htmlFor="cupom-validar-codigo">
-          Código do cupom
-        </label>
+        <label htmlFor="cupom-validar-codigo">Código do cupom</label>
 
         <input
           id="cupom-validar-codigo"
+          aria-invalid={Boolean(errors.codigo)}
+          aria-describedby={
+            errors.codigo ? "cupom-validar-codigo-error" : undefined
+          }
           maxLength={40}
           {...register("codigo")}
           className="min-h-10 rounded-md border bg-background px-3 py-2"
         />
 
         {errors.codigo ? (
-          <p className="text-sm text-destructive">
+          <p
+            id="cupom-validar-codigo-error"
+            role="alert"
+            className="text-sm text-destructive"
+          >
             {errors.codigo.message}
           </p>
         ) : null}
@@ -80,35 +75,24 @@ export function CupomValidacaoForm({
             type="checkbox"
             checked={confirmed}
             onChange={(event) => {
-              setConfirmed(
-                event.target.checked,
-              );
+              setConfirmed(event.target.checked);
             }}
             className="mt-1"
           />
 
           <span>
-            Confirmo esta operação. O contrato atual
-            registra utilização do cupom durante a
-            validação.
+            Confirmo esta operação. O contrato atual registra utilização do
+            cupom durante a validação.
           </span>
         </label>
       ) : null}
 
       <button
         type="submit"
-        disabled={
-          isSubmitting ||
-          (
-            cupomValidationConsumesUsage &&
-            !confirmed
-          )
-        }
+        disabled={isSubmitting || (cupomValidationConsumesUsage && !confirmed)}
         className="min-h-10 w-fit rounded-md border px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {isSubmitting
-          ? "Validando..."
-          : cupomValidationActionLabel}
+        {isSubmitting ? "Validando..." : cupomValidationActionLabel}
       </button>
     </form>
   );

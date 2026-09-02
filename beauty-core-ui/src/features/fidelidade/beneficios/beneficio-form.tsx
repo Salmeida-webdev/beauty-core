@@ -33,8 +33,7 @@ export function BeneficioForm({
     defaultValues: {
       nome: beneficio?.nome ?? "",
       descricao: beneficio?.descricao ?? "",
-      pontosNecessarios:
-        beneficio?.pontosNecessarios ?? 1,
+      pontosNecessarios: beneficio?.pontosNecessarios ?? 1,
     },
   });
 
@@ -53,27 +52,41 @@ export function BeneficioForm({
 
         <input
           id={`beneficio-nome-${beneficio?.id ?? "novo"}`}
+          aria-invalid={Boolean(errors.nome)}
+          aria-describedby={
+            errors.nome
+              ? `beneficio-nome-${beneficio?.id ?? "novo"}-error`
+              : undefined
+          }
           maxLength={120}
           {...register("nome")}
           className="min-h-10 rounded-md border bg-background px-3 py-2"
         />
 
         {errors.nome ? (
-          <p className="text-sm text-destructive">
+          <p
+            id={`beneficio-nome-${beneficio?.id ?? "novo"}-error`}
+            role="alert"
+            className="text-sm text-destructive"
+          >
             {errors.nome.message}
           </p>
         ) : null}
       </div>
 
       <div className="grid gap-2">
-        <label
-          htmlFor={`beneficio-descricao-${beneficio?.id ?? "novo"}`}
-        >
+        <label htmlFor={`beneficio-descricao-${beneficio?.id ?? "novo"}`}>
           Descrição
         </label>
 
         <textarea
           id={`beneficio-descricao-${beneficio?.id ?? "novo"}`}
+          aria-invalid={Boolean(errors.descricao)}
+          aria-describedby={
+            errors.descricao
+              ? `beneficio-descricao-${beneficio?.id ?? "novo"}-error`
+              : undefined
+          }
           maxLength={500}
           rows={3}
           {...register("descricao")}
@@ -81,21 +94,29 @@ export function BeneficioForm({
         />
 
         {errors.descricao ? (
-          <p className="text-sm text-destructive">
+          <p
+            id={`beneficio-descricao-${beneficio?.id ?? "novo"}-error`}
+            role="alert"
+            className="text-sm text-destructive"
+          >
             {errors.descricao.message}
           </p>
         ) : null}
       </div>
 
       <div className="grid gap-2">
-        <label
-          htmlFor={`beneficio-pontos-${beneficio?.id ?? "novo"}`}
-        >
+        <label htmlFor={`beneficio-pontos-${beneficio?.id ?? "novo"}`}>
           Pontos necessários
         </label>
 
         <input
           id={`beneficio-pontos-${beneficio?.id ?? "novo"}`}
+          aria-invalid={Boolean(errors.pontosNecessarios)}
+          aria-describedby={
+            errors.pontosNecessarios
+              ? `beneficio-pontos-${beneficio?.id ?? "novo"}-error`
+              : undefined
+          }
           type="number"
           min="1"
           step="1"
@@ -106,7 +127,11 @@ export function BeneficioForm({
         />
 
         {errors.pontosNecessarios ? (
-          <p className="text-sm text-destructive">
+          <p
+            id={`beneficio-pontos-${beneficio?.id ?? "novo"}-error`}
+            role="alert"
+            className="text-sm text-destructive"
+          >
             {errors.pontosNecessarios.message}
           </p>
         ) : null}

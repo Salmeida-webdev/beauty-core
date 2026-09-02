@@ -14,9 +14,7 @@ import {
 type Props = {
   nivel?: NivelFidelidade | null;
   isSubmitting: boolean;
-  onSubmit: (
-    payload: NivelFidelidadePayload,
-  ) => Promise<void>;
+  onSubmit: (payload: NivelFidelidadePayload) => Promise<void>;
   onCancel?: () => void;
 };
 
@@ -48,18 +46,24 @@ export function NivelFidelidadeForm({
       })}
     >
       <div className="grid gap-2">
-        <label htmlFor={`nivel-nome-${nivel?.id ?? "novo"}`}>
-          Nome
-        </label>
+        <label htmlFor={`nivel-nome-${nivel?.id ?? "novo"}`}>Nome</label>
 
         <input
           id={`nivel-nome-${nivel?.id ?? "novo"}`}
+          aria-invalid={Boolean(errors.nome)}
+          aria-describedby={
+            errors.nome ? `nivel-nome-${nivel?.id ?? "novo"}-error` : undefined
+          }
           {...register("nome")}
           className="min-h-10 rounded-md border bg-background px-3 py-2"
         />
 
         {errors.nome ? (
-          <p className="text-sm text-destructive">
+          <p
+            id={`nivel-nome-${nivel?.id ?? "novo"}-error`}
+            role="alert"
+            className="text-sm text-destructive"
+          >
             {errors.nome.message}
           </p>
         ) : null}
@@ -72,6 +76,12 @@ export function NivelFidelidadeForm({
 
         <input
           id={`nivel-pontos-${nivel?.id ?? "novo"}`}
+          aria-invalid={Boolean(errors.pontosMinimos)}
+          aria-describedby={
+            errors.pontosMinimos
+              ? `nivel-pontos-${nivel?.id ?? "novo"}-error`
+              : undefined
+          }
           type="number"
           step="1"
           {...register("pontosMinimos", {
@@ -81,7 +91,11 @@ export function NivelFidelidadeForm({
         />
 
         {errors.pontosMinimos ? (
-          <p className="text-sm text-destructive">
+          <p
+            id={`nivel-pontos-${nivel?.id ?? "novo"}-error`}
+            role="alert"
+            className="text-sm text-destructive"
+          >
             {errors.pontosMinimos.message}
           </p>
         ) : null}

@@ -16,31 +16,18 @@ import {
 type Props = {
   pacote?: Pacote | null;
   isSubmitting: boolean;
-  onSubmit: (
-    payload: PacotePayload,
-  ) => Promise<void>;
+  onSubmit: (payload: PacotePayload) => Promise<void>;
   onCancel?: () => void;
 };
 
-function pacoteToFormValues(
-  pacote: Pacote,
-): PacoteFormValues {
+function pacoteToFormValues(pacote: Pacote): PacoteFormValues {
   return {
     nome: pacote.nome,
-    descricao:
-      pacote.descricao ?? "",
-    valor:
-      String(pacote.valor),
-    quantidadeSessoes:
-      String(
-        pacote.quantidadeSessoes,
-      ),
+    descricao: pacote.descricao ?? "",
+    valor: String(pacote.valor),
+    quantidadeSessoes: String(pacote.quantidadeSessoes),
     validadeDias:
-      pacote.validadeDias == null
-        ? ""
-        : String(
-            pacote.validadeDias,
-          ),
+      pacote.validadeDias == null ? "" : String(pacote.validadeDias),
   };
 }
 
@@ -55,8 +42,7 @@ export function PacoteForm({
     handleSubmit,
     formState: { errors },
   } = useForm<PacoteFormValues>({
-    resolver:
-      zodResolver(pacoteFormSchema),
+    resolver: zodResolver(pacoteFormSchema),
 
     defaultValues: pacote
       ? pacoteToFormValues(pacote)
@@ -67,65 +53,65 @@ export function PacoteForm({
     <form
       className="grid gap-4 rounded-lg border bg-muted/20 p-4"
       noValidate
-      onSubmit={handleSubmit(
-        async (values) => {
-          await onSubmit(
-            toPacotePayload(values),
-          );
-        },
-      )}
+      onSubmit={handleSubmit(async (values) => {
+        await onSubmit(toPacotePayload(values));
+      })}
     >
-      <fieldset
-        disabled={isSubmitting}
-        className="grid gap-4"
-      >
-        <legend className="sr-only">
-          Dados do pacote
-        </legend>
+      <fieldset disabled={isSubmitting} className="grid gap-4">
+        <legend className="sr-only">Dados do pacote</legend>
 
         <div className="grid gap-2">
-          <label
-            htmlFor={`pacote-nome-${pacote?.id ?? "novo"}`}
-          >
-            Nome
-          </label>
+          <label htmlFor={`pacote-nome-${pacote?.id ?? "novo"}`}>Nome</label>
 
           <input
             id={`pacote-nome-${pacote?.id ?? "novo"}`}
-            maxLength={
-              PACOTE_FORM_LIMITS.nomeMax
+            aria-invalid={Boolean(errors.nome)}
+            aria-describedby={
+              errors.nome
+                ? `pacote-nome-${pacote?.id ?? "novo"}-error`
+                : undefined
             }
+            maxLength={PACOTE_FORM_LIMITS.nomeMax}
             {...register("nome")}
             className="min-h-10 rounded-md border bg-background px-3 py-2"
           />
 
           {errors.nome ? (
-            <p className="text-sm text-destructive">
+            <p
+              id={`pacote-nome-${pacote?.id ?? "novo"}-error`}
+              role="alert"
+              className="text-sm text-destructive"
+            >
               {errors.nome.message}
             </p>
           ) : null}
         </div>
 
         <div className="grid gap-2">
-          <label
-            htmlFor={`pacote-descricao-${pacote?.id ?? "novo"}`}
-          >
+          <label htmlFor={`pacote-descricao-${pacote?.id ?? "novo"}`}>
             Descrição
           </label>
 
           <textarea
             id={`pacote-descricao-${pacote?.id ?? "novo"}`}
-            maxLength={
-              PACOTE_FORM_LIMITS
-                .descricaoMax
+            aria-invalid={Boolean(errors.descricao)}
+            aria-describedby={
+              errors.descricao
+                ? `pacote-descricao-${pacote?.id ?? "novo"}-error`
+                : undefined
             }
+            maxLength={PACOTE_FORM_LIMITS.descricaoMax}
             rows={3}
             {...register("descricao")}
             className="rounded-md border bg-background px-3 py-2"
           />
 
           {errors.descricao ? (
-            <p className="text-sm text-destructive">
+            <p
+              id={`pacote-descricao-${pacote?.id ?? "novo"}-error`}
+              role="alert"
+              className="text-sm text-destructive"
+            >
               {errors.descricao.message}
             </p>
           ) : null}
@@ -133,76 +119,83 @@ export function PacoteForm({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="grid gap-2">
-            <label
-              htmlFor={`pacote-valor-${pacote?.id ?? "novo"}`}
-            >
+            <label htmlFor={`pacote-valor-${pacote?.id ?? "novo"}`}>
               Valor
             </label>
 
             <input
               id={`pacote-valor-${pacote?.id ?? "novo"}`}
-              type="number"
-              min={
-                PACOTE_FORM_LIMITS.valorMin
+              aria-invalid={Boolean(errors.valor)}
+              aria-describedby={
+                errors.valor
+                  ? `pacote-valor-${pacote?.id ?? "novo"}-error`
+                  : undefined
               }
+              type="number"
+              min={PACOTE_FORM_LIMITS.valorMin}
               step="any"
               {...register("valor")}
               className="min-h-10 rounded-md border bg-background px-3 py-2"
             />
 
             {errors.valor ? (
-              <p className="text-sm text-destructive">
+              <p
+                id={`pacote-valor-${pacote?.id ?? "novo"}-error`}
+                role="alert"
+                className="text-sm text-destructive"
+              >
                 {errors.valor.message}
               </p>
             ) : null}
           </div>
 
           <div className="grid gap-2">
-            <label
-              htmlFor={`pacote-sessoes-${pacote?.id ?? "novo"}`}
-            >
+            <label htmlFor={`pacote-sessoes-${pacote?.id ?? "novo"}`}>
               Quantidade de sessões
             </label>
 
             <input
               id={`pacote-sessoes-${pacote?.id ?? "novo"}`}
-              type="number"
-              min={
-                PACOTE_FORM_LIMITS
-                  .quantidadeSessoesMin
+              aria-invalid={Boolean(errors.quantidadeSessoes)}
+              aria-describedby={
+                errors.quantidadeSessoes
+                  ? `pacote-sessoes-${pacote?.id ?? "novo"}-error`
+                  : undefined
               }
+              type="number"
+              min={PACOTE_FORM_LIMITS.quantidadeSessoesMin}
               step="1"
-              {...register(
-                "quantidadeSessoes",
-              )}
+              {...register("quantidadeSessoes")}
               className="min-h-10 rounded-md border bg-background px-3 py-2"
             />
 
             {errors.quantidadeSessoes ? (
-              <p className="text-sm text-destructive">
-                {
-                  errors.quantidadeSessoes
-                    .message
-                }
+              <p
+                id={`pacote-sessoes-${pacote?.id ?? "novo"}-error`}
+                role="alert"
+                className="text-sm text-destructive"
+              >
+                {errors.quantidadeSessoes.message}
               </p>
             ) : null}
           </div>
         </div>
 
         <div className="grid gap-2">
-          <label
-            htmlFor={`pacote-validade-${pacote?.id ?? "novo"}`}
-          >
+          <label htmlFor={`pacote-validade-${pacote?.id ?? "novo"}`}>
             Validade em dias
           </label>
 
           <input
             id={`pacote-validade-${pacote?.id ?? "novo"}`}
-            type="number"
-            min={
-              PACOTE_FORM_LIMITS
-                .validadeDiasMin
+            aria-invalid={Boolean(errors.validadeDias)}
+            aria-describedby={
+              errors.validadeDias
+                ? `pacote-validade-${pacote?.id ?? "novo"}-error`
+                : undefined
             }
+            type="number"
+            min={PACOTE_FORM_LIMITS.validadeDiasMin}
             step="1"
             {...register("validadeDias")}
             className="min-h-10 rounded-md border bg-background px-3 py-2"
@@ -213,7 +206,11 @@ export function PacoteForm({
           </p>
 
           {errors.validadeDias ? (
-            <p className="text-sm text-destructive">
+            <p
+              id={`pacote-validade-${pacote?.id ?? "novo"}-error`}
+              role="alert"
+              className="text-sm text-destructive"
+            >
               {errors.validadeDias.message}
             </p>
           ) : null}

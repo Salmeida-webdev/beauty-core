@@ -135,6 +135,10 @@ export function AdminSessionsPanel() {
   const clearPrivateState =
     useAdminPrivateStateCleanup();
 
+  const status = useAuthStore(
+    (state) => state.status,
+  );
+
   const user = useAuthStore(
     (state) => state.user,
   );
@@ -155,6 +159,9 @@ export function AdminSessionsPanel() {
       listAdminSessions(
         signal,
       ),
+    enabled:
+      status === "authenticated" &&
+      user !== null,
   });
 
   const sortedSessions =
