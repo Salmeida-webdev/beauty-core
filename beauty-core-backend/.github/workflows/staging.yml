@@ -44,8 +44,8 @@ jobs:
       APP_ENV: test
       PORT: 3000
 
-      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5433/beauty_core_test?schema=public
-      DATABASE_URL_TEST: postgresql://postgres:postgres@127.0.0.1:5433/beauty_core_test?schema=public
+      DATABASE_URL: postgresql://postgres:${{ secrets.STAGING_POSTGRES_PASSWORD }}@127.0.0.1:5433/beauty_core_test?schema=public
+      DATABASE_URL_TEST: postgresql://postgres:${{ secrets.STAGING_POSTGRES_PASSWORD }}@127.0.0.1:5433/beauty_core_test?schema=public
 
       REDIS_HOST: 127.0.0.1
       REDIS_PORT: 6380
