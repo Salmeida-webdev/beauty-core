@@ -1,5 +1,5 @@
-import { PortalFoundationPage } from "@/features/portal/pages/portal-foundation-page";
+import { PortalOtpRequestPage } from "@/features/portal/pages/portal-otp-request-page";
 
 export default function PortalPage() {
-  return <PortalFoundationPage />;
+  return <PortalOtpRequestPage />;
 }

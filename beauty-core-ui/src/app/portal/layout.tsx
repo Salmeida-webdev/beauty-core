@@ -1,4 +1,4 @@
-﻿import type { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { PortalAuthProvider } from "@/features/portal/auth/portal-auth-context";
 import { PortalShell } from "@/features/portal/components/portal-shell";
@@ -11,7 +11,7 @@ export default function PortalLayout({
   children,
 }: PortalLayoutProps) {
   return (
-    <PortalAuthProvider>
+    <PortalAuthProvider restoreOnMount>
       <PortalShell>{children}</PortalShell>
     </PortalAuthProvider>
   );
