@@ -1,5 +1,10 @@
-import { describe, expect, it } from "vitest";
+import {
+  describe,
+  expect,
+  it,
+} from "vitest";
 
+import { portalNavigationItems } from "./portal-navigation-config";
 import {
   isPortalNavigationItemActive,
   isSafePortalHref,
@@ -12,6 +17,16 @@ describe("portal navigation utilities", () => {
     expect(isSafePortalHref("/admin")).toBe(false);
     expect(isSafePortalHref("https://externo.example")).toBe(false);
     expect(isSafePortalHref("//externo.example")).toBe(false);
+  });
+
+  it("exposes exactly the approved Portal routes", () => {
+    expect(portalNavigationItems).toEqual([
+      { href: "/portal", label: "Inicio" },
+      { href: "/portal/perfil", label: "Perfil" },
+      { href: "/portal/historico", label: "Historico" },
+    ]);
+    expect(portalNavigationItems.every((item) => isSafePortalHref(item.href))).toBe(true);
+    expect(portalNavigationItems.some((item) => item.href === "/admin")).toBe(false);
   });
 
   it("calculates the active route without false positives", () => {

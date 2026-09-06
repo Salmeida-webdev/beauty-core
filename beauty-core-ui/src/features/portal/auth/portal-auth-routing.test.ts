@@ -46,6 +46,16 @@ describe("Portal first-access routing", () => {
     ).toBe("/portal/historico");
   });
 
+  it("honors a safe returnTo after anonymous login", () => {
+    expect(
+      resolvePortalAuthRoute({
+        currentPath: "/portal",
+        primeiroAcesso: false,
+        returnTo: "/portal/perfil",
+      }),
+    ).toBe("/portal/perfil");
+  });
+
   it("does not redirect a normal user from the regular Portal route", () => {
     expect(
       resolvePortalAuthRoute({

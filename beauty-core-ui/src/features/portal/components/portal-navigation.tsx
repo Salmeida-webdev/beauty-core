@@ -1,4 +1,7 @@
-﻿import Link from "next/link";
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { portalNavigationItems } from "../navigation/portal-navigation-config";
 import {
@@ -7,7 +10,7 @@ import {
   type PortalNavigationItem,
 } from "../navigation/portal-navigation";
 
-const navigationLabel = "Navega\u00e7\u00e3o principal";
+const navigationLabel = "Navegacao principal";
 
 type PortalNavigationProps = {
   activePath?: string;
@@ -15,9 +18,11 @@ type PortalNavigationProps = {
 };
 
 export function PortalNavigation({
-  activePath = "/portal",
+  activePath,
   items = portalNavigationItems,
 }: PortalNavigationProps) {
+  const pathname = usePathname();
+  const resolvedActivePath = activePath ?? pathname ?? "/portal";
   const safeItems = items.filter(
     (item) => item.enabled !== false && isSafePortalHref(item.href),
   );
@@ -36,7 +41,7 @@ export function PortalNavigation({
           {safeItems.map((item) => {
             const active = isPortalNavigationItemActive(
               item.href,
-              activePath,
+              resolvedActivePath,
             );
 
             return (
@@ -62,7 +67,7 @@ export function PortalNavigation({
           {safeItems.map((item) => {
             const active = isPortalNavigationItemActive(
               item.href,
-              activePath,
+              resolvedActivePath,
             );
 
             return (

@@ -21,9 +21,7 @@ export function getPortalFirstAccessHref(
   const safeReturnTo =
     sanitizePortalFirstAccessReturnTo(returnTo);
 
-  return `${PORTAL_FIRST_ACCESS_PATH}?returnTo=${encodeURIComponent(
-    safeReturnTo,
-  )}`;
+  return PORTAL_FIRST_ACCESS_PATH + "?returnTo=" + encodeURIComponent(safeReturnTo);
 }
 
 type ResolvePortalAuthRouteInput = {
@@ -47,6 +45,12 @@ export function resolvePortalAuthRoute({
 
   if (currentPath === PORTAL_FIRST_ACCESS_PATH) {
     return sanitizePortalFirstAccessReturnTo(returnTo);
+  }
+
+  if (currentPath === "/portal") {
+    const safeReturnTo = sanitizePortalFirstAccessReturnTo(returnTo);
+
+    return safeReturnTo === "/portal" ? null : safeReturnTo;
   }
 
   return null;

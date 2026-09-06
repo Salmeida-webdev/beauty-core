@@ -17,8 +17,28 @@ afterEach(() => {
 });
 
 describe("PortalNavigation", () => {
-  it("does not render links when no real portal route exists", () => {
-    render(<PortalNavigation />);
+  it("renders the approved Portal routes by default", () => {
+    render(<PortalNavigation activePath="/portal/perfil" />);
+
+    expect(screen.getAllByRole("link")).toHaveLength(6);
+    expect(screen.getAllByRole("link", { name: "Inicio" })).toHaveLength(2);
+    expect(screen.getAllByRole("link", { name: "Perfil" })).toHaveLength(2);
+    expect(screen.getAllByRole("link", { name: "Historico" })).toHaveLength(2);
+
+    expect(
+      screen.getAllByRole("link", { name: "Perfil" }).every(
+        (link) => link.getAttribute("aria-current") === "page",
+      ),
+    ).toBe(true);
+    expect(
+      screen.getAllByRole("link", { name: "Inicio" }).every(
+        (link) => link.getAttribute("aria-current") === null,
+      ),
+    ).toBe(true);
+  });
+
+  it("does not render links when no enabled route is supplied", () => {
+    render(<PortalNavigation items={[]} />);
 
     expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
