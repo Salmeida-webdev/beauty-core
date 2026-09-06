@@ -15,13 +15,13 @@ import { usePortalOnlineStatus } from "@/features/portal/pwa/portal-online-statu
 
 function formatMessageDate(value: string | null | undefined) {
   if (!value) {
-    return "Data não informada";
+    return "Data nÃƒÂ£o informada";
   }
 
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return "Data não informada";
+    return "Data nÃƒÂ£o informada";
   }
 
   return new Intl.DateTimeFormat("pt-BR", {
@@ -37,7 +37,7 @@ function maskRecipient(value: string) {
     return "Contato protegido";
   }
 
-  return `${trimmed.slice(0, 2)}••••${trimmed.slice(-2)}`;
+  return `${trimmed.slice(0, 2)}Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢${trimmed.slice(-2)}`;
 }
 
 function PortalMessagesContent() {
@@ -64,8 +64,8 @@ function PortalMessagesContent() {
             void query.refetch();
           },
         }}
-        description="Verifique sua conexão e tente novamente para consultar seu histórico."
-        title="Você está offline"
+        description="Verifique sua conexÃƒÂ£o e tente novamente para consultar seu histÃƒÂ³rico."
+        title="VocÃƒÂª estÃƒÂ¡ offline"
       />
     );
   }
@@ -73,7 +73,7 @@ function PortalMessagesContent() {
   if (query.isPending) {
     return (
       <PortalLoadingState
-        description="Estamos carregando seu histórico de mensagens."
+        description="Estamos carregando seu histÃƒÂ³rico de mensagens."
         title="Carregando mensagens"
       />
     );
@@ -88,7 +88,7 @@ function PortalMessagesContent() {
             void query.refetch();
           },
         }}
-        description="Não foi possível carregar seu histórico de WhatsApp."
+        description="NÃƒÂ£o foi possÃƒÂ­vel carregar seu histÃƒÂ³rico de WhatsApp."
         title="Falha ao carregar mensagens"
       />
     );
@@ -97,7 +97,7 @@ function PortalMessagesContent() {
   if (messages.length === 0) {
     return (
       <PortalEmptyState
-        description="Quando houver comunicações registradas, elas aparecerão nesta área."
+        description="Quando houver comunicaÃƒÂ§ÃƒÂµes registradas, elas aparecerÃƒÂ£o nesta ÃƒÂ¡rea."
         title="Nenhuma mensagem encontrada"
       />
     );
@@ -110,24 +110,22 @@ function PortalMessagesContent() {
     >
       <header className="space-y-2">
         <p className="text-sm font-medium text-primary">
-          Comunicação da empresa
+          ComunicaÃƒÂ§ÃƒÂ£o da empresa
         </p>
 
         <h1
           className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"
           id="portal-messages-title"
-        >
-          Histórico de WhatsApp
-        </h1>
+        >Histórico de WhatsApp</h1>
 
         <p className="max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-          Consulte as mensagens registradas pela empresa. Esta área é somente
+          Consulte as mensagens registradas pela empresa. Esta ÃƒÂ¡rea ÃƒÂ© somente
           para leitura.
         </p>
       </header>
 
       <ol
-        aria-label="Histórico de mensagens de WhatsApp"
+        aria-label="HistÃƒÂ³rico de mensagens de WhatsApp"
         className="space-y-3"
       >
         {messages.map((message) => (

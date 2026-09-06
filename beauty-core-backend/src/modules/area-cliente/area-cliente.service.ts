@@ -7,12 +7,18 @@ import {
 import {
   Prisma,
   StatusAgendamento,
+  TipoMensagemWhatsApp,
+  StatusArquivo,
   StatusClientePacote,
   StatusNotificacao,
   TipoMovimentacaoPontos,
 } from '@prisma/client';
 
 import { PrismaService } from '../../database/prisma/prisma.service';
+import { AgendamentosService } from '../agendamentos/agendamentos.service';
+import { MensagensWhatsappService } from "../mensagens-whatsapp/mensagens-whatsapp.service";
+import { ClientesPacotesService } from "../clientes-pacotes/clientes-pacotes.service";
+import { CreateAgendamentoDto } from '../agendamentos/dto/create-agendamento.dto';
 import { PaginationDto } from '../../shared/dto/pagination.dto';
 import { TenantValidatorService } from '../../shared/tenant';
 import {
@@ -21,13 +27,18 @@ import {
 } from '../../shared/utils/pagination.util';
 
 import { UpdatePerfilClienteDto } from './dto/update-perfil-cliente.dto';
+import { CreatePortalAgendamentoDto } from './dto/create-portal-agendamento.dto';
+import { ReschedulePortalAgendamentoDto } from './dto/reschedule-portal-agendamento.dto';
 
 @Injectable()
 export class AreaClienteService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly tenantValidator: TenantValidatorService,
-  ) {}
+    private readonly agendamentosService: AgendamentosService,
+
+
+    private readonly mensagensWhatsappService: MensagensWhatsappService,private readonly clientesPacotesService: ClientesPacotesService,) {}
 
   private async validarClientePortal(
     empresaId: string,
@@ -38,7 +49,7 @@ export class AreaClienteService {
 
     if (!clienteValidado.ativoPortal) {
       throw new NotFoundException(
-        'Cliente não encontrado ou portal desativado.',
+        'Cliente nÃ£o encontrado ou portal desativado.',
       );
     }
 
@@ -53,7 +64,7 @@ export class AreaClienteService {
 
     if (!cliente) {
       throw new NotFoundException(
-        'Cliente não encontrado ou portal desativado.',
+        'Cliente nÃ£o encontrado ou portal desativado.',
       );
     }
 
@@ -173,7 +184,7 @@ export class AreaClienteService {
 
     if (resultado.count === 0) {
       throw new NotFoundException(
-        'Cliente não encontrado ou portal desativado.',
+        'Cliente nÃ£o encontrado ou portal desativado.',
       );
     }
 
@@ -215,7 +226,6 @@ export class AreaClienteService {
       pendentes: StatusAgendamento.PENDENTE,
       confirmados: StatusAgendamento.CONFIRMADO,
       concluidos: StatusAgendamento.CONCLUIDO,
-      concluídos: StatusAgendamento.CONCLUIDO,
       cancelados: StatusAgendamento.CANCELADO,
     };
 
@@ -542,7 +552,7 @@ export class AreaClienteService {
     });
 
     if (!pacote) {
-      throw new NotFoundException('Pacote do cliente não encontrado');
+      throw new NotFoundException('Pacote do cliente nÃ£o encontrado');
     }
 
     return pacote;
@@ -627,7 +637,7 @@ export class AreaClienteService {
     });
 
     if (resultado.count === 0) {
-      throw new NotFoundException('Notificação não encontrada');
+      throw new NotFoundException('NotificaÃ§Ã£o nÃ£o encontrada');
     }
 
     return this.prisma.notificacao.findFirst({
@@ -843,6 +853,73 @@ export class AreaClienteService {
       .slice(0, 200);
   }
 
+  async criarAgendamento(
+    empresaId: string,
+    clienteId: string,
+    dto: CreatePortalAgendamentoDto,
+  ) {
+    await this.validarClientePortal(empresaId, clienteId);
+
+    const payload: CreateAgendamentoDto = {
+      ...dto,
+      clienteId,
+    };
+
+    return this.agendamentosService.create(payload, empresaId);
+  }
+
+  async reagendarAgendamento(
+    empresaId: string,
+    clienteId: string,
+    id: string,
+    dto: ReschedulePortalAgendamentoDto,
+  ) {
+    await this.validarClientePortal(empresaId, clienteId);
+
+    const agendamento = await this.prisma.agendamento.findFirst({
+      where: {
+        id,
+        empresaId,
+        clienteId,
+      },
+    });
+
+    if (!agendamento) {
+      throw new NotFoundException(
+        'Agendamento não encontrado para o cliente autenticado.',
+      );
+    }
+
+    return this.agendamentosService.update(
+      id,
+      dto,
+      empresaId,
+    );
+  }
+
+  async cancelarAgendamento(
+    empresaId: string,
+    clienteId: string,
+    id: string,
+  ) {
+    await this.validarClientePortal(empresaId, clienteId);
+
+    const agendamento = await this.prisma.agendamento.findFirst({
+      where: {
+        id,
+        empresaId,
+        clienteId,
+      },
+    });
+
+    if (!agendamento) {
+      throw new NotFoundException(
+        'Agendamento não encontrado para o cliente autenticado.',
+      );
+    }
+
+    return this.agendamentosService.cancelar(id, empresaId);
+  }
   private async buscarNivelAtual(
     empresaId: string,
     clienteId: string,
@@ -869,5 +946,104 @@ export class AreaClienteService {
         pontosMinimos: 'desc',
       },
     });
+  }
+
+  async usarSessaoPacote(
+    empresaId: string,
+    clienteId: string,
+    pacoteId: string,
+  ) {
+    await this.validarClientePortal(empresaId, clienteId);
+
+    const pacote = await this.prisma.clientePacote.findFirst({
+      where: {
+        id: pacoteId,
+        empresaId,
+        clienteId,
+      },
+    });
+
+    if (!pacote) {
+      throw new NotFoundException("Pacote não encontrado para este cliente.");
+    }
+
+    return this.clientesPacotesService.usarSessao(
+      empresaId,
+      pacoteId,
+    );
+  }
+
+  async documentos(
+    empresaId: string,
+    clienteId: string,
+  ) {
+    await this.validarClientePortal(empresaId, clienteId);
+
+    return this.prisma.arquivo.findMany({
+      where: {
+        empresaId,
+        clienteId,
+        status: StatusArquivo.ATIVO,
+      },
+      select: {
+        id: true,
+        tipo: true,
+        nomeOriginal: true,
+        mimeType: true,
+        tamanhoBytes: true,
+        createdAt: true,
+        updatedAt: true,
+        expiraEm: true,
+        privado: true,
+        visibilidade: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
+
+  async enviarMensagemWhatsappPortal(
+    empresaId: string,
+    clienteId: string,
+    tipo: TipoMensagemWhatsApp,
+    mensagem: string,
+  ) {
+    await this.validarClientePortal(empresaId, clienteId);
+
+    const cliente = await this.prisma.cliente.findFirst({
+      where: {
+        id: clienteId,
+        empresaId,
+        ativo: true,
+      },
+      select: {
+        telefone: true,
+      },
+    });
+
+    if (!cliente?.telefone) {
+      throw new BadRequestException(
+        "Cliente não possui telefone cadastrado.",
+      );
+    }
+
+    const destinatario = cliente.telefone.replace(/\D/g, "");
+
+    if (destinatario.length < 10 || destinatario.length > 15) {
+      throw new BadRequestException(
+        "Telefone do cliente possui formato inválido.",
+      );
+    }
+
+    return this.mensagensWhatsappService.enviar(
+      empresaId,
+      {
+        clienteId,
+        tipo,
+        destinatario,
+        mensagem,
+      },
+    );
   }
 }

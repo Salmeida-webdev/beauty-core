@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+﻿import { Module } from '@nestjs/common';
 
 import { PrismaModule } from '../../database/prisma/prisma.module';
 import { TenantModule } from '../../shared/tenant';
@@ -37,6 +37,7 @@ import { ArquivosCleanupService } from './arquivos-cleanup.service';
   ],
 
   exports: [
+    ArquivosDownloadService,
     ArquivosService,
     ArquivosCleanupService,
   ],
