@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   useMutation,
@@ -25,6 +25,10 @@ export function usePortalNotificationsQuery(
     queryKey: portalClientQueryKeys.notifications(page, limit),
     queryFn: () => getPortalNotifications(page, limit),
     enabled: portalQueryEnabled(status, true),
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+    retry: 1,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -35,6 +39,10 @@ export function usePortalUnreadNotificationsQuery() {
     queryKey: portalClientQueryKeys.notificationsUnread(),
     queryFn: getPortalUnreadNotifications,
     enabled: portalQueryEnabled(status, true),
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+    retry: 1,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -52,6 +60,20 @@ export function useMarkPortalNotificationAsRead() {
           queryKey: portalClientQueryKeys.notificationsUnread(),
         }),
       ]);
+    },
+  });
+}
+
+export function usePortalMarkNotificationAsReadMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (notificationId: string) =>
+      markPortalNotificationAsRead(notificationId),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["portal", "private", "notifications"],
+      });
     },
   });
 }

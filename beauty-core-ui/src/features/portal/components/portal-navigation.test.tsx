@@ -20,7 +20,7 @@ describe("PortalNavigation", () => {
   it("renders the approved Portal routes by default", () => {
     render(<PortalNavigation activePath="/portal/perfil" />);
 
-    expect(screen.getAllByRole("link")).toHaveLength(6);
+    expect(screen.getAllByRole("link")).toHaveLength(10);
     expect(screen.getAllByRole("link", { name: "Inicio" })).toHaveLength(2);
     expect(screen.getAllByRole("link", { name: "Perfil" })).toHaveLength(2);
     expect(screen.getAllByRole("link", { name: "Historico" })).toHaveLength(2);

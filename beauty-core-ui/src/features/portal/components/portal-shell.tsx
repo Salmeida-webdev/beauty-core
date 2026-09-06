@@ -1,10 +1,12 @@
-﻿"use client";
+"use client";
 
 import { useTenant } from "@/providers/tenant-provider";
 import type { ReactNode } from "react";
 
 import { PortalBranding } from "./portal-branding";
 import { PortalNavigation } from "./portal-navigation";
+import { PortalOfflineIndicator } from "../pwa/portal-offline-indicator";
+import { PortalServiceWorkerRegistration } from "./portal-service-worker-registration";
 
 const skipLinkLabel = "Pular para o conte\u00fado principal";
 
@@ -31,6 +33,8 @@ export function PortalShell({ children }: PortalShellProps) {
           <PortalNavigation />
         </div>
       </header>
+      <PortalServiceWorkerRegistration />
+      <PortalOfflineIndicator />
 
       <main
         className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10"

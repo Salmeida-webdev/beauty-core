@@ -53,10 +53,11 @@ export function PortalStatePanel({
       data-portal-state={kind}
     >
       <PortalAssetImage
+          loading="eager"
         alt={assetAlt ?? ""}
         asset={asset}
         decorative={!assetAlt}
-        height={220}
+        height={320}
         sizes="(max-width: 640px) 80vw, 320px"
         width={320}
       />

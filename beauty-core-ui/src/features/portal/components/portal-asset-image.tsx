@@ -10,6 +10,7 @@ type PortalAssetImageProps = {
   height: number;
   sizes: string;
   priority?: boolean;
+  loading?: "eager" | "lazy";
   className?: string;
 };
 
@@ -21,10 +22,12 @@ export function PortalAssetImage({
   height,
   sizes,
   priority = false,
+  loading,
   className,
 }: PortalAssetImageProps) {
   return (
     <Image
+      loading={loading}
       alt={decorative ? "" : alt}
       className={className}
       height={height}

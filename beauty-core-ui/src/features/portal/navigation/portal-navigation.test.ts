@@ -23,7 +23,9 @@ describe("portal navigation utilities", () => {
     expect(portalNavigationItems).toEqual([
       { href: "/portal", label: "Inicio" },
       { href: "/portal/perfil", label: "Perfil" },
+      { href: "/portal/notificacoes", label: "Notificacoes" },
       { href: "/portal/historico", label: "Historico" },
+      { href: "/portal/mensagens", label: "Mensagens" },
     ]);
     expect(portalNavigationItems.every((item) => isSafePortalHref(item.href))).toBe(true);
     expect(portalNavigationItems.some((item) => item.href === "/admin")).toBe(false);
