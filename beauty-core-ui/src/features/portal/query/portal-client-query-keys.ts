@@ -8,4 +8,10 @@ export const portalClientQueryKeys = {
     portalQueryKeys.privateResource("profile"),
   history: () =>
     portalQueryKeys.privateResource("history"),
+  notificationsRoot: () =>
+    portalQueryKeys.privateResource("notifications"),
+  notifications: (page: number, limit: number) =>
+    portalQueryKeys.privateResource("notifications", page, limit),
+  notificationsUnread: () =>
+    portalQueryKeys.privateResource("notifications", "unread"),
 } as const;
