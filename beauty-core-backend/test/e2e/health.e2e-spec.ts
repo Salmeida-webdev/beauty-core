@@ -28,9 +28,12 @@ describe('Health E2E', () => {
       });
   });
 
+  it('deve manter /health publico', async () => {
+    await request(ctx.app.getHttpServer()).get('/health').expect(200);
+  });
+
   it('deve bloquear health detalhado sem autenticação', async () => {
     const endpoints = [
-      '/health',
       '/health/database',
       '/health/redis',
       '/health/summary',
@@ -45,7 +48,6 @@ describe('Health E2E', () => {
 
   it('deve permitir health detalhado com JWT Admin', async () => {
     const endpoints = [
-      '/health',
       '/health/database',
       '/health/redis',
       '/health/summary',
@@ -63,4 +65,3 @@ describe('Health E2E', () => {
     }
   });
 });
-
