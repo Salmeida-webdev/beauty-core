@@ -218,8 +218,13 @@ export class ClientesPacotesService {
       });
 
       if (result.count === 0) {
+        const pacoteAtual = await this.buscarClientePacoteOuFalhar(
+          empresaId,
+          id,
+        );
+
         throw new BadRequestException(
-          clientePacote.status === StatusClientePacote.VENCIDO
+          pacoteAtual.status === StatusClientePacote.VENCIDO
             ? 'Este pacote está vencido'
             : 'Este pacote não está disponível para uso',
         );

@@ -718,11 +718,11 @@ export class AgendamentosService {
   }
 
   private ocupaAgenda(status: StatusAgendamento) {
-    return [
+    return new Set<StatusAgendamento>([
       StatusAgendamento.PENDENTE,
       StatusAgendamento.CONFIRMADO,
       StatusAgendamento.EM_ANDAMENTO,
-    ].includes(status);
+    ]).has(status);
   }
 
   /**

@@ -90,6 +90,9 @@ export class AreaClienteService {
             empresaId,
           },
         },
+        select: {
+          saldoPontos: true,
+        },
       }),
       this.buscarNivelAtual(empresaId, clienteId),
       this.prisma.clientePacote.findMany({
@@ -98,8 +101,21 @@ export class AreaClienteService {
           clienteId,
           status: StatusClientePacote.ATIVO,
         },
-        include: {
-          pacote: true,
+        select: {
+          id: true,
+          pacoteId: true,
+          sessoesTotal: true,
+          sessoesUsadas: true,
+          sessoesRestantes: true,
+          dataCompra: true,
+          dataValidade: true,
+          status: true,
+          pacote: {
+            select: {
+              nome: true,
+              descricao: true,
+            },
+          },
         },
         orderBy: {
           createdAt: 'desc',
@@ -116,7 +132,6 @@ export class AreaClienteService {
 
     return {
       id: cliente.id,
-      empresaId: cliente.empresaId,
       nome: cliente.nome,
       telefone: cliente.telefone,
       email: cliente.email,
@@ -125,7 +140,18 @@ export class AreaClienteService {
       dataCadastro: cliente.createdAt,
       pontosAtuais: fidelidade?.saldoPontos ?? 0,
       nivelAtual,
-      pacotesAtivos,
+      pacotesAtivos: pacotesAtivos.map((item) => ({
+        id: item.id,
+        pacoteId: item.pacoteId,
+        nome: item.pacote?.nome ?? null,
+        descricao: item.pacote?.descricao ?? null,
+        sessoesTotal: item.sessoesTotal,
+        sessoesUsadas: item.sessoesUsadas,
+        sessoesRestantes: item.sessoesRestantes,
+        dataCompra: item.dataCompra,
+        dataValidade: item.dataValidade,
+        status: item.status,
+      })),
       quantidadeAgendamentos,
       ultimoAcessoPortal: cliente.ultimoAcessoPortal,
       aceitouTermos: cliente.aceitouTermos,
@@ -197,7 +223,6 @@ export class AreaClienteService {
       },
       select: {
         id: true,
-        empresaId: true,
         nome: true,
         telefone: true,
         email: true,
@@ -242,17 +267,30 @@ export class AreaClienteService {
         where,
         skip,
         take,
-        include: {
-          servico: true,
-          profissional: {
+        select: {
+          id: true,
+          dataHoraInicio: true,
+          dataHoraFim: true,
+          status: true,
+          observacoes: true,
+          createdAt: true,
+          updatedAt: true,
+          servico: {
             select: {
-              id: true,
               nome: true,
-              foto: true,
-              role: true,
             },
           },
-          unidade: true,
+          profissional: {
+            select: {
+              nome: true,
+              foto: true,
+            },
+          },
+          unidade: {
+            select: {
+              nome: true,
+            },
+          },
         },
         orderBy: {
           dataHoraInicio: 'desc',
@@ -282,16 +320,30 @@ export class AreaClienteService {
           ],
         },
       },
-      include: {
-        servico: true,
+      select: {
+        id: true,
+        dataHoraInicio: true,
+        dataHoraFim: true,
+        status: true,
+        observacoes: true,
+        createdAt: true,
+        updatedAt: true,
+        servico: {
+          select: {
+            nome: true,
+          },
+        },
         profissional: {
           select: {
-            id: true,
             nome: true,
             foto: true,
           },
         },
-        unidade: true,
+        unidade: {
+          select: {
+            nome: true,
+          },
+        },
       },
       orderBy: {
         dataHoraInicio: 'asc',
@@ -311,16 +363,30 @@ export class AreaClienteService {
           lt: new Date(),
         },
       },
-      include: {
-        servico: true,
+      select: {
+        id: true,
+        dataHoraInicio: true,
+        dataHoraFim: true,
+        status: true,
+        observacoes: true,
+        createdAt: true,
+        updatedAt: true,
+        servico: {
+          select: {
+            nome: true,
+          },
+        },
         profissional: {
           select: {
-            id: true,
             nome: true,
             foto: true,
           },
         },
-        unidade: true,
+        unidade: {
+          select: {
+            nome: true,
+          },
+        },
       },
       orderBy: {
         dataHoraInicio: 'desc',
@@ -372,6 +438,12 @@ export class AreaClienteService {
         where: {
           empresaId,
         },
+        select: {
+          id: true,
+          nome: true,
+          pontosMinimos: true,
+          beneficios: true,
+        },
         orderBy: {
           pontosMinimos: 'asc',
         },
@@ -379,6 +451,13 @@ export class AreaClienteService {
       this.prisma.beneficio.findMany({
         where: {
           empresaId,
+          ativo: true,
+        },
+        select: {
+          id: true,
+          nome: true,
+          descricao: true,
+          pontosNecessarios: true,
           ativo: true,
         },
         orderBy: {
@@ -401,9 +480,15 @@ export class AreaClienteService {
       pontosParaProximoNivel: proximoNivel
         ? proximoNivel.pontosMinimos - saldoAtual
         : 0,
-      beneficiosDisponiveis: beneficios.filter(
-        (beneficio) => beneficio.pontosNecessarios <= saldoAtual,
-      ),
+      beneficiosDisponiveis: beneficios
+        .filter((beneficio) => beneficio.pontosNecessarios <= saldoAtual)
+        .map((beneficio) => ({
+          id: beneficio.id,
+          nome: beneficio.nome,
+          descricao: beneficio.descricao,
+          pontosNecessarios: beneficio.pontosNecessarios,
+          ativo: beneficio.ativo,
+        })),
     };
   }
 
@@ -426,6 +511,13 @@ export class AreaClienteService {
         where,
         skip,
         take,
+        select: {
+          id: true,
+          pontos: true,
+          tipo: true,
+          descricao: true,
+          createdAt: true,
+        },
         orderBy: {
           createdAt: 'desc',
         },
@@ -453,6 +545,13 @@ export class AreaClienteService {
           empresaId,
           ativo: true,
         },
+        select: {
+          id: true,
+          nome: true,
+          descricao: true,
+          pontosNecessarios: true,
+          ativo: true,
+        },
         orderBy: {
           pontosNecessarios: 'asc',
         },
@@ -462,10 +561,22 @@ export class AreaClienteService {
     const saldoAtual = fidelidade?.saldoPontos ?? 0;
 
     return {
-      liberados: beneficios.filter(
-        (beneficio) => beneficio.pontosNecessarios <= saldoAtual,
-      ),
-      disponiveis: beneficios,
+      liberados: beneficios
+        .filter((beneficio) => beneficio.pontosNecessarios <= saldoAtual)
+        .map((beneficio) => ({
+          id: beneficio.id,
+          nome: beneficio.nome,
+          descricao: beneficio.descricao,
+          pontosNecessarios: beneficio.pontosNecessarios,
+          ativo: beneficio.ativo,
+        })),
+      disponiveis: beneficios.map((beneficio) => ({
+        id: beneficio.id,
+        nome: beneficio.nome,
+        descricao: beneficio.descricao,
+        pontosNecessarios: beneficio.pontosNecessarios,
+        ativo: beneficio.ativo,
+      })),
       utilizados: [],
     };
   }
@@ -478,8 +589,21 @@ export class AreaClienteService {
         empresaId,
         clienteId,
       },
-      include: {
-        pacote: true,
+      select: {
+        id: true,
+        pacoteId: true,
+        sessoesTotal: true,
+        sessoesUsadas: true,
+        sessoesRestantes: true,
+        dataCompra: true,
+        dataValidade: true,
+        status: true,
+        pacote: {
+          select: {
+            nome: true,
+            descricao: true,
+          },
+        },
       },
       orderBy: {
         createdAt: 'desc',
@@ -546,8 +670,21 @@ export class AreaClienteService {
         empresaId,
         clienteId,
       },
-      include: {
-        pacote: true,
+      select: {
+        id: true,
+        pacoteId: true,
+        sessoesTotal: true,
+        sessoesUsadas: true,
+        sessoesRestantes: true,
+        dataCompra: true,
+        dataValidade: true,
+        status: true,
+        pacote: {
+          select: {
+            nome: true,
+            descricao: true,
+          },
+        },
       },
     });
 
@@ -555,7 +692,18 @@ export class AreaClienteService {
       throw new NotFoundException('Pacote do cliente nÃ£o encontrado');
     }
 
-    return pacote;
+    return {
+      id: pacote.id,
+      pacoteId: pacote.pacoteId,
+      nome: pacote.pacote?.nome ?? null,
+      descricao: pacote.pacote?.descricao ?? null,
+      sessoesTotal: pacote.sessoesTotal,
+      sessoesUsadas: pacote.sessoesUsadas,
+      sessoesRestantes: pacote.sessoesRestantes,
+      dataCompra: pacote.dataCompra,
+      dataValidade: pacote.dataValidade,
+      status: pacote.status,
+    };
   }
 
   async notificacoes(
@@ -577,6 +725,16 @@ export class AreaClienteService {
         where,
         skip,
         take,
+        select: {
+          id: true,
+          tipo: true,
+          titulo: true,
+          mensagem: true,
+          status: true,
+          dataLeitura: true,
+          createdAt: true,
+          updatedAt: true,
+        },
         orderBy: {
           createdAt: 'desc',
         },
@@ -596,6 +754,16 @@ export class AreaClienteService {
           empresaId,
           clienteId,
           status: StatusNotificacao.NAO_LIDA,
+        },
+        select: {
+          id: true,
+          tipo: true,
+          titulo: true,
+          mensagem: true,
+          status: true,
+          dataLeitura: true,
+          createdAt: true,
+          updatedAt: true,
         },
         orderBy: {
           createdAt: 'desc',
@@ -646,6 +814,16 @@ export class AreaClienteService {
         empresaId,
         clienteId,
       },
+      select: {
+        id: true,
+        tipo: true,
+        titulo: true,
+        mensagem: true,
+        status: true,
+        dataLeitura: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
   }
 
@@ -674,7 +852,6 @@ export class AreaClienteService {
           destinatario: true,
           mensagem: true,
           status: true,
-          erro: true,
           dataEnvio: true,
           createdAt: true,
           updatedAt: true,
@@ -741,15 +918,30 @@ export class AreaClienteService {
           empresaId,
           clienteId,
         },
-        include: {
-          servico: true,
-          profissional: {
+        select: {
+          id: true,
+          dataHoraInicio: true,
+          dataHoraFim: true,
+          status: true,
+          observacoes: true,
+          createdAt: true,
+          updatedAt: true,
+          servico: {
             select: {
-              id: true,
               nome: true,
             },
           },
-          unidade: true,
+          profissional: {
+            select: {
+              nome: true,
+              foto: true,
+            },
+          },
+          unidade: {
+            select: {
+              nome: true,
+            },
+          },
         },
         orderBy: {
           dataHoraInicio: 'desc',
@@ -764,6 +956,13 @@ export class AreaClienteService {
         orderBy: {
           createdAt: 'desc',
         },
+        select: {
+          id: true,
+          pontos: true,
+          tipo: true,
+          descricao: true,
+          createdAt: true,
+        },
         take: 100,
       }),
       this.prisma.clientePacote.findMany({
@@ -771,8 +970,22 @@ export class AreaClienteService {
           empresaId,
           clienteId,
         },
-        include: {
-          pacote: true,
+        select: {
+          id: true,
+          pacoteId: true,
+          sessoesTotal: true,
+          sessoesUsadas: true,
+          sessoesRestantes: true,
+          dataCompra: true,
+          dataValidade: true,
+          status: true,
+          createdAt: true,
+          pacote: {
+            select: {
+              nome: true,
+              descricao: true,
+            },
+          },
         },
         orderBy: {
           createdAt: 'desc',
@@ -787,6 +1000,16 @@ export class AreaClienteService {
         orderBy: {
           createdAt: 'desc',
         },
+        select: {
+          id: true,
+          tipo: true,
+          titulo: true,
+          mensagem: true,
+          status: true,
+          dataLeitura: true,
+          createdAt: true,
+          updatedAt: true,
+        },
         take: 100,
       }),
       this.prisma.mensagemWhatsApp.findMany({
@@ -796,6 +1019,16 @@ export class AreaClienteService {
         },
         orderBy: {
           createdAt: 'desc',
+        },
+        select: {
+          id: true,
+          tipo: true,
+          destinatario: true,
+          mensagem: true,
+          status: true,
+          dataEnvio: true,
+          createdAt: true,
+          updatedAt: true,
         },
         take: 100,
       }),
@@ -808,7 +1041,7 @@ export class AreaClienteService {
         titulo: item.servico?.nome ?? 'Agendamento',
         descricao: item.observacoes,
         status: item.status,
-        dados: item,
+        dados: this.toPortalAppointment(item),
       })),
       ...pontos.map((item) => ({
         tipo: 'PONTOS',
@@ -816,7 +1049,7 @@ export class AreaClienteService {
         titulo: item.tipo,
         descricao: item.descricao,
         status: item.tipo,
-        dados: item,
+        dados: this.toPortalPointMovement(item),
       })),
       ...pacotes.map((item) => ({
         tipo: 'PACOTE',
@@ -824,7 +1057,7 @@ export class AreaClienteService {
         titulo: item.pacote?.nome ?? 'Pacote',
         descricao: item.pacote?.descricao,
         status: item.status,
-        dados: item,
+        dados: this.toPortalPackage(item),
       })),
       ...notificacoes.map((item) => ({
         tipo: 'NOTIFICACAO',
@@ -832,7 +1065,7 @@ export class AreaClienteService {
         titulo: item.titulo,
         descricao: item.mensagem,
         status: item.status,
-        dados: item,
+        dados: this.toPortalNotification(item),
       })),
       ...mensagensWhatsapp.map((item) => ({
         tipo: 'WHATSAPP',
@@ -840,7 +1073,7 @@ export class AreaClienteService {
         titulo: item.tipo,
         descricao: item.mensagem,
         status: item.status,
-        dados: item,
+        dados: this.toPortalWhatsappMessage(item),
       })),
     ];
 
@@ -865,7 +1098,8 @@ export class AreaClienteService {
       clienteId,
     };
 
-    return this.agendamentosService.create(payload, empresaId);
+    const agendamento = await this.agendamentosService.create(payload, empresaId);
+    return this.toPortalAppointment(agendamento);
   }
 
   async reagendarAgendamento(
@@ -890,11 +1124,12 @@ export class AreaClienteService {
       );
     }
 
-    return this.agendamentosService.update(
+    const atualizado = await this.agendamentosService.update(
       id,
       dto,
       empresaId,
     );
+    return this.toPortalAppointment(atualizado);
   }
 
   async cancelarAgendamento(
@@ -918,8 +1153,89 @@ export class AreaClienteService {
       );
     }
 
-    return this.agendamentosService.cancelar(id, empresaId);
+    const cancelado = await this.agendamentosService.cancelar(id, empresaId);
+    return this.toPortalAppointment(cancelado);
   }
+
+  private toPortalAppointment(item: any) {
+    return {
+      id: item.id,
+      dataHoraInicio: item.dataHoraInicio,
+      dataHoraFim: item.dataHoraFim,
+      status: item.status,
+      observacoes: item.observacoes ?? null,
+      servico: item.servico
+        ? {
+            nome: item.servico.nome ?? null,
+          }
+        : null,
+      profissional: item.profissional
+        ? {
+            nome: item.profissional.nome ?? null,
+            foto: item.profissional.foto ?? null,
+          }
+        : null,
+      unidade: item.unidade
+        ? {
+            nome: item.unidade.nome ?? null,
+          }
+        : null,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    };
+  }
+
+  private toPortalPointMovement(item: any) {
+    return {
+      id: item.id,
+      pontos: item.pontos,
+      tipo: item.tipo,
+      descricao: item.descricao,
+      createdAt: item.createdAt,
+    };
+  }
+
+  private toPortalPackage(item: any) {
+    return {
+      id: item.id,
+      pacoteId: item.pacoteId,
+      nome: item.pacote?.nome ?? null,
+      descricao: item.pacote?.descricao ?? null,
+      sessoesTotal: item.sessoesTotal,
+      sessoesUsadas: item.sessoesUsadas,
+      sessoesRestantes: item.sessoesRestantes,
+      dataCompra: item.dataCompra,
+      dataValidade: item.dataValidade,
+      status: item.status,
+    };
+  }
+
+  private toPortalNotification(item: any) {
+    return {
+      id: item.id,
+      tipo: item.tipo,
+      titulo: item.titulo,
+      mensagem: item.mensagem,
+      status: item.status,
+      dataLeitura: item.dataLeitura ?? null,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    };
+  }
+
+  private toPortalWhatsappMessage(item: any) {
+    return {
+      id: item.id,
+      tipo: item.tipo,
+      destinatario: item.destinatario,
+      mensagem: item.mensagem,
+      status: item.status,
+      dataEnvio: item.dataEnvio ?? null,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    };
+  }
+
   private async buscarNivelAtual(
     empresaId: string,
     clienteId: string,
@@ -944,6 +1260,12 @@ export class AreaClienteService {
       },
       orderBy: {
         pontosMinimos: 'desc',
+      },
+      select: {
+        id: true,
+        nome: true,
+        pontosMinimos: true,
+        beneficios: true,
       },
     });
   }
