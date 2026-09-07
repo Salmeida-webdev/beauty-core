@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   Logger,
   NotFoundException,
@@ -53,11 +54,29 @@ export class AgendamentosService {
       },
     );
 
-    const agendamento = await this.prisma.agendamento.create({
-      data: {
-        ...createAgendamentoDto,
-        empresaId,
-      },
+    const agendamento = await this.prisma.$transaction(async (tx) => {
+      await this.lockAgenda(tx, empresaId, [
+        createAgendamentoDto.profissionalId,
+      ]);
+
+      const status =
+        createAgendamentoDto.status ?? StatusAgendamento.PENDENTE;
+
+      if (this.ocupaAgenda(status)) {
+        await this.assertNoScheduleConflict(tx, {
+          empresaId,
+          profissionalId: createAgendamentoDto.profissionalId,
+          dataHoraInicio: new Date(createAgendamentoDto.dataHoraInicio),
+          dataHoraFim: new Date(createAgendamentoDto.dataHoraFim),
+        });
+      }
+
+      return tx.agendamento.create({
+        data: {
+          ...createAgendamentoDto,
+          empresaId,
+        },
+      });
     });
 
     await this.automacoesService.processarEvento({
@@ -408,8 +427,59 @@ export class AgendamentosService {
       },
     );
 
-    const agendamentoAtual =
-      await this.findOne(id, empresaId);
+    const agendamentoResult = await this.prisma.$transaction(async (tx) => {
+      const atual = await tx.agendamento.findFirst({
+        where: { id, empresaId },
+      });
+
+      if (!atual) {
+        throw new NotFoundException('Agendamento não encontrado');
+      }
+
+      const profissionalId =
+        updateAgendamentoDto.profissionalId ?? atual.profissionalId;
+
+      await this.lockAgenda(tx, empresaId, [
+        atual.profissionalId,
+        profissionalId,
+      ]);
+
+      const atualBloqueado = await tx.agendamento.findFirst({
+        where: { id, empresaId },
+      });
+
+      if (!atualBloqueado) {
+        throw new NotFoundException('Agendamento não encontrado');
+      }
+
+      const status = updateAgendamentoDto.status ?? atualBloqueado.status;
+      const dataHoraInicio = updateAgendamentoDto.dataHoraInicio
+        ? new Date(updateAgendamentoDto.dataHoraInicio)
+        : atualBloqueado.dataHoraInicio;
+      const dataHoraFim = updateAgendamentoDto.dataHoraFim
+        ? new Date(updateAgendamentoDto.dataHoraFim)
+        : atualBloqueado.dataHoraFim;
+
+      if (this.ocupaAgenda(status)) {
+        await this.assertNoScheduleConflict(tx, {
+          empresaId,
+          profissionalId,
+          dataHoraInicio,
+          dataHoraFim,
+          excludeId: id,
+        });
+      }
+
+      const atualizado = await tx.agendamento.update({
+        where: { id },
+        data: updateAgendamentoDto,
+      });
+
+      return { anterior: atualBloqueado, atualizado };
+    });
+
+    const agendamentoAtual = agendamentoResult.anterior;
+    const agendamentoAtualizado = agendamentoResult.atualizado;
 
     const dadosAntes = {
       status: agendamentoAtual.status,
@@ -420,24 +490,6 @@ export class AgendamentosService {
       dataHoraInicio: agendamentoAtual.dataHoraInicio,
       dataHoraFim: agendamentoAtual.dataHoraFim,
     };
-
-    const result =
-      await this.prisma.agendamento.updateMany({
-        where: {
-          id,
-          empresaId,
-        },
-        data: updateAgendamentoDto,
-      });
-
-    if (result.count === 0) {
-      throw new NotFoundException(
-        'Agendamento não encontrado',
-      );
-    }
-
-    const agendamentoAtualizado =
-      await this.findOne(id, empresaId);
 
     if (
       updateAgendamentoDto.status &&
@@ -663,6 +715,78 @@ export class AgendamentosService {
     });
 
     return agendamentoCancelado;
+  }
+
+  private ocupaAgenda(status: StatusAgendamento) {
+    return [
+      StatusAgendamento.PENDENTE,
+      StatusAgendamento.CONFIRMADO,
+      StatusAgendamento.EM_ANDAMENTO,
+    ].includes(status);
+  }
+
+  /**
+   * Serializes writes for the same tenant/professional pair. The advisory
+   * transaction lock closes the check-then-insert race without requiring a
+   * Prisma-unsupported exclusion constraint in the schema.
+   */
+  private async lockAgenda(
+    tx: Prisma.TransactionClient,
+    empresaId: string,
+    profissionalIds: string[],
+  ) {
+    const keys = [...new Set(profissionalIds)]
+      .sort()
+      .map((profissionalId) => `${empresaId}:${profissionalId}`);
+
+    for (const key of keys) {
+      await tx.$queryRaw`
+        SELECT pg_advisory_xact_lock(hashtextextended(${key}, 0))
+      `;
+    }
+  }
+
+  private async assertNoScheduleConflict(
+    tx: Prisma.TransactionClient,
+    params: {
+      empresaId: string;
+      profissionalId: string;
+      dataHoraInicio: Date;
+      dataHoraFim: Date;
+      excludeId?: string;
+    },
+  ) {
+    const conflito = await tx.agendamento.findFirst({
+      where: {
+        empresaId: params.empresaId,
+        profissionalId: params.profissionalId,
+        status: {
+          in: [
+            StatusAgendamento.PENDENTE,
+            StatusAgendamento.CONFIRMADO,
+            StatusAgendamento.EM_ANDAMENTO,
+          ],
+        },
+        dataHoraInicio: {
+          lt: params.dataHoraFim,
+        },
+        dataHoraFim: {
+          gt: params.dataHoraInicio,
+        },
+        ...(params.excludeId ? { id: { not: params.excludeId } } : {}),
+      },
+      select: {
+        id: true,
+        dataHoraInicio: true,
+        dataHoraFim: true,
+      },
+    });
+
+    if (conflito) {
+      throw new ConflictException(
+        'O profissional já possui um agendamento nesse intervalo.',
+      );
+    }
   }
 
   private async validarRelacionamentosDoAgendamento(

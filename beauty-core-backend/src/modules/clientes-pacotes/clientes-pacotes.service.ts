@@ -207,6 +207,10 @@ export class ClientesPacotesService {
         where: {
           id,
           empresaId,
+          status: StatusClientePacote.ATIVO,
+          dataValidade: {
+            lt: new Date(),
+          },
         },
         data: {
           status: StatusClientePacote.VENCIDO,
@@ -214,7 +218,11 @@ export class ClientesPacotesService {
       });
 
       if (result.count === 0) {
-        throw new NotFoundException('Pacote do cliente não encontrado');
+        throw new BadRequestException(
+          clientePacote.status === StatusClientePacote.VENCIDO
+            ? 'Este pacote está vencido'
+            : 'Este pacote não está disponível para uso',
+        );
       }
 
       const pacoteVencido = await this.buscarClientePacoteOuFalhar(
@@ -291,34 +299,74 @@ export class ClientesPacotesService {
       throw new BadRequestException('Não há sessões restantes');
     }
 
-    const novasSessoesUsadas = clientePacote.sessoesUsadas + 1;
-    const novasSessoesRestantes = clientePacote.sessoesRestantes - 1;
-
-    const novoStatus =
-      novasSessoesRestantes === 0
-        ? StatusClientePacote.FINALIZADO
-        : StatusClientePacote.ATIVO;
-
     const result = await this.prisma.clientePacote.updateMany({
       where: {
         id,
         empresaId,
+        status: StatusClientePacote.ATIVO,
+        sessoesRestantes: {
+          gt: 0,
+        },
+        OR: [
+          { dataValidade: null },
+          { dataValidade: { gt: new Date() } },
+        ],
       },
       data: {
-        sessoesUsadas: novasSessoesUsadas,
-        sessoesRestantes: novasSessoesRestantes,
-        status: novoStatus,
+        sessoesUsadas: {
+          increment: 1,
+        },
+        sessoesRestantes: {
+          decrement: 1,
+        },
       },
     });
 
     if (result.count === 0) {
-      throw new NotFoundException('Pacote do cliente não encontrado');
+      const estadoAtual = await this.buscarClientePacoteOuFalhar(
+        empresaId,
+        id,
+      );
+
+      if (
+        estadoAtual.dataValidade &&
+        estadoAtual.dataValidade < new Date()
+      ) {
+        throw new BadRequestException('Este pacote está vencido');
+      }
+
+      if (estadoAtual.sessoesRestantes <= 0) {
+        throw new BadRequestException('Não há sessões restantes');
+      }
+
+      throw new BadRequestException('Este pacote não está disponível para uso');
     }
 
-    const clientePacoteAtualizado =
-      await this.buscarClientePacoteOuFalhar(empresaId, id);
+    let clientePacoteAtualizado = await this.buscarClientePacoteOuFalhar(
+      empresaId,
+      id,
+    );
 
-    if (novoStatus === StatusClientePacote.FINALIZADO) {
+    const finalizacao = await this.prisma.clientePacote.updateMany({
+      where: {
+        id,
+        empresaId,
+        status: StatusClientePacote.ATIVO,
+        sessoesRestantes: 0,
+      },
+      data: {
+        status: StatusClientePacote.FINALIZADO,
+      },
+    });
+
+    if (finalizacao.count === 1) {
+      clientePacoteAtualizado = await this.buscarClientePacoteOuFalhar(
+        empresaId,
+        id,
+      );
+    }
+
+    if (finalizacao.count === 1) {
       await this.automacoesService.processarEvento({
         empresaId,
         tipo: TipoEventoSistema.PACOTE_FINALIZADO,
