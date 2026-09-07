@@ -51,6 +51,7 @@ jobs:
       JWT_CLIENT_SECRET: ci_jwt_client_secret_change_me_1234567890_abcdef
       JWT_REFRESH_SECRET: ci_jwt_refresh_secret_change_me_1234567890_abcdef
       JWT_CLIENT_REFRESH_SECRET: ci_jwt_client_refresh_secret_change_me_1234567890_abcdef
+      OTP_SECRET: ci_otp_secret_change_me_1234567890_abcdef
       JWT_EXPIRES_IN: 8h
       JWT_CLIENT_EXPIRES_IN: 7d
       JWT_REFRESH_EXPIRES_IN: 30d
