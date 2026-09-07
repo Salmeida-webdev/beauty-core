@@ -1,0 +1,40 @@
+name: Production Preflight
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: production-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    name: Production validation
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: beauty-core-backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: beauty-core-backend/package-lock.json
+      - name: Validate required production secrets
+        env:
+          DATABASE_URL_PRODUCTION: ${{ secrets.DATABASE_URL_PRODUCTION }}
+          REDIS_URL_PRODUCTION: ${{ secrets.REDIS_URL_PRODUCTION }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_CLIENT_SECRET: ${{ secrets.JWT_CLIENT_SECRET }}
+          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+          JWT_CLIENT_REFRESH_SECRET: ${{ secrets.JWT_CLIENT_REFRESH_SECRET }}
+        run: test -n "$DATABASE_URL_PRODUCTION" && test -n "$REDIS_URL_PRODUCTION" && test -n "$JWT_SECRET" && test -n "$JWT_CLIENT_SECRET" && test -n "$JWT_REFRESH_SECRET" && test -n "$JWT_CLIENT_REFRESH_SECRET"
+      - run: npm ci
+      - run: npm run prisma:validate
+      - run: npm run prisma:generate
+      - run: npm run build
+      - run: npm audit --omit=dev
+      - run: docker build -t beauty-core-api:production-candidate .
