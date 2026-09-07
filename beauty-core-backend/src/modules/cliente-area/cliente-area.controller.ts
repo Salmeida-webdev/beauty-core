@@ -26,7 +26,7 @@ type ClienteRequest = Request & {
   user: ClienteAuthUser;
 };
 
-@ApiTags('Cliente Area')
+@ApiTags('Cliente Area (deprecated)')
 @ApiBearerAuth('JWT Cliente')
 @UseGuards(ClienteAuthGuard)
 @Controller('cliente-area')

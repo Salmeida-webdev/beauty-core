@@ -215,7 +215,11 @@ Regras:
 
 ---
 
-## 9. Endpoint /cliente-area/me
+> **Compatibilidade:** o namespace `/cliente-area` está depreciado e permanece
+> apenas para compatibilidade com clientes antigos. Novos consumidores devem
+> usar exclusivamente `/area-cliente`, que é a API canônica do Portal Cliente.
+
+## 9. Endpoint /cliente-area/me (deprecated)
 
 Objetivo: retornar o perfil autenticado do cliente.
 

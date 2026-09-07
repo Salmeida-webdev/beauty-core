@@ -109,6 +109,7 @@ import { BackupModule } from './backup/backup.module';
     ArquivosModule,
 
     AreaClienteModule,
+    // Compatibility namespace only; its service delegates to AreaClienteService.
     ClienteAreaModule,
     AuthClienteModule,
 
@@ -137,7 +138,6 @@ export class AppModule implements NestModule {
     consumer.apply(MetricsMiddleware).forRoutes('*');
   }
 }
-
 
 
 
