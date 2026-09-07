@@ -1,0 +1,33 @@
+name: Dependency Security Audit
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    - cron: "40 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            beauty-core-backend/package-lock.json
+            beauty-core-ui/package-lock.json
+      - name: Backend production audit
+        working-directory: beauty-core-backend
+        run: npm ci && npm audit --omit=dev
+      - name: Frontend production audit
+        working-directory: beauty-core-ui
+        run: npm ci && npm audit --omit=dev

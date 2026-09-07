@@ -1,0 +1,183 @@
+﻿@baseUrl = http://localhost:3000
+@slug = beauty-core-demo
+@telefone = 83999999999
+
+### Depois de solicitar o código, copie o codigoDesenvolvimento aqui:
+@codigo = 934112
+
+### Depois de verificar o código, copie o access_token aqui:
+@clienteToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjNGRmNDRkOS03ZjFlLTRmOGYtOGM0MS01YjIxYjFkMGYxMTEiLCJjbGllbnRlSWQiOiJjNGRmNDRkOS03ZjFlLTRmOGYtOGM0MS01YjIxYjFkMGYxMTEiLCJ0ZWxlZm9uZSI6IjgzOTk5OTk5OTk5Iiwicm9sZSI6IkNMSUVOVEUiLCJlbXByZXNhSWQiOiIxMTJlZGFhNi00YjQ2LTQxNmUtYjA5MC1jMGMzZThiZTk4ZjYiLCJpYXQiOjE3ODE4MDQ1NzAsImV4cCI6MTc4MjQwOTM3MH0.nW6QXODpg-XHSjSkGHfkSSIr4AGgW8fk9oysneb4VYA
+
+@pacoteId = coloque-um-pacote-id-aqui
+@notificacaoId = coloque-uma-notificacao-id-aqui
+
+
+### =====================================================
+### CHAT 29 — TENANT PUBLICO
+### =====================================================
+
+### 1. Resolver tenant público oficial do Chat 29
+GET {{baseUrl}}/public/tenant/{{slug}}
+
+
+### 2. Resolver tenant público antigo por slug — compatibilidade
+GET {{baseUrl}}/tenant-publico/slug/{{slug}}
+
+
+### 3. Tenant inválido deve retornar erro
+GET {{baseUrl}}/public/tenant/tenant-inexistente
+
+
+### =====================================================
+### CHAT 29 — AUTH CLIENTE PUBLICO POR TENANT
+### =====================================================
+
+### 4. Solicitar OTP por slug — rota oficial Chat 29
+POST {{baseUrl}}/public/{{slug}}/auth-cliente/solicitar-codigo
+Content-Type: application/json
+
+{
+  "telefone": "{{telefone}}"
+}
+
+
+### 5. Verificar OTP por slug — rota oficial Chat 29
+### Copie o codigoDesenvolvimento retornado acima e cole na variável @codigo.
+POST {{baseUrl}}/public/{{slug}}/auth-cliente/verificar-codigo
+Content-Type: application/json
+
+{
+  "telefone": "{{telefone}}",
+  "codigo": "{{codigo}}"
+}
+
+
+### 6. Auth Cliente legado — solicitar código por body com slug
+POST {{baseUrl}}/auth-cliente/solicitar-codigo
+Content-Type: application/json
+
+{
+  "telefone": "{{telefone}}",
+  "slug": "{{slug}}"
+}
+
+
+### 7. Auth Cliente legado — verificar código por body com slug
+POST {{baseUrl}}/auth-cliente/verificar-codigo
+Content-Type: application/json
+
+{
+  "telefone": "{{telefone}}",
+  "slug": "{{slug}}",
+  "codigo": "{{codigo}}"
+}
+
+
+### =====================================================
+### CHAT 29 — CLIENTE AREA PROTEGIDA
+### =====================================================
+
+### 8. Perfil público do cliente logado
+GET {{baseUrl}}/cliente-area/me
+Authorization: Bearer {{clienteToken}}
+
+
+### 9. Dashboard mobile
+GET {{baseUrl}}/cliente-area/me/dashboard
+Authorization: Bearer {{clienteToken}}
+
+
+### 10. Todos os agendamentos do cliente
+GET {{baseUrl}}/cliente-area/me/agendamentos?page=1&limit=10
+Authorization: Bearer {{clienteToken}}
+
+
+### 11. Próximos agendamentos
+GET {{baseUrl}}/cliente-area/me/proximos-agendamentos?page=1&limit=10
+Authorization: Bearer {{clienteToken}}
+
+
+### 12. Último agendamento
+GET {{baseUrl}}/cliente-area/me/ultimo-agendamento
+Authorization: Bearer {{clienteToken}}
+
+
+### 13. Fidelidade mobile
+GET {{baseUrl}}/cliente-area/me/fidelidade
+Authorization: Bearer {{clienteToken}}
+
+
+### 14. Histórico de pontos
+GET {{baseUrl}}/cliente-area/me/pontos?page=1&limit=10
+Authorization: Bearer {{clienteToken}}
+
+
+### 15. Benefícios disponíveis
+GET {{baseUrl}}/cliente-area/me/beneficios
+Authorization: Bearer {{clienteToken}}
+
+
+### 16. Pacotes separados por status
+GET {{baseUrl}}/cliente-area/me/pacotes
+Authorization: Bearer {{clienteToken}}
+
+
+### 17. Detalhe de pacote do cliente
+### Troque @pacoteId por um ID real retornado na request anterior.
+GET {{baseUrl}}/cliente-area/me/pacotes/{{pacoteId}}
+Authorization: Bearer {{clienteToken}}
+
+
+### 18. Notificações do cliente
+GET {{baseUrl}}/cliente-area/me/notificacoes?page=1&limit=10
+Authorization: Bearer {{clienteToken}}
+
+
+### 19. Notificações não lidas
+GET {{baseUrl}}/cliente-area/me/notificacoes/nao-lidas
+Authorization: Bearer {{clienteToken}}
+
+
+### 20. Marcar notificação como lida
+### Troque @notificacaoId por um ID real retornado na listagem de notificações.
+PATCH {{baseUrl}}/cliente-area/me/notificacoes/{{notificacaoId}}/lida
+Authorization: Bearer {{clienteToken}}
+
+
+### 21. Histórico WhatsApp do cliente
+GET {{baseUrl}}/cliente-area/me/mensagens-whatsapp?page=1&limit=10
+Authorization: Bearer {{clienteToken}}
+
+
+### 22. Histórico consolidado
+GET {{baseUrl}}/cliente-area/me/historico?page=1&limit=20
+Authorization: Bearer {{clienteToken}}
+
+
+### =====================================================
+### CHAT 29 — TESTES DE SEGURANÇA
+### =====================================================
+
+### 23. ClienteArea sem token deve retornar 401
+GET {{baseUrl}}/cliente-area/me/dashboard
+
+
+### 24. Rota inválida tentando usar clienteId na URL deve retornar 404
+GET {{baseUrl}}/cliente-area/cliente-id-falso/dashboard
+Authorization: Bearer {{clienteToken}}
+
+
+### 25. Pacote inexistente ou de outro cliente deve retornar 404
+GET {{baseUrl}}/cliente-area/me/pacotes/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{clienteToken}}
+
+
+### 26. Notificação inexistente ou de outro cliente deve retornar 404
+PATCH {{baseUrl}}/cliente-area/me/notificacoes/00000000-0000-0000-0000-000000000000/lida
+Authorization: Bearer {{clienteToken}}
+
+
+### 27. Token cliente tentando acessar rota administrativa
+### Esperado: 401 ou 403, dependendo da configuração dos guards.
+GET {{baseUrl}}/clientes
+Authorization: Bearer {{clienteToken}}

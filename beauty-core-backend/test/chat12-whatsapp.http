@@ -1,0 +1,206 @@
+@BASE_URL=http://localhost:3000
+@TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMmUzN2UzZi02MTk2LTQ2YjYtYmFhYy1iZGZhMjliYjA0OTUiLCJlbWFpbCI6ImFkbWluQGJlYXV0eWNvcmUuY29tIiwicm9sZSI6IkFETUlOIiwiZW1wcmVzYUlkIjoiNWE4YzdjY2QtMjk3Ni00ODgzLTg4ZWEtZWFmNzcyODMyNWQ3IiwiaWF0IjoxNzgxMjgwODQ1LCJleHAiOjE3ODEzNjcyNDV9.EhKD-ewD5RIYnGMbBhKWtqEqDF8kSm3BoLYm2c1qe_c
+@TEMPLATE_ID=203e81b3-a554-4cda-9d25-b2c78a85fd9a
+@MENSAGEM_ID=1e41334d-41ad-43f9-b737-f7676b990d3f
+@CAMPANHA_ID=0886ba34-81cb-47c9-abcb-52f20ad854e2
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@beautycore.com",
+  "senha": "123456"
+}
+###
+### TESTE TOKEN
+###
+
+GET {{BASE_URL}}/auth/me
+Authorization: Bearer {{TOKEN}}
+
+###
+### 1. CRIAR CONFIGURAÇÃO WHATSAPP
+###
+
+POST {{BASE_URL}}/configuracao-whatsapp
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "ativo": true,
+  "canal": "MODO_DEMONSTRACAO",
+  "numeroWhatsApp": "83999999999",
+  "mensagemSaudacao": "Olá! Bem-vindo ao Beauty Core.",
+  "mensagemAusencia": "Estamos ausentes no momento.",
+  "usarModoDemonstracao": true
+}
+
+###
+### 2. BUSCAR CONFIGURAÇÃO
+###
+
+GET {{BASE_URL}}/configuracao-whatsapp
+Authorization: Bearer {{TOKEN}}
+
+###
+### 3. ATUALIZAR CONFIGURAÇÃO
+###
+
+PATCH {{BASE_URL}}/configuracao-whatsapp
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "mensagemSaudacao": "Olá! Obrigado por entrar em contato.",
+  "usarModoDemonstracao": true
+}
+
+###
+### 4. GERAR LINK GRATUITO
+###
+
+GET {{BASE_URL}}/configuracao-whatsapp/link?mensagem=Olá,%20gostaria%20de%20agendar%20um%20horário.
+Authorization: Bearer {{TOKEN}}
+
+### 5. CRIAR TEMPLATE
+
+POST {{BASE_URL}}/templates-whatsapp
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "nome": "Confirmacao Agendamento",
+  "tipo": "CONFIRMACAO_AGENDAMENTO",
+  "titulo": "Agendamento Confirmado",
+  "mensagem": "Olá NOME_CLIENTE, seu horário foi confirmado para DATA_AGENDAMENTO às HORA_AGENDAMENTO.",
+  "ativo": true
+}
+###
+### 6. LISTAR TEMPLATES
+###
+
+GET {{BASE_URL}}/templates-whatsapp
+Authorization: Bearer {{TOKEN}}
+
+###
+### 7. BUSCAR TEMPLATE
+###
+
+GET {{BASE_URL}}/templates-whatsapp/{{TEMPLATE_ID}}
+Authorization: Bearer {{TOKEN}}
+
+###
+### 8. ATUALIZAR TEMPLATE
+###
+
+PATCH {{BASE_URL}}/templates-whatsapp/{{TEMPLATE_ID}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "titulo": "Confirmação Oficial"
+}
+
+###
+### 9. INATIVAR TEMPLATE
+###
+
+PATCH {{BASE_URL}}/templates-whatsapp/{{TEMPLATE_ID}}/inativar
+Authorization: Bearer {{TOKEN}}
+
+###
+### 10. CRIAR MENSAGEM
+###
+
+POST {{BASE_URL}}/mensagens-whatsapp
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "tipo": "CONFIRMACAO_AGENDAMENTO",
+  "destinatario": "83999999999",
+  "mensagem": "Mensagem criada para teste."
+}
+
+###
+### 11. ENVIAR MENSAGEM SIMULADA
+###
+
+POST {{BASE_URL}}/mensagens-whatsapp/enviar
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "tipo": "CONFIRMACAO_AGENDAMENTO",
+  "destinatario": "83999999999",
+  "mensagem": "Mensagem simulada enviada pelo Chat 12."
+}
+
+###
+### 12. LISTAR MENSAGENS
+###
+
+GET {{BASE_URL}}/mensagens-whatsapp
+Authorization: Bearer {{TOKEN}}
+
+###
+### 13. BUSCAR MENSAGEM
+###
+
+GET {{BASE_URL}}/mensagens-whatsapp/{{MENSAGEM_ID}}
+Authorization: Bearer {{TOKEN}}
+
+###
+### 14. CANCELAR MENSAGEM
+###
+
+PATCH {{BASE_URL}}/mensagens-whatsapp/{{MENSAGEM_ID}}/cancelar
+Authorization: Bearer {{TOKEN}}
+
+###
+### 15. CRIAR CAMPANHA
+###
+
+POST {{BASE_URL}}/campanhas-whatsapp
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "nome": "Campanha Junho",
+  "descricao": "Campanha demonstrativa",
+  "tipo": "CAMPANHA",
+  "mensagem": "Promoção especial para nossos clientes.",
+  "totalDestinatarios": 50
+}
+
+###
+### 16. LISTAR CAMPANHAS
+###
+
+GET {{BASE_URL}}/campanhas-whatsapp
+Authorization: Bearer {{TOKEN}}
+
+###
+### 17. BUSCAR CAMPANHA
+###
+
+GET {{BASE_URL}}/campanhas-whatsapp/{{CAMPANHA_ID}}
+Authorization: Bearer {{TOKEN}}
+
+###
+### 18. ATUALIZAR CAMPANHA
+###
+
+PATCH {{BASE_URL}}/campanhas-whatsapp/{{CAMPANHA_ID}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "descricao": "Campanha demonstrativa atualizada."
+}
+
+###
+### 19. CANCELAR CAMPANHA
+###
+
+PATCH {{BASE_URL}}/campanhas-whatsapp/{{CAMPANHA_ID}}/cancelar
+Authorization: Bearer {{TOKEN}}

@@ -1,0 +1,96 @@
+@BASE_URL=http://localhost:3000
+@TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMmUzN2UzZi02MTk2LTQ2YjYtYmFhYy1iZGZhMjliYjA0OTUiLCJlbWFpbCI6ImFkbWluQGJlYXV0eWNvcmUuY29tIiwicm9sZSI6IkFETUlOIiwiZW1wcmVzYUlkIjoiNWE4YzdjY2QtMjk3Ni00ODgzLTg4ZWEtZWFmNzcyODMyNWQ3IiwiaWF0IjoxNzgxMjg4NDIzLCJleHAiOjE3ODEzNzQ4MjN9.7B8HGLskvYKsT07WPUTIWhrE_M5bJqT8gH65ACDdWNk
+@CLIENTE_ID=d16ec9e9-77eb-4c74-b04a-be7d7114e12b
+@PACOTE_ID=8e8a5ae7-d7ab-42d9-9436-a1c621966293
+@NOTIFICACAO_ID=CO2a5b8126-b1ea-4196-bdb0-0629e002e796
+
+### 1. Perfil do Cliente
+GET {{BASE_URL}}/area-cliente/perfil/{{CLIENTE_ID}}
+Authorization: Bearer {{TOKEN}}
+
+### 2. Atualizar Perfil do Cliente
+PATCH {{BASE_URL}}/area-cliente/perfil/{{CLIENTE_ID}}
+Authorization: Bearer {{TOKEN}}
+Content-Type: application/json
+
+{
+  "telefone": "83999999999",
+  "email": "cliente.portal@teste.com",
+  "observacoes": "Atualizado pela Área do Cliente",
+  "foto": "https://exemplo.com/foto-cliente.jpg"
+}
+
+### 3. Todos os Agendamentos
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/agendamentos
+Authorization: Bearer {{TOKEN}}
+
+### 4. Agendamentos Confirmados
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/agendamentos?status=confirmados
+Authorization: Bearer {{TOKEN}}
+
+### 5. Agendamentos Cancelados
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/agendamentos?status=cancelados
+Authorization: Bearer {{TOKEN}}
+
+### 6. Agendamentos Concluídos
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/agendamentos?status=concluidos
+Authorization: Bearer {{TOKEN}}
+
+### 7. Agendamentos Pendentes
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/agendamentos?status=pendentes
+Authorization: Bearer {{TOKEN}}
+
+### 8. Próximos Agendamentos
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/proximos-agendamentos
+Authorization: Bearer {{TOKEN}}
+
+### 9. Último Agendamento
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/ultimo-agendamento
+Authorization: Bearer {{TOKEN}}
+
+### 10. Fidelidade
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/fidelidade
+Authorization: Bearer {{TOKEN}}
+
+### 11. Histórico de Pontos
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/pontos
+Authorization: Bearer {{TOKEN}}
+
+### 12. Benefícios
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/beneficios
+Authorization: Bearer {{TOKEN}}
+
+### 13. Pacotes
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/pacotes
+Authorization: Bearer {{TOKEN}}
+
+### 14. Detalhes de Pacote
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/pacotes/{{PACOTE_ID}}
+Authorization: Bearer {{TOKEN}}
+
+### 15. Notificações
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/notificacoes
+Authorization: Bearer {{TOKEN}}
+
+### 16. Notificações Não Lidas
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/notificacoes/nao-lidas
+Authorization: Bearer {{TOKEN}}
+
+### 17. Marcar Notificação como Lida
+PATCH {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/notificacoes/{{NOTIFICACAO_ID}}/lida
+Authorization: Bearer {{TOKEN}}
+
+### 18. Mensagens WhatsApp
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/mensagens-whatsapp
+Authorization: Bearer {{TOKEN}}
+
+### 19. Dashboard Cliente
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/dashboard
+Authorization: Bearer {{TOKEN}}
+
+### 20. Histórico Consolidado
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/historico
+Authorization: Bearer {{TOKEN}}
+###
+GET {{BASE_URL}}/area-cliente/{{CLIENTE_ID}}/pacotes
+Authorization: Bearer {{TOKEN}}

@@ -1,0 +1,83 @@
+﻿@baseUrl = http://localhost:3000
+@adminToken = COLE_TOKEN_ADMIN_AQUI
+@arquivoPrivadoId = COLE_ID_ARQUIVO_PRIVADO_AQUI
+
+### Chat 31 — Login Admin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@beautycore.com",
+  "senha": "123456"
+}
+
+### Chat 31 — Upload privado PDF válido
+POST {{baseUrl}}/arquivos/private/documentos
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="contrato-chat31.pdf"
+Content-Type: application/pdf
+
+< ./files/contrato-chat31.pdf
+--boundary
+Content-Disposition: form-data; name="observacao"
+
+Contrato privado de teste do Chat 31
+--boundary--
+
+### Chat 31 — Upload privado sem token
+POST {{baseUrl}}/arquivos/private/documentos
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="contrato-chat31.pdf"
+Content-Type: application/pdf
+
+< ./files/contrato-chat31.pdf
+--boundary--
+
+### Chat 31 — Download protegido autorizado
+GET {{baseUrl}}/arquivos/{{arquivoPrivadoId}}/download
+Authorization: Bearer {{adminToken}}
+
+### Chat 31 — Download protegido sem token
+GET {{baseUrl}}/arquivos/{{arquivoPrivadoId}}/download
+
+### Chat 31 — Gerar signed URL
+GET {{baseUrl}}/arquivos/{{arquivoPrivadoId}}/signed-url
+Authorization: Bearer {{adminToken}}
+
+### Chat 31 — Signed URL inválida
+GET {{baseUrl}}/arquivos/signed/token-invalido
+
+### Chat 31 — Pasta private não pública
+GET {{baseUrl}}/uploads/private/teste.txt
+
+### Chat 31 — Pasta temp não pública
+GET {{baseUrl}}/uploads/temp/teste.txt
+
+### Chat 31 — EXE bloqueado
+POST {{baseUrl}}/arquivos/private/documentos
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="malware.exe"
+Content-Type: application/octet-stream
+
+< ./files/malware.exe
+--boundary--
+
+### Chat 31 — PHP bloqueado
+POST {{baseUrl}}/arquivos/private/documentos
+Authorization: Bearer {{adminToken}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="shell.php"
+Content-Type: application/x-httpd-php
+
+< ./files/shell.php
+--boundary--

@@ -1,98 +1,230 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+﻿# Beauty Core 1.0
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Beauty Core 1.0 é uma plataforma SaaS white-label para gestão de negócios de estética, beleza e serviços recorrentes.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+A plataforma foi construída com foco em backend enterprise, multiempresa forte, segurança, automação operacional, observabilidade, backup, LGPD, CI/CD e preparação para operação comercial com múltiplos clientes.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 1. Visão Geral
 
-## Project setup
+O Beauty Core 1.0 consolida uma base backend profissional para produtos SaaS white-label.
 
-```bash
-$ npm install
-```
+Principais capacidades:
 
-## Compile and run the project
+- Backend NestJS modular.
+- Multiempresa forte com empresaId.
+- SUPER_ADMIN global.
+- Perfis ADMIN, GERENTE, RECEPCAO, PROFISSIONAL e CLIENTE.
+- Portal Cliente.
+- Auth público por tenant.
+- JWT, refresh token, sessões e logout.
+- Uploads privados.
+- Storage avançado.
+- BullMQ com workers, retry, backoff e DLQ.
+- Scheduler com locks distribuídos.
+- Idempotência em jobs críticos.
+- Testes enterprise.
+- Docker para desenvolvimento, staging e produção.
+- Observabilidade com health checks, Prometheus e base Grafana.
+- Backup, restore, LGPD e Disaster Recovery.
+- CI/CD com GitHub Actions, quality gates e smoke tests.
 
-```bash
-# development
-$ npm run start
+---
 
-# watch mode
-$ npm run start:dev
+## 2. Objetivo da Plataforma
 
-# production mode
-$ npm run start:prod
-```
+O objetivo do Beauty Core é servir como base SaaS reutilizável para negócios de estética, beleza e serviços recorrentes.
 
-## Run tests
+A plataforma permite gerenciar clientes, usuários, serviços, unidades, agendamentos, financeiro, comissões, fidelidade, pacotes, arquivos, notificações, campanhas e rotinas operacionais.
 
-```bash
-# unit tests
-$ npm run test
+Do ponto de vista comercial, o Beauty Core foi projetado para venda como solução premium white-label, com possibilidade de personalização por cliente, domínio próprio, identidade visual própria e evolução para frontend web e aplicativo mobile.
 
-# e2e tests
-$ npm run test:e2e
+---
 
-# test coverage
-$ npm run test:cov
-```
+## 3. Arquitetura
 
-## Deployment
+Visão simplificada:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Admin Web Futuro -> Backend NestJS -> PostgreSQL
+Portal Cliente Futuro -> Backend NestJS -> Redis/BullMQ
+Mobile Futuro -> Backend NestJS -> Storage/Uploads
+Scheduler -> BullMQ -> Workers
+GitHub Actions -> Build/Test/Coverage -> Docker/Deploy
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Documentação detalhada:
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+- docs/architecture.md
+- docs/backend-guide.md
+- docs/multi-tenant.md
+- docs/security.md
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 4. Stack Tecnológica
 
-Check out a few resources that may come in handy when working with NestJS:
+- Backend: NestJS + TypeScript.
+- ORM: Prisma.
+- Banco de dados: PostgreSQL.
+- Filas: BullMQ.
+- Cache, locks e filas: Redis.
+- Scheduler: Nest Schedule.
+- Autenticação: JWT + Refresh Token + Sessões.
+- Uploads: Multer + Storage Provider.
+- Observabilidade: Health Checks + Prometheus.
+- Documentação de API: Swagger / OpenAPI.
+- Testes: Jest + Supertest.
+- Containers: Docker + Docker Compose.
+- CI/CD: GitHub Actions.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## 5. Estrutura do Projeto
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- src/: código-fonte backend.
+- prisma/: schema e migrations.
+- test/: testes unitários e E2E.
+- docs/: documentação técnica, operacional e comercial.
+- scripts/: scripts de CI, smoke, backup e operação.
+- .github/workflows/: pipelines GitHub Actions.
+- Dockerfile: imagem da aplicação.
+- docker-compose*.yml: stacks de execução.
+- package.json: scripts e dependências.
 
-## Stay in touch
+Principais áreas do backend: Auth, Auth Cliente, Portal Cliente, Empresas, Usuários, Clientes, Serviços, Unidades, Agendamentos, Financeiro, Comissões, Fidelidade, Pacotes, Arquivos, Auditoria, WhatsApp, Queues, Scheduler, Health, Backup e LGPD.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+## 6. Instalação
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Instalar dependências:
+
+npm install
+
+Configurar ambiente a partir dos arquivos .env*.example.
+
+Validar Prisma:
+
+npm run prisma:validate
+
+Aplicar migrations em ambiente preparado:
+
+npm run prisma:migrate:deploy
+
+---
+
+## 7. Desenvolvimento
+
+Executar em modo desenvolvimento:
+
+npm run start:dev
+
+Swagger: /api/docs
+
+Health checks: /health, /health/live, /health/ready, /health/full e /health/summary.
+
+Métricas: /metrics.
+
+---
+
+## 8. Docker
+
+O projeto possui arquivos Docker Compose para desenvolvimento, staging, produção, observabilidade e backup.
+
+Arquivos identificados:
+
+- docker-compose.yml
+- docker-compose.dev.yml
+- docker-compose.staging.yml
+- docker-compose.prod.yml
+- docker-compose.observability.yml
+- docker-compose.backup.chat26.yml
+
+Documentação relacionada: docs/docker.md, docs/deployment.md e docs/production-checklist.md.
+
+---
+
+## 9. Testes e Coverage
+
+Testes principais: npm run test.
+
+Testes E2E: npm run test:e2e.
+
+Coverage consolidado: npm run test:all:cov e npm run coverage:check.
+
+---
+
+## 10. Observabilidade
+
+A plataforma possui logs operacionais, auditoria, health checks, readiness, liveness, health completo, métricas Prometheus, base Grafana ready, métricas HTTP, métricas de dependências e métricas de filas.
+
+Documento principal: docs/observability.md.
+
+---
+
+## 11. Backup, Restore e Disaster Recovery
+
+A plataforma contempla backup PostgreSQL, backup Redis, backup de uploads, restore, limpeza de backups, RPO, RTO, Disaster Recovery e continuidade operacional.
+
+Documentos relacionados: docs/backup-recovery.md, docs/disaster-recovery.md e docs/business-continuity.md.
+
+---
+
+## 12. LGPD
+
+O Beauty Core contempla exportação de dados, anonimização, retenção, auditoria, proteção contra vazamento entre tenants e preservação de integridade financeira e operacional.
+
+Documento principal: docs/lgpd.md.
+
+---
+
+## 13. CI/CD
+
+O projeto possui workflows GitHub Actions para CI, Docker, staging, produção, quality gates, build, testes, coverage e smoke tests.
+
+Documentos relacionados: docs/ci-cd.md e docs/deploy-pipeline.md.
+
+---
+
+## 14. Deploy
+
+Fluxo recomendado: validar ambiente, instalar dependências, validar Prisma, executar build, executar testes, subir Docker, aplicar migrations, validar health checks, executar smoke tests e monitorar logs/métricas.
+
+Documento principal: docs/deployment.md.
+
+---
+
+## 15. Licenciamento
+
+Beauty Core 1.0 é uma base proprietária para operação SaaS white-label.
+
+O uso, revenda, sublicenciamento, implantação para terceiros e exploração comercial devem ser definidos por contrato próprio.
+
+---
+
+## 16. Roadmap
+
+- Frontend administrativo web.
+- Portal cliente web completo.
+- Aplicativo mobile.
+- Painel master comercial.
+- Billing SaaS.
+- Integração oficial WhatsApp.
+- Gateway de pagamento.
+- Temas white-label.
+- Relatórios avançados.
+- Recursos com IA.
+
+---
+
+## 17. Contato Técnico
+
+- Responsável técnico/comercial: Segundo Almeida.
+- Projeto: Beauty Core 1.0.
+- Área: SaaS white-label para estética, beleza e serviços recorrentes.
+
+---
+
+## 18. Índice da Documentação
+
+Consulte: docs/index.md.

@@ -54,3 +54,108 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+/generated/prisma
+
+# Beauty Core - local runtime files
+/uploads
+/uploads/
+/*.sql
+/*.tar.gz
+*.backup.*.json
+*.backup.*.yml
+docker-compose.backup*.yml
+package.backup*.json
+
+# Beauty Core - local backup folders
+/docs/backups
+/docs/backups/
+
+# Docker local artifacts
+*.tar
+*.tar.gz
+
+# Local database dumps
+backup-*.sql
+*-backup.sql
+
+# Local SQL scripts
+corrigir_roles.sql
+# Chat 34 - Environment secrets
+.env.*
+!.env.example
+!.env.dev.example
+!.env.staging.example
+!.env.prod.example
+!.env.production.example
+uploads/private
+uploads/temp
+# Docker / backups
+.chat34-backup-*
+*.dump
+
+# Beauty Core 1.0 â€” Chat 37 CI/CD security
+
+# Env reais nunca devem ir para o Git
+.env
+.env.*
+!.env.example
+!.env.dev.example
+!.env.staging.example
+!.env.prod.example
+!.env.production.example
+
+# Coverage local pode ser regenerado e enviado como artifact no CI
+coverage/
+.nyc_output/
+
+# Backups, logs e arquivos operacionais sensÃ­veis
+backups/
+logs/
+*.log
+*.bak
+*.backup
+
+# Uploads privados e temporÃ¡rios
+uploads/private/
+uploads/temp/
+
+# Artifacts locais de release candidate
+beauty-core-*-source.tar.gz
+# Chat/release temporary backups
+.backup-*/
+.chat*-backup-*/
+.chat34-*/
+.chat35-*/
+.chat36-*/
+.chat37-*/
+.chat38-*/
+.chat39-*/
+.chat35-*.txt
+.chat35-*.js
+.tmp-*
+
+# Release artifacts generated locally
+.release/*.zip
+.release/*.tar
+.release/*.tar.gz
+
+# Temporary patch scripts from development chats
+scripts/chat*.js
+scripts/chat*.cjs
+scripts/chat*.ps1
+
+# Prisma local schema backups
+prisma/*.backup.prisma
+prisma/schema.*.backup.prisma
+
+# Redundant Jest TypeScript config
+jest.config.ts
+
+# Local manual request/test artifacts
+requests.http
+teste-observacoes.json
+teste-perfil-valido.json
+teste-telefone.json
+teste/
+tests/

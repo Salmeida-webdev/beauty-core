@@ -1,0 +1,7 @@
+export enum RoleSistema {
+  ADMIN = 'ADMIN',
+  GERENTE = 'GERENTE',
+  RECEPCAO = 'RECEPCAO',
+  PROFISSIONAL = 'PROFISSIONAL',
+  CLIENTE = 'CLIENTE',
+}

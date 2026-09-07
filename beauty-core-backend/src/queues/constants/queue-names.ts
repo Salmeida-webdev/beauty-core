@@ -1,0 +1,32 @@
+export const NOTIFICACOES_QUEUE = 'notificacoes';
+export const WHATSAPP_QUEUE = 'whatsapp';
+export const CAMPANHAS_QUEUE = 'campanhas';
+export const ANIVERSARIOS_QUEUE = 'aniversarios';
+export const RELATORIOS_QUEUE = 'relatorios';
+
+export const DLQ_QUEUE = 'dlq';
+
+export const NOTIFICACOES_QUEUE_PROVIDER = 'NOTIFICACOES_QUEUE_PROVIDER';
+export const WHATSAPP_QUEUE_PROVIDER = 'WHATSAPP_QUEUE_PROVIDER';
+export const CAMPANHAS_QUEUE_PROVIDER = 'CAMPANHAS_QUEUE_PROVIDER';
+export const ANIVERSARIOS_QUEUE_PROVIDER = 'ANIVERSARIOS_QUEUE_PROVIDER';
+export const RELATORIOS_QUEUE_PROVIDER = 'RELATORIOS_QUEUE_PROVIDER';
+export const DLQ_QUEUE_PROVIDER = 'DLQ_QUEUE_PROVIDER';
+
+export enum QueueJobStatus {
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  DLQ = 'DLQ',
+}
+
+export const QUEUE_NAMES = [
+  NOTIFICACOES_QUEUE,
+  WHATSAPP_QUEUE,
+  CAMPANHAS_QUEUE,
+  ANIVERSARIOS_QUEUE,
+  RELATORIOS_QUEUE,
+] as const;
+
+export type BeautyCoreQueueName = (typeof QUEUE_NAMES)[number];

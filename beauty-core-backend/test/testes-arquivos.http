@@ -1,0 +1,258 @@
+
+###
+### =========================================================
+### BEAUTY CORE 1.0 — CHAT 14
+### TESTES — UPLOADS E GESTÃO DE ARQUIVOS
+### =========================================================
+
+@BASE_URL=http://localhost:3000
+
+@TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMmUzN2UzZi02MTk2LTQ2YjYtYmFhYy1iZGZhMjliYjA0OTUiLCJlbWFpbCI6ImFkbWluQGJlYXV0eWNvcmUuY29tIiwicm9sZSI6IkFETUlOIiwiZW1wcmVzYUlkIjoiNWE4YzdjY2QtMjk3Ni00ODgzLTg4ZWEtZWFmNzcyODMyNWQ3IiwiaWF0IjoxNzgxMjg2MjIxLCJleHAiOjE3ODEzNzI2MjF9.Aeab5k_BjHqC3PAPogOYPaOO_A23BLU_-CKu8Wo7JOs
+
+@CLIENTE_ID=d16ec9e9-77eb-4c74-b04a-be7d7114e12b
+@USUARIO_ID=12e37e3f-6196-46b6-baac-bdfa29bb0495
+@PROFISSIONAL_ID=e5c72b01-d770-4837-9dd0-43c478685615
+@SERVICO_ID=ed2032ad-06f4-44d2-906b-d63d4b2729ce
+@ARQUIVO_ID=6062c641-3f91-4fdb-aed8-7c20d63eaf8f
+
+
+### =========================================================
+### 01 — UPLOAD LOGO DA EMPRESA
+### Campo obrigatório: file
+### Esperado: 201 Created
+### =========================================================
+GET http://localhost:3000/usuarios
+Authorization: Bearer {{TOKEN}}
+###
+POST {{BASE_URL}}/arquivos/logo
+Authorization: Bearer {{TOKEN}}
+Content-Type: multipart/form-data; boundary=----BeautyCoreBoundary
+
+------BeautyCoreBoundary
+Content-Disposition: form-data; name="file"; filename="logo.png"
+Content-Type: image/png
+
+< ./teste/logo.png
+------BeautyCoreBoundary--
+
+
+### =========================================================
+### 02 — UPLOAD FOTO DO CLIENTE
+### Campo obrigatório: file
+### Esperado: 201 Created
+### =========================================================
+
+POST {{BASE_URL}}/arquivos/clientes/{{CLIENTE_ID}}/foto
+Authorization: Bearer {{TOKEN}}
+Content-Type: multipart/form-data; boundary=----BeautyCoreBoundary
+
+------BeautyCoreBoundary
+Content-Disposition: form-data; name="file"; filename="cliente.png"
+Content-Type: image/png
+
+< ./teste/cliente.png
+------BeautyCoreBoundary--
+
+
+### =========================================================
+### 03 — UPLOAD FOTO DO USUÁRIO
+### Campo obrigatório: file
+### Esperado: 201 Created
+### =========================================================
+
+POST {{BASE_URL}}/arquivos/usuarios/{{USUARIO_ID}}/foto
+Authorization: Bearer {{TOKEN}}
+Content-Type: multipart/form-data; boundary=----BeautyCoreBoundary
+
+------BeautyCoreBoundary
+Content-Disposition: form-data; name="file"; filename="usuario.png"
+Content-Type: image/png
+
+< ./teste/usuario.png
+------BeautyCoreBoundary--
+
+
+### =========================================================
+### 04 — UPLOAD FOTO DO PROFISSIONAL
+### Campo obrigatório: file
+### Esperado: 201 Created
+### =========================================================
+
+POST {{BASE_URL}}/arquivos/profissionais/{{PROFISSIONAL_ID}}/foto
+Authorization: Bearer {{TOKEN}}
+Content-Type: multipart/form-data; boundary=----BeautyCoreBoundary
+
+------BeautyCoreBoundary
+Content-Disposition: form-data; name="file"; filename="profissional.png"
+Content-Type: image/png
+
+< ./teste/profissional.png
+------BeautyCoreBoundary--
+
+
+### =========================================================
+### 05 — UPLOAD IMAGEM DO SERVIÇO
+### Campo obrigatório: file
+### Esperado: 201 Created
+### =========================================================
+
+POST {{BASE_URL}}/arquivos/servicos/{{SERVICO_ID}}/imagem
+Authorization: Bearer {{TOKEN}}
+Content-Type: multipart/form-data; boundary=----BeautyCoreBoundary
+
+------BeautyCoreBoundary
+Content-Disposition: form-data; name="file"; filename="servico.png"
+Content-Type: image/png
+
+< ./teste/servico.png
+------BeautyCoreBoundary--
+
+
+### =========================================================
+### 06 — UPLOAD GALERIA DA EMPRESA
+### Campo obrigatório: files
+### Esperado: 201 Created
+### =========================================================
+
+POST {{BASE_URL}}/arquivos/galeria
+Authorization: Bearer {{TOKEN}}
+Content-Type: multipart/form-data; boundary=----BeautyCoreBoundary
+
+------BeautyCoreBoundary
+Content-Disposition: form-data; name="files"; filename="galeria1.png"
+Content-Type: image/png
+
+< ./teste/galeria1.png
+------BeautyCoreBoundary
+Content-Disposition: form-data; name="files"; filename="galeria2.png"
+Content-Type: image/png
+
+< ./teste/galeria2.png
+------BeautyCoreBoundary--
+
+
+### =========================================================
+### 07 — UPLOAD DOCUMENTO
+### Campo obrigatório: file
+### Esperado: 201 Created
+### =========================================================
+
+POST {{BASE_URL}}/arquivos/documentos
+Authorization: Bearer {{TOKEN}}
+Content-Type: multipart/form-data; boundary=----BeautyCoreBoundary
+
+------BeautyCoreBoundary
+Content-Disposition: form-data; name="file"; filename="documento.pdf"
+Content-Type: application/pdf
+
+< ./teste/documento.pdf
+------BeautyCoreBoundary--
+
+
+### =========================================================
+### 08 — LISTAR TODOS OS ARQUIVOS
+### Esperado: 200 OK
+### =========================================================
+
+GET {{BASE_URL}}/arquivos
+Authorization: Bearer {{TOKEN}}
+
+
+### =========================================================
+### 09 — LISTAR GALERIA DA EMPRESA
+### Esperado: 200 OK
+### =========================================================
+
+GET {{BASE_URL}}/arquivos/galeria
+Authorization: Bearer {{TOKEN}}
+
+
+### =========================================================
+### 10 — BUSCAR ARQUIVOS POR TIPO — LOGO_EMPRESA
+### Esperado: 200 OK
+### =========================================================
+
+GET {{BASE_URL}}/arquivos/tipo/LOGO_EMPRESA
+Authorization: Bearer {{TOKEN}}
+
+
+### =========================================================
+### 11 — BUSCAR ARQUIVOS POR TIPO — FOTO_CLIENTE
+### Esperado: 200 OK
+### =========================================================
+
+GET {{BASE_URL}}/arquivos/tipo/FOTO_CLIENTE
+Authorization: Bearer {{TOKEN}}
+
+
+### =========================================================
+### 12 — BUSCAR ARQUIVOS POR TIPO — FOTO_USUARIO
+### Esperado: 200 OK
+### =========================================================
+
+GET {{BASE_URL}}/arquivos/tipo/FOTO_USUARIO
+Authorization: Bearer {{TOKEN}}
+
+
+### =========================================================
+### 13 — BUSCAR ARQUIVOS POR TIPO — FOTO_PROFISSIONAL
+### Esperado: 200 OK
+### =========================================================
+
+GET {{BASE_URL}}/arquivos/tipo/FOTO_PROFISSIONAL
+Authorization: Bearer {{TOKEN}}
+
+
+### =========================================================
+### 14 — BUSCAR ARQUIVOS POR TIPO — IMAGEM_SERVICO
+### Esperado: 200 OK
+### =========================================================
+
+GET {{BASE_URL}}/arquivos/tipo/IMAGEM_SERVICO
+Authorization: Bearer {{TOKEN}}
+
+
+### =========================================================
+### 15 — BUSCAR ARQUIVOS POR TIPO — GALERIA_EMPRESA
+### Esperado: 200 OK
+### =========================================================
+
+GET {{BASE_URL}}/arquivos/tipo/GALERIA_EMPRESA
+Authorization: Bearer {{TOKEN}}
+
+
+### =========================================================
+### 16 — BUSCAR ARQUIVOS POR TIPO — DOCUMENTO
+### Esperado: 200 OK
+### =========================================================
+
+GET {{BASE_URL}}/arquivos/tipo/DOCUMENTO
+Authorization: Bearer {{TOKEN}}
+
+
+### =========================================================
+### 17 — BUSCAR ARQUIVO POR ID
+### Esperado: 200 OK
+### =========================================================
+
+GET {{BASE_URL}}/arquivos/{{ARQUIVO_ID}}
+Authorization: Bearer {{TOKEN}}
+
+
+### =========================================================
+### 18 — SOFT DELETE DO ARQUIVO
+### Esperado: 200 OK
+### =========================================================
+
+DELETE {{BASE_URL}}/arquivos/{{ARQUIVO_ID}}
+Authorization: Bearer {{TOKEN}}
+
+
+### =========================================================
+### 19 — VALIDAR SE ARQUIVO EXCLUÍDO NÃO APARECE MAIS
+### Esperado: 404 Not Found
+### =========================================================
+
+GET {{BASE_URL}}/arquivos/{{ARQUIVO_ID}}
+Authorization: Bearer {{TOKEN}}
+

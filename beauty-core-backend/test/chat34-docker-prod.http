@@ -1,0 +1,92 @@
+@baseUrlDev = http://localhost:3000
+@baseUrlStaging = http://localhost:3001
+@baseUrlProd = http://localhost:3002
+@superAdminEmail = superadmin@beautycore.com
+@superAdminSenha = SuperAdmin123@
+@tenantSlug = demo
+@clienteTelefone = 83999999999
+@otp = 123456
+
+### DEV ? Health geral
+GET {{baseUrlDev}}/health
+
+### DEV ? Database
+GET {{baseUrlDev}}/health/database
+
+### DEV ? Redis
+GET {{baseUrlDev}}/health/redis
+
+### DEV ? Queues
+GET {{baseUrlDev}}/health/queues
+
+### STAGING ? Health geral
+GET {{baseUrlStaging}}/health
+
+### STAGING ? Database
+GET {{baseUrlStaging}}/health/database
+
+### STAGING ? Redis
+GET {{baseUrlStaging}}/health/redis
+
+### STAGING ? Queues
+GET {{baseUrlStaging}}/health/queues
+
+### PROD ? Health geral
+GET {{baseUrlProd}}/health
+
+### PROD ? Database
+GET {{baseUrlProd}}/health/database
+
+### PROD ? Redis
+GET {{baseUrlProd}}/health/redis
+
+### PROD ? Queues
+GET {{baseUrlProd}}/health/queues
+
+### PROD ? Swagger deve estar desativado
+GET {{baseUrlProd}}/api/docs
+
+### STAGING ? Login SUPER_ADMIN
+# @name loginSuperAdmin
+POST {{baseUrlStaging}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{superAdminEmail}}",
+  "senha": "{{superAdminSenha}}"
+}
+
+### Capturar token
+@adminToken = {{loginSuperAdmin.response.body.access_token}}
+
+### STAGING ? Tenant p?blico por slug
+GET {{baseUrlStaging}}/public/tenant/{{tenantSlug}}
+
+### STAGING ? Solicitar c?digo cliente p?blico por slug
+POST {{baseUrlStaging}}/public/{{tenantSlug}}/auth-cliente/solicitar-codigo
+Content-Type: application/json
+
+{
+  "telefone": "{{clienteTelefone}}"
+}
+
+### STAGING ? Verificar c?digo cliente p?blico por slug
+# @name loginClientePublico
+POST {{baseUrlStaging}}/public/{{tenantSlug}}/auth-cliente/verificar-codigo
+Content-Type: application/json
+
+{
+  "telefone": "{{clienteTelefone}}",
+  "codigo": "{{otp}}"
+}
+
+### STAGING ? Cliente area protegida sem token deve retornar 401
+GET {{baseUrlStaging}}/cliente-area/me
+
+### STAGING ? Scheduler status com token
+GET {{baseUrlStaging}}/scheduler/status
+Authorization: Bearer {{adminToken}}
+
+### STAGING ? Queues status com token
+GET {{baseUrlStaging}}/queues/status
+Authorization: Bearer {{adminToken}}
