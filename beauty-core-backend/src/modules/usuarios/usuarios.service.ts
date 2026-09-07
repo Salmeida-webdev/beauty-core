@@ -145,21 +145,24 @@ export class UsuariosService {
 
     const { page, limit, skip, take } = getPaginationParams(query);
 
-    const orderByPermitidos = [
-      'nome',
-      'email',
-      'role',
-      'createdAt',
-      'updatedAt',
-      'ultimoLogin',
-    ];
-
-    const orderBy: keyof Prisma.UsuarioOrderByWithRelationInput =
-      orderByPermitidos.includes(query.orderBy ?? '')
-        ? (query.orderBy as keyof Prisma.UsuarioOrderByWithRelationInput)
-        : 'createdAt';
-
     const orderDirection = query.orderDirection ?? 'desc';
+    const orderBy: Prisma.UsuarioOrderByWithRelationInput = (() => {
+      switch (query.orderBy) {
+        case 'nome':
+          return { nome: orderDirection };
+        case 'email':
+          return { email: orderDirection };
+        case 'role':
+          return { role: orderDirection };
+        case 'updatedAt':
+          return { updatedAt: orderDirection };
+        case 'ultimoLogin':
+          return { ultimoLogin: orderDirection };
+        case 'createdAt':
+        default:
+          return { createdAt: orderDirection };
+      }
+    })();
 
     const andFilters: Prisma.UsuarioWhereInput[] = [];
 
@@ -234,9 +237,7 @@ export class UsuariosService {
         where,
         skip,
         take,
-        orderBy: {
-          [orderBy]: orderDirection,
-        },
+        orderBy,
         select: usuarioSelect,
       }),
       this.prisma.usuario.count({

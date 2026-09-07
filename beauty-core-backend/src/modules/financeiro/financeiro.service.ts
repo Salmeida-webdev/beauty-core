@@ -142,22 +142,26 @@ export class FinanceiroService {
     const { page, limit, skip, take } =
       getPaginationParams(query);
 
-    const orderByPermitidos = [
-      'dataMovimentacao',
-      'createdAt',
-      'updatedAt',
-      'valor',
-      'status',
-      'tipo',
-      'descricao',
-    ];
-
-    const orderBy: keyof Prisma.MovimentacaoFinanceiraOrderByWithRelationInput =
-      orderByPermitidos.includes(query.orderBy ?? '')
-        ? (query.orderBy as keyof Prisma.MovimentacaoFinanceiraOrderByWithRelationInput)
-        : 'dataMovimentacao';
-
     const orderDirection = query.orderDirection ?? 'desc';
+    const orderBy: Prisma.MovimentacaoFinanceiraOrderByWithRelationInput = (() => {
+      switch (query.orderBy) {
+        case 'createdAt':
+          return { createdAt: orderDirection };
+        case 'updatedAt':
+          return { updatedAt: orderDirection };
+        case 'valor':
+          return { valor: orderDirection };
+        case 'status':
+          return { status: orderDirection };
+        case 'tipo':
+          return { tipo: orderDirection };
+        case 'descricao':
+          return { descricao: orderDirection };
+        case 'dataMovimentacao':
+        default:
+          return { dataMovimentacao: orderDirection };
+      }
+    })();
 
     const where = this.montarWhereFinanceiro(
       empresaId,
@@ -169,9 +173,7 @@ export class FinanceiroService {
         where,
         skip,
         take,
-        orderBy: {
-          [orderBy]: orderDirection,
-        },
+        orderBy,
         include: this.getIncludeBasico(),
       }),
       this.prisma.movimentacaoFinanceira.count({

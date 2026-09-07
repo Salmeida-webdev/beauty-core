@@ -85,21 +85,24 @@ export class NotificacoesService {
     const { page, limit, skip, take } =
       getPaginationParams(query);
 
-    const orderByPermitidos = [
-      'createdAt',
-      'updatedAt',
-      'dataLeitura',
-      'status',
-      'tipo',
-      'titulo',
-    ];
-
-    const orderBy: keyof Prisma.NotificacaoOrderByWithRelationInput =
-      orderByPermitidos.includes(query.orderBy ?? '')
-        ? (query.orderBy as keyof Prisma.NotificacaoOrderByWithRelationInput)
-        : 'createdAt';
-
     const orderDirection = query.orderDirection ?? 'desc';
+    const orderBy: Prisma.NotificacaoOrderByWithRelationInput = (() => {
+      switch (query.orderBy) {
+        case 'updatedAt':
+          return { updatedAt: orderDirection };
+        case 'dataLeitura':
+          return { dataLeitura: orderDirection };
+        case 'status':
+          return { status: orderDirection };
+        case 'tipo':
+          return { tipo: orderDirection };
+        case 'titulo':
+          return { titulo: orderDirection };
+        case 'createdAt':
+        default:
+          return { createdAt: orderDirection };
+      }
+    })();
 
     const where = this.montarWhereNotificacao(
       empresaId,
@@ -112,9 +115,7 @@ export class NotificacoesService {
         where,
         skip,
         take,
-        orderBy: {
-          [orderBy]: orderDirection,
-        },
+        orderBy,
       }),
       this.prisma.notificacao.count({
         where,

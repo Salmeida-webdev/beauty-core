@@ -120,21 +120,24 @@ export class ClientesService {
 
     const { page, limit, skip, take } = getPaginationParams(query);
 
-    const orderByPermitidos = [
-      'nome',
-      'telefone',
-      'email',
-      'createdAt',
-      'updatedAt',
-      'ultimoAcessoPortal',
-    ];
-
-    const orderBy: keyof Prisma.ClienteOrderByWithRelationInput =
-      orderByPermitidos.includes(query.orderBy ?? '')
-        ? (query.orderBy as keyof Prisma.ClienteOrderByWithRelationInput)
-        : 'createdAt';
-
     const orderDirection = query.orderDirection ?? 'desc';
+    const orderBy: Prisma.ClienteOrderByWithRelationInput = (() => {
+      switch (query.orderBy) {
+        case 'nome':
+          return { nome: orderDirection };
+        case 'telefone':
+          return { telefone: orderDirection };
+        case 'email':
+          return { email: orderDirection };
+        case 'updatedAt':
+          return { updatedAt: orderDirection };
+        case 'ultimoAcessoPortal':
+          return { ultimoAcessoPortal: orderDirection };
+        case 'createdAt':
+        default:
+          return { createdAt: orderDirection };
+      }
+    })();
 
     const where: Prisma.ClienteWhereInput = {
       empresaId,
@@ -170,9 +173,7 @@ export class ClientesService {
         where,
         skip,
         take,
-        orderBy: {
-          [orderBy]: orderDirection,
-        },
+        orderBy,
       }),
       this.prisma.cliente.count({
         where,

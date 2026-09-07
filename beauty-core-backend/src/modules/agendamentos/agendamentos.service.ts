@@ -139,20 +139,22 @@ export class AgendamentosService {
     const { page, limit, skip, take } =
       getPaginationParams(query);
 
-    const orderByPermitidos = [
-      'dataHoraInicio',
-      'dataHoraFim',
-      'status',
-      'createdAt',
-      'updatedAt',
-    ];
-
-    const orderBy: keyof Prisma.AgendamentoOrderByWithRelationInput =
-      orderByPermitidos.includes(query.orderBy ?? '')
-        ? (query.orderBy as keyof Prisma.AgendamentoOrderByWithRelationInput)
-        : 'dataHoraInicio';
-
     const orderDirection = query.orderDirection ?? 'asc';
+    const orderBy: Prisma.AgendamentoOrderByWithRelationInput = (() => {
+      switch (query.orderBy) {
+        case 'dataHoraFim':
+          return { dataHoraFim: orderDirection };
+        case 'status':
+          return { status: orderDirection };
+        case 'createdAt':
+          return { createdAt: orderDirection };
+        case 'updatedAt':
+          return { updatedAt: orderDirection };
+        case 'dataHoraInicio':
+        default:
+          return { dataHoraInicio: orderDirection };
+      }
+    })();
 
     const dataInicio = query.dataInicio
       ? new Date(query.dataInicio)
@@ -238,9 +240,7 @@ export class AgendamentosService {
         where,
         skip,
         take,
-        orderBy: {
-          [orderBy]: orderDirection,
-        },
+        orderBy,
         include: {
           cliente: {
             select: {

@@ -180,21 +180,24 @@ export class MensagensWhatsappService {
     const { page, limit, skip, take } =
       getPaginationParams(query);
 
-    const orderByPermitidos = [
-      'createdAt',
-      'updatedAt',
-      'dataEnvio',
-      'status',
-      'tipo',
-      'destinatario',
-    ];
-
-    const orderBy: keyof Prisma.MensagemWhatsAppOrderByWithRelationInput =
-      orderByPermitidos.includes(query.orderBy ?? '')
-        ? (query.orderBy as keyof Prisma.MensagemWhatsAppOrderByWithRelationInput)
-        : 'createdAt';
-
     const orderDirection = query.orderDirection ?? 'desc';
+    const orderBy: Prisma.MensagemWhatsAppOrderByWithRelationInput = (() => {
+      switch (query.orderBy) {
+        case 'updatedAt':
+          return { updatedAt: orderDirection };
+        case 'dataEnvio':
+          return { dataEnvio: orderDirection };
+        case 'status':
+          return { status: orderDirection };
+        case 'tipo':
+          return { tipo: orderDirection };
+        case 'destinatario':
+          return { destinatario: orderDirection };
+        case 'createdAt':
+        default:
+          return { createdAt: orderDirection };
+      }
+    })();
 
     const where = this.montarWhereMensagem(
       empresaId,
@@ -206,9 +209,7 @@ export class MensagensWhatsappService {
         where,
         skip,
         take,
-        orderBy: {
-          [orderBy]: orderDirection,
-        },
+        orderBy,
         include: this.getIncludeListagem(),
       }),
       this.prisma.mensagemWhatsApp.count({

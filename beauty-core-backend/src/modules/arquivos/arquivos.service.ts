@@ -527,21 +527,24 @@ export class ArquivosService {
 
     const { page, limit, skip, take } = getPaginationParams(query);
 
-    const orderByPermitidos = [
-      'createdAt',
-      'updatedAt',
-      'tipo',
-      'status',
-      'nomeOriginal',
-      'tamanhoBytes',
-    ];
-
-    const orderBy: keyof Prisma.ArquivoOrderByWithRelationInput =
-      orderByPermitidos.includes(query.orderBy ?? '')
-        ? (query.orderBy as keyof Prisma.ArquivoOrderByWithRelationInput)
-        : 'createdAt';
-
     const orderDirection = query.orderDirection ?? 'desc';
+    const orderBy: Prisma.ArquivoOrderByWithRelationInput = (() => {
+      switch (query.orderBy) {
+        case 'updatedAt':
+          return { updatedAt: orderDirection };
+        case 'tipo':
+          return { tipo: orderDirection };
+        case 'status':
+          return { status: orderDirection };
+        case 'nomeOriginal':
+          return { nomeOriginal: orderDirection };
+        case 'tamanhoBytes':
+          return { tamanhoBytes: orderDirection };
+        case 'createdAt':
+        default:
+          return { createdAt: orderDirection };
+      }
+    })();
 
     const dataInicio = query['dataInicio']
       ? new Date(query['dataInicio'])
@@ -600,9 +603,7 @@ export class ArquivosService {
         where,
         skip,
         take,
-        orderBy: {
-          [orderBy]: orderDirection,
-        },
+        orderBy,
       }),
       this.prisma.arquivo.count({
         where,
