@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "beauty-core-backend",
   "version": "0.0.1",
   "description": "",
@@ -125,7 +125,7 @@
     "typescript-eslint": "^8.20.0"
   },
   "overrides": {
-    "multer": "2.2.0",
+    "multer": "2.3.0",
     "deepmerge-ts": "8.0.2",
     "@eslint/eslintrc": {
       "js-yaml": "4.3.2"
