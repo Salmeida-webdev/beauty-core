@@ -1,4 +1,7 @@
-import { formatQueueTrace, getQueueTraceMetadata } from '../utils/queue-trace.util';
+import {
+  formatQueueTrace,
+  getQueueTraceMetadata,
+} from '../utils/queue-trace.util';
 import {
   Injectable,
   Logger,
@@ -21,9 +24,7 @@ import { AuditoriaService } from '../../modules/auditoria/auditoria.service';
 import { DeadLetterQueueService } from '../services/dead-letter-queue.service';
 
 @Injectable()
-export class WhatsappWorker
-  implements OnModuleInit, OnModuleDestroy
-{
+export class WhatsappWorker implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(WhatsappWorker.name);
   private worker?: Worker<WhatsappJob>;
 
@@ -40,21 +41,17 @@ export class WhatsappWorker
       async (job: Job<WhatsappJob>) => this.processar(job),
       {
         connection: {
-          host:
-            this.configService.get<string>('REDIS_HOST') ||
-            'localhost',
-          port: Number(
-            this.configService.get<string>('REDIS_PORT') ||
-              6379,
-          ),
+          host: this.configService.get<string>('REDIS_HOST') || 'localhost',
+          port: Number(this.configService.get<string>('REDIS_PORT') || 6379),
           password:
-            this.configService.get<string>('REDIS_PASSWORD') ||
-            undefined,
+            this.configService.get<string>('REDIS_PASSWORD') || undefined,
           maxRetriesPerRequest: null,
         },
-      
-      concurrency: Number(this.configService.get('QUEUE_CONCURRENCY_WHATSAPP', 10)),
-    },
+
+        concurrency: Number(
+          this.configService.get('QUEUE_CONCURRENCY_WHATSAPP', 10),
+        ),
+      },
     );
 
     this.worker.on('failed', async (job, error) => {
@@ -67,7 +64,6 @@ export class WhatsappWorker
       });
     });
 
-
     this.worker.on('completed', async (job) => {
       this.logger.log(
         `[BULLMQ] job concluido queue=${WHATSAPP_QUEUE} jobId=${job.id} ${formatQueueTrace(job)} empresaId=${job.data.empresaId}`,
@@ -77,8 +73,8 @@ export class WhatsappWorker
         empresaId: job.data.empresaId,
         usuarioId: job.data.usuarioId,
         clienteId: job.data.clienteId,
-        tipoUsuario: 'SISTEMA' as TipoUsuarioAuditoria,
-        acao: 'JOB_CONCLUIDO' as AcaoAuditoria,
+        tipoUsuario: 'SISTEMA',
+        acao: 'JOB_CONCLUIDO',
         modulo: 'BULLMQ',
         recurso: 'BullMQJob',
         recursoId: String(job.id),
@@ -99,9 +95,7 @@ export class WhatsappWorker
       this.logger.error(
         `[BULLMQ] job falhou queue=${WHATSAPP_QUEUE} jobId=${
           job?.id ?? '-'
-        } empresaId=${
-          job?.data?.empresaId ?? '-'
-        } erro=${error.message}`,
+        } empresaId=${job?.data?.empresaId ?? '-'} erro=${error.message}`,
         error.stack,
       );
 
@@ -109,9 +103,9 @@ export class WhatsappWorker
         empresaId: job?.data?.empresaId,
         usuarioId: job?.data?.usuarioId,
         clienteId: job?.data?.clienteId,
-        tipoUsuario: 'SISTEMA' as TipoUsuarioAuditoria,
-        acao: 'JOB_FALHOU' as AcaoAuditoria,
-        status: 'FALHA' as StatusAuditoria,
+        tipoUsuario: 'SISTEMA',
+        acao: 'JOB_FALHOU',
+        status: 'FALHA',
         modulo: 'BULLMQ',
         recurso: 'BullMQJob',
         recursoId: job?.id ? String(job.id) : undefined,
@@ -160,13 +154,13 @@ export class WhatsappWorker
       empresaId,
       usuarioId,
       clienteId,
-      tipoUsuario: 'SISTEMA' as TipoUsuarioAuditoria,
-      acao: 'JOB_INICIADO' as AcaoAuditoria,
+      tipoUsuario: 'SISTEMA',
+      acao: 'JOB_INICIADO',
       modulo: 'BULLMQ',
       recurso: 'BullMQJob',
       recursoId: String(job.id),
       metadata: {
-          ...getQueueTraceMetadata(job),
+        ...getQueueTraceMetadata(job),
         queue: WHATSAPP_QUEUE,
         worker: WhatsappWorker.name,
         jobName: job.name,
@@ -183,10 +177,7 @@ export class WhatsappWorker
 
     if (!numero || !mensagem) {
       if (this.ehJobGlobalDoScheduler(job)) {
-        return this.processarJobGlobalDoScheduler(
-          job,
-          startedAt,
-        );
+        return this.processarJobGlobalDoScheduler(job, startedAt);
       }
 
       if (!numero) {
@@ -195,20 +186,31 @@ export class WhatsappWorker
         );
       }
 
-      throw new Error(
-        'Mensagem nÃ£o informada no job de WhatsApp.',
-      );
+      throw new Error('Mensagem nÃ£o informada no job de WhatsApp.');
     }
 
     const registro =
-      await this.mensagensWhatsappService.prepararMensagemCampanha(
-        empresaId,
-        numero,
-        mensagem,
-      );
+      metadataSegura.mensagemId && typeof metadataSegura.mensagemId === 'string'
+        ? await this.mensagensWhatsappService.processarMensagemEnfileirada(
+            empresaId,
+            metadataSegura.mensagemId,
+            numero,
+            mensagem,
+          )
+        : await this.mensagensWhatsappService
+            .prepararMensagemCampanha(empresaId, numero, mensagem)
+            .then((preparada) =>
+              this.mensagensWhatsappService.processarMensagemEnfileirada(
+                empresaId,
+                preparada.id,
+                numero,
+                mensagem,
+              ),
+            );
 
     return {
-      status: 'ok',
+      status:
+        registro.status === 'ENVIADA' ? 'ok' : registro.status.toLowerCase(),
       tipoProcessamento: 'MENSAGEM_WHATSAPP',
       mensagemId: registro.id,
       empresaId,
@@ -232,13 +234,13 @@ export class WhatsappWorker
 
     await this.auditoriaService.registrarJob({
       empresaId,
-      tipoUsuario: 'SISTEMA' as TipoUsuarioAuditoria,
-      acao: 'PROCESSAR_JOB' as AcaoAuditoria,
+      tipoUsuario: 'SISTEMA',
+      acao: 'PROCESSAR_JOB',
       modulo: 'BULLMQ',
       recurso: 'BullMQJob',
       recursoId: String(job.id),
       metadata: {
-          ...getQueueTraceMetadata(job),
+        ...getQueueTraceMetadata(job),
         queue: WHATSAPP_QUEUE,
         worker: WhatsappWorker.name,
         jobName: job.name,
@@ -287,9 +289,7 @@ export class WhatsappWorker
     );
   }
 
-  private normalizarMetadata(
-    metadata: unknown,
-  ): Record<string, unknown> {
+  private normalizarMetadata(metadata: unknown): Record<string, unknown> {
     if (!metadata || typeof metadata !== 'object') {
       return {};
     }

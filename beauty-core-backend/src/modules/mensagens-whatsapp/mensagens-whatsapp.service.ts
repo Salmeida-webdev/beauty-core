@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import {
   Prisma,
+  CanalWhatsApp,
   StatusMensagemWhatsApp,
   TipoMensagemWhatsApp,
   TipoUsuarioAuditoria,
@@ -23,6 +24,10 @@ import { AuditoriaService } from '../auditoria/auditoria.service';
 
 import { CreateMensagemWhatsAppDto } from './dto/create-mensagem-whatsapp.dto';
 import { EnviarMensagemWhatsAppDto } from './dto/enviar-mensagem-whatsapp.dto';
+import {
+  MetaWhatsappCloudProvider,
+  MetaWhatsappProviderError,
+} from './providers/meta-whatsapp-cloud.provider';
 
 type RelacionamentosMensagemWhatsApp = {
   clienteId?: string;
@@ -38,12 +43,92 @@ export class MensagensWhatsappService {
     private readonly prisma: PrismaService,
     private readonly auditoriaService: AuditoriaService,
     private readonly tenantValidator: TenantValidatorService,
+    private readonly metaWhatsappProvider: MetaWhatsappCloudProvider,
   ) {}
 
-  async create(
+  async processarMensagemEnfileirada(
     empresaId: string,
-    dto: CreateMensagemWhatsAppDto,
+    mensagemId: string,
+    destinatario: string,
+    mensagem: string,
   ) {
+    const registro = await this.prisma.mensagemWhatsApp.findFirst({
+      where: { id: mensagemId, empresaId },
+    });
+
+    if (!registro) {
+      throw new NotFoundException(
+        'Mensagem WhatsApp enfileirada nao encontrada nesta empresa.',
+      );
+    }
+
+    if (registro.status === StatusMensagemWhatsApp.SIMULADA) {
+      return { ...registro, processamento: 'simulado' };
+    }
+
+    if (registro.status === StatusMensagemWhatsApp.CANCELADA) {
+      return { ...registro, processamento: 'cancelado' };
+    }
+
+    const configuracao = await this.prisma.configuracaoWhatsApp.findUnique({
+      where: { empresaId },
+    });
+
+    if (!configuracao?.ativo) {
+      return this.marcarFalhaDeEnvio(
+        empresaId,
+        mensagemId,
+        'WhatsApp nao configurado ou desativado.',
+      );
+    }
+
+    if (configuracao.usarModoDemonstracao) {
+      return this.prisma.mensagemWhatsApp.update({
+        where: { id: mensagemId },
+        data: {
+          status: StatusMensagemWhatsApp.SIMULADA,
+          erro: null,
+          dataEnvio: new Date(),
+        },
+      });
+    }
+
+    if (configuracao.canal !== CanalWhatsApp.API_OFICIAL) {
+      return this.marcarFalhaDeEnvio(
+        empresaId,
+        mensagemId,
+        `Canal WhatsApp nao suportado para envio real: ${configuracao.canal}.`,
+      );
+    }
+
+    try {
+      const resultado = await this.metaWhatsappProvider.enviarTexto(
+        destinatario,
+        mensagem,
+      );
+
+      return this.prisma.mensagemWhatsApp.update({
+        where: { id: mensagemId },
+        data: {
+          status: StatusMensagemWhatsApp.ENVIADA,
+          erro: null,
+          dataEnvio: new Date(),
+          metaMessageId: resultado.messageId,
+          metaStatus: 'sent',
+          metaStatusUpdatedAt: new Date(),
+        },
+      });
+    } catch (error) {
+      const detalhe = this.resumirErroDeEnvio(error);
+      await this.marcarFalhaDeEnvio(empresaId, mensagemId, detalhe);
+      const retryable =
+        error instanceof MetaWhatsappProviderError ? error.retryable : true;
+      if (retryable) throw new Error(detalhe);
+      return this.buscarMensagemOuFalhar(empresaId, mensagemId);
+    }
+  }
+
+  async create(empresaId: string, dto: CreateMensagemWhatsAppDto) {
     const startedAt = Date.now();
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
@@ -87,18 +172,14 @@ export class MensagensWhatsappService {
     return mensagem;
   }
 
-  async enviar(
-    empresaId: string,
-    dto: EnviarMensagemWhatsAppDto,
-  ) {
+  async enviar(empresaId: string, dto: EnviarMensagemWhatsAppDto) {
     const startedAt = Date.now();
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const configuracao =
-      await this.prisma.configuracaoWhatsApp.findUnique({
-        where: { empresaId },
-      });
+    const configuracao = await this.prisma.configuracaoWhatsApp.findUnique({
+      where: { empresaId },
+    });
 
     if (!configuracao) {
       throw new BadRequestException(
@@ -129,9 +210,7 @@ export class MensagensWhatsappService {
         mensagem: dto.mensagem,
         status,
         dataEnvio:
-          status === StatusMensagemWhatsApp.SIMULADA
-            ? new Date()
-            : null,
+          status === StatusMensagemWhatsApp.SIMULADA ? new Date() : null,
       },
       include: this.getIncludeDetalhado(),
     });
@@ -165,10 +244,7 @@ export class MensagensWhatsappService {
     return mensagem;
   }
 
-  async findAll(
-    empresaId: string,
-    query: PaginationDto,
-  ) {
+  async findAll(empresaId: string, query: PaginationDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     await this.validarFiltrosRelacionados(empresaId, {
@@ -177,8 +253,7 @@ export class MensagensWhatsappService {
       templateId: query['templateId'],
     });
 
-    const { page, limit, skip, take } =
-      getPaginationParams(query);
+    const { page, limit, skip, take } = getPaginationParams(query);
 
     const orderDirection = query.orderDirection ?? 'desc';
     const orderBy: Prisma.MensagemWhatsAppOrderByWithRelationInput = (() => {
@@ -199,10 +274,7 @@ export class MensagensWhatsappService {
       }
     })();
 
-    const where = this.montarWhereMensagem(
-      empresaId,
-      query,
-    );
+    const where = this.montarWhereMensagem(empresaId, query);
 
     const [data, total] = await Promise.all([
       this.prisma.mensagemWhatsApp.findMany({
@@ -217,12 +289,7 @@ export class MensagensWhatsappService {
       }),
     ]);
 
-    return buildPaginatedResponse(
-      data,
-      total,
-      page,
-      limit,
-    );
+    return buildPaginatedResponse(data, total, page, limit);
   }
 
   async findOne(empresaId: string, id: string) {
@@ -236,32 +303,23 @@ export class MensagensWhatsappService {
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const mensagemAntes = await this.buscarMensagemOuFalhar(
-      empresaId,
-      id,
-    );
+    const mensagemAntes = await this.buscarMensagemOuFalhar(empresaId, id);
 
-    const result =
-      await this.prisma.mensagemWhatsApp.updateMany({
-        where: {
-          id,
-          empresaId,
-        },
-        data: {
-          status: StatusMensagemWhatsApp.CANCELADA,
-        },
-      });
+    const result = await this.prisma.mensagemWhatsApp.updateMany({
+      where: {
+        id,
+        empresaId,
+      },
+      data: {
+        status: StatusMensagemWhatsApp.CANCELADA,
+      },
+    });
 
     if (result.count === 0) {
-      throw new NotFoundException(
-        'Mensagem WhatsApp não encontrada.',
-      );
+      throw new NotFoundException('Mensagem WhatsApp não encontrada.');
     }
 
-    const mensagemCancelada = await this.buscarMensagemOuFalhar(
-      empresaId,
-      id,
-    );
+    const mensagemCancelada = await this.buscarMensagemOuFalhar(empresaId, id);
 
     const tempoMs = Date.now() - startedAt;
 
@@ -378,10 +436,9 @@ export class MensagensWhatsappService {
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const configuracao =
-      await this.prisma.configuracaoWhatsApp.findUnique({
-        where: { empresaId },
-      });
+    const configuracao = await this.prisma.configuracaoWhatsApp.findUnique({
+      where: { empresaId },
+    });
 
     const status =
       !configuracao || !configuracao.ativo
@@ -390,25 +447,21 @@ export class MensagensWhatsappService {
           ? StatusMensagemWhatsApp.SIMULADA
           : StatusMensagemWhatsApp.PENDENTE;
 
-    const mensagemCriada =
-      await this.prisma.mensagemWhatsApp.create({
-        data: {
-          empresaId,
-          tipo,
-          destinatario,
-          mensagem,
-          status,
-          erro:
-            !configuracao || !configuracao.ativo
-              ? 'WhatsApp não configurado ou desativado.'
-              : undefined,
-          dataEnvio:
-            configuracao?.usarModoDemonstracao
-              ? new Date()
-              : null,
-        },
-        include: this.getIncludeDetalhado(),
-      });
+    const mensagemCriada = await this.prisma.mensagemWhatsApp.create({
+      data: {
+        empresaId,
+        tipo,
+        destinatario,
+        mensagem,
+        status,
+        erro:
+          !configuracao || !configuracao.ativo
+            ? 'WhatsApp não configurado ou desativado.'
+            : undefined,
+        dataEnvio: configuracao?.usarModoDemonstracao ? new Date() : null,
+      },
+      include: this.getIncludeDetalhado(),
+    });
 
     const tempoMs = Date.now() - startedAt;
 
@@ -428,9 +481,7 @@ export class MensagensWhatsappService {
         automatica: true,
         tipo,
         whatsappAtivo: Boolean(configuracao?.ativo),
-        modoDemonstracao: Boolean(
-          configuracao?.usarModoDemonstracao,
-        ),
+        modoDemonstracao: Boolean(configuracao?.usarModoDemonstracao),
       },
       mensagem: 'Mensagem WhatsApp automática preparada.',
     });
@@ -440,15 +491,40 @@ export class MensagensWhatsappService {
 
   private async validarRelacionamentos(
     empresaId: string,
-    dto:
-      | CreateMensagemWhatsAppDto
-      | EnviarMensagemWhatsAppDto,
+    dto: CreateMensagemWhatsAppDto | EnviarMensagemWhatsAppDto,
   ) {
     await this.validarFiltrosRelacionados(empresaId, {
       clienteId: dto.clienteId,
       usuarioId: dto.usuarioId,
       templateId: dto.templateId,
     });
+  }
+
+  private async marcarFalhaDeEnvio(
+    empresaId: string,
+    mensagemId: string,
+    erro: string,
+  ) {
+    const atualizada = await this.prisma.mensagemWhatsApp.updateMany({
+      where: { id: mensagemId, empresaId },
+      data: {
+        status: StatusMensagemWhatsApp.FALHOU,
+        erro: erro.slice(0, 500),
+      },
+    });
+
+    if (atualizada.count === 0) {
+      throw new NotFoundException(
+        'Mensagem WhatsApp enfileirada nao encontrada nesta empresa.',
+      );
+    }
+
+    return this.buscarMensagemOuFalhar(empresaId, mensagemId);
+  }
+
+  private resumirErroDeEnvio(error: unknown): string {
+    const mensagem = error instanceof Error ? error.message : String(error);
+    return mensagem.replace(/[\r\n]+/g, ' ').slice(0, 500);
   }
 
   private async validarFiltrosRelacionados(
@@ -459,53 +535,40 @@ export class MensagensWhatsappService {
 
     if (filtros.clienteId) {
       validacoes.push(
-        this.tenantValidator.validarCliente(
-          empresaId,
-          filtros.clienteId,
-        ),
+        this.tenantValidator.validarCliente(empresaId, filtros.clienteId),
       );
     }
 
     if (filtros.usuarioId) {
       validacoes.push(
-        this.tenantValidator.validarUsuario(
-          empresaId,
-          filtros.usuarioId,
-        ),
+        this.tenantValidator.validarUsuario(empresaId, filtros.usuarioId),
       );
     }
 
     if (filtros.templateId) {
       validacoes.push(
-        this.validarTemplateWhatsApp(
-          empresaId,
-          filtros.templateId,
-        ),
+        this.validarTemplateWhatsApp(empresaId, filtros.templateId),
       );
     }
 
     await Promise.all(validacoes);
   }
 
-  private async validarTemplateWhatsApp(
-    empresaId: string,
-    templateId: string,
-  ) {
-    const template =
-      await this.prisma.templateWhatsApp.findFirst({
-        where: {
-          id: templateId,
-          empresaId,
-        },
-        select: {
-          id: true,
-          empresaId: true,
-          nome: true,
-          tipo: true,
-          titulo: true,
-          ativo: true,
-        },
-      });
+  private async validarTemplateWhatsApp(empresaId: string, templateId: string) {
+    const template = await this.prisma.templateWhatsApp.findFirst({
+      where: {
+        id: templateId,
+        empresaId,
+      },
+      select: {
+        id: true,
+        empresaId: true,
+        nome: true,
+        tipo: true,
+        titulo: true,
+        ativo: true,
+      },
+    });
 
     if (!template) {
       throw new NotFoundException(
@@ -516,23 +579,17 @@ export class MensagensWhatsappService {
     return template;
   }
 
-  private async buscarMensagemOuFalhar(
-    empresaId: string,
-    id: string,
-  ) {
-    const mensagem =
-      await this.prisma.mensagemWhatsApp.findFirst({
-        where: {
-          id,
-          empresaId,
-        },
-        include: this.getIncludeDetalhado(),
-      });
+  private async buscarMensagemOuFalhar(empresaId: string, id: string) {
+    const mensagem = await this.prisma.mensagemWhatsApp.findFirst({
+      where: {
+        id,
+        empresaId,
+      },
+      include: this.getIncludeDetalhado(),
+    });
 
     if (!mensagem) {
-      throw new NotFoundException(
-        'Mensagem WhatsApp não encontrada.',
-      );
+      throw new NotFoundException('Mensagem WhatsApp não encontrada.');
     }
 
     return mensagem;
@@ -546,30 +603,26 @@ export class MensagensWhatsappService {
       ? new Date(query['dataInicio'])
       : undefined;
 
-    const dataFim = query['dataFim']
-      ? new Date(query['dataFim'])
-      : undefined;
+    const dataFim = query['dataFim'] ? new Date(query['dataFim']) : undefined;
 
-    const status = query['status'] as
-      | StatusMensagemWhatsApp
-      | undefined;
+    const status = query['status'] as StatusMensagemWhatsApp | undefined;
 
-    const tipo = query['tipo'] as
-      | TipoMensagemWhatsApp
-      | undefined;
+    const tipo = query['tipo'] as TipoMensagemWhatsApp | undefined;
 
     return {
       empresaId,
       ...(status ? { status } : {}),
       ...(tipo ? { tipo } : {}),
-      ...(query['clienteId']
-        ? { clienteId: query['clienteId'] }
+      ...(typeof (query as Record<string, unknown>).clienteId === 'string'
+        ? { clienteId: (query as Record<string, unknown>).clienteId as string }
         : {}),
-      ...(query['usuarioId']
-        ? { usuarioId: query['usuarioId'] }
+      ...(typeof (query as Record<string, unknown>).usuarioId === 'string'
+        ? { usuarioId: (query as Record<string, unknown>).usuarioId as string }
         : {}),
-      ...(query['templateId']
-        ? { templateId: query['templateId'] }
+      ...(typeof (query as Record<string, unknown>).templateId === 'string'
+        ? {
+            templateId: (query as Record<string, unknown>).templateId as string,
+          }
         : {}),
       ...(dataInicio || dataFim
         ? {

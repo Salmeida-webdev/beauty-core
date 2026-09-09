@@ -1,0 +1,105 @@
+# Chat 03 - Bloco 04AW - Manifesto e commit local
+
+Projeto: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core
+Branch: main
+Base HEAD antes do commit: ba6baa2c6cc08ddbc8aa17bee638071880b12bd1
+
+- Escopo: somente arquivos identificados como Chat 03.
+- Alteracoes fora do escopo permanecem preservadas e nao serao adicionadas.
+- Push nao sera executado neste bloco; fica reservado ao Chat 04.
+- Lint global legado permanece registrado como divida tecnica herdada; nao foi mascarado.
+- Purge de dados pessoais por prazo permanece pendente por ausencia de politica deterministica aprovada.
+
+Evidencias requeridas presentes: 15/15.
+
+Arquivos Chat 03 candidatos ao commit:
+- .github/workflows/production.yml
+- .github/workflows/staging.yml
+- beauty-core-backend/docker-compose.chat03-candidate.override.yml
+- beauty-core-backend/docs/chat03-block01-baseline-report.md
+- beauty-core-backend/docs/chat03-block02-whatsapp-meta.md
+- beauty-core-backend/docs/chat03-block03a-infra-workflows-report.md
+- beauty-core-backend/docs/chat03-block03b-workflows-secrets-report.md
+- beauty-core-backend/docs/chat03-block03c-workflow-contract-report.md
+- beauty-core-backend/docs/chat03-block03d-workflow-mapping-report.md
+- beauty-core-backend/docs/chat03-block03f-workflow-env-mapping-report.md
+- beauty-core-backend/docs/chat03-block03g-backup-linux.md
+- beauty-core-backend/docs/chat03-block03h-backup-linux-validation.md
+- beauty-core-backend/docs/chat03-block03i-security-lgpd-report.md
+- beauty-core-backend/docs/chat03-block03j-browser-e2e-preflight.md
+- beauty-core-backend/docs/chat03-block03k-browser-e2e-report.md
+- beauty-core-backend/docs/chat03-block04aa-services-critical-residual-lint.md
+- beauty-core-backend/docs/chat03-block04a-backend-lint-diagnosis.md
+- beauty-core-backend/docs/chat03-block04ab-services-critical-typed-boundaries-fix.md
+- beauty-core-backend/docs/chat03-block04ac-services-critical-residual-lint.md
+- beauty-core-backend/docs/chat03-block04ad-services-critical-residual-context.md
+- beauty-core-backend/docs/chat03-block04ae-services-critical-dynamic-types-fix.md
+- beauty-core-backend/docs/chat03-block04af-services-critical-final-lint.md
+- beauty-core-backend/docs/chat03-block04ag-services-critical-final-context.md
+- beauty-core-backend/docs/chat03-block04ahd-harness-lint-fix.md
+- beauty-core-backend/docs/chat03-block04aj-chat03-state-consolidation.md
+- beauty-core-backend/docs/chat03-block04aj-chat03-state-consolidation-v2.md
+- beauty-core-backend/docs/chat03-block04ak-chat03-scope-reconciliation.md
+- beauty-core-backend/docs/chat03-block04al-linux-backup-runtime-e2e.md
+- beauty-core-backend/docs/chat03-block04am-security-lgpd-final-matrix.md
+- beauty-core-backend/docs/chat03-block04anb-lgpd-runtime-diagnosis.md
+- beauty-core-backend/docs/chat03-block04an-lgpd-runtime-e2e.md
+- beauty-core-backend/docs/chat03-block04ao-raw-body-fix.md
+- beauty-core-backend/docs/chat03-block04ap-meta-provider-worker-hardening.md
+- beauty-core-backend/docs/chat03-block04aq-meta-worker-current-shape.md
+- beauty-core-backend/docs/chat03-block04ar-meta-worker-flow-test.md
+- beauty-core-backend/docs/chat03-block04as-retention-runtime-proof.md
+- beauty-core-backend/docs/chat03-block04at-final-closeout.md
+- beauty-core-backend/docs/chat03-block04au-bullmq-retention.md
+- beauty-core-backend/docs/chat03-block04av-staging-health-smoke-rollback.md
+- beauty-core-backend/docs/chat03-block04b-lint-baseline-vs-diff-report.md
+- beauty-core-backend/docs/chat03-block04c-lint-changed-lines-report.md
+- beauty-core-backend/docs/chat03-block04d-lint-context-report.md
+- beauty-core-backend/docs/chat03-block04-final-gate-report.md
+- beauty-core-backend/docs/chat03-block04g-lint-changed-lines-report.md
+- beauty-core-backend/docs/chat03-block04h-final-gate-report.md
+- beauty-core-backend/docs/chat03-block04i-global-lint-diagnosis.md
+- beauty-core-backend/docs/chat03-block04j-final-technical-report.md
+- beauty-core-backend/docs/chat03-block04k-commit-preflight.md
+- beauty-core-backend/docs/chat03-block04l-out-of-scope-audit.md
+- beauty-core-backend/docs/chat03-block04m-global-lint-breakdown.md
+- beauty-core-backend/docs/chat03-block04n-global-lint-fixability.md
+- beauty-core-backend/docs/chat03-block04o-top-lint-context.md
+- beauty-core-backend/docs/chat03-block04q-prisma-accessor-inspection.md
+- beauty-core-backend/docs/chat03-block04s-analytics-build-errors.md
+- beauty-core-backend/docs/chat03-block04t-analytics-build-types-fix.md
+- beauty-core-backend/docs/chat03-block04u-analytics-remaining-lint.md
+- beauty-core-backend/docs/chat03-block04v-analytics-remaining-lint-fix.md
+- beauty-core-backend/docs/chat03-block04w-financeiro-lint-context.md
+- beauty-core-backend/docs/chat03-block04x-financeiro-lint-types-fix.md
+- beauty-core-backend/docs/chat03-block04y-services-critical-lint-context.md
+- beauty-core-backend/docs/chat03-block04z-services-critical-require-await-fix.md
+- beauty-core-backend/scripts/backup/postgres-backup.sh
+- beauty-core-backend/scripts/backup/postgres-restore-verify.sh
+- beauty-core-backend/src/backup/backup.module.ts
+- beauty-core-backend/src/backup/backup.service.ts
+- beauty-core-backend/src/modules/analytics/analytics.service.ts
+- beauty-core-backend/src/modules/financeiro/financeiro.service.ts
+- beauty-core-backend/src/modules/mensagens-whatsapp/dto/create-mensagem-whatsapp.dto.ts
+- beauty-core-backend/src/modules/mensagens-whatsapp/dto/enviar-mensagem-whatsapp.dto.ts
+- beauty-core-backend/src/modules/mensagens-whatsapp/mensagens-whatsapp.controller.ts
+- beauty-core-backend/src/modules/mensagens-whatsapp/mensagens-whatsapp.module.ts
+- beauty-core-backend/src/modules/mensagens-whatsapp/mensagens-whatsapp.service.ts
+- beauty-core-backend/src/modules/mensagens-whatsapp/meta-whatsapp-webhook.controller.ts
+- beauty-core-backend/src/modules/mensagens-whatsapp/meta-whatsapp-webhook.service.ts
+- beauty-core-backend/src/modules/mensagens-whatsapp/meta-whatsapp-webhook.types.ts
+- beauty-core-backend/src/modules/mensagens-whatsapp/providers/meta-whatsapp-cloud.provider.ts
+- beauty-core-backend/src/queues/queues.module.ts
+- beauty-core-backend/src/queues/services/queues.service.ts
+- beauty-core-backend/src/queues/workers/whatsapp.worker.ts
+- beauty-core-backend/test/e2e/lgpd-runtime.e2e-spec.ts
+- beauty-core-backend/test/e2e/uploads.e2e-spec.ts
+- beauty-core-backend/test/e2e/uploads-strict-roundtrip.e2e-spec.ts
+- beauty-core-backend/test/e2e/whatsapp-queue-demo.e2e-spec.ts
+- beauty-core-backend/test/unit/chat03-bullmq-retention.spec.ts
+- beauty-core-backend/test/unit/chat03-retention-runtime.spec.ts
+- beauty-core-backend/test/unit/meta-whatsapp-cloud.provider.spec.ts
+- beauty-core-backend/test/unit/meta-whatsapp-cloud-provider-retry.spec.ts
+- beauty-core-backend/test/unit/meta-whatsapp-worker-flow.spec.ts
+- beauty-core-backend/test/unit/services-critical.coverage.spec.ts
+- beauty-core-backend/test/unit/storage-roundtrip.spec.ts

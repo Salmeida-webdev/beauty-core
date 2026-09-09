@@ -1,0 +1,97 @@
+# Chat 03 - Bloco 04Q - Inspecao dos accessors Prisma
+
+- Operacao somente leitura.
+- src/modules/analytics/analytics.service.ts:3 - import { PrismaService } from '../../database/prisma/prisma.service';
+- src/modules/analytics/analytics.service.ts:9 - private readonly prisma: PrismaService,
+- src/modules/analytics/analytics.service.ts:13 - private db() {
+- src/modules/analytics/analytics.service.ts:14 - return this.prisma as any;
+- src/modules/analytics/analytics.service.ts:43 - private numero(valor: any): number {
+- src/modules/analytics/analytics.service.ts:149 - this.db().cliente.count({
+- src/modules/analytics/analytics.service.ts:155 - this.db().cliente.count({
+- src/modules/analytics/analytics.service.ts:162 - this.db().cliente.count({
+- src/modules/analytics/analytics.service.ts:169 - this.db().cliente.count({
+- src/modules/analytics/analytics.service.ts:178 - this.db().cliente.count({
+- src/modules/analytics/analytics.service.ts:187 - this.db().cliente.findMany({
+- src/modules/analytics/analytics.service.ts:203 - (total: number, cliente: any) =>
+- src/modules/analytics/analytics.service.ts:237 - this.db().agendamento.count({
+- src/modules/analytics/analytics.service.ts:241 - this.db().agendamento.count({
+- src/modules/analytics/analytics.service.ts:248 - this.db().agendamento.count({
+- src/modules/analytics/analytics.service.ts:255 - this.db().agendamento.count({
+- src/modules/analytics/analytics.service.ts:262 - this.db().agendamento.count({
+- src/modules/analytics/analytics.service.ts:309 - this.db().movimentacaoFinanceira.aggregate({
+- src/modules/analytics/analytics.service.ts:319 - this.db().movimentacaoFinanceira.aggregate({
+- src/modules/analytics/analytics.service.ts:329 - this.db().movimentacaoFinanceira.aggregate({
+- src/modules/analytics/analytics.service.ts:343 - this.db().movimentacaoFinanceira.aggregate({
+- src/modules/analytics/analytics.service.ts:357 - this.db().agendamento.count({
+- src/modules/analytics/analytics.service.ts:390 - const agrupados = await this.db().agendamento.groupBy({
+- src/modules/analytics/analytics.service.ts:409 - .map((item: any) => item.servicoId)
+- src/modules/analytics/analytics.service.ts:416 - const servicos = await this.db().servico.findMany({
+- src/modules/analytics/analytics.service.ts:431 - servicos.map((servico: any) => [servico.id, servico]),
+- src/modules/analytics/analytics.service.ts:434 - return agrupados.map((item: any, index: number) => {
+- src/modules/analytics/analytics.service.ts:435 - const servico: any = servicosMap.get(item.servicoId);
+- src/modules/analytics/analytics.service.ts:455 - const agrupados = await this.db().agendamento.groupBy({
+- src/modules/analytics/analytics.service.ts:474 - .map((item: any) => item.profissionalId)
+- src/modules/analytics/analytics.service.ts:482 - this.db().usuario.findMany({
+- src/modules/analytics/analytics.service.ts:495 - this.db().comissaoProfissional.groupBy({
+- src/modules/analytics/analytics.service.ts:512 - profissionais.map((profissional: any) => [profissional.id, profissional]),
+- src/modules/analytics/analytics.service.ts:516 - comissoes.map((comissao: any) => [comissao.profissionalId, comissao]),
+- src/modules/analytics/analytics.service.ts:519 - return agrupados.map((item: any, index: number) => {
+- src/modules/analytics/analytics.service.ts:520 - const profissional: any = profissionaisMap.get(item.profissionalId);
+- src/modules/analytics/analytics.service.ts:521 - const comissao: any = comissoesMap.get(item.profissionalId);
+- src/modules/analytics/analytics.service.ts:536 - const agrupados = await this.db().agendamento.groupBy({
+- src/modules/analytics/analytics.service.ts:554 - .map((item: any) => item.unidadeId)
+- src/modules/analytics/analytics.service.ts:562 - this.db().unidade.findMany({
+- src/modules/analytics/analytics.service.ts:575 - this.db().movimentacaoFinanceira.findMany({
+- src/modules/analytics/analytics.service.ts:600 - unidades.map((unidade: any) => [unidade.id, unidade]),
+- src/modules/analytics/analytics.service.ts:618 - return agrupados.map((item: any, index: number) => {
+- src/modules/analytics/analytics.service.ts:619 - const unidade: any = unidadesMap.get(item.unidadeId);
+- src/modules/analytics/analytics.service.ts:641 - this.db().fidelidade.count({
+- src/modules/analytics/analytics.service.ts:650 - this.db().movimentacaoPontos.aggregate({
+- src/modules/analytics/analytics.service.ts:660 - this.db().movimentacaoPontos.aggregate({
+- src/modules/analytics/analytics.service.ts:670 - this.db().beneficio.count({
+- src/modules/analytics/analytics.service.ts:677 - this.db().fidelidade.findMany({
+- src/modules/analytics/analytics.service.ts:703 - topClientes: topClientes.map((item: any, index: number) => ({
+- src/modules/analytics/analytics.service.ts:723 - this.db().clientePacote.count({
+- src/modules/analytics/analytics.service.ts:729 - this.db().clientePacote.count({
+- src/modules/analytics/analytics.service.ts:736 - this.db().clientePacote.count({
+- src/modules/analytics/analytics.service.ts:743 - this.db().clientePacote.count({
+- src/modules/analytics/analytics.service.ts:750 - this.db().clientePacote.findMany({
+- src/modules/analytics/analytics.service.ts:766 - (total: number, item: any) => total + this.numero(item.pacote?.valor),
+- src/modules/analytics/analytics.service.ts:794 - this.db().mensagemWhatsApp.count({
+- src/modules/analytics/analytics.service.ts:798 - this.db().mensagemWhatsApp.count({
+- src/modules/analytics/analytics.service.ts:805 - this.db().mensagemWhatsApp.count({
+- src/modules/analytics/analytics.service.ts:812 - this.db().campanhaWhatsApp.count({
+- src/modules/analytics/analytics.service.ts:816 - this.db().templateWhatsApp.count({
+- src/modules/analytics/analytics.service.ts:842 - this.db().notificacao.count({
+- src/modules/analytics/analytics.service.ts:846 - this.db().notificacao.count({
+- src/modules/analytics/analytics.service.ts:853 - this.db().notificacao.count({
+- src/modules/analytics/analytics.service.ts:860 - this.db().notificacao.count({
+- src/modules/analytics/analytics.service.ts:886 - this.db().eventoSistema.count({
+- src/modules/analytics/analytics.service.ts:890 - this.db().eventoSistema.groupBy({
+- src/modules/analytics/analytics.service.ts:898 - this.db().eventoSistema.groupBy({
+- src/modules/analytics/analytics.service.ts:906 - this.db().eventoSistema.findMany({
+- src/modules/analytics/analytics.service.ts:917 - porTipo: porTipo.reduce((acc: Record<string, number>, item: any) => {
+- src/modules/analytics/analytics.service.ts:922 - porModulo: porModulo.reduce((acc: Record<string, number>, item: any) => {
+- src/modules/financeiro/financeiro.service.ts:8 - Prisma,
+- src/modules/financeiro/financeiro.service.ts:12 - } from '@prisma/client';
+- src/modules/financeiro/financeiro.service.ts:14 - import { PrismaService } from '../../database/prisma/prisma.service';
+- src/modules/financeiro/financeiro.service.ts:42 - private readonly prisma: PrismaService,
+- src/modules/financeiro/financeiro.service.ts:54 - const movimentacao = await this.prisma.movimentacaoFinanceira.create({
+- src/modules/financeiro/financeiro.service.ts:142 - const orderBy: Prisma.MovimentacaoFinanceiraOrderByWithRelationInput =
+- src/modules/financeiro/financeiro.service.ts:166 - this.prisma.movimentacaoFinanceira.findMany({
+- src/modules/financeiro/financeiro.service.ts:173 - this.prisma.movimentacaoFinanceira.count({
+- src/modules/financeiro/financeiro.service.ts:189 - const movimentacao = await this.prisma.movimentacaoFinanceira.findFirst({
+- src/modules/financeiro/financeiro.service.ts:231 - const result = await this.prisma.movimentacaoFinanceira.updateMany({
+- src/modules/financeiro/financeiro.service.ts:299 - const result = await this.prisma.movimentacaoFinanceira.updateMany({
+- src/modules/financeiro/financeiro.service.ts:389 - const result = await this.prisma.movimentacaoFinanceira.updateMany({
+- src/modules/financeiro/financeiro.service.ts:470 - this.prisma.movimentacaoFinanceira.aggregate({
+- src/modules/financeiro/financeiro.service.ts:481 - this.prisma.movimentacaoFinanceira.aggregate({
+- src/modules/financeiro/financeiro.service.ts:509 - const whereBase: Prisma.MovimentacaoFinanceiraWhereInput = {
+- src/modules/financeiro/financeiro.service.ts:517 - this.prisma.movimentacaoFinanceira.aggregate({
+- src/modules/financeiro/financeiro.service.ts:526 - this.prisma.movimentacaoFinanceira.aggregate({
+- src/modules/financeiro/financeiro.service.ts:535 - this.prisma.movimentacaoFinanceira.findMany({
+- src/modules/financeiro/financeiro.service.ts:563 - const receitas = await this.prisma.movimentacaoFinanceira.aggregate({
+- src/modules/financeiro/financeiro.service.ts:590 - const despesas = await this.prisma.movimentacaoFinanceira.aggregate({
+- src/modules/financeiro/financeiro.service.ts:696 - ): Prisma.MovimentacaoFinanceiraWhereInput {
+- src/modules/financeiro/financeiro.service.ts:758 - ): Prisma.DateTimeFilter | undefined {
+- src/modules/financeiro/financeiro.service.ts:809 - private formatarMovimentacao(movimentacao: any) {

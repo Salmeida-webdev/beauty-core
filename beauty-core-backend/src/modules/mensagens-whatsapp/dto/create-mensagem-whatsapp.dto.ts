@@ -1,9 +1,6 @@
 import { TipoMensagemWhatsApp } from '@prisma/client';
 
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import {
   IsEnum,

@@ -1,64 +1,32 @@
-﻿/**
+import { Logger } from '@nestjs/common';
+import { createRequire } from 'node:module';
+
+const moduleRequire = createRequire(__filename);
+
+/**
  * CHAT_33_2_STRONG_LOG_SILENCER
  *
- * Silencia apenas logs ruidosos gerados por esta suíte de smoke coverage.
- * Não altera código de produção.
- * Não silencia os logs E2E de segurança, pois eles rodam em outros arquivos.
+ * Silencia apenas logs ruidosos gerados por esta suÃƒÆ’Ã‚Â­te de smoke coverage.
+ * NÃƒÆ’Ã‚Â£o altera cÃƒÆ’Ã‚Â³digo de produÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o.
+ * NÃƒÆ’Ã‚Â£o silencia os logs E2E de seguranÃƒÆ’Ã‚Â§a, pois eles rodam em outros arquivos.
  */
+
+function asyncMock<TArgs extends unknown[], TResult>(
+  implementation: (...args: TArgs) => TResult,
+) {
+  return jest.fn((...args: TArgs) =>
+    Promise.resolve().then(() => implementation(...args)),
+  );
+}
 const CHAT_33_2_STRONG_LOG_SILENCER = (() => {
-  const originalStdoutWrite = process.stdout.write.bind(process.stdout);
-  const originalStderrWrite = process.stderr.write.bind(process.stderr);
-
-  const noisyPatterns = [
-    '[FinanceiroService]',
-    '[AgendamentosService]',
-    '[ClientesPacotesService]',
-    '[MensagensWhatsappService]',
-    '[ArquivosService]',
-    '[FINANCEIRO]',
-    '[AGENDAMENTOS]',
-    '[CLIENTES_PACOTES]',
-    '[WHATSAPP]',
-    '[ARQUIVOS]',
-  ];
-
-  function isNoisyLog(chunk: unknown): boolean {
-    const text = typeof chunk === 'string' ? chunk : String(chunk);
-
-    return noisyPatterns.some((pattern) => text.includes(pattern));
-  }
-
   beforeAll(() => {
-    jest
-      .spyOn(process.stdout, 'write')
-      .mockImplementation(((chunk: unknown, ...args: unknown[]) => {
-        if (isNoisyLog(chunk)) {
-          return true;
-        }
-
-        return originalStdoutWrite(chunk as any, ...(args as any));
-      }) as any);
-
-    jest
-      .spyOn(process.stderr, 'write')
-      .mockImplementation(((chunk: unknown, ...args: unknown[]) => {
-        if (isNoisyLog(chunk)) {
-          return true;
-        }
-
-        return originalStderrWrite(chunk as any, ...(args as any));
-      }) as any);
-
     try {
-      const common = require('@nestjs/common');
-      const Logger = common.Logger;
-
-      if (Logger && typeof Logger.overrideLogger === 'function') {
-        // Mantém comportamento interno, mas reduz saída visual desta suíte.
+      if (typeof Logger.overrideLogger === 'function') {
+        // MantÃƒÆ’Ã‚Â©m comportamento interno, mas reduz saÃƒÆ’Ã‚Â­da visual desta suÃƒÆ’Ã‚Â­te.
         Logger.overrideLogger(['error']);
       }
     } catch {
-      // Não bloqueia testes se Logger não estiver disponível.
+      // NÃƒÆ’Ã‚Â£o bloqueia testes se Logger nÃƒÆ’Ã‚Â£o estiver disponÃƒÆ’Ã‚Â­vel.
     }
   });
 
@@ -70,23 +38,22 @@ const CHAT_33_2_STRONG_LOG_SILENCER = (() => {
     }
 
     try {
-      const common = require('@nestjs/common');
-      const Logger = common.Logger;
-
-      if (Logger && typeof Logger.overrideLogger === 'function') {
+      if (typeof Logger.overrideLogger === 'function') {
         Logger.overrideLogger(true);
       }
     } catch {
-      // Não bloqueia teardown.
+      // NÃƒÆ’Ã‚Â£o bloqueia teardown.
     }
   });
 
   return true;
 })();
+void CHAT_33_2_STRONG_LOG_SILENCER;
 const UUID_A = '00000000-0000-4000-8000-000000000001';
 const UUID_B = '00000000-0000-4000-8000-000000000002';
 const EMPRESA_A = '00000000-0000-4000-8000-000000000101';
 const EMPRESA_B = '00000000-0000-4000-8000-000000000102';
+void EMPRESA_B;
 
 type TargetService = {
   label: string;
@@ -169,8 +136,8 @@ function createRecord(overrides: Record<string, any> = {}) {
     pacoteId: UUID_A,
     categoriaId: UUID_A,
     nome: 'Registro Teste',
-    titulo: 'Título Teste',
-    descricao: 'Descrição Teste',
+    titulo: 'TÃƒÆ’Ã‚Â­tulo Teste',
+    descricao: 'DescriÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o Teste',
     telefone: '83999999999',
     email: 'teste@beautycore.local',
     role: 'ADMIN',
@@ -192,18 +159,23 @@ function createRecord(overrides: Record<string, any> = {}) {
   };
 }
 
+type DelegateArgs = {
+  data?: Record<string, unknown>;
+  create?: Record<string, unknown>;
+  update?: Record<string, unknown>;
+};
 function createDelegateMock(record = createRecord()) {
   return {
-    findUnique: jest.fn(async () => record),
-    findFirst: jest.fn(async () => record),
-    findMany: jest.fn(async () => [record]),
-    count: jest.fn(async () => 1),
-    aggregate: jest.fn(async () => ({
+    findUnique: asyncMock(() => record),
+    findFirst: asyncMock(() => record),
+    findMany: asyncMock(() => [record]),
+    count: asyncMock(() => 1),
+    aggregate: asyncMock(() => ({
       _sum: { valor: 100, pontos: 10 },
       _count: { _all: 1 },
       _avg: { valor: 100 },
     })),
-    groupBy: jest.fn(async () => [
+    groupBy: asyncMock(() => [
       {
         status: 'ATIVO',
         tipo: 'RECEITA',
@@ -211,19 +183,19 @@ function createDelegateMock(record = createRecord()) {
         _count: { _all: 1 },
       },
     ]),
-    create: jest.fn(async (args?: any) => ({
+    create: asyncMock((args?: DelegateArgs) => ({
       ...record,
       ...(args?.data ?? {}),
     })),
-    createMany: jest.fn(async () => ({ count: 1 })),
-    update: jest.fn(async (args?: any) => ({
+    createMany: asyncMock(() => ({ count: 1 })),
+    update: asyncMock((args?: DelegateArgs) => ({
       ...record,
       ...(args?.data ?? {}),
     })),
-    updateMany: jest.fn(async () => ({ count: 1 })),
-    delete: jest.fn(async () => record),
-    deleteMany: jest.fn(async () => ({ count: 1 })),
-    upsert: jest.fn(async (args?: any) => ({
+    updateMany: asyncMock(() => ({ count: 1 })),
+    delete: asyncMock(() => record),
+    deleteMany: asyncMock(() => ({ count: 1 })),
+    upsert: asyncMock((args?: DelegateArgs) => ({
       ...record,
       ...(args?.create ?? {}),
       ...(args?.update ?? {}),
@@ -231,36 +203,35 @@ function createDelegateMock(record = createRecord()) {
   };
 }
 
-function createPrismaMock() {
+function createPrismaMock(): HarnessRecord {
   const record = createRecord();
+  const delegates = new Map<string, HarnessRecord>();
 
-  const delegates = new Map<string, any>();
-
-  const prisma: any = new Proxy(
+  const prisma: HarnessRecord = new Proxy<HarnessRecord>(
     {},
     {
-      get(_target, prop: string | symbol) {
+      get(_target: HarnessRecord, prop: string | symbol): unknown {
         if (typeof prop !== 'string') return undefined;
 
         if (prop === '$transaction') {
-          return jest.fn(async (input: any) => {
+          return asyncMock<[unknown], unknown>((input) => {
             if (typeof input === 'function') {
-              return input(prisma);
+              const transaction = input as (client: HarnessRecord) => unknown;
+              return transaction(prisma);
             }
-
-            if (Array.isArray(input)) {
-              return Promise.all(input);
-            }
-
+            if (Array.isArray(input)) return Promise.all(input);
             return input;
           });
         }
 
-        if (prop === '$connect') return jest.fn(async () => undefined);
-        if (prop === '$disconnect') return jest.fn(async () => undefined);
-        if (prop === '$executeRaw') return jest.fn(async () => 1);
-        if (prop === '$queryRaw') return jest.fn(async () => []);
-        if (prop === '$runCommandRaw') return jest.fn(async () => ({}));
+        if (prop === '$connect')
+          return asyncMock<[], undefined>(() => undefined);
+        if (prop === '$disconnect')
+          return asyncMock<[], undefined>(() => undefined);
+        if (prop === '$executeRaw') return asyncMock<[], number>(() => 1);
+        if (prop === '$queryRaw') return asyncMock<[], unknown[]>(() => []);
+        if (prop === '$runCommandRaw')
+          return asyncMock<[], HarnessRecord>(() => ({}));
 
         if (!delegates.has(prop)) {
           delegates.set(prop, createDelegateMock(record));
@@ -274,122 +245,143 @@ function createPrismaMock() {
   return prisma;
 }
 
-function createDependencyMock() {
-  const base: any = {
-    get: jest.fn((key: string, fallback?: any) => {
-      const values: Record<string, any> = {
-        JWT_SECRET: 'test-secret',
-        JWT_REFRESH_SECRET: 'test-refresh-secret',
-        JWT_CLIENT_SECRET: 'test-client-secret',
-        JWT_CLIENT_REFRESH_SECRET: 'test-client-refresh-secret',
-        JWT_EXPIRES_IN: '8h',
-        JWT_REFRESH_EXPIRES_IN: '7d',
-        JWT_CLIENT_EXPIRES_IN: '7d',
-        JWT_CLIENT_REFRESH_EXPIRES_IN: '30d',
-        SCHEDULER_ENABLED: 'true',
-        SCHEDULER_TIMEZONE: 'America/Fortaleza',
-      };
+function createDependencyMock(): HarnessRecord {
+  const values: Record<string, string> = {
+    JWT_SECRET: 'test-secret',
+    JWT_REFRESH_SECRET: 'test-refresh-secret',
+    JWT_CLIENT_SECRET: 'test-client-secret',
+    JWT_CLIENT_REFRESH_SECRET: 'test-client-refresh-secret',
+    JWT_EXPIRES_IN: '8h',
+    JWT_REFRESH_EXPIRES_IN: '7d',
+    JWT_CLIENT_EXPIRES_IN: '7d',
+    JWT_CLIENT_REFRESH_EXPIRES_IN: '30d',
+    SCHEDULER_ENABLED: 'true',
+    SCHEDULER_TIMEZONE: 'America/Fortaleza',
+  };
 
-      return values[key] ?? fallback ?? 'test-value';
-    }),
-
+  const base: HarnessRecord = {
+    get: jest.fn(
+      (key: string, fallback?: unknown): unknown =>
+        values[key] ?? fallback ?? 'test-value',
+    ),
     sign: jest.fn(() => 'token-test'),
-    signAsync: jest.fn(async () => 'token-test'),
-
-    registrar: jest.fn(async () => null),
-    registrarAuditoria: jest.fn(async () => null),
-
-    adicionarJob: jest.fn(async () => ({ id: 'job-test' })),
-    adicionarNotificacao: jest.fn(async () => ({ id: 'job-test' })),
-    adicionarWhatsapp: jest.fn(async () => ({ id: 'job-test' })),
-    adicionarCampanha: jest.fn(async () => ({ id: 'job-test' })),
-    adicionarRelatorio: jest.fn(async () => ({ id: 'job-test' })),
-
-    processarEvento: jest.fn(async () => null),
-    podeNotificar: jest.fn(async () => true),
-
-    validarEmpresaAtiva: jest.fn(async () => createRecord({ id: EMPRESA_A })),
-    validarEmpresa: jest.fn(async () => createRecord({ id: EMPRESA_A })),
-    validarRecursoEmpresa: jest.fn(async () => createRecord()),
-    validarUsuarioEmpresa: jest.fn(async () => createRecord()),
-    validarClienteEmpresa: jest.fn(async () => createRecord()),
-    validarTenant: jest.fn(async () => true),
-
-    criarSessao: jest.fn(async () => ({
+    signAsync: asyncMock<[], string>(() => 'token-test'),
+    registrar: asyncMock<[], null>(() => null),
+    registrarAuditoria: asyncMock<[], null>(() => null),
+    adicionarJob: asyncMock<[], HarnessRecord>(() => ({ id: 'job-test' })),
+    adicionarNotificacao: asyncMock<[], HarnessRecord>(() => ({
+      id: 'job-test',
+    })),
+    adicionarWhatsapp: asyncMock<[], HarnessRecord>(() => ({ id: 'job-test' })),
+    adicionarCampanha: asyncMock<[], HarnessRecord>(() => ({ id: 'job-test' })),
+    adicionarRelatorio: asyncMock<[], HarnessRecord>(() => ({
+      id: 'job-test',
+    })),
+    processarEvento: asyncMock<[], null>(() => null),
+    podeNotificar: asyncMock<[], boolean>(() => true),
+    validarEmpresaAtiva: asyncMock<[], HarnessRecord>(() =>
+      createRecord({ id: EMPRESA_A }),
+    ),
+    validarEmpresa: asyncMock<[], HarnessRecord>(() =>
+      createRecord({ id: EMPRESA_A }),
+    ),
+    validarRecursoEmpresa: asyncMock<[], HarnessRecord>(() => createRecord()),
+    validarUsuarioEmpresa: asyncMock<[], HarnessRecord>(() => createRecord()),
+    validarClienteEmpresa: asyncMock<[], HarnessRecord>(() => createRecord()),
+    validarTenant: asyncMock<[], boolean>(() => true),
+    criarSessao: asyncMock<[], HarnessRecord>(() => ({
       sessao: createRecord({ id: UUID_A }),
       refreshToken: 'refresh-token-test',
     })),
-    rotacionarRefreshToken: jest.fn(async () => ({
+    rotacionarRefreshToken: asyncMock<[], HarnessRecord>(() => ({
       access_token: 'access-token-test',
       refresh_token: 'refresh-token-test',
     })),
-    revogarSessao: jest.fn(async () => true),
-    revogarTodasSessoes: jest.fn(async () => true),
-
-    salvar: jest.fn(async () => createRecord()),
-    upload: jest.fn(async () => createRecord()),
-    download: jest.fn(async () => Buffer.from('test')),
-    gerarUrlAssinada: jest.fn(async () => 'http://localhost/signed/test'),
+    revogarSessao: asyncMock<[], boolean>(() => true),
+    revogarTodasSessoes: asyncMock<[], boolean>(() => true),
+    salvar: asyncMock<[], HarnessRecord>(() => createRecord()),
+    upload: asyncMock<[], HarnessRecord>(() => createRecord()),
+    download: asyncMock<[], Buffer>(() => Buffer.from('test')),
+    gerarUrlAssinada: asyncMock<[], string>(
+      () => 'http://localhost/signed/test',
+    ),
   };
 
-  return new Proxy(base, {
-    get(target, prop: string | symbol) {
+  return new Proxy<HarnessRecord>(base, {
+    get(target: HarnessRecord, prop: string | symbol): unknown {
       if (typeof prop !== 'string') return undefined;
-
-      if (prop in target) {
-        return target[prop];
-      }
-
-      const fn = jest.fn(async () => null);
+      if (prop in target) return target[prop];
+      const fn = asyncMock<[], null>(() => null);
       target[prop] = fn;
       return fn;
     },
   });
 }
+type HarnessRecord = Record<string, unknown>;
 
-function loadServiceClass(target: TargetService): any | null {
+type ServiceConstructor = {
+  new (...args: unknown[]): object;
+  readonly length: number;
+  readonly name: string;
+};
+
+function isServiceConstructor(value: unknown): value is ServiceConstructor {
+  return typeof value === 'function';
+}
+
+function loadServiceClass(target: TargetService): ServiceConstructor | null {
   try {
-    const mod = require(target.path);
-
-    if (typeof mod[target.exportName] === 'function') {
-      return mod[target.exportName];
-    }
+    const mod = moduleRequire(target.path) as Record<string, unknown>;
+    const exported = mod[target.exportName];
+    if (isServiceConstructor(exported)) return exported;
 
     const serviceLike = Object.values(mod).find(
-      (value: any) => typeof value === 'function' && String(value.name ?? '').includes('Service'),
+      (value: unknown) =>
+        isServiceConstructor(value) && value.name.includes('Service'),
     );
-
     if (serviceLike) return serviceLike;
 
-    return Object.values(mod).find((value: any) => typeof value === 'function') ?? null;
+    return Object.values(mod).find(isServiceConstructor) ?? null;
   } catch {
     return null;
   }
 }
 
-function createServiceInstance(ServiceClass: any) {
+function createServiceInstance(ServiceClass: ServiceConstructor): object {
   const prisma = createPrismaMock();
   const dependency = createDependencyMock();
-
   const dependencyCount = Math.max(ServiceClass.length || 0, 8);
-  const args = Array.from({ length: dependencyCount }, (_value, index) =>
-    index === 0 ? prisma : dependency,
+  const args: unknown[] = Array.from(
+    { length: dependencyCount },
+    (_value, index) => (index === 0 ? prisma : dependency),
   );
-
   return new ServiceClass(...args);
 }
 
-function getPublicMethods(instance: any): string[] {
-  return Object.getOwnPropertyNames(Object.getPrototypeOf(instance))
+function getPublicMethods(instance: object): string[] {
+  const prototype = Reflect.getPrototypeOf(instance);
+  if (prototype === null) return [];
+  const instanceRecord = instance as Record<string, unknown>;
+  return Object.getOwnPropertyNames(prototype)
     .filter((name) => name !== 'constructor')
-    .filter((name) => typeof instance[name] === 'function');
+    .filter((name) => typeof instanceRecord[name] === 'function');
 }
 
+function invokePublicMethod(
+  instance: object,
+  method: string,
+  args: unknown[],
+): unknown {
+  const candidate = (instance as Record<string, unknown>)[method];
+  if (typeof candidate !== 'function') return undefined;
+  const callable = candidate as (...values: unknown[]) => unknown;
+  return callable.apply(instance, args);
+}
 function createDto() {
   return {
     nome: 'Teste Automatizado',
     titulo: 'Teste Automatizado',
-    descricao: 'Descrição teste',
+    descricao: 'DescriÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o teste',
     telefone: '83999999999',
     email: 'teste@beautycore.local',
     senha: 'Teste@123456',
@@ -410,8 +402,10 @@ function createDto() {
     categoriaId: UUID_A,
     dataHoraInicio: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
     dataHoraFim: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-    dataVencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    observacoes: 'Observação teste',
+    dataVencimento: new Date(
+      Date.now() + 30 * 24 * 60 * 60 * 1000,
+    ).toISOString(),
+    observacoes: 'ObservaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o teste',
   };
 }
 
@@ -459,21 +453,31 @@ function createScenarios() {
     [req, dto],
     [EMPRESA_A, UUID_A, dto],
     [UUID_A, EMPRESA_A, dto],
-    [EMPRESA_A, { dataInicio: new Date().toISOString(), dataFim: new Date().toISOString() }],
+    [
+      EMPRESA_A,
+      {
+        dataInicio: new Date().toISOString(),
+        dataFim: new Date().toISOString(),
+      },
+    ],
     [UUID_A, UUID_B, EMPRESA_A],
     [EMPRESA_A, 'ATIVO'],
     ['ATIVO', EMPRESA_A],
   ];
 }
 
-async function runWithTimeout(fn: () => any, timeoutMs = 350) {
-  return Promise.race([
+async function runWithTimeout(
+  fn: () => unknown,
+  timeoutMs = 350,
+): Promise<unknown> {
+  return Promise.race<unknown>([
     Promise.resolve().then(fn),
-    new Promise((resolve) => setTimeout(resolve, timeoutMs)),
+    new Promise<undefined>((resolve) => {
+      setTimeout(() => resolve(undefined), timeoutMs);
+    }),
   ]);
 }
-
-describe('Chat 33.2 - Services críticos smoke coverage', () => {
+describe('Chat 33.2 - Services crÃƒÆ’Ã‚Â­ticos smoke coverage', () => {
   for (const target of TARGETS) {
     describe(target.label, () => {
       it('deve importar e instanciar o service quando existir', () => {
@@ -486,7 +490,7 @@ describe('Chat 33.2 - Services críticos smoke coverage', () => {
         expect(instance).toBeDefined();
       });
 
-      it('deve expor métodos públicos no service', () => {
+      it('deve expor mÃƒÆ’Ã‚Â©todos pÃƒÆ’Ã‚Âºblicos no service', () => {
         const ServiceClass = loadServiceClass(target);
         const instance = createServiceInstance(ServiceClass);
         const methods = getPublicMethods(instance);
@@ -494,7 +498,7 @@ describe('Chat 33.2 - Services críticos smoke coverage', () => {
         expect(methods.length).toBeGreaterThan(0);
       });
 
-      it('deve exercitar métodos públicos com mocks seguros', async () => {
+      it('deve exercitar mÃƒÆ’Ã‚Â©todos pÃƒÆ’Ã‚Âºblicos com mocks seguros', () => {
         const ServiceClass = loadServiceClass(target);
         const instance = createServiceInstance(ServiceClass);
         const methods = getPublicMethods(instance);
@@ -504,12 +508,14 @@ describe('Chat 33.2 - Services críticos smoke coverage', () => {
 
         for (const method of methods) {
           for (const args of scenarios.slice(0, 8)) {
-            await expect(async () => {
+            expect(async () => {
               try {
-                await runWithTimeout(() => instance[method](...args));
+                await runWithTimeout(() =>
+                  invokePublicMethod(instance, method, args),
+                );
               } catch {
-                // Services podem lançar NotFound, Forbidden, BadRequest ou Unauthorized por contrato.
-                // O objetivo deste teste é exercitar fluxos com mocks sem transformar exceções esperadas em falha.
+                // Services podem lanÃƒÆ’Ã‚Â§ar NotFound, Forbidden, BadRequest ou Unauthorized por contrato.
+                // O objetivo deste teste ÃƒÆ’Ã‚Â© exercitar fluxos com mocks sem transformar exceÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes esperadas em falha.
               }
             }).not.toThrow();
           }
@@ -518,5 +524,3 @@ describe('Chat 33.2 - Services críticos smoke coverage', () => {
     });
   }
 });
-
-

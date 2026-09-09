@@ -1,10 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { execFileSync } from 'child_process';
-import { appendFileSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'fs';
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  rmSync,
+  statSync,
+} from 'fs';
 import { join, resolve } from 'path';
 
 import { PrismaService } from '../database/prisma/prisma.service';
+import { QueuesService } from '../queues/services/queues.service';
 
 type BackupJobName =
   | 'backup_postgres_diario'
@@ -21,9 +29,17 @@ type BackupScriptResult = {
 @Injectable()
 export class BackupService {
   private readonly projectRoot = process.cwd();
-  private readonly logPath = join(this.projectRoot, 'logs', 'backups', 'automation.log');
+  private readonly logPath = join(
+    this.projectRoot,
+    'logs',
+    'backups',
+    'automation.log',
+  );
 
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional() private readonly queuesService?: QueuesService,
+  ) {
     this.ensureDirectories();
   }
 
@@ -75,8 +91,11 @@ export class BackupService {
   async executarLimpezaOperacional() {
     const sessoes = await this.limparSessoesAntigas();
     const uploads = this.limparUploadsTemp();
-    const jobs = this.registrarLimpezaJobsAntigos();
-    const payload = { timestamp: new Date().toISOString(), results: [sessoes, uploads, jobs] };
+    const jobs = await this.registrarLimpezaJobsAntigos();
+    const payload = {
+      timestamp: new Date().toISOString(),
+      results: [sessoes, uploads, jobs],
+    };
 
     this.appendAutomationLog({ evento: 'LIMPEZA_OPERACIONAL', ...payload });
 
@@ -171,25 +190,42 @@ export class BackupService {
     return payload;
   }
 
-  private registrarLimpezaJobsAntigos() {
+  private async registrarLimpezaJobsAntigos() {
+    if (!this.queuesService) {
+      const payload = {
+        job: 'limpeza_jobs_antigos',
+        status: 'SIMULADO' as const,
+        retentionCompletedJobsDays: 30,
+        retentionFailedJobsDays: 90,
+        message:
+          'QueuesService indisponivel; limpeza mantida em modo scheduler-ready.',
+      };
+
+      this.appendAutomationLog(payload);
+      void this.registrarAuditoria(
+        'RETENCAO_EXECUTADA',
+        'Retencao de jobs antigos registrada em modo scheduler-ready.',
+        payload,
+      );
+
+      return payload;
+    }
+
+    const cleanup = await this.queuesService.limparJobsAntigos();
     const payload = {
       job: 'limpeza_jobs_antigos',
-      status: 'SIMULADO',
-      retentionCompletedJobsDays: 30,
-      retentionFailedJobsDays: 90,
-      message: 'Estrutura de retencao de jobs antigos preparada para integracao BullMQ especifica.',
+      ...cleanup,
     };
 
     this.appendAutomationLog(payload);
     void this.registrarAuditoria(
       'RETENCAO_EXECUTADA',
-      'Retencao de jobs antigos registrada em modo scheduler-ready.',
+      'Retencao fisica de jobs antigos executada no BullMQ.',
       payload,
     );
 
     return payload;
   }
-
   private registrarOuExecutarBackup(job: BackupJobName) {
     if (!this.isExecutionEnabled()) {
       return this.registrarExecucaoSimulada(job);
@@ -204,7 +240,8 @@ export class BackupService {
       status: 'SIMULADO',
       timestamp: new Date().toISOString(),
       executionEnabled: this.isExecutionEnabled(),
-      message: 'Backup registrado em modo seguro. Execucao real exige BACKUP_EXECUTION_ENABLED=true.',
+      message:
+        'Backup registrado em modo seguro. Execucao real exige BACKUP_EXECUTION_ENABLED=true.',
       scripts: this.scriptsForJob(job),
     };
 
@@ -252,7 +289,9 @@ export class BackupService {
           cwd: this.projectRoot,
           encoding: 'utf8',
           stdio: ['ignore', 'pipe', 'pipe'],
-          timeout: Number(process.env.BACKUP_SCRIPT_TIMEOUT_MS ?? 15 * 60 * 1000),
+          timeout: Number(
+            process.env.BACKUP_SCRIPT_TIMEOUT_MS ?? 15 * 60 * 1000,
+          ),
         },
       );
 
@@ -274,7 +313,9 @@ export class BackupService {
         ...payload,
       });
 
-      throw new Error(`Falha ao executar script de backup ${script}: ${message}`);
+      throw new Error(
+        `Falha ao executar script de backup ${script}: ${message}`,
+      );
     }
   }
 
@@ -341,7 +382,9 @@ export class BackupService {
 
   private appendAutomationLog(payload: Record<string, unknown>) {
     this.ensureDirectories();
-    appendFileSync(this.logPath, JSON.stringify(payload) + '\n', { encoding: 'utf8' });
+    appendFileSync(this.logPath, JSON.stringify(payload) + '\n', {
+      encoding: 'utf8',
+    });
   }
 
   private isExecutionEnabled() {

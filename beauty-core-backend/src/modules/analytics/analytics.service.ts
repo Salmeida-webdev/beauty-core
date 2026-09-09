@@ -10,8 +10,8 @@ export class AnalyticsService {
     private readonly tenantValidator: TenantValidatorService,
   ) {}
 
-  private db() {
-    return this.prisma as any;
+  private db(): PrismaService {
+    return this.prisma;
   }
 
   private inicioDoMes(): Date {
@@ -81,28 +81,18 @@ export class AnalyticsService {
     };
   }
 
-  async dashboard(
-    empresaId: string,
-    dataInicio?: string,
-    dataFim?: string,
-  ) {
+  async dashboard(empresaId: string, dataInicio?: string, dataFim?: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const [
-      clientes,
-      agendamentos,
-      financeiro,
-      fidelidade,
-      pacotes,
-      whatsapp,
-    ] = await Promise.all([
-      this.clientes(empresaId),
-      this.agendamentos(empresaId, dataInicio, dataFim),
-      this.financeiro(empresaId, dataInicio, dataFim),
-      this.fidelidade(empresaId),
-      this.pacotes(empresaId),
-      this.whatsapp(empresaId, dataInicio, dataFim),
-    ]);
+    const [clientes, agendamentos, financeiro, fidelidade, pacotes, whatsapp] =
+      await Promise.all([
+        this.clientes(empresaId),
+        this.agendamentos(empresaId, dataInicio, dataFim),
+        this.financeiro(empresaId, dataInicio, dataFim),
+        this.fidelidade(empresaId),
+        this.pacotes(empresaId),
+        this.whatsapp(empresaId, dataInicio, dataFim),
+      ]);
 
     return {
       clientes: {
@@ -210,10 +200,8 @@ export class AnalyticsService {
     ]);
 
     const aniversariantesMes = clientesComNascimento.reduce(
-      (total: number, cliente: any) =>
-        cliente.dataNascimento?.getMonth() === mesAtual
-          ? total + 1
-          : total,
+      (total: number, cliente) =>
+        cliente.dataNascimento?.getMonth() === mesAtual ? total + 1 : total,
       0,
     );
 
@@ -230,11 +218,7 @@ export class AnalyticsService {
     };
   }
 
-  async agendamentos(
-    empresaId: string,
-    dataInicio?: string,
-    dataFim?: string,
-  ) {
+  async agendamentos(empresaId: string, dataInicio?: string, dataFim?: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const filtroPeriodo = this.filtroData(
@@ -248,45 +232,40 @@ export class AnalyticsService {
       ...filtroPeriodo,
     };
 
-    const [
-      total,
-      confirmados,
-      cancelados,
-      concluidos,
-      pendentes,
-    ] = await Promise.all([
-      this.db().agendamento.count({
-        where: whereBase,
-      }),
+    const [total, confirmados, cancelados, concluidos, pendentes] =
+      await Promise.all([
+        this.db().agendamento.count({
+          where: whereBase,
+        }),
 
-      this.db().agendamento.count({
-        where: {
-          ...whereBase,
-          status: 'CONFIRMADO',
-        },
-      }),
+        this.db().agendamento.count({
+          where: {
+            ...whereBase,
+            status: 'CONFIRMADO',
+          },
+        }),
 
-      this.db().agendamento.count({
-        where: {
-          ...whereBase,
-          status: 'CANCELADO',
-        },
-      }),
+        this.db().agendamento.count({
+          where: {
+            ...whereBase,
+            status: 'CANCELADO',
+          },
+        }),
 
-      this.db().agendamento.count({
-        where: {
-          ...whereBase,
-          status: 'CONCLUIDO',
-        },
-      }),
+        this.db().agendamento.count({
+          where: {
+            ...whereBase,
+            status: 'CONCLUIDO',
+          },
+        }),
 
-      this.db().agendamento.count({
-        where: {
-          ...whereBase,
-          status: 'PENDENTE',
-        },
-      }),
-    ]);
+        this.db().agendamento.count({
+          where: {
+            ...whereBase,
+            status: 'PENDENTE',
+          },
+        }),
+      ]);
 
     return {
       total,
@@ -303,11 +282,7 @@ export class AnalyticsService {
     };
   }
 
-  async financeiro(
-    empresaId: string,
-    dataInicio?: string,
-    dataFim?: string,
-  ) {
+  async financeiro(empresaId: string, dataInicio?: string, dataFim?: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const inicioMes = this.inicioDoMes();
@@ -320,7 +295,7 @@ export class AnalyticsService {
 
     const whereBase = {
       empresaId,
-      status: 'PAGO',
+      status: 'PAGO' as const,
       ...filtroPeriodo,
     };
 
@@ -354,7 +329,7 @@ export class AnalyticsService {
       this.db().movimentacaoFinanceira.aggregate({
         where: {
           empresaId,
-          status: 'PAGO',
+          status: 'PAGO' as const,
           tipo: 'RECEITA',
           dataMovimentacao: {
             gte: inicioMes,
@@ -368,7 +343,7 @@ export class AnalyticsService {
       this.db().movimentacaoFinanceira.aggregate({
         where: {
           empresaId,
-          status: 'PAGO',
+          status: 'PAGO' as const,
           tipo: 'DESPESA',
           dataMovimentacao: {
             gte: inicioMes,
@@ -388,10 +363,10 @@ export class AnalyticsService {
       }),
     ]);
 
-    const receitas = this.numero(receitasAgg._sum.valor);
-    const despesas = this.numero(despesasAgg._sum.valor);
-    const receitasMes = this.numero(receitasMesAgg._sum.valor);
-    const despesasMes = this.numero(despesasMesAgg._sum.valor);
+    const receitas = this.numero(receitasAgg._sum?.valor);
+    const despesas = this.numero(despesasAgg._sum?.valor);
+    const receitasMes = this.numero(receitasMesAgg._sum?.valor);
+    const despesasMes = this.numero(despesasMesAgg._sum?.valor);
 
     return {
       receitas,
@@ -409,11 +384,7 @@ export class AnalyticsService {
     };
   }
 
-  async servicos(
-    empresaId: string,
-    dataInicio?: string,
-    dataFim?: string,
-  ) {
+  async servicos(empresaId: string, dataInicio?: string, dataFim?: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const agrupados = await this.db().agendamento.groupBy({
@@ -434,9 +405,7 @@ export class AnalyticsService {
       take: this.analyticsTopLimit(),
     });
 
-    const servicoIds = agrupados
-      .map((item: any) => item.servicoId)
-      .filter(Boolean);
+    const servicoIds = agrupados.map((item) => item.servicoId).filter(Boolean);
 
     if (!servicoIds.length) {
       return [];
@@ -456,12 +425,12 @@ export class AnalyticsService {
       },
     });
 
-    const servicosMap = new Map<string, any>(
-      servicos.map((servico: any) => [servico.id, servico]),
+    const servicosMap = new Map<string, (typeof servicos)[number]>(
+      servicos.map((servico) => [servico.id, servico] as const),
     );
 
-    return agrupados.map((item: any, index: number) => {
-      const servico: any = servicosMap.get(item.servicoId);
+    return agrupados.map((item, index: number) => {
+      const servico = servicosMap.get(item.servicoId);
       const quantidade = item._count.id;
       const preco = this.numero(servico?.preco);
 
@@ -500,7 +469,7 @@ export class AnalyticsService {
     });
 
     const profissionalIds = agrupados
-      .map((item: any) => item.profissionalId)
+      .map((item) => item.profissionalId)
       .filter(Boolean);
 
     if (!profissionalIds.length) {
@@ -537,23 +506,19 @@ export class AnalyticsService {
       }),
     ]);
 
-    const profissionaisMap = new Map<string, any>(
-      profissionais.map((profissional: any) => [
-        profissional.id,
-        profissional,
-      ]),
+    const profissionaisMap = new Map<string, (typeof profissionais)[number]>(
+      profissionais.map(
+        (profissional) => [profissional.id, profissional] as const,
+      ),
     );
 
-    const comissoesMap = new Map<string, any>(
-      comissoes.map((comissao: any) => [
-        comissao.profissionalId,
-        comissao,
-      ]),
+    const comissoesMap = new Map<string, (typeof comissoes)[number]>(
+      comissoes.map((comissao) => [comissao.profissionalId, comissao] as const),
     );
 
-    return agrupados.map((item: any, index: number) => {
-      const profissional: any = profissionaisMap.get(item.profissionalId);
-      const comissao: any = comissoesMap.get(item.profissionalId);
+    return agrupados.map((item, index: number) => {
+      const profissional = profissionaisMap.get(item.profissionalId);
+      const comissao = comissoesMap.get(item.profissionalId);
 
       return {
         ranking: index + 1,
@@ -565,11 +530,7 @@ export class AnalyticsService {
     });
   }
 
-  async unidades(
-    empresaId: string,
-    dataInicio?: string,
-    dataFim?: string,
-  ) {
+  async unidades(empresaId: string, dataInicio?: string, dataFim?: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const agrupados = await this.db().agendamento.groupBy({
@@ -589,9 +550,7 @@ export class AnalyticsService {
       take: this.analyticsTopLimit(),
     });
 
-    const unidadeIds = agrupados
-      .map((item: any) => item.unidadeId)
-      .filter(Boolean);
+    const unidadeIds = agrupados.map((item) => item.unidadeId).filter(Boolean);
 
     if (!unidadeIds.length) {
       return [];
@@ -615,7 +574,7 @@ export class AnalyticsService {
         where: {
           empresaId,
           tipo: 'RECEITA',
-          status: 'PAGO',
+          status: 'PAGO' as const,
           ...this.filtroData(dataInicio, dataFim, 'dataMovimentacao'),
           agendamento: {
             unidadeId: {
@@ -635,8 +594,8 @@ export class AnalyticsService {
       }),
     ]);
 
-    const unidadesMap = new Map<string, any>(
-      unidades.map((unidade: any) => [unidade.id, unidade]),
+    const unidadesMap = new Map<string, (typeof unidades)[number]>(
+      unidades.map((unidade) => [unidade.id, unidade] as const),
     );
 
     const receitasPorUnidade = new Map<string, number>();
@@ -650,13 +609,12 @@ export class AnalyticsService {
 
       receitasPorUnidade.set(
         unidadeId,
-        (receitasPorUnidade.get(unidadeId) ?? 0) +
-          this.numero(receita.valor),
+        (receitasPorUnidade.get(unidadeId) ?? 0) + this.numero(receita.valor),
       );
     }
 
-    return agrupados.map((item: any, index: number) => {
-      const unidade: any = unidadesMap.get(item.unidadeId);
+    return agrupados.map((item, index: number) => {
+      const unidade = unidadesMap.get(item.unidadeId);
 
       return {
         ranking: index + 1,
@@ -740,7 +698,7 @@ export class AnalyticsService {
       pontosDistribuidos: this.numero(pontosDistribuidosAgg._sum.pontos),
       pontosResgatados: this.numero(pontosResgatadosAgg._sum.pontos),
       beneficiosLiberados,
-      topClientes: topClientes.map((item: any, index: number) => ({
+      topClientes: topClientes.map((item, index: number) => ({
         ranking: index + 1,
         clienteId: item.cliente.id,
         nome: item.cliente.nome,
@@ -803,8 +761,7 @@ export class AnalyticsService {
     ]);
 
     const receitaGerada = clientesPacotes.reduce(
-      (total: number, item: any) =>
-        total + this.numero(item.pacote?.valor),
+      (total: number, item) => total + this.numero(item.pacote?.valor),
       0,
     );
 
@@ -817,11 +774,7 @@ export class AnalyticsService {
     };
   }
 
-  async whatsapp(
-    empresaId: string,
-    dataInicio?: string,
-    dataFim?: string,
-  ) {
+  async whatsapp(empresaId: string, dataInicio?: string, dataFim?: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const whereBase = {
@@ -875,11 +828,7 @@ export class AnalyticsService {
     };
   }
 
-  async notificacoes(
-    empresaId: string,
-    dataInicio?: string,
-    dataFim?: string,
-  ) {
+  async notificacoes(empresaId: string, dataInicio?: string, dataFim?: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const whereBase = {
@@ -922,11 +871,7 @@ export class AnalyticsService {
     };
   }
 
-  async eventos(
-    empresaId: string,
-    dataInicio?: string,
-    dataFim?: string,
-  ) {
+  async eventos(empresaId: string, dataInicio?: string, dataFim?: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const whereBase = {
@@ -967,22 +912,16 @@ export class AnalyticsService {
 
     return {
       totalEventos,
-      porTipo: porTipo.reduce(
-        (acc: Record<string, number>, item: any) => {
-          acc[item.tipo] = item._count.id;
+      porTipo: porTipo.reduce((acc: Record<string, number>, item) => {
+        acc[item.tipo] = item._count.id;
 
-          return acc;
-        },
-        {} as Record<string, number>,
-      ),
-      porModulo: porModulo.reduce(
-        (acc: Record<string, number>, item: any) => {
-          acc[item.modulo] = item._count.id;
+        return acc;
+      }, {}),
+      porModulo: porModulo.reduce((acc: Record<string, number>, item) => {
+        acc[item.modulo] = item._count.id;
 
-          return acc;
-        },
-        {} as Record<string, number>,
-      ),
+        return acc;
+      }, {}),
       ultimosEventos,
     };
   }

@@ -24,8 +24,8 @@ jobs:
           cache-dependency-path: beauty-core-backend/package-lock.json
       - name: Validate required staging secrets
         env:
-          DATABASE_URL_STAGING: ${{ secrets.DATABASE_URL_STAGING }}
-          REDIS_URL_STAGING: ${{ secrets.REDIS_URL_STAGING }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+          REDIS_URL: ${{ secrets.REDIS_URL_STAGING }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_CLIENT_SECRET: ${{ secrets.JWT_CLIENT_SECRET }}
           JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}

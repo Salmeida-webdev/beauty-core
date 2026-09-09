@@ -25,8 +25,8 @@ jobs:
           cache-dependency-path: beauty-core-backend/package-lock.json
       - name: Validate required production secrets
         env:
-          DATABASE_URL_PRODUCTION: ${{ secrets.DATABASE_URL_PRODUCTION }}
-          REDIS_URL_PRODUCTION: ${{ secrets.REDIS_URL_PRODUCTION }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_PRODUCTION }}
+          REDIS_URL: ${{ secrets.REDIS_URL_PRODUCTION }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_CLIENT_SECRET: ${{ secrets.JWT_CLIENT_SECRET }}
           JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}

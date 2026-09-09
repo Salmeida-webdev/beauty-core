@@ -1,0 +1,4 @@
+﻿services:
+  api:
+    image: beauty-core-api:production-candidate-ba6baa2c6cc0
+    build: null

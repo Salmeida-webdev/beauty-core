@@ -1,4 +1,4 @@
-﻿import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Queue } from 'bullmq';
 
@@ -36,6 +36,16 @@ type QueueTraceMetadata = {
   correlationId: string | null;
 };
 
+type QueueRetentionResult = {
+  queue: string;
+  completedRemoved: number;
+  failedRemoved: number;
+};
+
+const COMPLETED_JOB_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+const FAILED_JOB_RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
+const JOB_CLEAN_LIMIT = 10000;
+
 @Injectable()
 export class QueuesService {
   private readonly logger = new Logger(QueuesService.name);
@@ -64,9 +74,7 @@ export class QueuesService {
     return data && typeof data === 'object' ? data : {};
   }
 
-  private normalizarMetadata(
-    metadata: unknown,
-  ): Record<string, any> {
+  private normalizarMetadata(metadata: unknown): Record<string, any> {
     if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
       return {};
     }
@@ -86,9 +94,7 @@ export class QueuesService {
     return null;
   }
 
-  private resolverTraceMetadata(
-    payload: QueueJobPayload,
-  ): QueueTraceMetadata {
+  private resolverTraceMetadata(payload: QueueJobPayload): QueueTraceMetadata {
     const metadata = this.normalizarMetadata(payload.metadata);
     const contextData = this.requestContext.getContext();
 
@@ -327,6 +333,53 @@ export class QueuesService {
     });
   }
 
+  async limparJobsAntigos() {
+    const queues: Array<{ label: string; queue: Queue }> = [
+      { label: 'notificacoes', queue: this.notificacoesQueue },
+      { label: 'whatsapp', queue: this.whatsappQueue },
+      { label: 'campanhas', queue: this.campanhasQueue },
+      { label: 'aniversarios', queue: this.aniversariosQueue },
+      { label: 'relatorios', queue: this.relatoriosQueue },
+    ];
+
+    const results: QueueRetentionResult[] = [];
+
+    for (const entry of queues) {
+      const [completed, failed] = await Promise.all([
+        entry.queue.clean(
+          COMPLETED_JOB_RETENTION_MS,
+          JOB_CLEAN_LIMIT,
+          'completed',
+        ),
+        entry.queue.clean(FAILED_JOB_RETENTION_MS, JOB_CLEAN_LIMIT, 'failed'),
+      ]);
+
+      results.push({
+        queue: entry.label,
+        completedRemoved: completed.length,
+        failedRemoved: failed.length,
+      });
+    }
+
+    const completedRemoved = results.reduce(
+      (total, item) => total + item.completedRemoved,
+      0,
+    );
+    const failedRemoved = results.reduce(
+      (total, item) => total + item.failedRemoved,
+      0,
+    );
+
+    return {
+      status: 'SUCESSO' as const,
+      retentionCompletedJobsDays: 30,
+      retentionFailedJobsDays: 90,
+      cleanLimitPerQueueAndStatus: JOB_CLEAN_LIMIT,
+      completedRemoved,
+      failedRemoved,
+      queues: results,
+    };
+  }
   // Aliases defensivos para compatibilidade com chamadas antigas/futuras.
   adicionarJobNotificacao(data: QueueJobPayload) {
     return this.adicionarNotificacao(data);

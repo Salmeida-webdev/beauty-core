@@ -33,6 +33,44 @@ type DadosRelacionamentosFinanceiro = {
   agendamentoId?: string | null;
   tipo?: TipoMovimentacaoFinanceira | null;
 };
+type FiltrosFinanceiro = {
+  categoriaId?: string;
+  clienteId?: string;
+  agendamentoId?: string;
+  dataInicio?: string;
+  dataFim?: string;
+  tipo?: TipoMovimentacaoFinanceira;
+  status?: StatusPagamento;
+};
+
+type IncludeBasicoFinanceiro = {
+  categoria: {
+    select: {
+      id: true;
+      nome: true;
+      tipo: true;
+    };
+  };
+  cliente: {
+    select: {
+      id: true;
+      nome: true;
+      telefone: true;
+    };
+  };
+  agendamento: {
+    select: {
+      id: true;
+      dataHoraInicio: true;
+      status: true;
+    };
+  };
+};
+
+type MovimentacaoFinanceiraComRelacionamentos =
+  Prisma.MovimentacaoFinanceiraGetPayload<{
+    include: IncludeBasicoFinanceiro;
+  }>;
 
 @Injectable()
 export class FinanceiroService {
@@ -51,21 +89,20 @@ export class FinanceiroService {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
     await this.validarRelacionamentos(empresaId, dto);
 
-    const movimentacao =
-      await this.prisma.movimentacaoFinanceira.create({
-        data: {
-          empresaId,
-          categoriaId: dto.categoriaId,
-          clienteId: dto.clienteId,
-          agendamentoId: dto.agendamentoId,
-          descricao: dto.descricao,
-          tipo: dto.tipo,
-          valor: dto.valor,
-          formaPagamento: dto.formaPagamento,
-          observacoes: dto.observacoes,
-        },
-        include: this.getIncludeBasico(),
-      });
+    const movimentacao = await this.prisma.movimentacaoFinanceira.create({
+      data: {
+        empresaId,
+        categoriaId: dto.categoriaId,
+        clienteId: dto.clienteId,
+        agendamentoId: dto.agendamentoId,
+        descricao: dto.descricao,
+        tipo: dto.tipo,
+        valor: dto.valor,
+        formaPagamento: dto.formaPagamento,
+        observacoes: dto.observacoes,
+      },
+      include: this.getIncludeBasico(),
+    });
 
     await this.automacoesService.processarEvento({
       empresaId,
@@ -76,9 +113,7 @@ export class FinanceiroService {
           ? 'Receita criada'
           : 'Despesa criada',
       mensagem: `${
-        dto.tipo === TipoMovimentacaoFinanceira.RECEITA
-          ? 'Receita'
-          : 'Despesa'
+        dto.tipo === TipoMovimentacaoFinanceira.RECEITA ? 'Receita' : 'Despesa'
       } de R$ ${Number(movimentacao.valor).toFixed(2)} registrada.`,
       referenciaId: movimentacao.id,
       dados: {
@@ -130,7 +165,7 @@ export class FinanceiroService {
     return this.formatarMovimentacao(movimentacao);
   }
 
-  async findAll(empresaId: string, query: PaginationDto) {
+  async findAll(empresaId: string, query: PaginationDto & FiltrosFinanceiro) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     await this.validarFiltrosFinanceiros(empresaId, {
@@ -139,34 +174,31 @@ export class FinanceiroService {
       agendamentoId: query['agendamentoId'],
     });
 
-    const { page, limit, skip, take } =
-      getPaginationParams(query);
+    const { page, limit, skip, take } = getPaginationParams(query);
 
     const orderDirection = query.orderDirection ?? 'desc';
-    const orderBy: Prisma.MovimentacaoFinanceiraOrderByWithRelationInput = (() => {
-      switch (query.orderBy) {
-        case 'createdAt':
-          return { createdAt: orderDirection };
-        case 'updatedAt':
-          return { updatedAt: orderDirection };
-        case 'valor':
-          return { valor: orderDirection };
-        case 'status':
-          return { status: orderDirection };
-        case 'tipo':
-          return { tipo: orderDirection };
-        case 'descricao':
-          return { descricao: orderDirection };
-        case 'dataMovimentacao':
-        default:
-          return { dataMovimentacao: orderDirection };
-      }
-    })();
+    const orderBy: Prisma.MovimentacaoFinanceiraOrderByWithRelationInput =
+      (() => {
+        switch (query.orderBy) {
+          case 'createdAt':
+            return { createdAt: orderDirection };
+          case 'updatedAt':
+            return { updatedAt: orderDirection };
+          case 'valor':
+            return { valor: orderDirection };
+          case 'status':
+            return { status: orderDirection };
+          case 'tipo':
+            return { tipo: orderDirection };
+          case 'descricao':
+            return { descricao: orderDirection };
+          case 'dataMovimentacao':
+          default:
+            return { dataMovimentacao: orderDirection };
+        }
+      })();
 
-    const where = this.montarWhereFinanceiro(
-      empresaId,
-      query,
-    );
+    const where = this.montarWhereFinanceiro(empresaId, query);
 
     const [data, total] = await Promise.all([
       this.prisma.movimentacaoFinanceira.findMany({
@@ -192,37 +224,27 @@ export class FinanceiroService {
   async findOne(empresaId: string, id: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const movimentacao =
-      await this.prisma.movimentacaoFinanceira.findFirst({
-        where: {
-          id,
-          empresaId,
-        },
-        include: this.getIncludeBasico(),
-      });
+    const movimentacao = await this.prisma.movimentacaoFinanceira.findFirst({
+      where: {
+        id,
+        empresaId,
+      },
+      include: this.getIncludeBasico(),
+    });
 
     if (!movimentacao) {
-      throw new NotFoundException(
-        'Movimentação financeira não encontrada',
-      );
+      throw new NotFoundException('Movimentação financeira não encontrada');
     }
 
     return this.formatarMovimentacao(movimentacao);
   }
 
-  async update(
-    empresaId: string,
-    id: string,
-    dto: UpdateMovimentacaoDto,
-  ) {
+  async update(empresaId: string, id: string, dto: UpdateMovimentacaoDto) {
     const startedAt = Date.now();
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const movimentacaoAtual = await this.findOne(
-      empresaId,
-      id,
-    );
+    const movimentacaoAtual = await this.findOne(empresaId, id);
 
     const dadosAntes = {
       descricao: movimentacaoAtual.descricao,
@@ -238,34 +260,25 @@ export class FinanceiroService {
     };
 
     await this.validarRelacionamentos(empresaId, {
-      categoriaId:
-        dto.categoriaId ?? movimentacaoAtual.categoriaId,
-      clienteId:
-        dto.clienteId ?? movimentacaoAtual.clienteId,
-      agendamentoId:
-        dto.agendamentoId ?? movimentacaoAtual.agendamentoId,
+      categoriaId: dto.categoriaId ?? movimentacaoAtual.categoriaId,
+      clienteId: dto.clienteId ?? movimentacaoAtual.clienteId,
+      agendamentoId: dto.agendamentoId ?? movimentacaoAtual.agendamentoId,
       tipo: dto.tipo ?? movimentacaoAtual.tipo,
     });
 
-    const result =
-      await this.prisma.movimentacaoFinanceira.updateMany({
-        where: {
-          id,
-          empresaId,
-        },
-        data: dto,
-      });
+    const result = await this.prisma.movimentacaoFinanceira.updateMany({
+      where: {
+        id,
+        empresaId,
+      },
+      data: dto,
+    });
 
     if (result.count === 0) {
-      throw new NotFoundException(
-        'Movimentação financeira não encontrada',
-      );
+      throw new NotFoundException('Movimentação financeira não encontrada');
     }
 
-    const movimentacaoAtualizada = await this.findOne(
-      empresaId,
-      id,
-    );
+    const movimentacaoAtualizada = await this.findOne(empresaId, id);
 
     const tempoMs = Date.now() - startedAt;
 
@@ -307,10 +320,7 @@ export class FinanceiroService {
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const movimentacaoAtual = await this.findOne(
-      empresaId,
-      id,
-    );
+    const movimentacaoAtual = await this.findOne(empresaId, id);
 
     const dadosAntes = {
       descricao: movimentacaoAtual.descricao,
@@ -324,32 +334,23 @@ export class FinanceiroService {
       formaPagamento: movimentacaoAtual.formaPagamento,
     };
 
-    const result =
-      await this.prisma.movimentacaoFinanceira.updateMany({
-        where: {
-          id,
-          empresaId,
-        },
-        data: {
-          status: StatusPagamento.CANCELADO,
-        },
-      });
+    const result = await this.prisma.movimentacaoFinanceira.updateMany({
+      where: {
+        id,
+        empresaId,
+      },
+      data: {
+        status: StatusPagamento.CANCELADO,
+      },
+    });
 
     if (result.count === 0) {
-      throw new NotFoundException(
-        'Movimentação financeira não encontrada',
-      );
+      throw new NotFoundException('Movimentação financeira não encontrada');
     }
 
-    const movimentacaoCancelada = await this.findOne(
-      empresaId,
-      id,
-    );
+    const movimentacaoCancelada = await this.findOne(empresaId, id);
 
-    if (
-      movimentacaoAtual.status !==
-      StatusPagamento.CANCELADO
-    ) {
+    if (movimentacaoAtual.status !== StatusPagamento.CANCELADO) {
       await this.automacoesService.processarEvento({
         empresaId,
         tipo: TipoEventoSistema.MOVIMENTACAO_FINANCEIRA,
@@ -404,19 +405,12 @@ export class FinanceiroService {
     return movimentacaoCancelada;
   }
 
-  async pagar(
-    empresaId: string,
-    id: string,
-    dto: RegistrarPagamentoDto,
-  ) {
+  async pagar(empresaId: string, id: string, dto: RegistrarPagamentoDto) {
     const startedAt = Date.now();
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const movimentacaoAtual = await this.findOne(
-      empresaId,
-      id,
-    );
+    const movimentacaoAtual = await this.findOne(empresaId, id);
 
     const dadosAntes = {
       descricao: movimentacaoAtual.descricao,
@@ -430,28 +424,22 @@ export class FinanceiroService {
       formaPagamento: movimentacaoAtual.formaPagamento,
     };
 
-    const result =
-      await this.prisma.movimentacaoFinanceira.updateMany({
-        where: {
-          id,
-          empresaId,
-        },
-        data: {
-          status: StatusPagamento.PAGO,
-          formaPagamento: dto.formaPagamento,
-        },
-      });
+    const result = await this.prisma.movimentacaoFinanceira.updateMany({
+      where: {
+        id,
+        empresaId,
+      },
+      data: {
+        status: StatusPagamento.PAGO,
+        formaPagamento: dto.formaPagamento,
+      },
+    });
 
     if (result.count === 0) {
-      throw new NotFoundException(
-        'Movimentação financeira não encontrada',
-      );
+      throw new NotFoundException('Movimentação financeira não encontrada');
     }
 
-    const movimentacaoPaga = await this.findOne(
-      empresaId,
-      id,
-    );
+    const movimentacaoPaga = await this.findOne(empresaId, id);
 
     if (movimentacaoAtual.status !== StatusPagamento.PAGO) {
       await this.automacoesService.processarEvento({
@@ -459,9 +447,9 @@ export class FinanceiroService {
         tipo: TipoEventoSistema.MOVIMENTACAO_FINANCEIRA,
         modulo: 'FINANCEIRO',
         titulo: 'Pagamento registrado',
-        mensagem: `Pagamento de R$ ${Number(
-          movimentacaoPaga.valor,
-        ).toFixed(2)} registrado.`,
+        mensagem: `Pagamento de R$ ${Number(movimentacaoPaga.valor).toFixed(
+          2,
+        )} registrado.`,
         referenciaId: movimentacaoPaga.id,
         dados: {
           movimentacaoId: movimentacaoPaga.id,
@@ -511,17 +499,10 @@ export class FinanceiroService {
     return movimentacaoPaga;
   }
 
-  async resumo(
-    empresaId: string,
-    dataInicio?: string,
-    dataFim?: string,
-  ) {
+  async resumo(empresaId: string, dataInicio?: string, dataFim?: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const filtroData = this.montarFiltroData(
-      dataInicio,
-      dataFim,
-    );
+    const filtroData = this.montarFiltroData(dataInicio, dataFim);
 
     const [receitas, despesas] = await Promise.all([
       this.prisma.movimentacaoFinanceira.aggregate({
@@ -529,9 +510,7 @@ export class FinanceiroService {
           empresaId,
           tipo: TipoMovimentacaoFinanceira.RECEITA,
           status: StatusPagamento.PAGO,
-          ...(filtroData
-            ? { dataMovimentacao: filtroData }
-            : {}),
+          ...(filtroData ? { dataMovimentacao: filtroData } : {}),
         },
         _sum: {
           valor: true,
@@ -542,9 +521,7 @@ export class FinanceiroService {
           empresaId,
           tipo: TipoMovimentacaoFinanceira.DESPESA,
           status: StatusPagamento.PAGO,
-          ...(filtroData
-            ? { dataMovimentacao: filtroData }
-            : {}),
+          ...(filtroData ? { dataMovimentacao: filtroData } : {}),
         },
         _sum: {
           valor: true,
@@ -562,24 +539,15 @@ export class FinanceiroService {
     };
   }
 
-  async fluxoCaixa(
-    empresaId: string,
-    dataInicio?: string,
-    dataFim?: string,
-  ) {
+  async fluxoCaixa(empresaId: string, dataInicio?: string, dataFim?: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const filtroData = this.montarFiltroData(
-      dataInicio,
-      dataFim,
-    );
+    const filtroData = this.montarFiltroData(dataInicio, dataFim);
 
     const whereBase: Prisma.MovimentacaoFinanceiraWhereInput = {
       empresaId,
       status: StatusPagamento.PAGO,
-      ...(filtroData
-        ? { dataMovimentacao: filtroData }
-        : {}),
+      ...(filtroData ? { dataMovimentacao: filtroData } : {}),
     };
 
     const [entradasTotal, saidasTotal, ultimasMovimentacoes] =
@@ -612,12 +580,8 @@ export class FinanceiroService {
         }),
       ]);
 
-    const totalEntradas = Number(
-      entradasTotal._sum.valor || 0,
-    );
-    const totalSaidas = Number(
-      saidasTotal._sum.valor || 0,
-    );
+    const totalEntradas = Number(entradasTotal._sum.valor || 0);
+    const totalSaidas = Number(saidasTotal._sum.valor || 0);
 
     return {
       totalEntradas,
@@ -632,24 +596,22 @@ export class FinanceiroService {
   async receitasMes(empresaId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const { inicioMes, fimMes, hoje } =
-      this.getIntervaloMesAtual();
+    const { inicioMes, fimMes, hoje } = this.getIntervaloMesAtual();
 
-    const receitas =
-      await this.prisma.movimentacaoFinanceira.aggregate({
-        where: {
-          empresaId,
-          tipo: TipoMovimentacaoFinanceira.RECEITA,
-          status: StatusPagamento.PAGO,
-          dataMovimentacao: {
-            gte: inicioMes,
-            lt: fimMes,
-          },
+    const receitas = await this.prisma.movimentacaoFinanceira.aggregate({
+      where: {
+        empresaId,
+        tipo: TipoMovimentacaoFinanceira.RECEITA,
+        status: StatusPagamento.PAGO,
+        dataMovimentacao: {
+          gte: inicioMes,
+          lt: fimMes,
         },
-        _sum: {
-          valor: true,
-        },
-      });
+      },
+      _sum: {
+        valor: true,
+      },
+    });
 
     return {
       mes: hoje.getMonth() + 1,
@@ -661,24 +623,22 @@ export class FinanceiroService {
   async despesasMes(empresaId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const { inicioMes, fimMes, hoje } =
-      this.getIntervaloMesAtual();
+    const { inicioMes, fimMes, hoje } = this.getIntervaloMesAtual();
 
-    const despesas =
-      await this.prisma.movimentacaoFinanceira.aggregate({
-        where: {
-          empresaId,
-          tipo: TipoMovimentacaoFinanceira.DESPESA,
-          status: StatusPagamento.PAGO,
-          dataMovimentacao: {
-            gte: inicioMes,
-            lt: fimMes,
-          },
+    const despesas = await this.prisma.movimentacaoFinanceira.aggregate({
+      where: {
+        empresaId,
+        tipo: TipoMovimentacaoFinanceira.DESPESA,
+        status: StatusPagamento.PAGO,
+        dataMovimentacao: {
+          gte: inicioMes,
+          lt: fimMes,
         },
-        _sum: {
-          valor: true,
-        },
-      });
+      },
+      _sum: {
+        valor: true,
+      },
+    });
 
     return {
       mes: hoje.getMonth() + 1,
@@ -692,11 +652,10 @@ export class FinanceiroService {
     dto: DadosRelacionamentosFinanceiro,
   ) {
     if (dto.categoriaId) {
-      const categoria =
-        await this.tenantValidator.validarCategoriaFinanceira(
-          empresaId,
-          dto.categoriaId,
-        );
+      const categoria = await this.tenantValidator.validarCategoriaFinanceira(
+        empresaId,
+        dto.categoriaId,
+      );
 
       if (dto.tipo && categoria.tipo !== dto.tipo) {
         throw new BadRequestException(
@@ -715,23 +674,16 @@ export class FinanceiroService {
     }
 
     if (dto.clienteId) {
-      await this.tenantValidator.validarCliente(
-        empresaId,
-        dto.clienteId,
-      );
+      await this.tenantValidator.validarCliente(empresaId, dto.clienteId);
     }
 
     if (dto.agendamentoId) {
-      const agendamento =
-        await this.tenantValidator.validarAgendamento(
-          empresaId,
-          dto.agendamentoId,
-        );
+      const agendamento = await this.tenantValidator.validarAgendamento(
+        empresaId,
+        dto.agendamentoId,
+      );
 
-      if (
-        dto.clienteId &&
-        agendamento.clienteId !== dto.clienteId
-      ) {
+      if (dto.clienteId && agendamento.clienteId !== dto.clienteId) {
         throw new BadRequestException(
           'O agendamento informado não pertence ao cliente informado.',
         );
@@ -760,10 +712,7 @@ export class FinanceiroService {
 
     if (filtros.clienteId) {
       validacoes.push(
-        this.tenantValidator.validarCliente(
-          empresaId,
-          filtros.clienteId,
-        ),
+        this.tenantValidator.validarCliente(empresaId, filtros.clienteId),
       );
     }
 
@@ -781,34 +730,24 @@ export class FinanceiroService {
 
   private montarWhereFinanceiro(
     empresaId: string,
-    query: PaginationDto,
+    query: PaginationDto & FiltrosFinanceiro,
   ): Prisma.MovimentacaoFinanceiraWhereInput {
     const dataInicio = query['dataInicio']
       ? new Date(query['dataInicio'])
       : undefined;
 
-    const dataFim = query['dataFim']
-      ? new Date(query['dataFim'])
-      : undefined;
+    const dataFim = query['dataFim'] ? new Date(query['dataFim']) : undefined;
 
-    const tipo = query['tipo'] as
-      | TipoMovimentacaoFinanceira
-      | undefined;
+    const tipo = query['tipo'];
 
-    const status = query['status'] as
-      | StatusPagamento
-      | undefined;
+    const status = query['status'];
 
     return {
       empresaId,
       ...(tipo ? { tipo } : {}),
       ...(status ? { status } : {}),
-      ...(query['categoriaId']
-        ? { categoriaId: query['categoriaId'] }
-        : {}),
-      ...(query['clienteId']
-        ? { clienteId: query['clienteId'] }
-        : {}),
+      ...(query['categoriaId'] ? { categoriaId: query['categoriaId'] } : {}),
+      ...(query['clienteId'] ? { clienteId: query['clienteId'] } : {}),
       ...(query['agendamentoId']
         ? { agendamentoId: query['agendamentoId'] }
         : {}),
@@ -868,17 +807,9 @@ export class FinanceiroService {
   private getIntervaloMesAtual() {
     const hoje = new Date();
 
-    const inicioMes = new Date(
-      hoje.getFullYear(),
-      hoje.getMonth(),
-      1,
-    );
+    const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
 
-    const fimMes = new Date(
-      hoje.getFullYear(),
-      hoje.getMonth() + 1,
-      1,
-    );
+    const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 1);
 
     return {
       hoje,
@@ -887,7 +818,7 @@ export class FinanceiroService {
     };
   }
 
-  private getIncludeBasico() {
+  private getIncludeBasico(): IncludeBasicoFinanceiro {
     return {
       categoria: {
         select: {
@@ -913,7 +844,9 @@ export class FinanceiroService {
     };
   }
 
-  private formatarMovimentacao(movimentacao: any) {
+  private formatarMovimentacao(
+    movimentacao: MovimentacaoFinanceiraComRelacionamentos,
+  ) {
     return {
       ...movimentacao,
       valor: Number(movimentacao.valor),

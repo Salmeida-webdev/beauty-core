@@ -1,9 +1,28 @@
-﻿import request = require('supertest');
+import request from 'supertest';
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
-import { bearer, loginAdmin, loginClientePublico } from '../helpers/auth.helper';
-import { createBlockedTempFile, createTempUploadFile } from '../helpers/upload.helper';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
+import {
+  bearer,
+  loginAdmin,
+  loginClientePublico,
+} from '../helpers/auth.helper';
+import {
+  createBlockedTempFile,
+  createTempUploadFile,
+} from '../helpers/upload.helper';
 
+function readStringProperty(value: unknown, property: string): string {
+  const record = value as Record<string, unknown>;
+  const item = record[property];
+  if (typeof item !== 'string' || !item) {
+    throw new Error('Campo de texto ausente: ' + property);
+  }
+  return item;
+}
 describe('Uploads E2E', () => {
   let ctx: E2eContext;
   let adminToken: string;
@@ -12,7 +31,13 @@ describe('Uploads E2E', () => {
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
     adminToken = (await loginAdmin(ctx.app)).access_token;
-    clienteToken = (await loginClientePublico(ctx.app, ctx.seed.empresaA.slug, ctx.prisma)).access_token;
+    clienteToken = (
+      await loginClientePublico(
+        ctx.app,
+        readStringProperty(ctx.seed.empresaA as unknown, 'slug'),
+        ctx.prisma,
+      )
+    ).access_token;
   });
 
   afterAll(async () => {
@@ -88,11 +113,16 @@ describe('Uploads E2E', () => {
     delete empresaData.createdAt;
     delete empresaData.updatedAt;
 
-    if ('nome' in empresaData) empresaData.nome = 'Empresa Cross Tenant ' + suffix;
-    if ('slug' in empresaData) empresaData.slug = 'empresa-cross-tenant-' + suffix;
-    if ('email' in empresaData) empresaData.email = 'empresa-cross-' + suffix + '@teste.local';
-    if ('dominio' in empresaData) empresaData.dominio = 'cross-' + suffix + '.teste.local';
-    if ('cnpj' in empresaData) empresaData.cnpj = null;
+    const empresaPayload = empresaData as Record<string, unknown>;
+    if ('nome' in empresaPayload)
+      empresaPayload.nome = 'Empresa Cross Tenant ' + suffix;
+    if ('slug' in empresaPayload)
+      empresaPayload.slug = 'empresa-cross-tenant-' + suffix;
+    if ('email' in empresaPayload)
+      empresaPayload.email = 'empresa-cross-' + suffix + '@teste.local';
+    if ('dominio' in empresaPayload)
+      empresaPayload.dominio = 'cross-' + suffix + '.teste.local';
+    if ('cnpj' in empresaPayload) empresaPayload.cnpj = null;
 
     const empresaOutroTenant = await ctx.prisma.empresa.create({
       data: empresaData,
@@ -114,10 +144,14 @@ describe('Uploads E2E', () => {
 
     clienteData.empresaId = empresaOutroTenant.id;
 
-    if ('nome' in clienteData) clienteData.nome = 'Cliente Cross Tenant ' + suffix;
-    if ('telefone' in clienteData) clienteData.telefone = '119' + suffix.slice(-8).padStart(8, '0');
-    if ('email' in clienteData) clienteData.email = 'cliente-cross-' + suffix + '@teste.local';
-    if ('cpf' in clienteData) clienteData.cpf = null;
+    const clientePayload = clienteData as Record<string, unknown>;
+    if ('nome' in clientePayload)
+      clientePayload.nome = 'Cliente Cross Tenant ' + suffix;
+    if ('telefone' in clientePayload)
+      clientePayload.telefone = '119' + suffix.slice(-8).padStart(8, '0');
+    if ('email' in clientePayload)
+      clientePayload.email = 'cliente-cross-' + suffix + '@teste.local';
+    if ('cpf' in clientePayload) clientePayload.cpf = null;
 
     const clienteOutroTenant = await ctx.prisma.cliente.create({
       data: clienteData,
@@ -131,7 +165,7 @@ describe('Uploads E2E', () => {
     const arquivosAntes = await ctx.prisma.arquivo.count({
       where: {
         empresaId: ctx.seed.empresaA.id,
-        clienteId: clienteOutroTenant!.id,
+        clienteId: clienteOutroTenant.id,
       },
     });
 
@@ -143,7 +177,7 @@ describe('Uploads E2E', () => {
       await request(ctx.app.getHttpServer())
         .post('/arquivos/private/documentos')
         .set('Authorization', bearer(adminToken))
-        .field('clienteId', clienteOutroTenant!.id)
+        .field('clienteId', clienteOutroTenant.id)
         .attach('file', file.filePath)
         .expect((res) => {
           expect([400, 403, 404]).toContain(res.status);
@@ -152,7 +186,7 @@ describe('Uploads E2E', () => {
       const arquivosDepois = await ctx.prisma.arquivo.count({
         where: {
           empresaId: ctx.seed.empresaA.id,
-          clienteId: clienteOutroTenant!.id,
+          clienteId: clienteOutroTenant.id,
         },
       });
 
@@ -161,7 +195,6 @@ describe('Uploads E2E', () => {
       file.cleanup();
     }
   });
-
 
   it('deve bloquear PDF falso sem assinatura interna %PDF-', async () => {
     const file = createTempUploadFile({
@@ -198,5 +231,4 @@ describe('Uploads E2E', () => {
       file.cleanup();
     }
   });
-
 });

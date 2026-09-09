@@ -1,0 +1,118 @@
+# Chat 03 - Bloco 04S - Contexto dos erros de build do Analytics
+
+- Operacao somente leitura.
+- Trechos: linhas 1-30 e 295-375.
+## Linhas 1-30
+- 1: import { Injectable } from '@nestjs/common';
+- 2:
+- 3: import { PrismaService } from '../../database/prisma/prisma.service';
+- 4: import { TenantValidatorService } from '../../shared/tenant';
+- 5:
+- 6: @Injectable()
+- 7: export class AnalyticsService {
+- 8:   constructor(
+- 9:     private readonly prisma: PrismaService,
+- 10:     private readonly tenantValidator: TenantValidatorService,
+- 11:   ) {}
+- 12:
+- 13:   private db() {
+- 14:     return this.prisma as any;
+- 15:   }
+- 16:
+- 17:   private inicioDoMes(): Date {
+- 18:     const hoje = new Date();
+- 19:
+- 20:     return new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+- 21:   }
+- 22:
+- 23:   private trintaDiasAtras(): Date {
+- 24:     const data = new Date();
+- 25:
+- 26:     data.setDate(data.getDate() - 30);
+- 27:
+- 28:     return data;
+- 29:   }
+- 30:
+
+## Linhas 295-375
+- 295:
+- 296:     const whereBase = {
+- 297:       empresaId,
+- 298:       status: 'PAGO',
+- 299:       ...filtroPeriodo,
+- 300:     };
+- 301:
+- 302:     const [
+- 303:       receitasAgg,
+- 304:       despesasAgg,
+- 305:       receitasMesAgg,
+- 306:       despesasMesAgg,
+- 307:       agendamentosConcluidos,
+- 308:     ] = await Promise.all([
+- 309:       this.db().movimentacaoFinanceira.aggregate({
+- 310:         where: {
+- 311:           ...whereBase,
+- 312:           tipo: 'RECEITA',
+- 313:         },
+- 314:         _sum: {
+- 315:           valor: true,
+- 316:         },
+- 317:       }),
+- 318:
+- 319:       this.db().movimentacaoFinanceira.aggregate({
+- 320:         where: {
+- 321:           ...whereBase,
+- 322:           tipo: 'DESPESA',
+- 323:         },
+- 324:         _sum: {
+- 325:           valor: true,
+- 326:         },
+- 327:       }),
+- 328:
+- 329:       this.db().movimentacaoFinanceira.aggregate({
+- 330:         where: {
+- 331:           empresaId,
+- 332:           status: 'PAGO',
+- 333:           tipo: 'RECEITA',
+- 334:           dataMovimentacao: {
+- 335:             gte: inicioMes,
+- 336:           },
+- 337:         },
+- 338:         _sum: {
+- 339:           valor: true,
+- 340:         },
+- 341:       }),
+- 342:
+- 343:       this.db().movimentacaoFinanceira.aggregate({
+- 344:         where: {
+- 345:           empresaId,
+- 346:           status: 'PAGO',
+- 347:           tipo: 'DESPESA',
+- 348:           dataMovimentacao: {
+- 349:             gte: inicioMes,
+- 350:           },
+- 351:         },
+- 352:         _sum: {
+- 353:           valor: true,
+- 354:         },
+- 355:       }),
+- 356:
+- 357:       this.db().agendamento.count({
+- 358:         where: {
+- 359:           empresaId,
+- 360:           status: 'CONCLUIDO',
+- 361:           ...this.filtroData(dataInicio, dataFim, 'dataHoraInicio'),
+- 362:         },
+- 363:       }),
+- 364:     ]);
+- 365:
+- 366:     const receitas = this.numero(receitasAgg._sum.valor);
+- 367:     const despesas = this.numero(despesasAgg._sum.valor);
+- 368:     const receitasMes = this.numero(receitasMesAgg._sum.valor);
+- 369:     const despesasMes = this.numero(despesasMesAgg._sum.valor);
+- 370:
+- 371:     return {
+- 372:       receitas,
+- 373:       despesas,
+- 374:       saldo: receitas - despesas,
+- 375:       ticketMedio: agendamentosConcluidos

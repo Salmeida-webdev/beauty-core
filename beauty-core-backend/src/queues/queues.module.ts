@@ -1,8 +1,4 @@
-import {
-  Global,
-  Module,
-  Provider,
-  } from '@nestjs/common';
+import { Global, Module, Provider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
@@ -47,51 +43,32 @@ const dlqQueueProvider: Provider = {
 
 export const REDIS_CONNECTION = 'REDIS_CONNECTION';
 
-export const NOTIFICACOES_QUEUE_PROVIDER =
-  'NOTIFICACOES_QUEUE_PROVIDER';
+export const NOTIFICACOES_QUEUE_PROVIDER = 'NOTIFICACOES_QUEUE_PROVIDER';
 
-export const WHATSAPP_QUEUE_PROVIDER =
-  'WHATSAPP_QUEUE_PROVIDER';
+export const WHATSAPP_QUEUE_PROVIDER = 'WHATSAPP_QUEUE_PROVIDER';
 
-export const CAMPANHAS_QUEUE_PROVIDER =
-  'CAMPANHAS_QUEUE_PROVIDER';
+export const CAMPANHAS_QUEUE_PROVIDER = 'CAMPANHAS_QUEUE_PROVIDER';
 
-export const ANIVERSARIOS_QUEUE_PROVIDER =
-  'ANIVERSARIOS_QUEUE_PROVIDER';
+export const ANIVERSARIOS_QUEUE_PROVIDER = 'ANIVERSARIOS_QUEUE_PROVIDER';
 
-export const RELATORIOS_QUEUE_PROVIDER =
-  'RELATORIOS_QUEUE_PROVIDER';
+export const RELATORIOS_QUEUE_PROVIDER = 'RELATORIOS_QUEUE_PROVIDER';
 
 function getRedisOptions(configService: ConfigService) {
   return {
-    host:
-      configService.get<string>('REDIS_HOST') ||
-      'localhost',
+    host: configService.get<string>('REDIS_HOST') || 'localhost',
 
-    port: Number(
-      configService.get<string>('REDIS_PORT') ||
-        6379,
-    ),
+    port: Number(configService.get<string>('REDIS_PORT') || 6379),
 
-    password:
-      configService.get<string>('REDIS_PASSWORD') ||
-      undefined,
+    password: configService.get<string>('REDIS_PASSWORD') || undefined,
 
     maxRetriesPerRequest: null,
   };
 }
 
 @Global()
-
 @Module({
-  controllers: [
-    QueuesController,
-  ],
-  imports: [
-    NotificacoesModule,
-    MensagensWhatsappModule,
-    AuditoriaModule,
-  ],
+  controllers: [QueuesController],
+  imports: [NotificacoesModule, MensagensWhatsappModule, AuditoriaModule],
 
   providers: [
     {
@@ -153,24 +130,24 @@ function getRedisOptions(configService: ConfigService) {
     CampanhasWorker,
     AniversariosWorker,
     RelatoriosWorker,
-  ,
+    ,
     dlqQueueProvider,
     DistributedLockService,
     DeadLetterQueueService,
     QueueMonitorService,
     QueueShutdownService,
-    QueueMetricsService
+    QueueMetricsService,
   ].filter(Boolean) as Provider[],
 
   exports: [
     QueuesService,
     REDIS_CONNECTION,
-  ,
+    ,
     DistributedLockService,
     DeadLetterQueueService,
     QueueMonitorService,
     QueueShutdownService,
-    QueueMetricsService
+    QueueMetricsService,
   ].filter(Boolean) as any[],
 })
 export class QueuesModule {}
