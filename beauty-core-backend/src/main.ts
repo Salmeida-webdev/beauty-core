@@ -39,9 +39,7 @@ function resolveCorsOrigin() {
     .filter(Boolean);
 
   if (nodeEnv === 'production' && origins.includes('*')) {
-    throw new Error(
-      'CORS_ORIGIN não pode conter * em produção.',
-    );
+    throw new Error('CORS_ORIGIN não pode conter * em produção.');
   }
 
   return origins;
@@ -61,14 +59,11 @@ function getHeaderValue(req: Request, headerName: string): string | undefined {
   return undefined;
 }
 
-function createRequestContextMiddleware(
-  requestContext: RequestContextService,
-) {
+function createRequestContextMiddleware(requestContext: RequestContextService) {
   return (req: RequestWithIds, res: Response, next: NextFunction): void => {
     const requestId = getHeaderValue(req, 'x-request-id') ?? randomUUID();
 
-    const correlationId =
-      getHeaderValue(req, 'x-correlation-id') ?? requestId;
+    const correlationId = getHeaderValue(req, 'x-correlation-id') ?? requestId;
 
     req.requestId = requestId;
     req.correlationId = correlationId;
@@ -105,7 +100,10 @@ function apiVersionAliasMiddleware(
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
 
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+    rawBody: true,
+  });
 
   const requestContext = app.get(RequestContextService);
   const structuredLogger = app.get(StructuredLoggerService);
@@ -194,4 +192,3 @@ async function bootstrap() {
 }
 
 bootstrap();
-

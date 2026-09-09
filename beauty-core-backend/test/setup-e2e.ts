@@ -1,9 +1,12 @@
-﻿import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { PrismaClient } from '@prisma/client';
 
 import { AppModule } from '../src/app.module';
-import { createTestPrismaClient, resetTestDatabase } from './helpers/prisma.helper';
+import {
+  createTestPrismaClient,
+  resetTestDatabase,
+} from './helpers/prisma.helper';
 import { seedTestDatabase, TestSeedResult } from './seeds/test-seed';
 
 export type E2eContext = {
@@ -18,19 +21,14 @@ export async function bootstrapE2eTestApp(): Promise<E2eContext> {
   await prisma.$connect();
   await resetTestDatabase(prisma);
   const seed = await seedTestDatabase(prisma);
-
-  const moduleFixture: TestingModule = await Test.createTestingModule({
-    imports: [AppModule]
-  }).compile();
-
-  const app = moduleFixture.createNestApplication();
+  const app = await NestFactory.create(AppModule, { rawBody: true });
 
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true
-    })
+      transform: true,
+    }),
   );
 
   await app.init();
@@ -38,7 +36,7 @@ export async function bootstrapE2eTestApp(): Promise<E2eContext> {
   return {
     app,
     prisma,
-    seed
+    seed,
   };
 }
 
@@ -51,5 +49,3 @@ export async function teardownE2eTestApp(ctx?: Partial<E2eContext>) {
     await ctx.prisma.$disconnect();
   }
 }
-
-
