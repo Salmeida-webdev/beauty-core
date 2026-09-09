@@ -1118,6 +1118,9 @@ model MensagemWhatsApp {
   status       StatusMensagemWhatsApp @default(PENDENTE)
   erro         String?
   dataEnvio    DateTime?
+  metaMessageId        String?
+  metaStatus           String?
+  metaStatusUpdatedAt  DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1144,6 +1147,21 @@ model MensagemWhatsApp {
   @@index([empresaId, status, createdAt])
   @@index([empresaId, tipo, status])
   @@index([empresaId, updatedAt])
+}
+
+
+model MetaWhatsappWebhookEvent {
+  id          String    @id @default(uuid())
+  eventKey    String    @unique
+  messageId   String?
+  status      String?
+  payloadHash String
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([messageId])
+  @@index([createdAt])
 }
 
 model CampanhaWhatsApp {
