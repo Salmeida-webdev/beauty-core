@@ -20,6 +20,31 @@ type LgpdRequestContext = {
   headers?: Record<string, string | string[] | undefined>;
 };
 
+type LgpdClientRecord = Record<string, unknown> & {
+  empresaId?: string | null;
+};
+
+type LgpdModelDelegate = {
+  findMany: (
+    args: Record<string, unknown>,
+  ) => Promise<Record<string, unknown>[]>;
+  updateMany?: (args: Record<string, unknown>) => Promise<{ count: number }>;
+  create?: (args: Record<string, unknown>) => Promise<unknown>;
+};
+
+type LgpdClientDelegate = LgpdModelDelegate & {
+  update: (args: Record<string, unknown>) => Promise<LgpdClientRecord>;
+  findFirst: (
+    args: Record<string, unknown>,
+  ) => Promise<LgpdClientRecord | null>;
+};
+
+type LgpdPrismaClient = {
+  cliente: LgpdClientDelegate;
+  codigoAcessoCliente?: LgpdModelDelegate;
+  auditoriaSistema?: LgpdModelDelegate;
+  [modelName: string]: LgpdClientDelegate | LgpdModelDelegate | undefined;
+};
 @Injectable()
 export class LgpdService {
   constructor(private readonly prisma: PrismaService) {}
@@ -31,7 +56,10 @@ export class LgpdService {
 
     const agendamentos = await this.findManySafe('agendamento', where);
     const notificacoes = await this.findManySafe('notificacao', where);
-    const mensagensWhatsApp = await this.findManySafe('mensagemWhatsApp', where);
+    const mensagensWhatsApp = await this.findManySafe(
+      'mensagemWhatsApp',
+      where,
+    );
     const arquivos = await this.findManySafe('arquivo', where);
     const sessoes = await this.findManySafe('sessao', where);
 
@@ -54,11 +82,7 @@ export class LgpdService {
     };
 
     const financeiro = await this.findManyFromModels(
-      [
-        'movimentacaoFinanceira',
-        'pagamentoFinanceiro',
-        'comissaoProfissional',
-      ],
+      ['movimentacaoFinanceira', 'pagamentoFinanceiro', 'comissaoProfissional'],
       where,
     );
 
@@ -115,7 +139,9 @@ export class LgpdService {
       );
     }
 
-    const clienteAnonimizado = await (this.prisma as any).cliente.update({
+    const clienteAnonimizado = await (
+      this.prisma as unknown as LgpdPrismaClient
+    ).cliente.update({
       where: { id: clienteId },
       data,
     });
@@ -163,9 +189,19 @@ export class LgpdService {
     this.setIfExists(cliente, data, 'nome', 'Cliente anonimizado ' + token);
     this.setIfExists(cliente, data, 'telefone', anonPhone);
     this.setIfExists(cliente, data, 'email', anonEmail);
-    this.setIfExists(cliente, data, 'cpf', this.createNumericAnonValue(clienteId, 11));
+    this.setIfExists(
+      cliente,
+      data,
+      'cpf',
+      this.createNumericAnonValue(clienteId, 11),
+    );
     this.setIfExists(cliente, data, 'documento', 'anon-' + token);
-    this.setIfExists(cliente, data, 'dataNascimento', new Date('1900-01-01T00:00:00.000Z'));
+    this.setIfExists(
+      cliente,
+      data,
+      'dataNascimento',
+      new Date('1900-01-01T00:00:00.000Z'),
+    );
     this.setIfExists(cliente, data, 'endereco', anonText);
     this.setIfExists(cliente, data, 'logradouro', anonText);
     this.setIfExists(cliente, data, 'numero', anonText);
@@ -200,7 +236,8 @@ export class LgpdService {
   ) {
     const updates: Record<string, unknown> = {};
 
-    const codigoDelegate = (this.prisma as any).codigoAcessoCliente;
+    const codigoDelegate = (this.prisma as unknown as LgpdPrismaClient)
+      .codigoAcessoCliente;
 
     if (codigoDelegate?.updateMany) {
       try {
@@ -229,7 +266,7 @@ export class LgpdService {
   private async getClienteOrThrow(
     clienteId: string,
     request: LgpdRequestContext,
-  ): Promise<Record<string, unknown>> {
+  ): Promise<LgpdClientRecord> {
     const empresaId = this.getEmpresaId(request);
     const isSuperAdmin = this.isSuperAdmin(request);
 
@@ -240,7 +277,9 @@ export class LgpdService {
           empresaId,
         };
 
-    const cliente = await (this.prisma as any).cliente.findFirst({
+    const cliente = await (
+      this.prisma as unknown as LgpdPrismaClient
+    ).cliente.findFirst({
       where,
     });
 
@@ -261,7 +300,7 @@ export class LgpdService {
     modelName: string,
     where: Record<string, unknown>,
   ): Promise<Record<string, unknown>[]> {
-    const delegate = (this.prisma as any)[modelName];
+    const delegate = (this.prisma as unknown as LgpdPrismaClient)[modelName];
 
     if (!delegate || typeof delegate.findMany !== 'function') {
       return [];
@@ -270,7 +309,7 @@ export class LgpdService {
     try {
       const rows = await delegate.findMany({
         where,
-        orderBy: this.safeOrderBy(modelName),
+        orderBy: this.safeOrderBy(),
         take: this.exportTakeLimit(),
       });
 
@@ -319,7 +358,7 @@ export class LgpdService {
 
     return Math.min(Math.floor(value), 10000);
   }
-  private safeOrderBy(_modelName: string) {
+  private safeOrderBy() {
     return {
       createdAt: 'desc',
     };
@@ -335,10 +374,7 @@ export class LgpdService {
 
   private getUsuarioId(request: LgpdRequestContext): string | null {
     return (
-      request.user?.id ??
-      request.user?.sub ??
-      request.user?.usuarioId ??
-      null
+      request.user?.id ?? request.user?.sub ?? request.user?.usuarioId ?? null
     );
   }
 
@@ -450,7 +486,8 @@ export class LgpdService {
     dadosDepois?: Record<string, unknown>;
     mensagem: string;
   }) {
-    const delegate = (this.prisma as any).auditoriaSistema;
+    const delegate = (this.prisma as unknown as LgpdPrismaClient)
+      .auditoriaSistema;
 
     if (!delegate || typeof delegate.create !== 'function') {
       return;

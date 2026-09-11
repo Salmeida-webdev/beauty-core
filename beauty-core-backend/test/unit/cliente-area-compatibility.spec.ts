@@ -34,16 +34,11 @@ describe('ClienteAreaService compatibility facade', () => {
 
     await service.dashboard({ clienteId: 'cliente-1', empresaId: 'empresa-1' });
 
-    expect(canonical.dashboard).toHaveBeenCalledWith(
-      'empresa-1',
-      'cliente-1',
-    );
+    expect(canonical.dashboard).toHaveBeenCalledWith('empresa-1', 'cliente-1');
   });
 
   it('rejects legacy calls without JWT client identity or tenant', async () => {
-    await expect(service.me({})).rejects.toBeInstanceOf(
-      UnauthorizedException,
-    );
+    await expect(service.me({})).rejects.toBeInstanceOf(UnauthorizedException);
     expect(canonical.perfil).not.toHaveBeenCalled();
   });
 });

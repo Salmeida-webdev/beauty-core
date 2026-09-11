@@ -3,11 +3,13 @@
     const mod = require('../../src/modules/auth/guards/jwt-auth.guard');
     expect(mod).toBeDefined();
 
-    const GuardClass = mod.JwtAuthGuard ?? Object.values(mod).find((value) => typeof value === 'function');
+    const GuardClass =
+      mod.JwtAuthGuard ??
+      Object.values(mod).find((value) => typeof value === 'function');
     expect(GuardClass).toBeDefined();
 
     expect(() => {
-      new (GuardClass as any)();
+      new GuardClass();
     }).not.toThrow();
   });
 
@@ -15,11 +17,13 @@
     const mod = require('../../src/modules/auth-cliente/guards/cliente-auth.guard');
     expect(mod).toBeDefined();
 
-    const GuardClass = mod.ClienteAuthGuard ?? Object.values(mod).find((value) => typeof value === 'function');
+    const GuardClass =
+      mod.ClienteAuthGuard ??
+      Object.values(mod).find((value) => typeof value === 'function');
     expect(GuardClass).toBeDefined();
 
     expect(() => {
-      new (GuardClass as any)();
+      new GuardClass();
     }).not.toThrow();
   });
 
@@ -27,11 +31,13 @@
     const mod = require('../../src/modules/arquivos/guards/jwt-or-cliente-auth.guard');
     expect(mod).toBeDefined();
 
-    const GuardClass = mod.JwtOrClienteAuthGuard ?? Object.values(mod).find((value) => typeof value === 'function');
+    const GuardClass =
+      mod.JwtOrClienteAuthGuard ??
+      Object.values(mod).find((value) => typeof value === 'function');
     expect(GuardClass).toBeDefined();
 
     expect(() => {
-      new (GuardClass as any)();
+      new GuardClass();
     }).not.toThrow();
   });
 });

@@ -1,4 +1,36 @@
-﻿import { Controller, Get, Header, UseGuards } from '@nestjs/common';
+function stringifyLintValue(value: unknown): string {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (value === null || value === undefined) {
+    return '';
+  }
+
+  if (
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    typeof value === 'bigint'
+  ) {
+    return value.toString();
+  }
+
+  if (typeof value === 'symbol') {
+    return value.description ?? '';
+  }
+
+  if (typeof value === 'object') {
+    try {
+      return JSON.stringify(value) ?? '';
+    } catch {
+      return '[unserializable]';
+    }
+  }
+
+  return '';
+}
+
+import { Controller, Get, Header, UseGuards } from '@nestjs/common';
 
 import { HealthService } from '../../modules/health/health.service';
 import { MetricsService } from './metrics.service';
@@ -150,7 +182,7 @@ export class MetricsController {
 
     const status = (result as Record<string, unknown>).status;
 
-    return String(status ?? 'unknown').toLowerCase();
+    return stringifyLintValue(status ?? 'unknown').toLowerCase();
   }
 
   private isHealthyStatus(status: string): boolean {
@@ -192,7 +224,9 @@ export class MetricsController {
   }
 
   private escapeLabelValue(value: string): string {
-    return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
+    return value
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '\\n');
   }
 }
-

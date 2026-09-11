@@ -1,6 +1,10 @@
 ﻿import request = require('supertest');
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 import { bearer, loginClientePublico } from '../helpers/auth.helper';
 import { TEST_CLIENTE } from '../seeds/test-seed';
 
@@ -17,9 +21,11 @@ describe('Auth Cliente E2E', () => {
 
   it('POST /public/:slug/auth-cliente/solicitar-codigo deve salvar OTP seguro sem plaintext', async () => {
     const response = await request(ctx.app.getHttpServer())
-      .post('/public/' + ctx.seed.empresaA.slug + '/auth-cliente/solicitar-codigo')
+      .post(
+        '/public/' + ctx.seed.empresaA.slug + '/auth-cliente/solicitar-codigo',
+      )
       .send({
-        telefone: TEST_CLIENTE.telefone
+        telefone: TEST_CLIENTE.telefone,
       })
       .expect((res) => {
         expect([200, 201]).toContain(res.status);
@@ -34,11 +40,11 @@ describe('Auth Cliente E2E', () => {
     const registro = await (ctx.prisma as any).codigoAcessoCliente.findFirst({
       where: {
         empresaId: ctx.seed.empresaA.id,
-        telefone: TEST_CLIENTE.telefone
+        telefone: TEST_CLIENTE.telefone,
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     });
 
     expect(registro).toBeDefined();
@@ -53,13 +59,21 @@ describe('Auth Cliente E2E', () => {
   });
 
   it('POST /public/:slug/auth-cliente/verificar-codigo', async () => {
-    const login = await loginClientePublico(ctx.app, ctx.seed.empresaA.slug, ctx.prisma);
+    const login = await loginClientePublico(
+      ctx.app,
+      ctx.seed.empresaA.slug,
+      ctx.prisma,
+    );
 
     expect(login.access_token).toBeDefined();
   });
 
   it('POST /auth-cliente/refresh deve validar endpoint de refresh cliente', async () => {
-    const login = await loginClientePublico(ctx.app, ctx.seed.empresaA.slug, ctx.prisma);
+    const login = await loginClientePublico(
+      ctx.app,
+      ctx.seed.empresaA.slug,
+      ctx.prisma,
+    );
 
     if (!login.refresh_token) {
       return;
@@ -68,7 +82,7 @@ describe('Auth Cliente E2E', () => {
     await request(ctx.app.getHttpServer())
       .post('/auth-cliente/refresh')
       .send({
-        refreshToken: login.refresh_token
+        refreshToken: login.refresh_token,
       })
       .expect((res) => {
         expect([200, 201, 400, 401]).toContain(res.status);
@@ -76,7 +90,11 @@ describe('Auth Cliente E2E', () => {
   });
 
   it('GET /auth-cliente/sessoes', async () => {
-    const login = await loginClientePublico(ctx.app, ctx.seed.empresaA.slug, ctx.prisma);
+    const login = await loginClientePublico(
+      ctx.app,
+      ctx.seed.empresaA.slug,
+      ctx.prisma,
+    );
 
     await request(ctx.app.getHttpServer())
       .get('/auth-cliente/sessoes')
@@ -85,13 +103,17 @@ describe('Auth Cliente E2E', () => {
   });
 
   it('POST /auth-cliente/logout', async () => {
-    const login = await loginClientePublico(ctx.app, ctx.seed.empresaA.slug, ctx.prisma);
+    const login = await loginClientePublico(
+      ctx.app,
+      ctx.seed.empresaA.slug,
+      ctx.prisma,
+    );
 
     await request(ctx.app.getHttpServer())
       .post('/auth-cliente/logout')
       .set('Authorization', bearer(login.access_token))
       .send({
-        refreshToken: login.refresh_token
+        refreshToken: login.refresh_token,
       })
       .expect((res) => {
         expect([200, 201, 400, 401]).toContain(res.status);
@@ -99,7 +121,11 @@ describe('Auth Cliente E2E', () => {
   });
 
   it('POST /auth-cliente/logout-all', async () => {
-    const login = await loginClientePublico(ctx.app, ctx.seed.empresaA.slug, ctx.prisma);
+    const login = await loginClientePublico(
+      ctx.app,
+      ctx.seed.empresaA.slug,
+      ctx.prisma,
+    );
 
     await request(ctx.app.getHttpServer())
       .post('/auth-cliente/logout-all')
@@ -109,4 +135,3 @@ describe('Auth Cliente E2E', () => {
       });
   });
 });
-

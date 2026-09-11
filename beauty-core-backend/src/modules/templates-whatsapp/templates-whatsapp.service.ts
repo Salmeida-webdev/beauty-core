@@ -20,14 +20,13 @@ export class TemplatesWhatsappService {
   async create(empresaId: string, dto: CreateTemplateWhatsAppDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const templateExistente =
-      await this.prisma.templateWhatsApp.findFirst({
-        where: {
-          empresaId,
-          nome: dto.nome,
-          ativo: true,
-        },
-      });
+    const templateExistente = await this.prisma.templateWhatsApp.findFirst({
+      where: {
+        empresaId,
+        nome: dto.nome,
+        ativo: true,
+      },
+    });
 
     if (templateExistente) {
       throw new BadRequestException(
@@ -64,21 +63,14 @@ export class TemplatesWhatsappService {
     return this.buscarTemplateOuFalhar(empresaId, id);
   }
 
-  async update(
-    empresaId: string,
-    id: string,
-    dto: UpdateTemplateWhatsAppDto,
-  ) {
+  async update(empresaId: string, id: string, dto: UpdateTemplateWhatsAppDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const templateAntes = await this.buscarTemplateOuFalhar(
-      empresaId,
-      id,
-    );
+    const templateAntes = await this.buscarTemplateOuFalhar(empresaId, id);
 
     if (dto.nome && dto.nome !== templateAntes.nome) {
-      const templateComMesmoNome =
-        await this.prisma.templateWhatsApp.findFirst({
+      const templateComMesmoNome = await this.prisma.templateWhatsApp.findFirst(
+        {
           where: {
             empresaId,
             nome: dto.nome,
@@ -87,7 +79,8 @@ export class TemplatesWhatsappService {
               not: id,
             },
           },
-        });
+        },
+      );
 
       if (templateComMesmoNome) {
         throw new BadRequestException(
@@ -137,16 +130,10 @@ export class TemplatesWhatsappService {
       throw new NotFoundException('Template WhatsApp não encontrado.');
     }
 
-    return this.buscarTemplateInativoOuAtivoOuFalhar(
-      empresaId,
-      id,
-    );
+    return this.buscarTemplateInativoOuAtivoOuFalhar(empresaId, id);
   }
 
-  private async buscarTemplateOuFalhar(
-    empresaId: string,
-    id: string,
-  ) {
+  private async buscarTemplateOuFalhar(empresaId: string, id: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const template = await this.prisma.templateWhatsApp.findFirst({

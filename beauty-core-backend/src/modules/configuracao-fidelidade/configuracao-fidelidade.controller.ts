@@ -31,14 +31,15 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 
 import { Roles } from '../../shared/decorators/roles.decorator';
 
+type CompanyAuthenticatedRequest = {
+  user: { empresaId: string };
+};
 @ApiTags('Configuracao Fidelidade')
 @ApiBearerAuth('JWT')
 @Controller('configuracao-fidelidade')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ConfiguracaoFidelidadeController {
-  constructor(
-    private readonly service: ConfiguracaoFidelidadeService,
-  ) {}
+  constructor(private readonly service: ConfiguracaoFidelidadeService) {}
 
   @Post()
   @Roles('ADMIN')
@@ -79,7 +80,7 @@ export class ConfiguracaoFidelidadeController {
     description: 'Usuário sem permissão. Permitido apenas para ADMIN.',
   })
   create(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Body() dto: CreateConfiguracaoFidelidadeDto,
   ) {
     return this.service.create(req.user.empresaId, dto);
@@ -112,13 +113,14 @@ export class ConfiguracaoFidelidadeController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description:
       'Configuração de fidelidade não encontrada para a empresa autenticada.',
   })
-  findOne(@Req() req: any) {
+  findOne(@Req() req: CompanyAuthenticatedRequest) {
     return this.service.findOne(req.user.empresaId);
   }
 
@@ -164,7 +166,7 @@ export class ConfiguracaoFidelidadeController {
       'Configuração de fidelidade não encontrada para a empresa autenticada.',
   })
   update(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Body() dto: UpdateConfiguracaoFidelidadeDto,
   ) {
     return this.service.update(req.user.empresaId, dto);

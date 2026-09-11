@@ -64,7 +64,9 @@ export class ClienteAreaController {
   }
 
   @Get('me/proximos-agendamentos')
-  @ApiOperation({ summary: 'Lista os próximos agendamentos do cliente logado.' })
+  @ApiOperation({
+    summary: 'Lista os próximos agendamentos do cliente logado.',
+  })
   proximosAgendamentos(
     @Req() req: ClienteRequest,
     @Query() query: ClienteAreaQueryDto,
@@ -82,17 +84,16 @@ export class ClienteAreaController {
   }
 
   @Get('me/fidelidade')
-  @ApiOperation({ summary: 'Retorna o resumo de fidelidade do cliente logado.' })
+  @ApiOperation({
+    summary: 'Retorna o resumo de fidelidade do cliente logado.',
+  })
   fidelidade(@Req() req: ClienteRequest) {
     return this.clienteAreaService.fidelidade(this.getAuth(req));
   }
 
   @Get('me/pontos')
   @ApiOperation({ summary: 'Lista o histórico de pontos do cliente logado.' })
-  pontos(
-    @Req() req: ClienteRequest,
-    @Query() query: ClienteAreaQueryDto,
-  ) {
+  pontos(@Req() req: ClienteRequest, @Query() query: ClienteAreaQueryDto) {
     return this.clienteAreaService.pontos(this.getAuth(req), query);
   }
 
@@ -103,7 +104,9 @@ export class ClienteAreaController {
   }
 
   @Get('me/pacotes')
-  @ApiOperation({ summary: 'Lista os pacotes do cliente separados por status.' })
+  @ApiOperation({
+    summary: 'Lista os pacotes do cliente separados por status.',
+  })
   pacotes(@Req() req: ClienteRequest) {
     return this.clienteAreaService.pacotes(this.getAuth(req));
   }
@@ -114,10 +117,7 @@ export class ClienteAreaController {
     @Req() req: ClienteRequest,
     @Param('pacoteId') pacoteId: string,
   ) {
-    return this.clienteAreaService.pacoteDetalhes(
-      this.getAuth(req),
-      pacoteId,
-    );
+    return this.clienteAreaService.pacoteDetalhes(this.getAuth(req), pacoteId);
   }
 
   @Get('me/notificacoes')
@@ -148,7 +148,9 @@ export class ClienteAreaController {
   }
 
   @Get('me/mensagens-whatsapp')
-  @ApiOperation({ summary: 'Lista o histórico de mensagens WhatsApp do cliente.' })
+  @ApiOperation({
+    summary: 'Lista o histórico de mensagens WhatsApp do cliente.',
+  })
   mensagensWhatsapp(
     @Req() req: ClienteRequest,
     @Query() query: ClienteAreaQueryDto,
@@ -158,10 +160,7 @@ export class ClienteAreaController {
 
   @Get('me/historico')
   @ApiOperation({ summary: 'Retorna o histórico consolidado do cliente.' })
-  historico(
-    @Req() req: ClienteRequest,
-    @Query() query: ClienteAreaQueryDto,
-  ) {
+  historico(@Req() req: ClienteRequest, @Query() query: ClienteAreaQueryDto) {
     return this.clienteAreaService.historico(this.getAuth(req), query);
   }
 }

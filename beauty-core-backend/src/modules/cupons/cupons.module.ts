@@ -7,21 +7,12 @@ import { CuponsService } from './cupons.service';
 import { CuponsController } from './cupons.controller';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-  ],
+  imports: [PrismaModule, TenantModule],
 
-  controllers: [
-    CuponsController,
-  ],
+  controllers: [CuponsController],
 
-  providers: [
-    CuponsService,
-  ],
+  providers: [CuponsService],
 
-  exports: [
-    CuponsService,
-  ],
+  exports: [CuponsService],
 })
 export class CuponsModule {}

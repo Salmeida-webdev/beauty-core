@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Query,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 
 import {
   ApiBearerAuth,
@@ -22,6 +16,22 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../shared/decorators/roles.decorator';
 import { getEmpresaId } from '../../shared/utils/get-empresa-id';
+
+type Group14AuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    empresa_id: string;
+    sub: string;
+    id: string;
+    usuarioId: string;
+    clienteId: string;
+    role: string;
+    tipoUsuario: string;
+    email: string;
+    nome: string;
+    [key: string]: string | undefined;
+  };
+};
 
 @ApiTags('Analytics')
 @ApiBearerAuth('JWT')
@@ -84,10 +94,11 @@ export class AnalyticsController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   dashboard(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Query('dataInicio') dataInicio?: string,
     @Query('dataFim') dataFim?: string,
   ) {
@@ -120,9 +131,10 @@ export class AnalyticsController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  clientes(@Req() req: any) {
+  clientes(@Req() req: Group14AuthenticatedRequest) {
     return this.analyticsService.clientes(getEmpresaId(req));
   }
 
@@ -161,10 +173,11 @@ export class AnalyticsController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   agendamentos(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Query('dataInicio') dataInicio?: string,
     @Query('dataFim') dataFim?: string,
   ) {
@@ -209,10 +222,11 @@ export class AnalyticsController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   financeiro(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Query('dataInicio') dataInicio?: string,
     @Query('dataFim') dataFim?: string,
   ) {
@@ -262,10 +276,11 @@ export class AnalyticsController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   servicos(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Query('dataInicio') dataInicio?: string,
     @Query('dataFim') dataFim?: string,
   ) {
@@ -314,10 +329,11 @@ export class AnalyticsController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   profissionais(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Query('dataInicio') dataInicio?: string,
     @Query('dataFim') dataFim?: string,
   ) {
@@ -366,10 +382,11 @@ export class AnalyticsController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   unidades(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Query('dataInicio') dataInicio?: string,
     @Query('dataFim') dataFim?: string,
   ) {
@@ -402,9 +419,10 @@ export class AnalyticsController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  fidelidade(@Req() req: any) {
+  fidelidade(@Req() req: Group14AuthenticatedRequest) {
     return this.analyticsService.fidelidade(getEmpresaId(req));
   }
 
@@ -430,9 +448,10 @@ export class AnalyticsController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  pacotes(@Req() req: any) {
+  pacotes(@Req() req: Group14AuthenticatedRequest) {
     return this.analyticsService.pacotes(getEmpresaId(req));
   }
 
@@ -470,10 +489,11 @@ export class AnalyticsController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   whatsapp(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Query('dataInicio') dataInicio?: string,
     @Query('dataFim') dataFim?: string,
   ) {
@@ -517,10 +537,11 @@ export class AnalyticsController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   notificacoes(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Query('dataInicio') dataInicio?: string,
     @Query('dataFim') dataFim?: string,
   ) {
@@ -571,10 +592,11 @@ export class AnalyticsController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   eventos(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Query('dataInicio') dataInicio?: string,
     @Query('dataFim') dataFim?: string,
   ) {

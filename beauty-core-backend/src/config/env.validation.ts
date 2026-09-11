@@ -1,3 +1,6 @@
+const getConfigString = (value: unknown, fallback = ''): string =>
+  typeof value === 'string' ? value : fallback;
+
 export function validateEnv(config: Record<string, unknown>) {
   const requiredEnvs = [
     'DATABASE_URL',
@@ -15,12 +18,12 @@ export function validateEnv(config: Record<string, unknown>) {
     }
   }
 
-  const nodeEnv = String(config.NODE_ENV ?? 'development');
+  const nodeEnv = getConfigString(config.NODE_ENV, 'development');
   const isProduction = nodeEnv === 'production';
   const minSecretLength = 32;
 
   if (isProduction) {
-    const corsOrigin = String(config.CORS_ORIGIN ?? '').trim();
+    const corsOrigin = getConfigString(config.CORS_ORIGIN).trim();
 
     if (
       !corsOrigin ||
@@ -35,7 +38,7 @@ export function validateEnv(config: Record<string, unknown>) {
       );
     }
 
-    const redisPassword = String(config.REDIS_PASSWORD ?? '').trim();
+    const redisPassword = getConfigString(config.REDIS_PASSWORD).trim();
 
     if (!redisPassword) {
       throw new Error('REDIS_PASSWORD deve ser configurado em producao.');
@@ -47,7 +50,7 @@ export function validateEnv(config: Record<string, unknown>) {
       );
     }
 
-    const metricsToken = String(config.METRICS_TOKEN ?? '').trim();
+    const metricsToken = getConfigString(config.METRICS_TOKEN).trim();
 
     if (!metricsToken) {
       throw new Error('METRICS_TOKEN deve ser configurado em producao.');
@@ -69,7 +72,7 @@ export function validateEnv(config: Record<string, unknown>) {
   ];
 
   for (const env of secretEnvs) {
-    const value = String(config[env] ?? '');
+    const value = getConfigString(config[env]);
 
     if (value.length < minSecretLength) {
       throw new Error(
@@ -93,7 +96,7 @@ export function validateEnv(config: Record<string, unknown>) {
   config.JWT_CLIENT_REFRESH_EXPIRES_IN ??= '30d';
 
   for (const env of durationEnvs) {
-    const value = String(config[env] ?? '');
+    const value = getConfigString(config[env]);
 
     if (!durationRegex.test(value)) {
       throw new Error(

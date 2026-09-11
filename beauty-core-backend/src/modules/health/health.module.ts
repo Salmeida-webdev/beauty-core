@@ -5,7 +5,6 @@ import { HealthController } from './health.controller';
 import { EnterpriseHealthController } from './enterprise-health.controller';
 import { HealthService } from './health.service';
 import { EnterpriseHealthService } from './enterprise-health.service';
-import { QueuesModule } from '../../queues/queues.module';
 
 @Module({
   imports: [PrismaModule],
@@ -14,4 +13,3 @@ import { QueuesModule } from '../../queues/queues.module';
   exports: [HealthService],
 })
 export class HealthModule {}
-

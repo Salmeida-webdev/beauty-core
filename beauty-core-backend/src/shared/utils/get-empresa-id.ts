@@ -1,6 +1,14 @@
 import { UnauthorizedException } from '@nestjs/common';
 
-export function getEmpresaId(req: any): string {
+type AuthenticatedEmpresaRequest = {
+  user?: {
+    empresaId?: string;
+    empresa_id?: string;
+    id?: string;
+  };
+};
+
+export function getEmpresaId(req: AuthenticatedEmpresaRequest): string {
   const empresaId = req?.user?.empresaId;
 
   if (!empresaId) {

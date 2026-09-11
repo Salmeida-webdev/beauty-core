@@ -6,18 +6,10 @@ import { TenantValidatorService } from './tenant-validator.service';
 import { TenantPublicService } from './tenant-public.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-  ],
+  imports: [PrismaModule],
 
-  providers: [
-    TenantValidatorService,
-    TenantPublicService,
-  ],
+  providers: [TenantValidatorService, TenantPublicService],
 
-  exports: [
-    TenantValidatorService,
-    TenantPublicService,
-  ],
+  exports: [TenantValidatorService, TenantPublicService],
 })
 export class TenantModule {}

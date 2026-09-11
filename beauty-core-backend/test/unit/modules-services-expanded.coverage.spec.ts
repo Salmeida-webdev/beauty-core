@@ -9,16 +9,19 @@
 
 installCoverageSmokeSilencer();
 
-const serviceFiles = discoverFiles(process.cwd() + '/src/modules', (filePath) => {
-  const normalized = filePath.replace(/\\/g, '/');
+const serviceFiles = discoverFiles(
+  process.cwd() + '/src/modules',
+  (filePath) => {
+    const normalized = filePath.replace(/\\/g, '/');
 
-  return (
-    normalized.endsWith('.service.ts') &&
-    !normalized.endsWith('.spec.ts') &&
-    !normalized.includes('/dto/') &&
-    !normalized.includes('/entities/')
-  );
-});
+    return (
+      normalized.endsWith('.service.ts') &&
+      !normalized.endsWith('.spec.ts') &&
+      !normalized.includes('/dto/') &&
+      !normalized.includes('/entities/')
+    );
+  },
+);
 
 describe('Chat 33.3 - Modules Services Expanded Coverage', () => {
   it('deve localizar services de módulos', () => {

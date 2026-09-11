@@ -50,9 +50,12 @@ export class UpdateUnidadeDto {
     maxLength: 150,
   })
   @IsOptional()
-  @IsEmail({}, {
-    message: 'O e-mail da unidade informado é inválido.',
-  })
+  @IsEmail(
+    {},
+    {
+      message: 'O e-mail da unidade informado é inválido.',
+    },
+  )
   @MaxLength(150, {
     message: 'O e-mail da unidade deve ter no máximo 150 caracteres.',
   })

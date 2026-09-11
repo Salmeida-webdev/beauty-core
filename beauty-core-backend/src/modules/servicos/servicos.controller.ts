@@ -32,6 +32,17 @@ import { ServicosService } from './servicos.service';
 import { CreateServicoDto } from './dto/create-servico.dto';
 import { UpdateServicoDto } from './dto/update-servico.dto';
 
+type CompanyAuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    sub?: string;
+    id?: string;
+    usuarioId?: string;
+    clienteId?: string;
+    role?: import('@prisma/client').Role;
+  };
+};
+
 @ApiTags('Servicos')
 @ApiBearerAuth('JWT')
 @Controller('servicos')
@@ -73,25 +84,18 @@ export class ServicosController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   create(
     @Body() createServicoDto: CreateServicoDto,
-    @Request() req: any,
+    @Request() req: CompanyAuthenticatedRequest,
   ) {
-    return this.servicosService.create(
-      createServicoDto,
-      req.user.empresaId,
-    );
+    return this.servicosService.create(createServicoDto, req.user.empresaId);
   }
 
   @Get()
-  @Roles(
-    'ADMIN',
-    'GERENTE',
-    'RECEPCAO',
-    'PROFISSIONAL',
-  )
+  @Roles('ADMIN', 'GERENTE', 'RECEPCAO', 'PROFISSIONAL')
   @ApiOperation({
     summary: 'Listar serviços',
     description:
@@ -122,19 +126,12 @@ export class ServicosController {
     description:
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
-  findAll(@Request() req: any) {
-    return this.servicosService.findAll(
-      req.user.empresaId,
-    );
+  findAll(@Request() req: CompanyAuthenticatedRequest) {
+    return this.servicosService.findAll(req.user.empresaId);
   }
 
   @Get(':id')
-  @Roles(
-    'ADMIN',
-    'GERENTE',
-    'RECEPCAO',
-    'PROFISSIONAL',
-  )
+  @Roles('ADMIN', 'GERENTE', 'RECEPCAO', 'PROFISSIONAL')
   @ApiOperation({
     summary: 'Buscar serviço por ID',
     description:
@@ -177,12 +174,9 @@ export class ServicosController {
   })
   findOne(
     @Param('id', ParseUUIDPipe) id: string,
-    @Request() req: any,
+    @Request() req: CompanyAuthenticatedRequest,
   ) {
-    return this.servicosService.findOne(
-      id,
-      req.user.empresaId,
-    );
+    return this.servicosService.findOne(id, req.user.empresaId);
   }
 
   @Patch(':id')
@@ -219,13 +213,15 @@ export class ServicosController {
     },
   })
   @ApiBadRequestResponse({
-    description: 'ID inválido, payload inválido ou dados fora das regras permitidas.',
+    description:
+      'ID inválido, payload inválido ou dados fora das regras permitidas.',
   })
   @ApiUnauthorizedResponse({
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Serviço não encontrado para a empresa autenticada.',
@@ -233,7 +229,7 @@ export class ServicosController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateServicoDto: UpdateServicoDto,
-    @Request() req: any,
+    @Request() req: CompanyAuthenticatedRequest,
   ) {
     return this.servicosService.update(
       id,
@@ -273,18 +269,16 @@ export class ServicosController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Serviço não encontrado para a empresa autenticada.',
   })
   inativar(
     @Param('id', ParseUUIDPipe) id: string,
-    @Request() req: any,
+    @Request() req: CompanyAuthenticatedRequest,
   ) {
-    return this.servicosService.inativar(
-      id,
-      req.user.empresaId,
-    );
+    return this.servicosService.inativar(id, req.user.empresaId);
   }
 }

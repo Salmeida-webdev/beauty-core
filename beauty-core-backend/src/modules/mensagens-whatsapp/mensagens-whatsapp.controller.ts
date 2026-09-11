@@ -39,6 +39,22 @@ import { QueuesService } from '../../queues/services/queues.service';
 import { CreateMensagemWhatsAppDto } from './dto/create-mensagem-whatsapp.dto';
 import { EnviarMensagemWhatsAppDto } from './dto/enviar-mensagem-whatsapp.dto';
 
+type Group15AuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    empresa_id: string;
+    sub: string;
+    id: string;
+    usuarioId: string;
+    clienteId: string;
+    role: string;
+    tipoUsuario: string;
+    email: string;
+    nome: string;
+    [key: string]: string | undefined;
+  };
+};
+
 @ApiTags('WhatsApp Mensagens')
 @ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -87,7 +103,10 @@ export class MensagensWhatsappController {
     description:
       'Usuário sem permissão. Permitido apenas para ADMIN, GERENTE e RECEPCAO.',
   })
-  create(@Req() req: any, @Body() dto: CreateMensagemWhatsAppDto) {
+  create(
+    @Req() req: Group15AuthenticatedRequest,
+    @Body() dto: CreateMensagemWhatsAppDto,
+  ) {
     return this.mensagensWhatsappService.create(getEmpresaId(req), dto);
   }
 
@@ -127,7 +146,10 @@ export class MensagensWhatsappController {
     description:
       'Usuário sem permissão. Permitido apenas para ADMIN, GERENTE e RECEPCAO.',
   })
-  async enviar(@Req() req: any, @Body() dto: EnviarMensagemWhatsAppDto) {
+  async enviar(
+    @Req() req: Group15AuthenticatedRequest,
+    @Body() dto: EnviarMensagemWhatsAppDto,
+  ) {
     const empresaId = getEmpresaId(req);
 
     const mensagem = await this.mensagensWhatsappService.enviar(empresaId, dto);
@@ -202,7 +224,10 @@ export class MensagensWhatsappController {
     description:
       'Usuário sem permissão. Permitido apenas para ADMIN, GERENTE e RECEPCAO.',
   })
-  findAll(@Req() req: any, @Query() query: PaginationDto) {
+  findAll(
+    @Req() req: Group15AuthenticatedRequest,
+    @Query() query: PaginationDto,
+  ) {
     return this.mensagensWhatsappService.findAll(getEmpresaId(req), query);
   }
 
@@ -253,7 +278,10 @@ export class MensagensWhatsappController {
     description:
       'Mensagem de WhatsApp não encontrada para a empresa autenticada.',
   })
-  findOne(@Req() req: any, @Param('id', ParseUUIDPipe) id: string) {
+  findOne(
+    @Req() req: Group15AuthenticatedRequest,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.mensagensWhatsappService.findOne(getEmpresaId(req), id);
   }
 
@@ -294,7 +322,10 @@ export class MensagensWhatsappController {
     description:
       'Mensagem de WhatsApp não encontrada para a empresa autenticada.',
   })
-  cancelar(@Req() req: any, @Param('id', ParseUUIDPipe) id: string) {
+  cancelar(
+    @Req() req: Group15AuthenticatedRequest,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     return this.mensagensWhatsappService.cancelar(getEmpresaId(req), id);
   }
 }

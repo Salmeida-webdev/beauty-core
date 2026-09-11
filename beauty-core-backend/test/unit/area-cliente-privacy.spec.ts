@@ -1,7 +1,7 @@
 import { AreaClienteService } from '../../src/modules/area-cliente/area-cliente.service';
 
 describe('AreaClienteService privacy DTOs', () => {
-  const service = Object.create(AreaClienteService.prototype) as any;
+  const service = Object.create(AreaClienteService.prototype);
 
   it('exposes only the portal appointment fields', () => {
     const result = service.toPortalAppointment({
@@ -19,13 +19,15 @@ describe('AreaClienteService privacy DTOs', () => {
       updatedAt: new Date(),
     });
 
-    expect(result).toEqual(expect.objectContaining({
-      id: 'appointment-1',
-      status: 'CONFIRMADO',
-      servico: { nome: 'Corte' },
-      profissional: { nome: 'Ana', foto: 'foto' },
-      unidade: { nome: 'Centro' },
-    }));
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: 'appointment-1',
+        status: 'CONFIRMADO',
+        servico: { nome: 'Corte' },
+        profissional: { nome: 'Ana', foto: 'foto' },
+        unidade: { nome: 'Centro' },
+      }),
+    );
     expect(result).not.toHaveProperty('empresaId');
     expect(result).not.toHaveProperty('clienteId');
     expect(result.servico).not.toHaveProperty('id');

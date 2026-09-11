@@ -7,21 +7,12 @@ import { TemplatesWhatsappController } from './templates-whatsapp.controller';
 import { TemplatesWhatsappService } from './templates-whatsapp.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-  ],
+  imports: [PrismaModule, TenantModule],
 
-  controllers: [
-    TemplatesWhatsappController,
-  ],
+  controllers: [TemplatesWhatsappController],
 
-  providers: [
-    TemplatesWhatsappService,
-  ],
+  providers: [TemplatesWhatsappService],
 
-  exports: [
-    TemplatesWhatsappService,
-  ],
+  exports: [TemplatesWhatsappService],
 })
 export class TemplatesWhatsappModule {}

@@ -1,13 +1,6 @@
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
-import {
-  StatusMensagemWhatsApp,
-  TipoUsuarioAuditoria,
-} from '@prisma/client';
+import { StatusMensagemWhatsApp, TipoUsuarioAuditoria } from '@prisma/client';
 
 import { PrismaService } from '../../database/prisma/prisma.service';
 import { TenantValidatorService } from '../../shared/tenant';
@@ -19,6 +12,19 @@ import { UpdateCampanhaWhatsAppDto } from './dto/update-campanha-whatsapp.dto';
 
 import { AuditoriaService } from '../auditoria/auditoria.service';
 
+type CampanhaAuditoria = {
+  id?: unknown;
+  empresaId?: unknown;
+  nome?: unknown;
+  descricao?: unknown;
+  tipo?: unknown;
+  status?: unknown;
+  totalDestinatarios?: unknown;
+  totalEnviadas?: unknown;
+  totalFalhas?: unknown;
+  createdAt?: unknown;
+  updatedAt?: unknown;
+};
 @Injectable()
 export class CampanhasWhatsappService {
   private readonly logger = new Logger(CampanhasWhatsappService.name);
@@ -30,39 +36,33 @@ export class CampanhasWhatsappService {
     private readonly tenantValidator: TenantValidatorService,
   ) {}
 
-  async create(
-    empresaId: string,
-    dto: CreateCampanhaWhatsAppDto,
-  ) {
+  async create(empresaId: string, dto: CreateCampanhaWhatsAppDto) {
     const startedAt = Date.now();
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const totalDestinatarios =
-      dto.totalDestinatarios ?? 0;
+    const totalDestinatarios = dto.totalDestinatarios ?? 0;
 
-    const campanha =
-      await this.prisma.campanhaWhatsApp.create({
-        data: {
-          empresaId,
-          nome: dto.nome,
-          descricao: dto.descricao,
-          tipo: dto.tipo,
-          mensagem: dto.mensagem,
-          status: StatusMensagemWhatsApp.PENDENTE,
-          totalDestinatarios,
-          totalEnviadas: 0,
-          totalFalhas: 0,
-        },
-      });
-
-    const job =
-      await this.queuesService.adicionarCampanha({
-        campanhaId: campanha.id,
+    const campanha = await this.prisma.campanhaWhatsApp.create({
+      data: {
         empresaId,
-        mensagem: dto.mensagem,
+        nome: dto.nome,
+        descricao: dto.descricao,
         tipo: dto.tipo,
-      });
+        mensagem: dto.mensagem,
+        status: StatusMensagemWhatsApp.PENDENTE,
+        totalDestinatarios,
+        totalEnviadas: 0,
+        totalFalhas: 0,
+      },
+    });
+
+    const job = await this.queuesService.adicionarCampanha({
+      campanhaId: campanha.id,
+      empresaId,
+      mensagem: dto.mensagem,
+      tipo: dto.tipo,
+    });
 
     const tempoMs = Date.now() - startedAt;
 
@@ -107,48 +107,32 @@ export class CampanhasWhatsappService {
     });
   }
 
-  async findOne(
-    empresaId: string,
-    id: string,
-  ) {
+  async findOne(empresaId: string, id: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     return this.buscarCampanhaOuFalhar(empresaId, id);
   }
 
-  async update(
-    empresaId: string,
-    id: string,
-    dto: UpdateCampanhaWhatsAppDto,
-  ) {
+  async update(empresaId: string, id: string, dto: UpdateCampanhaWhatsAppDto) {
     const startedAt = Date.now();
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const campanhaAntes = await this.buscarCampanhaOuFalhar(
-      empresaId,
-      id,
-    );
+    const campanhaAntes = await this.buscarCampanhaOuFalhar(empresaId, id);
 
-    const result =
-      await this.prisma.campanhaWhatsApp.updateMany({
-        where: {
-          id,
-          empresaId,
-        },
-        data: dto,
-      });
+    const result = await this.prisma.campanhaWhatsApp.updateMany({
+      where: {
+        id,
+        empresaId,
+      },
+      data: dto,
+    });
 
     if (result.count === 0) {
-      throw new NotFoundException(
-        'Campanha WhatsApp não encontrada.',
-      );
+      throw new NotFoundException('Campanha WhatsApp não encontrada.');
     }
 
-    const campanhaDepois = await this.buscarCampanhaOuFalhar(
-      empresaId,
-      id,
-    );
+    const campanhaDepois = await this.buscarCampanhaOuFalhar(empresaId, id);
 
     const tempoMs = Date.now() - startedAt;
 
@@ -173,40 +157,28 @@ export class CampanhasWhatsappService {
     return campanhaDepois;
   }
 
-  async cancelar(
-    empresaId: string,
-    id: string,
-  ) {
+  async cancelar(empresaId: string, id: string) {
     const startedAt = Date.now();
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const campanhaAntes = await this.buscarCampanhaOuFalhar(
-      empresaId,
-      id,
-    );
+    const campanhaAntes = await this.buscarCampanhaOuFalhar(empresaId, id);
 
-    const result =
-      await this.prisma.campanhaWhatsApp.updateMany({
-        where: {
-          id,
-          empresaId,
-        },
-        data: {
-          status: StatusMensagemWhatsApp.CANCELADA,
-        },
-      });
+    const result = await this.prisma.campanhaWhatsApp.updateMany({
+      where: {
+        id,
+        empresaId,
+      },
+      data: {
+        status: StatusMensagemWhatsApp.CANCELADA,
+      },
+    });
 
     if (result.count === 0) {
-      throw new NotFoundException(
-        'Campanha WhatsApp não encontrada.',
-      );
+      throw new NotFoundException('Campanha WhatsApp não encontrada.');
     }
 
-    const campanhaDepois = await this.buscarCampanhaOuFalhar(
-      empresaId,
-      id,
-    );
+    const campanhaDepois = await this.buscarCampanhaOuFalhar(empresaId, id);
 
     const tempoMs = Date.now() - startedAt;
 
@@ -233,28 +205,22 @@ export class CampanhasWhatsappService {
     return campanhaDepois;
   }
 
-  private async buscarCampanhaOuFalhar(
-    empresaId: string,
-    id: string,
-  ) {
-    const campanha =
-      await this.prisma.campanhaWhatsApp.findFirst({
-        where: {
-          id,
-          empresaId,
-        },
-      });
+  private async buscarCampanhaOuFalhar(empresaId: string, id: string) {
+    const campanha = await this.prisma.campanhaWhatsApp.findFirst({
+      where: {
+        id,
+        empresaId,
+      },
+    });
 
     if (!campanha) {
-      throw new NotFoundException(
-        'Campanha WhatsApp não encontrada.',
-      );
+      throw new NotFoundException('Campanha WhatsApp não encontrada.');
     }
 
     return campanha;
   }
 
-  private montarDadosAuditoria(campanha: any) {
+  private montarDadosAuditoria(campanha: CampanhaAuditoria) {
     return {
       id: campanha.id,
       empresaId: campanha.empresaId,

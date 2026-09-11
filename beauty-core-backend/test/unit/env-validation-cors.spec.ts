@@ -19,22 +19,23 @@ function baseEnv(overrides: Record<string, unknown> = {}) {
 describe('Env validation CORS production', () => {
   it('deve rejeitar producao com CORS_ORIGIN=*', () => {
     expect(() => validateEnv(baseEnv({ CORS_ORIGIN: '*' }))).toThrow(
-      /CORS_ORIGIN/
+      /CORS_ORIGIN/,
     );
   });
 
   it('deve rejeitar producao sem CORS_ORIGIN', () => {
     expect(() => validateEnv(baseEnv({ CORS_ORIGIN: '' }))).toThrow(
-      /CORS_ORIGIN/
+      /CORS_ORIGIN/,
     );
   });
 
   it('deve aceitar producao com origens explicitas', () => {
     const result = validateEnv(
-      baseEnv({ CORS_ORIGIN: 'https://app.exemplo.com,https://admin.exemplo.com' })
+      baseEnv({
+        CORS_ORIGIN: 'https://app.exemplo.com,https://admin.exemplo.com',
+      }),
     );
 
     expect(result.CORS_ORIGIN).toContain('https://app.exemplo.com');
   });
 });
-

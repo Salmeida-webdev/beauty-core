@@ -53,7 +53,10 @@ const UUID_B = '00000000-0000-4000-8000-000000000002';
 const EMPRESA_A = '00000000-0000-4000-8000-000000000101';
 const EMPRESA_B = '00000000-0000-4000-8000-000000000102';
 
-function createRecord(mode: MockMode = 'happy', overrides: Record<string, any> = {}) {
+function createRecord(
+  mode: MockMode = 'happy',
+  overrides: Record<string, any> = {},
+) {
   const empresaId = mode === 'crossTenant' ? EMPRESA_B : EMPRESA_A;
 
   return {
@@ -335,7 +338,8 @@ function createRichMock(mode: MockMode = 'happy') {
                 : mode === 'public'
                   ? 'S3'
                   : 'LOCAL',
-            SIGNED_URL_SECRET: mode === 'invalid' ? '' : 'signed-url-secret-test',
+            SIGNED_URL_SECRET:
+              mode === 'invalid' ? '' : 'signed-url-secret-test',
             SIGNED_URL_EXPIRES_IN_SECONDS: mode === 'expired' ? '0' : '900',
             JWT_SECRET: 'jwt-secret-test',
             JWT_REFRESH_SECRET: 'jwt-refresh-secret-test',
@@ -360,14 +364,22 @@ function createRichMock(mode: MockMode = 'happy') {
       }
 
       if (prop === 'signAsync') {
-        obj[prop] = jest.fn(async () => (mode === 'invalid' ? '' : 'token-test'));
+        obj[prop] = jest.fn(async () =>
+          mode === 'invalid' ? '' : 'token-test',
+        );
         return obj[prop];
       }
 
       if (prop === 'verify' || prop === 'verifyAsync') {
         obj[prop] = jest.fn(async () => {
-          if (mode === 'invalid') throw new UnauthorizedException('Token inválido');
-          return { sub: UUID_A, empresaId: EMPRESA_A, role: 'ADMIN', sid: 'sid-test' };
+          if (mode === 'invalid')
+            throw new UnauthorizedException('Token inválido');
+          return {
+            sub: UUID_A,
+            empresaId: EMPRESA_A,
+            role: 'ADMIN',
+            sid: 'sid-test',
+          };
         });
         return obj[prop];
       }
@@ -431,7 +443,11 @@ function createRichMock(mode: MockMode = 'happy') {
         return obj[prop];
       }
 
-      if (prop === 'mkdirSync' || prop === 'writeFileSync' || prop === 'unlinkSync') {
+      if (
+        prop === 'mkdirSync' ||
+        prop === 'writeFileSync' ||
+        prop === 'unlinkSync'
+      ) {
         obj[prop] = jest.fn(() => {
           if (mode === 'throw') throw new Error('FS branch error');
           return undefined;
@@ -616,11 +632,12 @@ function argsForMethod(method: string, mode: MockMode) {
 
   const empresaId = mode === 'crossTenant' ? EMPRESA_B : EMPRESA_A;
   const id = mode === 'invalid' ? 'id-invalido' : UUID_A;
-  const callback = mode === 'throw'
-    ? async () => {
-        throw new Error('Callback branch error');
-      }
-    : async () => ({ ok: true, status: 'ok' });
+  const callback =
+    mode === 'throw'
+      ? async () => {
+          throw new Error('Callback branch error');
+        }
+      : async () => ({ ok: true, status: 'ok' });
 
   if (method === 'executarRotina') {
     return [
@@ -637,15 +654,27 @@ function argsForMethod(method: string, mode: MockMode) {
 
   if (method === 'catch') {
     return [
-      [new BadRequestException(['campo inválido', 'payload inválido']), createHttpHost()],
-      [new BadRequestException({ message: ['erro um', 'erro dois'], error: 'Bad Request' }), createHttpHost()],
+      [
+        new BadRequestException(['campo inválido', 'payload inválido']),
+        createHttpHost(),
+      ],
+      [
+        new BadRequestException({
+          message: ['erro um', 'erro dois'],
+          error: 'Bad Request',
+        }),
+        createHttpHost(),
+      ],
       [new UnauthorizedException('Não autorizado'), createHttpHost()],
       [new ForbiddenException('Sem permissão'), createHttpHost()],
       [new NotFoundException('Não encontrado'), createHttpHost()],
       [new ConflictException('Conflito'), createHttpHost()],
       [new InternalServerErrorException('Erro interno'), createHttpHost()],
       [new HttpException('Erro customizado', 418), createHttpHost()],
-      [{ code: 'P2002', message: 'Unique constraint failed' }, createHttpHost()],
+      [
+        { code: 'P2002', message: 'Unique constraint failed' },
+        createHttpHost(),
+      ],
       [{ code: 'P2025', message: 'Record not found' }, createHttpHost()],
       [{ code: 'P2003', message: 'Foreign key failed' }, createHttpHost()],
       [new Error('Erro controlado'), createHttpHost()],
@@ -655,12 +684,23 @@ function argsForMethod(method: string, mode: MockMode) {
 
   if (method === 'intercept') {
     return [
-      [context, { handle: () => ({ pipe: () => ({ subscribe: () => undefined }) }) }],
+      [
+        context,
+        { handle: () => ({ pipe: () => ({ subscribe: () => undefined }) }) },
+      ],
     ];
   }
 
-  if (method.toLowerCase().includes('process') || method.toLowerCase().includes('handle')) {
-    return [[job], [job, 'token-test'], [{ ...job, data: {} }], [{ ...job, data: null }]];
+  if (
+    method.toLowerCase().includes('process') ||
+    method.toLowerCase().includes('handle')
+  ) {
+    return [
+      [job],
+      [job, 'token-test'],
+      [{ ...job, data: {} }],
+      [{ ...job, data: null }],
+    ];
   }
 
   return [
@@ -707,8 +747,16 @@ async function exerciseExportedFunction(fn: any, mode: MockMode) {
     { originalname: 'arquivo.pdf', mimetype: 'application/pdf', size: 1024 },
     { originalname: 'imagem.jpg', mimetype: 'image/jpeg', size: 1024 },
     { originalname: 'imagem.png', mimetype: 'image/png', size: 1024 },
-    { originalname: 'arquivo.exe', mimetype: 'application/x-msdownload', size: 1024 },
-    { originalname: 'script.js', mimetype: 'application/javascript', size: 1024 },
+    {
+      originalname: 'arquivo.exe',
+      mimetype: 'application/x-msdownload',
+      size: 1024,
+    },
+    {
+      originalname: 'script.js',
+      mimetype: 'application/javascript',
+      size: 1024,
+    },
     { originalname: 'sem-extensao', mimetype: '', size: 0 },
   ];
 
@@ -772,7 +820,7 @@ describe('Chat 33.4.2 - branch matrix para alvos abaixo de 70%', () => {
       for (const mode of modes) {
         it('deve exercitar branches no modo ' + mode, async () => {
           const mod = require(target.requirePath);
-          const exportedValues = Object.values(mod) as any[];
+          const exportedValues = Object.values(mod);
 
           for (const exported of exportedValues) {
             if (typeof exported !== 'function') continue;

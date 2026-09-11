@@ -8,10 +8,7 @@ import { UpdateCategoriaFinanceiraDto } from './dto/update-categoria-financeira.
 export class CategoriasFinanceirasService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(
-    empresaId: string,
-    dto: CreateCategoriaFinanceiraDto,
-  ) {
+  create(empresaId: string, dto: CreateCategoriaFinanceiraDto) {
     return this.prisma.categoriaFinanceira.create({
       data: {
         empresaId,
@@ -31,22 +28,16 @@ export class CategoriasFinanceirasService {
     });
   }
 
-  async findOne(
-    empresaId: string,
-    id: string,
-  ) {
-    const categoria =
-      await this.prisma.categoriaFinanceira.findFirst({
-        where: {
-          id,
-          empresaId,
-        },
-      });
+  async findOne(empresaId: string, id: string) {
+    const categoria = await this.prisma.categoriaFinanceira.findFirst({
+      where: {
+        id,
+        empresaId,
+      },
+    });
 
     if (!categoria) {
-      throw new NotFoundException(
-        'Categoria financeira não encontrada',
-      );
+      throw new NotFoundException('Categoria financeira não encontrada');
     }
 
     return categoria;
@@ -57,10 +48,7 @@ export class CategoriasFinanceirasService {
     id: string,
     dto: UpdateCategoriaFinanceiraDto,
   ) {
-    await this.findOne(
-      empresaId,
-      id,
-    );
+    await this.findOne(empresaId, id);
 
     return this.prisma.categoriaFinanceira.update({
       where: {
@@ -70,14 +58,8 @@ export class CategoriasFinanceirasService {
     });
   }
 
-  async inativar(
-    empresaId: string,
-    id: string,
-  ) {
-    await this.findOne(
-      empresaId,
-      id,
-    );
+  async inativar(empresaId: string, id: string) {
+    await this.findOne(empresaId, id);
 
     return this.prisma.categoriaFinanceira.update({
       where: {

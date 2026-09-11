@@ -1,6 +1,10 @@
 ﻿import request = require('supertest');
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 import { bearer, loginAdmin } from '../helpers/auth.helper';
 
 describe('Sessões E2E', () => {
@@ -15,8 +19,12 @@ describe('Sessões E2E', () => {
   });
 
   it('múltiplas sessões e logout-all', async () => {
-    const sessao1 = await loginAdmin(ctx.app, undefined, undefined, { forceNew: true });
-    const sessao2 = await loginAdmin(ctx.app, undefined, undefined, { forceNew: true });
+    const sessao1 = await loginAdmin(ctx.app, undefined, undefined, {
+      forceNew: true,
+    });
+    const sessao2 = await loginAdmin(ctx.app, undefined, undefined, {
+      forceNew: true,
+    });
 
     await request(ctx.app.getHttpServer())
       .post('/auth/logout-all')
@@ -29,7 +37,7 @@ describe('Sessões E2E', () => {
       await request(ctx.app.getHttpServer())
         .post('/auth/refresh')
         .send({
-          refreshToken: sessao1.refresh_token
+          refreshToken: sessao1.refresh_token,
         })
         .expect((res) => {
           expect([400, 401]).toContain(res.status);
@@ -38,13 +46,15 @@ describe('Sessões E2E', () => {
   });
 
   it('refresh revogado por logout não deve funcionar', async () => {
-    const login = await loginAdmin(ctx.app, undefined, undefined, { forceNew: true });
+    const login = await loginAdmin(ctx.app, undefined, undefined, {
+      forceNew: true,
+    });
 
     await request(ctx.app.getHttpServer())
       .post('/auth/logout')
       .set('Authorization', bearer(login.access_token))
       .send({
-        refreshToken: login.refresh_token
+        refreshToken: login.refresh_token,
       })
       .expect((res) => {
         expect([200, 201, 400, 401]).toContain(res.status);
@@ -54,7 +64,7 @@ describe('Sessões E2E', () => {
       await request(ctx.app.getHttpServer())
         .post('/auth/refresh')
         .send({
-          refreshToken: login.refresh_token
+          refreshToken: login.refresh_token,
         })
         .expect((res) => {
           expect([400, 401]).toContain(res.status);

@@ -1,6 +1,10 @@
 ﻿import request = require('supertest');
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 
 describe('Swagger / DTO Validation E2E', () => {
   let ctx: E2eContext;
@@ -19,7 +23,7 @@ describe('Swagger / DTO Validation E2E', () => {
       .send({
         email: 'admin.test@beautycore.com',
         senha: 'Teste@123456',
-        campoInvasor: true
+        campoInvasor: true,
       })
       .expect(400);
   });
@@ -32,5 +36,3 @@ describe('Swagger / DTO Validation E2E', () => {
       });
   });
 });
-
-

@@ -1,4 +1,5 @@
-﻿import { Controller, Get, Res, UseGuards } from '@nestjs/common';
+import type { Response } from 'express';
+import { Controller, Get, Res, UseGuards } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { EnterpriseHealthService } from './enterprise-health.service';
@@ -15,7 +16,7 @@ export class EnterpriseHealthController {
   }
 
   @Get('ready')
-  async ready(@Res({ passthrough: true }) response: any) {
+  async ready(@Res({ passthrough: true }) response: Response) {
     const result = await this.enterpriseHealthService.ready();
 
     if (!this.enterpriseHealthService.isReady(result)) {
@@ -27,7 +28,7 @@ export class EnterpriseHealthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('full')
-  async full(@Res({ passthrough: true }) response: any) {
+  async full(@Res({ passthrough: true }) response: Response) {
     const result = await this.enterpriseHealthService.full();
 
     if (this.enterpriseHealthService.shouldReturnUnavailable(result)) {
@@ -37,4 +38,3 @@ export class EnterpriseHealthController {
     return result;
   }
 }
-

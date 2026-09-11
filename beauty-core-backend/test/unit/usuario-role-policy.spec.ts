@@ -18,7 +18,10 @@
           const staticValue = value[staticName];
 
           if (typeof staticValue === 'function') {
-            entries.push([exportName + '.' + staticName, staticValue.bind(value)]);
+            entries.push([
+              exportName + '.' + staticName,
+              staticValue.bind(value),
+            ]);
           }
         }
 
@@ -26,13 +29,18 @@
         try {
           const instance = new value();
 
-          for (const methodName of Object.getOwnPropertyNames(Object.getPrototypeOf(instance))) {
+          for (const methodName of Object.getOwnPropertyNames(
+            Object.getPrototypeOf(instance),
+          )) {
             if (methodName === 'constructor') continue;
 
             const method = instance[methodName];
 
             if (typeof method === 'function') {
-              entries.push([exportName + '#' + methodName, method.bind(instance)]);
+              entries.push([
+                exportName + '#' + methodName,
+                method.bind(instance),
+              ]);
             }
           }
         } catch {
@@ -43,7 +51,7 @@
       if (value && typeof value === 'object') {
         for (const [methodName, method] of Object.entries(value)) {
           if (typeof method === 'function') {
-            entries.push([exportName + '.' + methodName, (method as Function).bind(value)]);
+            entries.push([exportName + '.' + methodName, method.bind(value)]);
           }
         }
       }
@@ -80,11 +88,7 @@
         { id: 'u1', role: 'GERENTE', empresaId: 'empresa-a' },
         { id: 'u2', role: 'ADMIN', empresaId: 'empresa-b' },
       ],
-      [
-        { role: 'ADMIN' },
-        'GERENTE',
-        'RECEPCAO',
-      ],
+      [{ role: 'ADMIN' }, 'GERENTE', 'RECEPCAO'],
     ];
 
     for (const args of cenarios) {

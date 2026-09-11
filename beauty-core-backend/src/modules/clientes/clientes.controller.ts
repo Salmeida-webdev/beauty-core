@@ -36,6 +36,22 @@ import { ClientesService } from './clientes.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 
+type Group14AuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    empresa_id: string;
+    sub: string;
+    id: string;
+    usuarioId: string;
+    clienteId: string;
+    role: string;
+    tipoUsuario: string;
+    email: string;
+    nome: string;
+    [key: string]: string | undefined;
+  };
+};
+
 @ApiTags('Clientes')
 @ApiBearerAuth('JWT')
 @Controller('clientes')
@@ -88,12 +104,9 @@ export class ClientesController {
   })
   create(
     @Body() createClienteDto: CreateClienteDto,
-    @Request() req: any,
+    @Request() req: Group14AuthenticatedRequest,
   ) {
-    return this.clientesService.create(
-      createClienteDto,
-      getEmpresaId(req),
-    );
+    return this.clientesService.create(createClienteDto, getEmpresaId(req));
   }
 
   @Get()
@@ -155,13 +168,10 @@ export class ClientesController {
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
   findAll(
-    @Request() req: any,
+    @Request() req: Group14AuthenticatedRequest,
     @Query() query: PaginationDto,
   ) {
-    return this.clientesService.findAll(
-      getEmpresaId(req),
-      query,
-    );
+    return this.clientesService.findAll(getEmpresaId(req), query);
   }
 
   @Get(':id')
@@ -214,12 +224,9 @@ export class ClientesController {
   })
   findOne(
     @Param('id', ParseUUIDPipe) id: string,
-    @Request() req: any,
+    @Request() req: Group14AuthenticatedRequest,
   ) {
-    return this.clientesService.findOne(
-      id,
-      getEmpresaId(req),
-    );
+    return this.clientesService.findOne(id, getEmpresaId(req));
   }
 
   @Patch(':id')
@@ -262,7 +269,8 @@ export class ClientesController {
     },
   })
   @ApiBadRequestResponse({
-    description: 'ID inválido, payload inválido ou dados obrigatórios ausentes.',
+    description:
+      'ID inválido, payload inválido ou dados obrigatórios ausentes.',
   })
   @ApiUnauthorizedResponse({
     description: 'Token Admin ausente, inválido ou expirado.',
@@ -277,13 +285,9 @@ export class ClientesController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateClienteDto: UpdateClienteDto,
-    @Request() req: any,
+    @Request() req: Group14AuthenticatedRequest,
   ) {
-    return this.clientesService.update(
-      id,
-      updateClienteDto,
-      getEmpresaId(req),
-    );
+    return this.clientesService.update(id, updateClienteDto, getEmpresaId(req));
   }
 
   @Patch(':id/inativar')
@@ -328,11 +332,8 @@ export class ClientesController {
   })
   inativar(
     @Param('id', ParseUUIDPipe) id: string,
-    @Request() req: any,
+    @Request() req: Group14AuthenticatedRequest,
   ) {
-    return this.clientesService.inativar(
-      id,
-      getEmpresaId(req),
-    );
+    return this.clientesService.inativar(id, getEmpresaId(req));
   }
 }

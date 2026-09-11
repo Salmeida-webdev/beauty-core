@@ -7,21 +7,12 @@ import { NiveisFidelidadeService } from './niveis-fidelidade.service';
 import { NiveisFidelidadeController } from './niveis-fidelidade.controller';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-  ],
+  imports: [PrismaModule, TenantModule],
 
-  controllers: [
-    NiveisFidelidadeController,
-  ],
+  controllers: [NiveisFidelidadeController],
 
-  providers: [
-    NiveisFidelidadeService,
-  ],
+  providers: [NiveisFidelidadeService],
 
-  exports: [
-    NiveisFidelidadeService,
-  ],
+  exports: [NiveisFidelidadeService],
 })
 export class NiveisFidelidadeModule {}

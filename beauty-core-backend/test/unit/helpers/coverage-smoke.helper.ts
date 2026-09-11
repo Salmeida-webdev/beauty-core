@@ -181,12 +181,18 @@ export function installCoverageSmokeSilencer() {
   }
 
   beforeAll(() => {
-    jest.spyOn(process.stdout, 'write').mockImplementation(((chunk: unknown, ...args: unknown[]) => {
+    jest.spyOn(process.stdout, 'write').mockImplementation(((
+      chunk: unknown,
+      ...args: unknown[]
+    ) => {
       if (isNoisyLog(chunk)) return true;
       return originalStdoutWrite(chunk as any, ...(args as any));
     }) as any);
 
-    jest.spyOn(process.stderr, 'write').mockImplementation(((chunk: unknown, ...args: unknown[]) => {
+    jest.spyOn(process.stderr, 'write').mockImplementation(((
+      chunk: unknown,
+      ...args: unknown[]
+    ) => {
       if (isNoisyLog(chunk)) return true;
       return originalStderrWrite(chunk as any, ...(args as any));
     }) as any);
@@ -451,12 +457,24 @@ export function createUniversalMock() {
       }
 
       if (prop === '$connect' || prop === '$disconnect') {
-        if (!methods.has(prop)) methods.set(prop, jest.fn(async () => undefined));
+        if (!methods.has(prop))
+          methods.set(
+            prop,
+            jest.fn(async () => undefined),
+          );
         return methods.get(prop);
       }
 
-      if (prop === '$executeRaw' || prop === '$queryRaw' || prop === '$runCommandRaw') {
-        if (!methods.has(prop)) methods.set(prop, jest.fn(async () => []));
+      if (
+        prop === '$executeRaw' ||
+        prop === '$queryRaw' ||
+        prop === '$runCommandRaw'
+      ) {
+        if (!methods.has(prop))
+          methods.set(
+            prop,
+            jest.fn(async () => []),
+          );
         return methods.get(prop);
       }
 
@@ -475,9 +493,11 @@ export function createUniversalMock() {
                 REDIS_PASSWORD: 'redis-test',
 
                 JWT_SECRET: 'test-secret-64-chars-minimum-admin',
-                JWT_REFRESH_SECRET: 'test-refresh-secret-64-chars-minimum-admin',
+                JWT_REFRESH_SECRET:
+                  'test-refresh-secret-64-chars-minimum-admin',
                 JWT_CLIENT_SECRET: 'test-client-secret-64-chars-minimum-client',
-                JWT_CLIENT_REFRESH_SECRET: 'test-client-refresh-secret-64-chars-minimum-client',
+                JWT_CLIENT_REFRESH_SECRET:
+                  'test-client-refresh-secret-64-chars-minimum-client',
 
                 JWT_EXPIRES_IN: '8h',
                 JWT_REFRESH_EXPIRES_IN: '7d',
@@ -501,12 +521,20 @@ export function createUniversalMock() {
       }
 
       if (prop === 'sign') {
-        if (!methods.has(prop)) methods.set(prop, jest.fn(() => 'token-test'));
+        if (!methods.has(prop))
+          methods.set(
+            prop,
+            jest.fn(() => 'token-test'),
+          );
         return methods.get(prop);
       }
 
       if (prop === 'signAsync') {
-        if (!methods.has(prop)) methods.set(prop, jest.fn(async () => 'token-test'));
+        if (!methods.has(prop))
+          methods.set(
+            prop,
+            jest.fn(async () => 'token-test'),
+          );
         return methods.get(prop);
       }
 
@@ -532,12 +560,24 @@ export function createUniversalMock() {
       ];
 
       if (directRecordMethods.includes(prop)) {
-        if (!methods.has(prop)) methods.set(prop, jest.fn(async () => record));
+        if (!methods.has(prop))
+          methods.set(
+            prop,
+            jest.fn(async () => record),
+          );
         return methods.get(prop);
       }
 
-      if (prop.startsWith('pode') || prop.startsWith('can') || prop.includes('Permissao')) {
-        if (!methods.has(prop)) methods.set(prop, jest.fn(async () => true));
+      if (
+        prop.startsWith('pode') ||
+        prop.startsWith('can') ||
+        prop.includes('Permissao')
+      ) {
+        if (!methods.has(prop))
+          methods.set(
+            prop,
+            jest.fn(async () => true),
+          );
         return methods.get(prop);
       }
 
@@ -575,7 +615,11 @@ export function createUniversalMock() {
         prop.startsWith('resumo') ||
         prop.startsWith('dashboard')
       ) {
-        if (!methods.has(prop)) methods.set(prop, jest.fn(async () => [record]));
+        if (!methods.has(prop))
+          methods.set(
+            prop,
+            jest.fn(async () => [record]),
+          );
         return methods.get(prop);
       }
 
@@ -592,7 +636,11 @@ export function createUniversalMock() {
         prop.startsWith('usar') ||
         prop.startsWith('vender')
       ) {
-        if (!methods.has(prop)) methods.set(prop, jest.fn(async () => record));
+        if (!methods.has(prop))
+          methods.set(
+            prop,
+            jest.fn(async () => record),
+          );
         return methods.get(prop);
       }
 
@@ -643,7 +691,9 @@ export function createDto(overrides: Record<string, any> = {}) {
     dataHoraFim: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
     dataInicio: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
     dataFim: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    dataVencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    dataVencimento: new Date(
+      Date.now() + 30 * 24 * 60 * 60 * 1000,
+    ).toISOString(),
     ativo: true,
     ...overrides,
   };
@@ -751,7 +801,10 @@ export function createScenarios() {
   ];
 }
 
-export function discoverFiles(baseDir: string, predicate: (filePath: string) => boolean): string[] {
+export function discoverFiles(
+  baseDir: string,
+  predicate: (filePath: string) => boolean,
+): string[] {
   const results: string[] = [];
 
   function walk(dir: string) {
@@ -791,7 +844,9 @@ export function loadExportedClasses(filePath: string, suffix: string): any[] {
     const mod = require(filePath);
 
     return Object.values(mod).filter((value: any) => {
-      return typeof value === 'function' && String(value.name ?? '').endsWith(suffix);
+      return (
+        typeof value === 'function' && String(value.name ?? '').endsWith(suffix)
+      );
     });
   } catch {
     return [];
@@ -800,7 +855,9 @@ export function loadExportedClasses(filePath: string, suffix: string): any[] {
 
 export function createInstance(ClassRef: any) {
   const dependencyCount = Math.max(ClassRef.length || 0, 12);
-  const dependencies = Array.from({ length: dependencyCount }, () => createUniversalMock());
+  const dependencies = Array.from({ length: dependencyCount }, () =>
+    createUniversalMock(),
+  );
 
   try {
     return new ClassRef(...dependencies);
@@ -834,7 +891,10 @@ export async function runWithTimeout(fn: () => any, timeoutMs = 300) {
   }
 }
 
-export async function exerciseInstance(instance: any, maxScenariosPerMethod = 12) {
+export async function exerciseInstance(
+  instance: any,
+  maxScenariosPerMethod = 12,
+) {
   const methods = getPublicMethods(instance);
   const scenarios = createScenarios();
 
@@ -881,4 +941,3 @@ export async function exerciseInstance(instance: any, maxScenariosPerMethod = 12
 export function toProjectRelative(filePath: string) {
   return path.relative(process.cwd(), filePath).replace(/\\/g, '/');
 }
-

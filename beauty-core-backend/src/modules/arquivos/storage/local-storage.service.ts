@@ -9,13 +9,7 @@ import { ArquivoVisibilidade } from '@prisma/client';
 import { createHash, createHmac, randomUUID } from 'crypto';
 import { createReadStream, ReadStream } from 'fs';
 import { access, mkdir, rename, writeFile } from 'fs/promises';
-import {
-  dirname,
-  extname,
-  join,
-  resolve,
-  sep,
-} from 'path';
+import { dirname, extname, resolve, sep } from 'path';
 import {
   SignedUrlResult,
   StorageProvider,
@@ -55,9 +49,7 @@ export class LocalStorageService implements StorageProvider {
     const nomeArquivo = `${randomUUID()}${extensao}`;
 
     const raiz =
-      input.visibilidade === ArquivoVisibilidade.PRIVADO
-        ? 'private'
-        : 'public';
+      input.visibilidade === ArquivoVisibilidade.PRIVADO ? 'private' : 'public';
 
     const subdiretorioSeguro = this.sanitizeFolder(
       input.subdiretorio || String(input.tipo).toLowerCase(),
@@ -137,6 +129,7 @@ export class LocalStorageService implements StorageProvider {
     empresaId: string,
     expiresInSeconds: number,
   ): Promise<SignedUrlResult> {
+    await Promise.resolve();
     const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
 
     const payload = Buffer.from(
@@ -155,15 +148,12 @@ export class LocalStorageService implements StorageProvider {
     };
   }
 
-
   gerarUrl(caminhoRelativo: string): string {
     if (!caminhoRelativo) {
       return '';
     }
 
-    const normalized = caminhoRelativo
-      .replace(/\\/g, '/')
-      .replace(/^\/+/, '');
+    const normalized = caminhoRelativo.replace(/\\/g, '/').replace(/^\/+/, '');
 
     if (normalized.startsWith('uploads/public/')) {
       return `/${normalized}`;
@@ -196,7 +186,9 @@ export class LocalStorageService implements StorageProvider {
     let data: SignedPayload;
 
     try {
-      data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
+      data = JSON.parse(
+        Buffer.from(payload, 'base64url').toString('utf8'),
+      ) as SignedPayload;
     } catch {
       throw new BadRequestException('Payload da URL assinada inválido.');
     }

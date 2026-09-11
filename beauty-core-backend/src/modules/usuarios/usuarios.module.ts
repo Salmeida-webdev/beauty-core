@@ -8,10 +8,7 @@ import { UsuariosService } from './usuarios.service';
 import { AuditoriaModule } from '../auditoria/auditoria.module';
 
 @Module({
-  imports: [
-    PrismaModule,
-    AuditoriaModule,
-  ],
+  imports: [PrismaModule, AuditoriaModule],
 
   controllers: [UsuariosController],
 

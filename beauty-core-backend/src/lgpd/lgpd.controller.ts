@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -23,6 +16,22 @@ import {
 import { JwtAuthGuard } from '../modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../modules/auth/guards/roles.guard';
 import { Roles } from '../shared/decorators/roles.decorator';
+
+type Group15AuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    empresa_id: string;
+    sub: string;
+    id: string;
+    usuarioId: string;
+    clienteId: string;
+    role: string;
+    tipoUsuario: string;
+    email: string;
+    nome: string;
+    [key: string]: string | undefined;
+  };
+};
 
 @ApiTags('LGPD')
 @ApiBearerAuth()
@@ -44,9 +53,9 @@ export class LgpdController {
   })
   exportarCliente(
     @Param('clienteId') clienteId: string,
-    @Req() request: Request,
+    @Req() request: Group15AuthenticatedRequest,
   ) {
-    return this.lgpdService.exportarCliente(clienteId, request as any);
+    return this.lgpdService.exportarCliente(clienteId, request);
   }
 
   @Post('anonimizar-cliente/:clienteId')
@@ -61,8 +70,8 @@ export class LgpdController {
   })
   anonimizarCliente(
     @Param('clienteId') clienteId: string,
-    @Req() request: Request,
+    @Req() request: Group15AuthenticatedRequest,
   ) {
-    return this.lgpdService.anonimizarCliente(clienteId, request as any);
+    return this.lgpdService.anonimizarCliente(clienteId, request);
   }
 }

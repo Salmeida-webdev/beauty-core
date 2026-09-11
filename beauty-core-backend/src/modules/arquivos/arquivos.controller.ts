@@ -1,3 +1,4 @@
+import { UnauthorizedException } from '@nestjs/common';
 import {
   Body,
   Controller,
@@ -13,10 +14,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  FileInterceptor,
-  FilesInterceptor,
-} from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -48,6 +46,16 @@ import {
 } from './storage/multer.config';
 import { UploadDocumentoPrivadoDto } from './dto/upload-documento-privado.dto';
 
+type ArquivosAuthenticatedRequest = {
+  user: {
+    sub?: string;
+    id?: string;
+    usuarioId?: string;
+    role: import('@prisma/client').Role;
+    empresaId: string;
+  };
+};
+
 @ApiTags('Arquivos')
 @ApiBearerAuth('JWT')
 @Controller('arquivos')
@@ -57,9 +65,7 @@ export class ArquivosController {
 
   @Post('logo')
   @Roles(Role.ADMIN, Role.GERENTE)
-  @UseInterceptors(
-    FileInterceptor('file', multerStorageOptions('logos')),
-  )
+  @UseInterceptors(FileInterceptor('file', multerStorageOptions('logos')))
   @ApiOperation({
     summary: 'Fazer upload da logo da empresa',
     description:
@@ -104,23 +110,19 @@ export class ArquivosController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   uploadLogo(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.arquivosService.uploadLogo(
-      getEmpresaId(req),
-      file,
-    );
+    return this.arquivosService.uploadLogo(getEmpresaId(req), file);
   }
 
   @Post('clientes/:clienteId/foto')
   @Roles(Role.ADMIN, Role.GERENTE, Role.RECEPCAO)
-  @UseInterceptors(
-    FileInterceptor('file', multerStorageOptions('clientes')),
-  )
+  @UseInterceptors(FileInterceptor('file', multerStorageOptions('clientes')))
   @ApiOperation({
     summary: 'Fazer upload da foto do cliente',
     description:
@@ -175,7 +177,7 @@ export class ArquivosController {
     description: 'Cliente não encontrado para a empresa autenticada.',
   })
   uploadFotoCliente(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @Param('clienteId', ParseUUIDPipe) clienteId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
@@ -188,9 +190,7 @@ export class ArquivosController {
 
   @Post('usuarios/:usuarioId/foto')
   @Roles(Role.ADMIN, Role.GERENTE, Role.PROFISSIONAL)
-  @UseInterceptors(
-    FileInterceptor('file', multerStorageOptions('usuarios')),
-  )
+  @UseInterceptors(FileInterceptor('file', multerStorageOptions('usuarios')))
   @ApiOperation({
     summary: 'Fazer upload da foto do usuário',
     description:
@@ -245,7 +245,7 @@ export class ArquivosController {
     description: 'Usuário não encontrado para a empresa autenticada.',
   })
   uploadFotoUsuario(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @Param('usuarioId', ParseUUIDPipe) usuarioId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
@@ -316,7 +316,7 @@ export class ArquivosController {
     description: 'Profissional não encontrado para a empresa autenticada.',
   })
   uploadFotoProfissional(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @Param('usuarioId', ParseUUIDPipe) usuarioId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
@@ -330,9 +330,7 @@ export class ArquivosController {
 
   @Post('servicos/:servicoId/imagem')
   @Roles(Role.ADMIN, Role.GERENTE)
-  @UseInterceptors(
-    FileInterceptor('file', multerStorageOptions('servicos')),
-  )
+  @UseInterceptors(FileInterceptor('file', multerStorageOptions('servicos')))
   @ApiOperation({
     summary: 'Fazer upload da imagem do serviço',
     description:
@@ -380,13 +378,14 @@ export class ArquivosController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Serviço não encontrado para a empresa autenticada.',
   })
   uploadImagemServico(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @Param('servicoId', ParseUUIDPipe) servicoId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
@@ -448,16 +447,14 @@ export class ArquivosController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   uploadGaleria(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    return this.arquivosService.uploadGaleria(
-      getEmpresaId(req),
-      files,
-    );
+    return this.arquivosService.uploadGaleria(getEmpresaId(req), files);
   }
 
   @Get('galeria')
@@ -511,20 +508,15 @@ export class ArquivosController {
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
   listarGaleria(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @Query() query: PaginationDto,
   ) {
-    return this.arquivosService.listarGaleria(
-      getEmpresaId(req),
-      query,
-    );
+    return this.arquivosService.listarGaleria(getEmpresaId(req), query);
   }
 
   @Post('documentos')
   @Roles(Role.ADMIN, Role.GERENTE)
-  @UseInterceptors(
-    FileInterceptor('file', multerStorageOptions('documentos')),
-  )
+  @UseInterceptors(FileInterceptor('file', multerStorageOptions('documentos')))
   @ApiOperation({
     summary: 'Fazer upload de documento',
     description:
@@ -560,22 +552,21 @@ export class ArquivosController {
     },
   })
   @ApiBadRequestResponse({
-    description: 'Arquivo inválido, tipo não permitido ou tamanho acima do limite.',
+    description:
+      'Arquivo inválido, tipo não permitido ou tamanho acima do limite.',
   })
   @ApiUnauthorizedResponse({
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   uploadDocumento(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.arquivosService.uploadDocumento(
-      getEmpresaId(req),
-      file,
-    );
+    return this.arquivosService.uploadDocumento(getEmpresaId(req), file);
   }
 
   @Get()
@@ -625,16 +616,14 @@ export class ArquivosController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   findAll(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @Query() query: PaginationDto,
   ) {
-    return this.arquivosService.findAll(
-      getEmpresaId(req),
-      query,
-    );
+    return this.arquivosService.findAll(getEmpresaId(req), query);
   }
 
   @Get('tipo/:tipo')
@@ -647,8 +636,7 @@ export class ArquivosController {
   @ApiParam({
     name: 'tipo',
     enum: TipoArquivo,
-    description:
-      'Tipo do arquivo conforme enum TipoArquivo do Prisma.',
+    description: 'Tipo do arquivo conforme enum TipoArquivo do Prisma.',
     example: Object.values(TipoArquivo)[0],
   })
   @ApiQuery({
@@ -694,18 +682,15 @@ export class ArquivosController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   findByTipo(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @Param('tipo') tipo: TipoArquivo,
     @Query() query: PaginationDto,
   ) {
-    return this.arquivosService.findByTipo(
-      getEmpresaId(req),
-      tipo,
-      query,
-    );
+    return this.arquivosService.findByTipo(getEmpresaId(req), tipo, query);
   }
 
   @Get(':id')
@@ -745,19 +730,17 @@ export class ArquivosController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Arquivo não encontrado para a empresa autenticada.',
   })
   findOne(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.arquivosService.findOne(
-      getEmpresaId(req),
-      id,
-    );
+    return this.arquivosService.findOne(getEmpresaId(req), id);
   }
 
   @Delete(':id')
@@ -790,21 +773,18 @@ export class ArquivosController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Arquivo não encontrado para a empresa autenticada.',
   })
   remove(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.arquivosService.remove(
-      getEmpresaId(req),
-      id,
-    );
+    return this.arquivosService.remove(getEmpresaId(req), id);
   }
-
 
   @Post('private/documentos')
   @Roles(Role.ADMIN, Role.GERENTE, Role.RECEPCAO)
@@ -846,12 +826,15 @@ export class ArquivosController {
     description: 'Documento privado enviado com sucesso.',
   })
   uploadPrivadoDocumento(
-    @Req() req: any,
+    @Req() req: ArquivosAuthenticatedRequest,
     @UploadedFile() file: Express.Multer.File,
     @Body() dto: UploadDocumentoPrivadoDto,
   ) {
     const empresaId = req.user.empresaId;
     const usuarioId = req.user.sub || req.user.id || req.user.usuarioId;
+    if (!usuarioId) {
+      throw new UnauthorizedException('Usuario autenticado sem identificador.');
+    }
 
     return this.arquivosService.uploadPrivadoDocumento(
       empresaId,
@@ -860,5 +843,4 @@ export class ArquivosController {
       dto,
     );
   }
-
 }

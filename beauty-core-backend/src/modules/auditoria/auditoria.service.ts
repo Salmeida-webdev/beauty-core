@@ -21,6 +21,38 @@ type JsonSeguro =
       [key: string]: JsonSeguro;
     };
 
+function stringifyAuditValue(value: unknown): string {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (value === null || value === undefined) {
+    return '';
+  }
+
+  if (typeof value === 'object') {
+    try {
+      return JSON.stringify(value) ?? '';
+    } catch {
+      return '[unserializable]';
+    }
+  }
+
+  if (
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    typeof value === 'bigint'
+  ) {
+    return value.toString();
+  }
+
+  if (typeof value === 'symbol') {
+    return value.description ?? '';
+  }
+
+  return '';
+}
+
 @Injectable()
 export class AuditoriaService {
   private readonly logger = new Logger(AuditoriaService.name);
@@ -136,104 +168,103 @@ export class AuditoriaService {
   async registrarSucesso(dto: CreateAuditoriaDto) {
     return this.registrar({
       ...dto,
-      status: 'SUCESSO' as StatusAuditoria,
+      status: 'SUCESSO',
     });
   }
 
   async registrarFalha(dto: CreateAuditoriaDto) {
     return this.registrar({
       ...dto,
-      status: 'FALHA' as StatusAuditoria,
+      status: 'FALHA',
     });
   }
 
   async registrarLoginAdmin(data: CreateAuditoriaDto) {
     return this.registrar({
       ...data,
-      acao: 'LOGIN_ADMIN' as AcaoAuditoria,
+      acao: 'LOGIN_ADMIN',
       modulo: data.modulo ?? 'AUTH',
-      status: data.status ?? ('SUCESSO' as StatusAuditoria),
+      status: data.status ?? 'SUCESSO',
     });
   }
 
   async registrarLoginCliente(data: CreateAuditoriaDto) {
     return this.registrar({
       ...data,
-      acao: 'LOGIN_CLIENTE' as AcaoAuditoria,
+      acao: 'LOGIN_CLIENTE',
       modulo: data.modulo ?? 'AUTH_CLIENTE',
-      tipoUsuario:
-        data.tipoUsuario ?? ('CLIENTE' as TipoUsuarioAuditoria),
-      status: data.status ?? ('SUCESSO' as StatusAuditoria),
+      tipoUsuario: data.tipoUsuario ?? 'CLIENTE',
+      status: data.status ?? 'SUCESSO',
     });
   }
 
   async registrarCriacao(data: CreateAuditoriaDto) {
     return this.registrarSucesso({
       ...data,
-      acao: 'CRIAR' as AcaoAuditoria,
+      acao: 'CRIAR',
     });
   }
 
   async registrarAtualizacao(data: CreateAuditoriaDto) {
     return this.registrarSucesso({
       ...data,
-      acao: 'ATUALIZAR' as AcaoAuditoria,
+      acao: 'ATUALIZAR',
     });
   }
 
   async registrarExclusao(data: CreateAuditoriaDto) {
     return this.registrarSucesso({
       ...data,
-      acao: 'EXCLUIR' as AcaoAuditoria,
+      acao: 'EXCLUIR',
     });
   }
 
   async registrarInativacao(data: CreateAuditoriaDto) {
     return this.registrarSucesso({
       ...data,
-      acao: 'INATIVAR' as AcaoAuditoria,
+      acao: 'INATIVAR',
     });
   }
 
   async registrarCancelamento(data: CreateAuditoriaDto) {
     return this.registrarSucesso({
       ...data,
-      acao: 'CANCELAR' as AcaoAuditoria,
+      acao: 'CANCELAR',
     });
   }
 
   async registrarConclusao(data: CreateAuditoriaDto) {
     return this.registrarSucesso({
       ...data,
-      acao: 'CONCLUIR' as AcaoAuditoria,
+      acao: 'CONCLUIR',
     });
   }
 
   async registrarPagamento(data: CreateAuditoriaDto) {
     return this.registrarSucesso({
       ...data,
-      acao: 'PAGAR' as AcaoAuditoria,
+      acao: 'PAGAR',
     });
   }
 
   async registrarUpload(data: CreateAuditoriaDto) {
     return this.registrarSucesso({
       ...data,
-      acao: 'UPLOAD' as AcaoAuditoria,
+      acao: 'UPLOAD',
     });
   }
 
   async registrarDownload(data: CreateAuditoriaDto) {
     return this.registrarSucesso({
       ...data,
-      acao: 'DOWNLOAD' as AcaoAuditoria,
+      acao: 'DOWNLOAD',
     });
   }
 
   async registrarVisualizacao(data: CreateAuditoriaDto) {
     return this.registrarSucesso({
       ...data,
-      acao: 'VISUALIZAR' as AcaoAuditoria,
+      acao: 'VISUALIZAR',
     });
   }
 
@@ -241,8 +272,7 @@ export class AuditoriaService {
     return this.registrar({
       ...data,
       modulo: data.modulo ?? 'BULLMQ',
-      tipoUsuario:
-        data.tipoUsuario ?? ('SISTEMA' as TipoUsuarioAuditoria),
+      tipoUsuario: data.tipoUsuario ?? 'SISTEMA',
       acao: this.normalizarAcaoAuditoria(data.acao, 'PROCESSAR_JOB'),
       status: this.normalizarStatusAuditoria(data.status, 'SUCESSO'),
     });
@@ -252,8 +282,7 @@ export class AuditoriaService {
     return this.registrar({
       ...data,
       modulo: data.modulo ?? 'SCHEDULER',
-      tipoUsuario:
-        data.tipoUsuario ?? ('SISTEMA' as TipoUsuarioAuditoria),
+      tipoUsuario: data.tipoUsuario ?? 'SISTEMA',
       acao: this.normalizarAcaoAuditoria(data.acao, 'CRON_EXECUTADO'),
       status: this.normalizarStatusAuditoria(data.status, 'SUCESSO'),
     });
@@ -442,7 +471,7 @@ export class AuditoriaService {
       return undefined;
     }
 
-    const valorLimpo = String(valor).trim();
+    const valorLimpo = stringifyAuditValue(valor).trim();
 
     if (
       !valorLimpo ||
@@ -468,12 +497,7 @@ export class AuditoriaService {
     valor: unknown,
     fallback: string,
   ): AcaoAuditoria {
-    return this.normalizarValorEnum(
-      AcaoAuditoria,
-      valor,
-      fallback,
-      'OUTRO',
-    ) as AcaoAuditoria;
+    return this.normalizarValorEnum(AcaoAuditoria, valor, fallback, 'OUTRO');
   }
 
   private normalizarStatusAuditoria(
@@ -485,7 +509,7 @@ export class AuditoriaService {
       valor,
       fallback,
       'SUCESSO',
-    ) as StatusAuditoria;
+    );
   }
 
   private normalizarTipoUsuarioAuditoria(
@@ -496,7 +520,7 @@ export class AuditoriaService {
     }
 
     const valoresPermitidos = Object.values(TipoUsuarioAuditoria) as string[];
-    const valorNormalizado = String(valor).trim();
+    const valorNormalizado = stringifyAuditValue(valor).trim();
 
     if (!valoresPermitidos.includes(valorNormalizado)) {
       return undefined;
@@ -514,7 +538,9 @@ export class AuditoriaService {
     const valoresPermitidos = Object.values(enumObject);
 
     const valorNormalizado =
-      valor === undefined || valor === null ? undefined : String(valor).trim();
+      valor === undefined || valor === null
+        ? undefined
+        : stringifyAuditValue(valor).trim();
 
     if (valorNormalizado && valoresPermitidos.includes(valorNormalizado)) {
       return valorNormalizado as T[keyof T];
@@ -531,16 +557,14 @@ export class AuditoriaService {
     return valoresPermitidos[0] as T[keyof T];
   }
 
-  private sanitizarJson(
-    payload: unknown,
-  ): Prisma.InputJsonValue | undefined {
+  private sanitizarJson(payload: unknown): Prisma.InputJsonValue | undefined {
     const sanitizado = this.sanitizar(payload, new WeakSet<object>(), 0);
 
     if (sanitizado === undefined || sanitizado === null) {
       return undefined;
     }
 
-    return sanitizado as Prisma.InputJsonValue;
+    return sanitizado;
   }
 
   private sanitizar(
@@ -589,7 +613,7 @@ export class AuditoriaService {
     }
 
     if (typeof payload !== 'object') {
-      return String(payload);
+      return stringifyAuditValue(payload);
     }
 
     if (visitados.has(payload)) {
@@ -635,9 +659,7 @@ export class AuditoriaService {
       .filter((item): item is JsonSeguro => item !== undefined);
 
     if (payload.length > this.maxArrayItems) {
-      resultado.push(
-        `[ARRAY_TRUNCADO_TOTAL_${payload.length}_ITENS]`,
-      );
+      resultado.push(`[ARRAY_TRUNCADO_TOTAL_${payload.length}_ITENS]`);
     }
 
     return resultado;
@@ -795,9 +817,7 @@ export class AuditoriaService {
     return this.sanitizarObjeto(resumo, visitados, profundidade + 1);
   }
 
-  private resumirBullMqQueue(
-    payload: Record<string, unknown>,
-  ): JsonSeguro {
+  private resumirBullMqQueue(payload: Record<string, unknown>): JsonSeguro {
     return {
       name: this.converterParaJsonSeguroSimples(
         this.obterCampoSeguro(payload, 'name'),
@@ -858,7 +878,7 @@ export class AuditoriaService {
       return valor.toString();
     }
 
-    return String(valor);
+    return stringifyAuditValue(valor);
   }
 
   private limitarString(valor: string): string {
@@ -879,9 +899,7 @@ export class AuditoriaService {
   }
 
   private deveMascararCampoSensivel(keyNormalizada: string): boolean {
-    return this.camposSensiveis.some((campo) =>
-      keyNormalizada.includes(campo),
-    );
+    return this.camposSensiveis.some((campo) => keyNormalizada.includes(campo));
   }
 
   private deveRemoverCampoTecnico(keyNormalizada: string): boolean {

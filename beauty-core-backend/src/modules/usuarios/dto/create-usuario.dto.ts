@@ -37,7 +37,9 @@ export class CreateUsuarioDto {
   @IsString()
   @MinLength(2)
   @MaxLength(120)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   nome: string;
 
   @ApiProperty({
@@ -46,7 +48,7 @@ export class CreateUsuarioDto {
   })
   @IsEmail()
   @MaxLength(120)
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toLowerCase() : value,
   )
   email: string;
@@ -58,7 +60,9 @@ export class CreateUsuarioDto {
   @IsOptional()
   @IsString()
   @Length(8, 20)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   telefone?: string;
 
   @ApiPropertyOptional({
@@ -68,7 +72,9 @@ export class CreateUsuarioDto {
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   foto?: string;
 
   @ApiProperty({

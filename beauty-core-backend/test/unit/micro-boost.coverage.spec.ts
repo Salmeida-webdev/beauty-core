@@ -13,7 +13,7 @@ describe('Chat 33.3.1 - Micro boost coverage', () => {
     try {
       const mod = require('../../src/config/swagger.config');
 
-      for (const value of Object.values(mod) as any[]) {
+      for (const value of Object.values(mod)) {
         if (typeof value === 'function') {
           try {
             await runWithTimeout(() => value());
@@ -40,16 +40,19 @@ describe('Chat 33.3.1 - Micro boost coverage', () => {
         if (typeof instance.catch === 'function') {
           const host = {
             switchToHttp: () => ({
-              getRequest: () => createRequestLike({
-                method: 'GET',
-                originalUrl: '/teste',
-                url: '/teste',
-              }),
+              getRequest: () =>
+                createRequestLike({
+                  method: 'GET',
+                  originalUrl: '/teste',
+                  url: '/teste',
+                }),
               getResponse: () => createResponseLike(),
             }),
           };
 
-          await runWithTimeout(() => instance.catch(new Error('Erro controlado'), host));
+          await runWithTimeout(() =>
+            instance.catch(new Error('Erro controlado'), host),
+          );
         }
       }
 
@@ -73,10 +76,12 @@ describe('Chat 33.3.1 - Micro boost coverage', () => {
       try {
         const mod = require(modulePath);
 
-        for (const value of Object.values(mod) as any[]) {
+        for (const value of Object.values(mod)) {
           if (typeof value === 'function') {
             try {
-              await runWithTimeout(() => value(createRequestLike(), 'ADMIN', 'GERENTE'));
+              await runWithTimeout(() =>
+                value(createRequestLike(), 'ADMIN', 'GERENTE'),
+              );
             } catch {}
 
             try {

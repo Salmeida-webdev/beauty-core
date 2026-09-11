@@ -16,8 +16,8 @@ import {
 
 import { PrismaService } from '../../database/prisma/prisma.service';
 import { AgendamentosService } from '../agendamentos/agendamentos.service';
-import { MensagensWhatsappService } from "../mensagens-whatsapp/mensagens-whatsapp.service";
-import { ClientesPacotesService } from "../clientes-pacotes/clientes-pacotes.service";
+import { MensagensWhatsappService } from '../mensagens-whatsapp/mensagens-whatsapp.service';
+import { ClientesPacotesService } from '../clientes-pacotes/clientes-pacotes.service';
 import { CreateAgendamentoDto } from '../agendamentos/dto/create-agendamento.dto';
 import { PaginationDto } from '../../shared/dto/pagination.dto';
 import { TenantValidatorService } from '../../shared/tenant';
@@ -30,6 +30,60 @@ import { UpdatePerfilClienteDto } from './dto/update-perfil-cliente.dto';
 import { CreatePortalAgendamentoDto } from './dto/create-portal-agendamento.dto';
 import { ReschedulePortalAgendamentoDto } from './dto/reschedule-portal-agendamento.dto';
 
+type PortalAppointmentItem = {
+  id: string;
+  dataHoraInicio: Date;
+  dataHoraFim: Date;
+  status: StatusAgendamento;
+  observacoes?: string | null;
+  servico?: { nome?: string | null } | null;
+  profissional?: { nome?: string | null; foto?: string | null } | null;
+  unidade?: { nome?: string | null } | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type PortalPointMovementItem = {
+  id: string;
+  pontos: number;
+  tipo: TipoMovimentacaoPontos;
+  descricao: string | null;
+  createdAt: Date;
+};
+
+type PortalPackageItem = {
+  id: string;
+  pacoteId: string;
+  pacote?: { nome: string; descricao: string | null } | null;
+  sessoesTotal: number;
+  sessoesUsadas: number;
+  sessoesRestantes: number;
+  dataCompra: Date;
+  dataValidade: Date | null;
+  status: StatusClientePacote;
+};
+
+type PortalNotificationItem = {
+  id: string;
+  tipo: string;
+  titulo: string;
+  mensagem: string;
+  status: StatusNotificacao;
+  dataLeitura: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type PortalWhatsappMessageItem = {
+  id: string;
+  tipo: TipoMensagemWhatsApp;
+  destinatario: string;
+  mensagem: string;
+  status: string;
+  dataEnvio: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
 @Injectable()
 export class AreaClienteService {
   constructor(
@@ -37,15 +91,15 @@ export class AreaClienteService {
     private readonly tenantValidator: TenantValidatorService,
     private readonly agendamentosService: AgendamentosService,
 
+    private readonly mensagensWhatsappService: MensagensWhatsappService,
+    private readonly clientesPacotesService: ClientesPacotesService,
+  ) {}
 
-    private readonly mensagensWhatsappService: MensagensWhatsappService,private readonly clientesPacotesService: ClientesPacotesService,) {}
-
-  private async validarClientePortal(
-    empresaId: string,
-    clienteId: string,
-  ) {
-    const clienteValidado =
-      await this.tenantValidator.validarCliente(empresaId, clienteId);
+  private async validarClientePortal(empresaId: string, clienteId: string) {
+    const clienteValidado = await this.tenantValidator.validarCliente(
+      empresaId,
+      clienteId,
+    );
 
     if (!clienteValidado.ativoPortal) {
       throw new NotFoundException(
@@ -72,63 +126,56 @@ export class AreaClienteService {
   }
 
   async perfil(empresaId: string, clienteId: string) {
-    const cliente = await this.validarClientePortal(
-      empresaId,
-      clienteId,
-    );
+    const cliente = await this.validarClientePortal(empresaId, clienteId);
 
-    const [
-      fidelidade,
-      nivelAtual,
-      pacotesAtivos,
-      quantidadeAgendamentos,
-    ] = await Promise.all([
-      this.prisma.fidelidade.findUnique({
-        where: {
-          clienteId_empresaId: {
-            clienteId,
-            empresaId,
-          },
-        },
-        select: {
-          saldoPontos: true,
-        },
-      }),
-      this.buscarNivelAtual(empresaId, clienteId),
-      this.prisma.clientePacote.findMany({
-        where: {
-          empresaId,
-          clienteId,
-          status: StatusClientePacote.ATIVO,
-        },
-        select: {
-          id: true,
-          pacoteId: true,
-          sessoesTotal: true,
-          sessoesUsadas: true,
-          sessoesRestantes: true,
-          dataCompra: true,
-          dataValidade: true,
-          status: true,
-          pacote: {
-            select: {
-              nome: true,
-              descricao: true,
+    const [fidelidade, nivelAtual, pacotesAtivos, quantidadeAgendamentos] =
+      await Promise.all([
+        this.prisma.fidelidade.findUnique({
+          where: {
+            clienteId_empresaId: {
+              clienteId,
+              empresaId,
             },
           },
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        take: 20,
-      }),
-      this.prisma.agendamento.count({
-        where: {
-          empresaId,
-          clienteId,
-        },
-      }),
-    ]);
+          select: {
+            saldoPontos: true,
+          },
+        }),
+        this.buscarNivelAtual(empresaId, clienteId),
+        this.prisma.clientePacote.findMany({
+          where: {
+            empresaId,
+            clienteId,
+            status: StatusClientePacote.ATIVO,
+          },
+          select: {
+            id: true,
+            pacoteId: true,
+            sessoesTotal: true,
+            sessoesUsadas: true,
+            sessoesRestantes: true,
+            dataCompra: true,
+            dataValidade: true,
+            status: true,
+            pacote: {
+              select: {
+                nome: true,
+                descricao: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 20,
+        }),
+        this.prisma.agendamento.count({
+          where: {
+            empresaId,
+            clienteId,
+          },
+        }),
+      ]);
 
     return {
       id: cliente.id,
@@ -257,9 +304,7 @@ export class AreaClienteService {
     const where: Prisma.AgendamentoWhereInput = {
       empresaId,
       clienteId,
-      ...(status && statusMap[status]
-        ? { status: statusMap[status] }
-        : {}),
+      ...(status && statusMap[status] ? { status: statusMap[status] } : {}),
     };
 
     const [data, total] = await Promise.all([
@@ -397,79 +442,72 @@ export class AreaClienteService {
   async fidelidade(empresaId: string, clienteId: string) {
     await this.validarClientePortal(empresaId, clienteId);
 
-    const [
-      fidelidade,
-      ganhos,
-      resgates,
-      nivelAtual,
-      niveis,
-      beneficios,
-    ] = await Promise.all([
-      this.prisma.fidelidade.findUnique({
-        where: {
-          clienteId_empresaId: {
+    const [fidelidade, ganhos, resgates, nivelAtual, niveis, beneficios] =
+      await Promise.all([
+        this.prisma.fidelidade.findUnique({
+          where: {
+            clienteId_empresaId: {
+              clienteId,
+              empresaId,
+            },
+          },
+        }),
+        this.prisma.movimentacaoPontos.aggregate({
+          where: {
+            empresaId,
             clienteId,
+            tipo: TipoMovimentacaoPontos.GANHO,
+          },
+          _sum: {
+            pontos: true,
+          },
+        }),
+        this.prisma.movimentacaoPontos.aggregate({
+          where: {
+            empresaId,
+            clienteId,
+            tipo: TipoMovimentacaoPontos.RESGATE,
+          },
+          _sum: {
+            pontos: true,
+          },
+        }),
+        this.buscarNivelAtual(empresaId, clienteId),
+        this.prisma.nivelFidelidade.findMany({
+          where: {
             empresaId,
           },
-        },
-      }),
-      this.prisma.movimentacaoPontos.aggregate({
-        where: {
-          empresaId,
-          clienteId,
-          tipo: TipoMovimentacaoPontos.GANHO,
-        },
-        _sum: {
-          pontos: true,
-        },
-      }),
-      this.prisma.movimentacaoPontos.aggregate({
-        where: {
-          empresaId,
-          clienteId,
-          tipo: TipoMovimentacaoPontos.RESGATE,
-        },
-        _sum: {
-          pontos: true,
-        },
-      }),
-      this.buscarNivelAtual(empresaId, clienteId),
-      this.prisma.nivelFidelidade.findMany({
-        where: {
-          empresaId,
-        },
-        select: {
-          id: true,
-          nome: true,
-          pontosMinimos: true,
-          beneficios: true,
-        },
-        orderBy: {
-          pontosMinimos: 'asc',
-        },
-      }),
-      this.prisma.beneficio.findMany({
-        where: {
-          empresaId,
-          ativo: true,
-        },
-        select: {
-          id: true,
-          nome: true,
-          descricao: true,
-          pontosNecessarios: true,
-          ativo: true,
-        },
-        orderBy: {
-          pontosNecessarios: 'asc',
-        },
-      }),
-    ]);
+          select: {
+            id: true,
+            nome: true,
+            pontosMinimos: true,
+            beneficios: true,
+          },
+          orderBy: {
+            pontosMinimos: 'asc',
+          },
+        }),
+        this.prisma.beneficio.findMany({
+          where: {
+            empresaId,
+            ativo: true,
+          },
+          select: {
+            id: true,
+            nome: true,
+            descricao: true,
+            pontosNecessarios: true,
+            ativo: true,
+          },
+          orderBy: {
+            pontosNecessarios: 'asc',
+          },
+        }),
+      ]);
 
     const saldoAtual = fidelidade?.saldoPontos ?? 0;
     const proximoNivel =
-      niveis.find((nivel) => nivel.pontosMinimos > saldoAtual) ??
-      null;
+      niveis.find((nivel) => nivel.pontosMinimos > saldoAtual) ?? null;
 
     return {
       saldoAtual,
@@ -492,11 +530,7 @@ export class AreaClienteService {
     };
   }
 
-  async pontos(
-    empresaId: string,
-    clienteId: string,
-    query?: PaginationDto,
-  ) {
+  async pontos(empresaId: string, clienteId: string, query?: PaginationDto) {
     await this.validarClientePortal(empresaId, clienteId);
 
     const { page, limit, skip, take } = getPaginationParams(query ?? {});
@@ -642,26 +676,18 @@ export class AreaClienteService {
         .filter((pacote) => pacote.status === StatusClientePacote.ATIVO)
         .map(mapPacote),
       finalizados: pacotes
-        .filter(
-          (pacote) => pacote.status === StatusClientePacote.FINALIZADO,
-        )
+        .filter((pacote) => pacote.status === StatusClientePacote.FINALIZADO)
         .map(mapPacote),
       vencidos: pacotes
         .filter((pacote) => pacote.status === StatusClientePacote.VENCIDO)
         .map(mapPacote),
       cancelados: pacotes
-        .filter(
-          (pacote) => pacote.status === StatusClientePacote.CANCELADO,
-        )
+        .filter((pacote) => pacote.status === StatusClientePacote.CANCELADO)
         .map(mapPacote),
     };
   }
 
-  async pacoteDetalhes(
-    empresaId: string,
-    clienteId: string,
-    pacoteId: string,
-  ) {
+  async pacoteDetalhes(empresaId: string, clienteId: string, pacoteId: string) {
     await this.validarClientePortal(empresaId, clienteId);
 
     const pacote = await this.prisma.clientePacote.findFirst({
@@ -906,133 +932,128 @@ export class AreaClienteService {
   async historico(empresaId: string, clienteId: string) {
     await this.validarClientePortal(empresaId, clienteId);
 
-    const [
-      agendamentos,
-      pontos,
-      pacotes,
-      notificacoes,
-      mensagensWhatsapp,
-    ] = await Promise.all([
-      this.prisma.agendamento.findMany({
-        where: {
-          empresaId,
-          clienteId,
-        },
-        select: {
-          id: true,
-          dataHoraInicio: true,
-          dataHoraFim: true,
-          status: true,
-          observacoes: true,
-          createdAt: true,
-          updatedAt: true,
-          servico: {
-            select: {
-              nome: true,
+    const [agendamentos, pontos, pacotes, notificacoes, mensagensWhatsapp] =
+      await Promise.all([
+        this.prisma.agendamento.findMany({
+          where: {
+            empresaId,
+            clienteId,
+          },
+          select: {
+            id: true,
+            dataHoraInicio: true,
+            dataHoraFim: true,
+            status: true,
+            observacoes: true,
+            createdAt: true,
+            updatedAt: true,
+            servico: {
+              select: {
+                nome: true,
+              },
+            },
+            profissional: {
+              select: {
+                nome: true,
+                foto: true,
+              },
+            },
+            unidade: {
+              select: {
+                nome: true,
+              },
             },
           },
-          profissional: {
-            select: {
-              nome: true,
-              foto: true,
+          orderBy: {
+            dataHoraInicio: 'desc',
+          },
+          take: 100,
+        }),
+        this.prisma.movimentacaoPontos.findMany({
+          where: {
+            empresaId,
+            clienteId,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          select: {
+            id: true,
+            pontos: true,
+            tipo: true,
+            descricao: true,
+            createdAt: true,
+          },
+          take: 100,
+        }),
+        this.prisma.clientePacote.findMany({
+          where: {
+            empresaId,
+            clienteId,
+          },
+          select: {
+            id: true,
+            pacoteId: true,
+            sessoesTotal: true,
+            sessoesUsadas: true,
+            sessoesRestantes: true,
+            dataCompra: true,
+            dataValidade: true,
+            status: true,
+            createdAt: true,
+            pacote: {
+              select: {
+                nome: true,
+                descricao: true,
+              },
             },
           },
-          unidade: {
-            select: {
-              nome: true,
-            },
+          orderBy: {
+            createdAt: 'desc',
           },
-        },
-        orderBy: {
-          dataHoraInicio: 'desc',
-        },
-        take: 100,
-      }),
-      this.prisma.movimentacaoPontos.findMany({
-        where: {
-          empresaId,
-          clienteId,
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        select: {
-          id: true,
-          pontos: true,
-          tipo: true,
-          descricao: true,
-          createdAt: true,
-        },
-        take: 100,
-      }),
-      this.prisma.clientePacote.findMany({
-        where: {
-          empresaId,
-          clienteId,
-        },
-        select: {
-          id: true,
-          pacoteId: true,
-          sessoesTotal: true,
-          sessoesUsadas: true,
-          sessoesRestantes: true,
-          dataCompra: true,
-          dataValidade: true,
-          status: true,
-          createdAt: true,
-          pacote: {
-            select: {
-              nome: true,
-              descricao: true,
-            },
+          take: 100,
+        }),
+        this.prisma.notificacao.findMany({
+          where: {
+            empresaId,
+            clienteId,
           },
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        take: 100,
-      }),
-      this.prisma.notificacao.findMany({
-        where: {
-          empresaId,
-          clienteId,
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        select: {
-          id: true,
-          tipo: true,
-          titulo: true,
-          mensagem: true,
-          status: true,
-          dataLeitura: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-        take: 100,
-      }),
-      this.prisma.mensagemWhatsApp.findMany({
-        where: {
-          empresaId,
-          clienteId,
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        select: {
-          id: true,
-          tipo: true,
-          destinatario: true,
-          mensagem: true,
-          status: true,
-          dataEnvio: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-        take: 100,
-      }),
-    ]);
+          orderBy: {
+            createdAt: 'desc',
+          },
+          select: {
+            id: true,
+            tipo: true,
+            titulo: true,
+            mensagem: true,
+            status: true,
+            dataLeitura: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+          take: 100,
+        }),
+        this.prisma.mensagemWhatsApp.findMany({
+          where: {
+            empresaId,
+            clienteId,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          select: {
+            id: true,
+            tipo: true,
+            destinatario: true,
+            mensagem: true,
+            status: true,
+            dataEnvio: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+          take: 100,
+        }),
+      ]);
 
     const historico = [
       ...agendamentos.map((item) => ({
@@ -1078,11 +1099,7 @@ export class AreaClienteService {
     ];
 
     return historico
-      .sort(
-        (a, b) =>
-          new Date(b.data).getTime() -
-          new Date(a.data).getTime(),
-      )
+      .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
       .slice(0, 200);
   }
 
@@ -1098,7 +1115,10 @@ export class AreaClienteService {
       clienteId,
     };
 
-    const agendamento = await this.agendamentosService.create(payload, empresaId);
+    const agendamento = await this.agendamentosService.create(
+      payload,
+      empresaId,
+    );
     return this.toPortalAppointment(agendamento);
   }
 
@@ -1132,11 +1152,7 @@ export class AreaClienteService {
     return this.toPortalAppointment(atualizado);
   }
 
-  async cancelarAgendamento(
-    empresaId: string,
-    clienteId: string,
-    id: string,
-  ) {
+  async cancelarAgendamento(empresaId: string, clienteId: string, id: string) {
     await this.validarClientePortal(empresaId, clienteId);
 
     const agendamento = await this.prisma.agendamento.findFirst({
@@ -1157,7 +1173,7 @@ export class AreaClienteService {
     return this.toPortalAppointment(cancelado);
   }
 
-  private toPortalAppointment(item: any) {
+  private toPortalAppointment(item: PortalAppointmentItem) {
     return {
       id: item.id,
       dataHoraInicio: item.dataHoraInicio,
@@ -1185,7 +1201,7 @@ export class AreaClienteService {
     };
   }
 
-  private toPortalPointMovement(item: any) {
+  private toPortalPointMovement(item: PortalPointMovementItem) {
     return {
       id: item.id,
       pontos: item.pontos,
@@ -1195,7 +1211,7 @@ export class AreaClienteService {
     };
   }
 
-  private toPortalPackage(item: any) {
+  private toPortalPackage(item: PortalPackageItem) {
     return {
       id: item.id,
       pacoteId: item.pacoteId,
@@ -1210,7 +1226,7 @@ export class AreaClienteService {
     };
   }
 
-  private toPortalNotification(item: any) {
+  private toPortalNotification(item: PortalNotificationItem) {
     return {
       id: item.id,
       tipo: item.tipo,
@@ -1223,7 +1239,7 @@ export class AreaClienteService {
     };
   }
 
-  private toPortalWhatsappMessage(item: any) {
+  private toPortalWhatsappMessage(item: PortalWhatsappMessageItem) {
     return {
       id: item.id,
       tipo: item.tipo,
@@ -1236,10 +1252,7 @@ export class AreaClienteService {
     };
   }
 
-  private async buscarNivelAtual(
-    empresaId: string,
-    clienteId: string,
-  ) {
+  private async buscarNivelAtual(empresaId: string, clienteId: string) {
     const fidelidade = await this.prisma.fidelidade.findUnique({
       where: {
         clienteId_empresaId: {
@@ -1286,19 +1299,13 @@ export class AreaClienteService {
     });
 
     if (!pacote) {
-      throw new NotFoundException("Pacote não encontrado para este cliente.");
+      throw new NotFoundException('Pacote não encontrado para este cliente.');
     }
 
-    return this.clientesPacotesService.usarSessao(
-      empresaId,
-      pacoteId,
-    );
+    return this.clientesPacotesService.usarSessao(empresaId, pacoteId);
   }
 
-  async documentos(
-    empresaId: string,
-    clienteId: string,
-  ) {
+  async documentos(empresaId: string, clienteId: string) {
     await this.validarClientePortal(empresaId, clienteId);
 
     return this.prisma.arquivo.findMany({
@@ -1320,7 +1327,7 @@ export class AreaClienteService {
         visibilidade: true,
       },
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
   }
@@ -1345,27 +1352,22 @@ export class AreaClienteService {
     });
 
     if (!cliente?.telefone) {
-      throw new BadRequestException(
-        "Cliente não possui telefone cadastrado.",
-      );
+      throw new BadRequestException('Cliente não possui telefone cadastrado.');
     }
 
-    const destinatario = cliente.telefone.replace(/\D/g, "");
+    const destinatario = cliente.telefone.replace(/\D/g, '');
 
     if (destinatario.length < 10 || destinatario.length > 15) {
       throw new BadRequestException(
-        "Telefone do cliente possui formato inválido.",
+        'Telefone do cliente possui formato inválido.',
       );
     }
 
-    return this.mensagensWhatsappService.enviar(
-      empresaId,
-      {
-        clienteId,
-        tipo,
-        destinatario,
-        mensagem,
-      },
-    );
+    return this.mensagensWhatsappService.enviar(empresaId, {
+      clienteId,
+      tipo,
+      destinatario,
+      mensagem,
+    });
   }
 }

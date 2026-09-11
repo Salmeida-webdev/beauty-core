@@ -53,8 +53,8 @@ describe('AgendamentosService concurrency guards', () => {
       }),
     ).resolves.toBeUndefined();
 
-    expect(tx.agendamento.findFirst.mock.calls[0][0].where.status.in).not.toContain(
-      'CANCELADO',
-    );
+    expect(
+      tx.agendamento.findFirst.mock.calls[0][0].where.status.in,
+    ).not.toContain('CANCELADO');
   });
 });

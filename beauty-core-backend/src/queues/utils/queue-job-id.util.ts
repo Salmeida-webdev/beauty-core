@@ -27,25 +27,13 @@ export function createQueueJobId(params: JobIdParams): string {
   const dataReferencia = normalizarParte(params.dataReferencia);
   const extra = normalizarParte(params.extra);
 
-  const rawKey = [
-    empresaId,
-    tipo,
-    referenciaId,
-    dataReferencia,
-    extra,
-  ].join('|');
+  const rawKey = [empresaId, tipo, referenciaId, dataReferencia, extra].join(
+    '|',
+  );
 
   const hash = createHash('sha256').update(rawKey).digest('hex').slice(0, 24);
 
-  return [
-    'bc',
-    empresaId,
-    tipo,
-    referenciaId,
-    dataReferencia,
-    extra,
-    hash,
-  ]
+  return ['bc', empresaId, tipo, referenciaId, dataReferencia, extra, hash]
     .filter(Boolean)
     .join('-')
     .slice(0, 180);

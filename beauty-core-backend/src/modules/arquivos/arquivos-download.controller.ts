@@ -18,6 +18,15 @@ import {
 import { JwtOrClienteAuthGuard } from './guards/jwt-or-cliente-auth.guard';
 import { ArquivosDownloadService } from './arquivos-download.service';
 
+type AuthenticatedFileUser = {
+  empresaId: string;
+  sub: string;
+};
+
+type AuthenticatedFileRequest = {
+  user: AuthenticatedFileUser;
+};
+
 @ApiTags('Arquivos')
 @Controller('arquivos')
 export class ArquivosDownloadController {
@@ -68,7 +77,7 @@ export class ArquivosDownloadController {
   })
   async downloadProtegido(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: any,
+    @Req() req: AuthenticatedFileRequest,
   ) {
     const { arquivo, stream } =
       await this.arquivosDownloadService.downloadProtegido(id, req.user);
@@ -103,7 +112,10 @@ export class ArquivosDownloadController {
       },
     },
   })
-  gerarSignedUrl(@Param('id', ParseUUIDPipe) id: string, @Req() req: any) {
+  gerarSignedUrl(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: AuthenticatedFileRequest,
+  ) {
     return this.arquivosDownloadService.gerarSignedUrl(id, req.user);
   }
 }

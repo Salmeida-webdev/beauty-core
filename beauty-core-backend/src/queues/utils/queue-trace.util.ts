@@ -38,8 +38,7 @@ export function getQueueTrace(
   const metadata = toRecord(data.metadata);
 
   const requestId =
-    toNullableString(data.requestId) ??
-    toNullableString(metadata.requestId);
+    toNullableString(data.requestId) ?? toNullableString(metadata.requestId);
 
   const correlationId =
     toNullableString(data.correlationId) ??

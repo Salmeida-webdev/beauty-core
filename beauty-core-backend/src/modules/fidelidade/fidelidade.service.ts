@@ -214,12 +214,11 @@ export class FidelidadeService {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
     await this.tenantValidator.validarCliente(empresaId, dto.clienteId);
 
-    const configuracao =
-      await this.prisma.configuracaoFidelidade.findUnique({
-        where: {
-          empresaId,
-        },
-      });
+    const configuracao = await this.prisma.configuracaoFidelidade.findUnique({
+      where: {
+        empresaId,
+      },
+    });
 
     if (!configuracao || !configuracao.fidelidadeAtiva) {
       throw new BadRequestException(
@@ -343,12 +342,11 @@ export class FidelidadeService {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
     await this.tenantValidator.validarCliente(empresaId, clienteId);
 
-    const configuracao =
-      await this.prisma.configuracaoFidelidade.findUnique({
-        where: {
-          empresaId,
-        },
-      });
+    const configuracao = await this.prisma.configuracaoFidelidade.findUnique({
+      where: {
+        empresaId,
+      },
+    });
 
     if (!configuracao || !configuracao.fidelidadeAtiva) {
       throw new BadRequestException(
@@ -365,8 +363,7 @@ export class FidelidadeService {
       fidelidade.saldoPontos / configuracao.pontosParaResgate,
     );
 
-    const valorDisponivel =
-      quantidadeResgates * configuracao.valorResgate;
+    const valorDisponivel = quantidadeResgates * configuracao.valorResgate;
 
     return {
       clienteId,
@@ -382,12 +379,11 @@ export class FidelidadeService {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
     await this.tenantValidator.validarCliente(empresaId, clienteId);
 
-    const configuracao =
-      await this.prisma.configuracaoFidelidade.findUnique({
-        where: {
-          empresaId,
-        },
-      });
+    const configuracao = await this.prisma.configuracaoFidelidade.findUnique({
+      where: {
+        empresaId,
+      },
+    });
 
     if (!configuracao || !configuracao.niveisAtivos) {
       throw new BadRequestException(
@@ -427,10 +423,7 @@ export class FidelidadeService {
     };
   }
 
-  private async buscarFidelidadeOuFalhar(
-    empresaId: string,
-    clienteId: string,
-  ) {
+  private async buscarFidelidadeOuFalhar(empresaId: string, clienteId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
     await this.tenantValidator.validarCliente(empresaId, clienteId);
 
@@ -454,12 +447,11 @@ export class FidelidadeService {
     saldoAnterior: number,
     saldoAtual: number,
   ) {
-    const configuracao =
-      await this.prisma.configuracaoFidelidade.findUnique({
-        where: {
-          empresaId,
-        },
-      });
+    const configuracao = await this.prisma.configuracaoFidelidade.findUnique({
+      where: {
+        empresaId,
+      },
+    });
 
     if (!configuracao || !configuracao.niveisAtivos) {
       return;
@@ -519,12 +511,11 @@ export class FidelidadeService {
     clienteId: string,
     saldoAtual: number,
   ) {
-    const configuracao =
-      await this.prisma.configuracaoFidelidade.findUnique({
-        where: {
-          empresaId,
-        },
-      });
+    const configuracao = await this.prisma.configuracaoFidelidade.findUnique({
+      where: {
+        empresaId,
+      },
+    });
 
     if (!configuracao || !configuracao.fidelidadeAtiva) {
       return;
@@ -538,8 +529,7 @@ export class FidelidadeService {
       saldoAtual / configuracao.pontosParaResgate,
     );
 
-    const valorDisponivel =
-      quantidadeResgates * configuracao.valorResgate;
+    const valorDisponivel = quantidadeResgates * configuracao.valorResgate;
 
     await this.automacoesService.processarEvento({
       empresaId,

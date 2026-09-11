@@ -1,4 +1,4 @@
-﻿import {
+import {
   CanActivate,
   ExecutionContext,
   Injectable,
@@ -6,10 +6,14 @@
 } from '@nestjs/common';
 import { timingSafeEqual } from 'crypto';
 
+type MetricsAuthRequest = {
+  headers?: Record<string, string | string[] | undefined>;
+};
+
 @Injectable()
 export class MetricsAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<MetricsAuthRequest>();
 
     const nodeEnv = process.env.NODE_ENV || 'development';
     const metricsPublic = process.env.METRICS_PUBLIC === 'true';
@@ -46,7 +50,10 @@ export class MetricsAuthGuard implements CanActivate {
     return true;
   }
 
-  private safeTokenEquals(receivedToken: string, expectedToken: string): boolean {
+  private safeTokenEquals(
+    receivedToken: string,
+    expectedToken: string,
+  ): boolean {
     const received = Buffer.from(receivedToken);
     const expected = Buffer.from(expectedToken);
 

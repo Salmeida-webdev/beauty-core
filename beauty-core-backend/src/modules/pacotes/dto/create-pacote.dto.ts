@@ -1,7 +1,4 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import {
   IsInt,
@@ -49,13 +46,15 @@ export class CreatePacoteDto {
 
   @ApiProperty({
     example: 500,
-    description:
-      'Valor comercial do pacote. Deve ser maior ou igual a zero.',
+    description: 'Valor comercial do pacote. Deve ser maior ou igual a zero.',
     minimum: 0,
   })
-  @IsNumber({}, {
-    message: 'O valor do pacote deve ser um número.',
-  })
+  @IsNumber(
+    {},
+    {
+      message: 'O valor do pacote deve ser um número.',
+    },
+  )
   @Min(0, {
     message: 'O valor do pacote deve ser maior ou igual a 0.',
   })
@@ -63,8 +62,7 @@ export class CreatePacoteDto {
 
   @ApiProperty({
     example: 5,
-    description:
-      'Quantidade total de sessões incluídas no pacote.',
+    description: 'Quantidade total de sessões incluídas no pacote.',
     minimum: 1,
   })
   @IsInt({

@@ -5,10 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import {
-  StatusClientePacote,
-  TipoUsuarioAuditoria,
-} from '@prisma/client';
+import { StatusClientePacote, TipoUsuarioAuditoria } from '@prisma/client';
 
 import { PrismaService } from '../../database/prisma/prisma.service';
 import { TenantValidatorService } from '../../shared/tenant';
@@ -35,10 +32,7 @@ export class ClientesPacotesService {
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    await this.tenantValidator.validarCliente(
-      empresaId,
-      dto.clienteId,
-    );
+    await this.tenantValidator.validarCliente(empresaId, dto.clienteId);
 
     const pacote = await this.prisma.pacote.findFirst({
       where: {
@@ -160,10 +154,7 @@ export class ClientesPacotesService {
   async findByCliente(empresaId: string, clienteId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    await this.tenantValidator.validarCliente(
-      empresaId,
-      clienteId,
-    );
+    await this.tenantValidator.validarCliente(empresaId, clienteId);
 
     return this.prisma.clientePacote.findMany({
       where: {
@@ -185,10 +176,7 @@ export class ClientesPacotesService {
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const clientePacote = await this.buscarClientePacoteOuFalhar(
-      empresaId,
-      id,
-    );
+    const clientePacote = await this.buscarClientePacoteOuFalhar(empresaId, id);
 
     await this.tenantValidator.validarCliente(
       empresaId,
@@ -199,10 +187,7 @@ export class ClientesPacotesService {
       throw new BadRequestException('Este pacote não está ativo');
     }
 
-    if (
-      clientePacote.dataValidade &&
-      clientePacote.dataValidade < new Date()
-    ) {
+    if (clientePacote.dataValidade && clientePacote.dataValidade < new Date()) {
       const result = await this.prisma.clientePacote.updateMany({
         where: {
           id,
@@ -312,10 +297,7 @@ export class ClientesPacotesService {
         sessoesRestantes: {
           gt: 0,
         },
-        OR: [
-          { dataValidade: null },
-          { dataValidade: { gt: new Date() } },
-        ],
+        OR: [{ dataValidade: null }, { dataValidade: { gt: new Date() } }],
       },
       data: {
         sessoesUsadas: {
@@ -328,15 +310,9 @@ export class ClientesPacotesService {
     });
 
     if (result.count === 0) {
-      const estadoAtual = await this.buscarClientePacoteOuFalhar(
-        empresaId,
-        id,
-      );
+      const estadoAtual = await this.buscarClientePacoteOuFalhar(empresaId, id);
 
-      if (
-        estadoAtual.dataValidade &&
-        estadoAtual.dataValidade < new Date()
-      ) {
+      if (estadoAtual.dataValidade && estadoAtual.dataValidade < new Date()) {
         throw new BadRequestException('Este pacote está vencido');
       }
 
@@ -444,10 +420,7 @@ export class ClientesPacotesService {
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const clientePacote = await this.buscarClientePacoteOuFalhar(
-      empresaId,
-      id,
-    );
+    const clientePacote = await this.buscarClientePacoteOuFalhar(empresaId, id);
 
     await this.tenantValidator.validarCliente(
       empresaId,
@@ -468,8 +441,10 @@ export class ClientesPacotesService {
       throw new NotFoundException('Pacote do cliente não encontrado');
     }
 
-    const clientePacoteCancelado =
-      await this.buscarClientePacoteOuFalhar(empresaId, id);
+    const clientePacoteCancelado = await this.buscarClientePacoteOuFalhar(
+      empresaId,
+      id,
+    );
 
     const tempoMs = Date.now() - startedAt;
 
@@ -519,10 +494,7 @@ export class ClientesPacotesService {
     return clientePacoteCancelado;
   }
 
-  private async buscarClientePacoteOuFalhar(
-    empresaId: string,
-    id: string,
-  ) {
+  private async buscarClientePacoteOuFalhar(empresaId: string, id: string) {
     const clientePacote = await this.prisma.clientePacote.findFirst({
       where: {
         id,

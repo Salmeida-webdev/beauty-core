@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
 
 import {
   ApiBadRequestResponse,
@@ -29,15 +22,34 @@ import { Roles } from '../../shared/decorators/roles.decorator';
 
 import { FiltrosAuditoriaDto } from './dto/filtros-auditoria.dto';
 
+type AuthenticatedControllerUser = {
+  id?: string;
+  sub: string;
+  empresaId: string;
+  usuarioId?: string;
+  clienteId?: string;
+  role?: string;
+  tipoUsuario?: string;
+};
+
+type AuthenticatedControllerRequest = {
+  headers?: Record<string, string | string[] | undefined>;
+  ip?: string;
+  socket?: { remoteAddress?: string | null };
+  connection?: { remoteAddress?: string | null };
+  originalUrl?: string;
+  url?: string;
+  method?: string;
+  user: AuthenticatedControllerUser;
+};
+
 @ApiTags('Auditoria')
 @ApiBearerAuth('JWT')
 @Controller('auditoria')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'GERENTE')
 export class AuditoriaController {
-  constructor(
-    private readonly auditoriaService: AuditoriaService,
-  ) {}
+  constructor(private readonly auditoriaService: AuditoriaService) {}
 
   @Get()
   @ApiOperation({
@@ -61,7 +73,8 @@ export class AuditoriaController {
     name: 'dataInicio',
     required: false,
     example: '2026-06-01',
-    description: 'Data inicial opcional para filtrar os registros de auditoria.',
+    description:
+      'Data inicial opcional para filtrar os registros de auditoria.',
   })
   @ApiQuery({
     name: 'dataFim',
@@ -143,16 +156,14 @@ export class AuditoriaController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   findAll(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Query() filtros: FiltrosAuditoriaDto,
   ) {
-    return this.auditoriaService.findAll(
-      req.user.empresaId,
-      filtros,
-    );
+    return this.auditoriaService.findAll(req.user.empresaId, filtros);
   }
 
   @Get('recurso/:recurso/:recursoId')
@@ -227,10 +238,11 @@ export class AuditoriaController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   findByRecurso(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('recurso') recurso: string,
     @Param('recursoId') recursoId: string,
     @Query() filtros: FiltrosAuditoriaDto,
@@ -311,10 +323,11 @@ export class AuditoriaController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   findByUsuario(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('usuarioId') usuarioId: string,
     @Query() filtros: FiltrosAuditoriaDto,
   ) {
@@ -392,10 +405,11 @@ export class AuditoriaController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   findByCliente(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('clienteId') clienteId: string,
     @Query() filtros: FiltrosAuditoriaDto,
   ) {
@@ -468,10 +482,11 @@ export class AuditoriaController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   findByModulo(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('modulo') modulo: string,
     @Query() filtros: FiltrosAuditoriaDto,
   ) {
@@ -545,18 +560,15 @@ export class AuditoriaController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   findByAcao(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('acao') acao: string,
     @Query() filtros: FiltrosAuditoriaDto,
   ) {
-    return this.auditoriaService.findByAcao(
-      req.user.empresaId,
-      acao,
-      filtros,
-    );
+    return this.auditoriaService.findByAcao(req.user.empresaId, acao, filtros);
   }
 
   @Get(':id')
@@ -606,18 +618,14 @@ export class AuditoriaController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
-    description: 'Registro de auditoria não encontrado para a empresa autenticada.',
+    description:
+      'Registro de auditoria não encontrado para a empresa autenticada.',
   })
-  findOne(
-    @Req() req: any,
-    @Param('id') id: string,
-  ) {
-    return this.auditoriaService.findOne(
-      req.user.empresaId,
-      id,
-    );
+  findOne(@Req() req: AuthenticatedControllerRequest, @Param('id') id: string) {
+    return this.auditoriaService.findOne(req.user.empresaId, id);
   }
 }

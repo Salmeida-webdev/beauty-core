@@ -2,12 +2,7 @@ import { TipoMensagemWhatsApp } from '@prisma/client';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-import {
-  IsEnum,
-  IsString,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsEnum, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateTemplateWhatsAppDto {
   @ApiProperty({

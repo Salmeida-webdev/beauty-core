@@ -46,6 +46,48 @@ const COMPLETED_JOB_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
 const FAILED_JOB_RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
 const JOB_CLEAN_LIMIT = 10000;
 
+type QueueMetadataTyped = {
+  [key: string]: unknown;
+  referenciaId?: string;
+  rotina?: string;
+  dataReferencia?: string;
+  extra?: string | null;
+};
+
+type QueueJobPayloadTyped = Omit<
+  QueueJobPayload,
+  | 'empresaId'
+  | 'usuarioId'
+  | 'clienteId'
+  | 'tipo'
+  | 'referenciaId'
+  | 'notificacaoId'
+  | 'mensagemId'
+  | 'campanhaId'
+  | 'aniversarioId'
+  | 'relatorioId'
+  | 'pacoteId'
+  | 'dataReferencia'
+  | 'data'
+  | 'competencia'
+  | 'metadata'
+> & {
+  empresaId?: string;
+  usuarioId?: string;
+  clienteId?: string;
+  tipo?: string;
+  referenciaId?: string;
+  notificacaoId?: string;
+  mensagemId?: string;
+  campanhaId?: string;
+  aniversarioId?: string;
+  relatorioId?: string;
+  pacoteId?: string;
+  dataReferencia?: string;
+  data?: string;
+  competencia?: string;
+  metadata?: QueueMetadataTyped;
+};
 @Injectable()
 export class QueuesService {
   private readonly logger = new Logger(QueuesService.name);
@@ -115,9 +157,8 @@ export class QueuesService {
     };
   }
 
-  private getReferenciaId(data: QueueJobPayload): string | null {
-    return (
-      data.referenciaId ??
+  private getReferenciaId(data: QueueJobPayloadTyped): string | null {
+    const typedQueueJobId: string = (data.referenciaId ??
       data.notificacaoId ??
       data.mensagemId ??
       data.whatsappId ??
@@ -129,11 +170,11 @@ export class QueuesService {
       data.metadata?.referenciaId ??
       data.metadata?.rotina ??
       data.dataReferencia ??
-      null
-    );
+      null) as string;
+    return typedQueueJobId;
   }
 
-  private getDataReferencia(data: QueueJobPayload): string | null {
+  private getDataReferencia(data: QueueJobPayloadTyped): string | null {
     return (
       data.dataReferencia ??
       data.data ??
@@ -144,7 +185,7 @@ export class QueuesService {
   }
 
   private createIdempotencyKey(
-    data: QueueJobPayload,
+    data: QueueJobPayloadTyped,
     fallbackTipo: string,
   ): string {
     return createQueueJobId({
@@ -160,7 +201,7 @@ export class QueuesService {
     queue: Queue,
     queueLabel: string,
     jobName: string,
-    data: QueueJobPayload | undefined,
+    data: QueueJobPayloadTyped | undefined,
     fallbackTipo: string,
   ): Promise<AddJobResult> {
     const payload = this.normalizarData(data);
@@ -221,7 +262,7 @@ export class QueuesService {
     };
   }
 
-  adicionarNotificacao(data: QueueJobPayload) {
+  adicionarNotificacao(data: QueueJobPayloadTyped) {
     return this.addDeduplicatedJob(
       this.notificacoesQueue,
       'NOTIFICACOES',
@@ -231,7 +272,7 @@ export class QueuesService {
     );
   }
 
-  adicionarWhatsapp(data: QueueJobPayload) {
+  adicionarWhatsapp(data: QueueJobPayloadTyped) {
     return this.addDeduplicatedJob(
       this.whatsappQueue,
       'WHATSAPP',
@@ -241,7 +282,7 @@ export class QueuesService {
     );
   }
 
-  adicionarCampanha(data: QueueJobPayload) {
+  adicionarCampanha(data: QueueJobPayloadTyped) {
     return this.addDeduplicatedJob(
       this.campanhasQueue,
       'CAMPANHAS',
@@ -251,7 +292,7 @@ export class QueuesService {
     );
   }
 
-  adicionarAniversario(data: QueueJobPayload) {
+  adicionarAniversario(data: QueueJobPayloadTyped) {
     return this.addDeduplicatedJob(
       this.aniversariosQueue,
       'ANIVERSARIOS',
@@ -261,7 +302,7 @@ export class QueuesService {
     );
   }
 
-  adicionarRelatorio(data: QueueJobPayload) {
+  adicionarRelatorio(data: QueueJobPayloadTyped) {
     return this.addDeduplicatedJob(
       this.relatoriosQueue,
       'RELATORIOS',
@@ -271,7 +312,7 @@ export class QueuesService {
     );
   }
 
-  adicionarNotificacaoScheduler(data: QueueJobPayload) {
+  adicionarNotificacaoScheduler(data: QueueJobPayloadTyped) {
     return this.adicionarNotificacao({
       ...this.normalizarData(data),
       empresaId: data?.empresaId ?? 'SCHEDULER_GLOBAL',
@@ -283,7 +324,7 @@ export class QueuesService {
     });
   }
 
-  adicionarWhatsappScheduler(data: QueueJobPayload) {
+  adicionarWhatsappScheduler(data: QueueJobPayloadTyped) {
     return this.adicionarWhatsapp({
       ...this.normalizarData(data),
       empresaId: data?.empresaId ?? 'SCHEDULER_GLOBAL',
@@ -295,7 +336,7 @@ export class QueuesService {
     });
   }
 
-  adicionarCampanhaScheduler(data: QueueJobPayload) {
+  adicionarCampanhaScheduler(data: QueueJobPayloadTyped) {
     return this.adicionarCampanha({
       ...this.normalizarData(data),
       empresaId: data?.empresaId ?? 'SCHEDULER_GLOBAL',
@@ -308,7 +349,7 @@ export class QueuesService {
     });
   }
 
-  adicionarAniversarioScheduler(data: QueueJobPayload) {
+  adicionarAniversarioScheduler(data: QueueJobPayloadTyped) {
     return this.adicionarAniversario({
       ...this.normalizarData(data),
       empresaId: data?.empresaId ?? 'SCHEDULER_GLOBAL',
@@ -321,7 +362,7 @@ export class QueuesService {
     });
   }
 
-  adicionarRelatorioScheduler(data: QueueJobPayload) {
+  adicionarRelatorioScheduler(data: QueueJobPayloadTyped) {
     return this.adicionarRelatorio({
       ...this.normalizarData(data),
       empresaId: data?.empresaId ?? 'SCHEDULER_GLOBAL',
@@ -381,23 +422,23 @@ export class QueuesService {
     };
   }
   // Aliases defensivos para compatibilidade com chamadas antigas/futuras.
-  adicionarJobNotificacao(data: QueueJobPayload) {
+  adicionarJobNotificacao(data: QueueJobPayloadTyped) {
     return this.adicionarNotificacao(data);
   }
 
-  adicionarJobWhatsapp(data: QueueJobPayload) {
+  adicionarJobWhatsapp(data: QueueJobPayloadTyped) {
     return this.adicionarWhatsapp(data);
   }
 
-  adicionarJobCampanha(data: QueueJobPayload) {
+  adicionarJobCampanha(data: QueueJobPayloadTyped) {
     return this.adicionarCampanha(data);
   }
 
-  adicionarJobAniversario(data: QueueJobPayload) {
+  adicionarJobAniversario(data: QueueJobPayloadTyped) {
     return this.adicionarAniversario(data);
   }
 
-  adicionarJobRelatorio(data: QueueJobPayload) {
+  adicionarJobRelatorio(data: QueueJobPayloadTyped) {
     return this.adicionarRelatorio(data);
   }
 }

@@ -78,8 +78,7 @@ export class EmpresasController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description:
-      'Usuário sem permissão. Permitido apenas para SUPER_ADMIN.',
+    description: 'Usuário sem permissão. Permitido apenas para SUPER_ADMIN.',
   })
   create(@Body() createEmpresaDto: CreateEmpresaDto) {
     return this.empresasService.create(createEmpresaDto);
@@ -117,8 +116,7 @@ export class EmpresasController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description:
-      'Usuário sem permissão. Permitido apenas para SUPER_ADMIN.',
+    description: 'Usuário sem permissão. Permitido apenas para SUPER_ADMIN.',
   })
   findAll() {
     return this.empresasService.findAll();
@@ -163,8 +161,7 @@ export class EmpresasController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description:
-      'Usuário sem permissão. Permitido apenas para SUPER_ADMIN.',
+    description: 'Usuário sem permissão. Permitido apenas para SUPER_ADMIN.',
   })
   @ApiNotFoundResponse({
     description: 'Empresa não encontrada.',
@@ -210,14 +207,14 @@ export class EmpresasController {
     },
   })
   @ApiBadRequestResponse({
-    description: 'ID inválido, payload inválido ou dados obrigatórios ausentes.',
+    description:
+      'ID inválido, payload inválido ou dados obrigatórios ausentes.',
   })
   @ApiUnauthorizedResponse({
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description:
-      'Usuário sem permissão. Permitido apenas para SUPER_ADMIN.',
+    description: 'Usuário sem permissão. Permitido apenas para SUPER_ADMIN.',
   })
   @ApiNotFoundResponse({
     description: 'Empresa não encontrada.',
@@ -262,8 +259,7 @@ export class EmpresasController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description:
-      'Usuário sem permissão. Permitido apenas para SUPER_ADMIN.',
+    description: 'Usuário sem permissão. Permitido apenas para SUPER_ADMIN.',
   })
   @ApiNotFoundResponse({
     description: 'Empresa não encontrada.',

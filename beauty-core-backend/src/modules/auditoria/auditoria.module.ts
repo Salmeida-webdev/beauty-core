@@ -6,20 +6,12 @@ import { AuditoriaController } from './auditoria.controller';
 import { AuditoriaService } from './auditoria.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-  ],
+  imports: [PrismaModule],
 
-  controllers: [
-    AuditoriaController,
-  ],
+  controllers: [AuditoriaController],
 
-  providers: [
-    AuditoriaService,
-  ],
+  providers: [AuditoriaService],
 
-  exports: [
-    AuditoriaService,
-  ],
+  exports: [AuditoriaService],
 })
 export class AuditoriaModule {}

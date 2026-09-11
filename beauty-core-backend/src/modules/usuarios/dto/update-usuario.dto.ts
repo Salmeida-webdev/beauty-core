@@ -38,7 +38,9 @@ export class UpdateUsuarioDto {
   @IsString()
   @MinLength(2)
   @MaxLength(120)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   nome?: string;
 
   @ApiPropertyOptional({
@@ -48,7 +50,7 @@ export class UpdateUsuarioDto {
   @IsOptional()
   @IsEmail()
   @MaxLength(120)
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toLowerCase() : value,
   )
   email?: string;
@@ -60,7 +62,9 @@ export class UpdateUsuarioDto {
   @IsOptional()
   @IsString()
   @Length(8, 20)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   telefone?: string;
 
   @ApiPropertyOptional({
@@ -70,7 +74,9 @@ export class UpdateUsuarioDto {
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   foto?: string;
 
   @ApiPropertyOptional({

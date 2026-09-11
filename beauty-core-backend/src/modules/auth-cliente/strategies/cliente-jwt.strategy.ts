@@ -32,9 +32,7 @@ export class ClienteJwtStrategy extends PassportStrategy(
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.getOrThrow<string>(
-        'JWT_CLIENT_SECRET',
-      ),
+      secretOrKey: configService.getOrThrow<string>('JWT_CLIENT_SECRET'),
     });
   }
 

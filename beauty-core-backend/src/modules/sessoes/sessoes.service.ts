@@ -36,7 +36,9 @@ export class SessoesService {
   }
 
   async criarSessao(params: CriarSessaoParams) {
-    const refreshTokenHash = await this.gerarRefreshTokenHash(params.refreshToken);
+    const refreshTokenHash = await this.gerarRefreshTokenHash(
+      params.refreshToken,
+    );
 
     return this.prisma.sessao.create({
       data: {

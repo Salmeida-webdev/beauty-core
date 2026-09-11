@@ -1,19 +1,12 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import {
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 import { TenantPublicService } from '../../shared/tenant';
 
 @ApiTags('Tenant Público')
 @Controller('tenant-publico')
 export class TenantPublicoController {
-  constructor(
-    private readonly tenantPublicService: TenantPublicService,
-  ) {}
+  constructor(private readonly tenantPublicService: TenantPublicService) {}
 
   @Get('slug/:slug')
   @ApiOperation({

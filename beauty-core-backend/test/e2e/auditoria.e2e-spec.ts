@@ -1,6 +1,10 @@
 ﻿import request = require('supertest');
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 import { bearer, loginAdmin, loginSuperAdmin } from '../helpers/auth.helper';
 
 describe('Auditoria E2E', () => {
@@ -24,7 +28,7 @@ describe('Auditoria E2E', () => {
     }
 
     const auditorias = await (ctx.prisma as any).auditoriaSistema.findMany({
-      take: 5
+      take: 5,
     });
 
     expect(auditorias.length).toBeGreaterThanOrEqual(0);
@@ -41,5 +45,3 @@ describe('Auditoria E2E', () => {
       });
   });
 });
-
-

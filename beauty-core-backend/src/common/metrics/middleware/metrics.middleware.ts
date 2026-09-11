@@ -1,12 +1,31 @@
-﻿import { Injectable, NestMiddleware } from '@nestjs/common';
+import type { NextFunction } from 'express';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 
 import { MetricsService } from '../metrics.service';
+
+type MetricsMiddlewareRequest = {
+  method?: string;
+  baseUrl?: string;
+  route?: { path?: string };
+  originalUrl?: string;
+  url?: string;
+  path?: string;
+};
+
+type MetricsMiddlewareResponse = {
+  statusCode?: number;
+  on: (event: 'finish', listener: () => void) => void;
+};
 
 @Injectable()
 export class MetricsMiddleware implements NestMiddleware {
   constructor(private readonly metricsService: MetricsService) {}
 
-  use(request: any, response: any, next: () => void): void {
+  use(
+    request: MetricsMiddlewareRequest,
+    response: MetricsMiddlewareResponse,
+    next: NextFunction,
+  ): void {
     const startedAt = process.hrtime.bigint();
 
     response.on('finish', () => {
@@ -24,7 +43,7 @@ export class MetricsMiddleware implements NestMiddleware {
     next();
   }
 
-  private resolveRoute(request: any): string {
+  private resolveRoute(request: MetricsMiddlewareRequest): string {
     const baseUrl = request?.baseUrl ?? '';
     const routePath = request?.route?.path;
 

@@ -1,15 +1,8 @@
-import {
-  StatusNotificacao,
-  TipoNotificacao,
-} from '@prisma/client';
+import { StatusNotificacao, TipoNotificacao } from '@prisma/client';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import {
-  IsEnum,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class UpdateNotificacaoDto {
   @ApiPropertyOptional({
@@ -37,8 +30,7 @@ export class UpdateNotificacaoDto {
 
   @ApiPropertyOptional({
     example: 'O agendamento foi atualizado no sistema.',
-    description:
-      'Mensagem atualizada da notificação exibida ao usuário.',
+    description: 'Mensagem atualizada da notificação exibida ao usuário.',
   })
   @IsOptional()
   @IsString({

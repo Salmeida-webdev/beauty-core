@@ -7,17 +7,10 @@ import { UnidadesService } from './unidades.service';
 import { UnidadesController } from './unidades.controller';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-  ],
+  imports: [PrismaModule, TenantModule],
 
-  controllers: [
-    UnidadesController,
-  ],
+  controllers: [UnidadesController],
 
-  providers: [
-    UnidadesService,
-  ],
+  providers: [UnidadesService],
 })
 export class UnidadesModule {}

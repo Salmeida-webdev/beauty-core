@@ -33,18 +33,10 @@ import { ClienteJwtStrategy } from './strategies/cliente-jwt.strategy';
     }),
   ],
 
-  controllers: [
-    AuthClienteController,
-    AuthClientePublicoController,
-  ],
+  controllers: [AuthClienteController, AuthClientePublicoController],
 
-  providers: [
-    AuthClienteService,
-    ClienteJwtStrategy,
-  ],
+  providers: [AuthClienteService, ClienteJwtStrategy],
 
-  exports: [
-    AuthClienteService,
-  ],
+  exports: [AuthClienteService],
 })
 export class AuthClienteModule {}

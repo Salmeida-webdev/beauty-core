@@ -1,8 +1,6 @@
 import { TipoCupom } from '@prisma/client';
 
-import {
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import {
   IsDateString,
@@ -89,9 +87,12 @@ export class UpdateCupomDto {
     minimum: 0,
   })
   @IsOptional()
-  @IsNumber({}, {
-    message: 'O valor do cupom deve ser um número.',
-  })
+  @IsNumber(
+    {},
+    {
+      message: 'O valor do cupom deve ser um número.',
+    },
+  )
   @Min(0, {
     message: 'O valor do cupom deve ser maior ou igual a 0.',
   })
@@ -103,9 +104,12 @@ export class UpdateCupomDto {
       'Data opcional atualizada de início da validade do cupom em formato ISO 8601.',
   })
   @IsOptional()
-  @IsDateString({}, {
-    message: 'A data de início deve estar em formato de data válido.',
-  })
+  @IsDateString(
+    {},
+    {
+      message: 'A data de início deve estar em formato de data válido.',
+    },
+  )
   dataInicio?: string;
 
   @ApiPropertyOptional({
@@ -114,9 +118,12 @@ export class UpdateCupomDto {
       'Data opcional atualizada de término da validade do cupom em formato ISO 8601.',
   })
   @IsOptional()
-  @IsDateString({}, {
-    message: 'A data de fim deve estar em formato de data válido.',
-  })
+  @IsDateString(
+    {},
+    {
+      message: 'A data de fim deve estar em formato de data válido.',
+    },
+  )
   dataFim?: string;
 
   @ApiPropertyOptional({

@@ -1,12 +1,6 @@
-import {
-  FormaPagamento,
-  TipoMovimentacaoFinanceira,
-} from '@prisma/client';
+import { FormaPagamento, TipoMovimentacaoFinanceira } from '@prisma/client';
 
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import {
   IsEnum,
@@ -90,9 +84,12 @@ export class CreateMovimentacaoDto {
       'Valor da movimentação financeira. Deve ser maior ou igual a zero.',
     minimum: 0,
   })
-  @IsNumber({}, {
-    message: 'O valor da movimentação financeira deve ser um número.',
-  })
+  @IsNumber(
+    {},
+    {
+      message: 'O valor da movimentação financeira deve ser um número.',
+    },
+  )
   @Min(0, {
     message: 'O valor da movimentação financeira deve ser maior ou igual a 0.',
   })

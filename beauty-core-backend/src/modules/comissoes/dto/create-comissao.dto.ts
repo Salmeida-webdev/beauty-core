@@ -1,11 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import {
-  IsNumber,
-  IsUUID,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsNumber, IsUUID, Max, Min } from 'class-validator';
 
 export class CreateComissaoDto {
   @ApiProperty({
@@ -36,9 +31,12 @@ export class CreateComissaoDto {
       'Valor base do serviço usado para calcular a comissão do profissional.',
     minimum: 0,
   })
-  @IsNumber({}, {
-    message: 'O valor do serviço deve ser um número.',
-  })
+  @IsNumber(
+    {},
+    {
+      message: 'O valor do serviço deve ser um número.',
+    },
+  )
   @Min(0, {
     message: 'O valor do serviço deve ser maior ou igual a 0.',
   })
@@ -51,9 +49,12 @@ export class CreateComissaoDto {
     minimum: 0,
     maximum: 100,
   })
-  @IsNumber({}, {
-    message: 'O percentual deve ser um número.',
-  })
+  @IsNumber(
+    {},
+    {
+      message: 'O percentual deve ser um número.',
+    },
+  )
   @Min(0, {
     message: 'O percentual deve ser maior ou igual a 0.',
   })

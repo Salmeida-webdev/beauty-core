@@ -32,6 +32,22 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../shared/decorators/roles.decorator';
 import { getEmpresaId } from '../../shared/utils/get-empresa-id';
 
+type Group15AuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    empresa_id: string;
+    sub: string;
+    id: string;
+    usuarioId: string;
+    clienteId: string;
+    role: string;
+    tipoUsuario: string;
+    email: string;
+    nome: string;
+    [key: string]: string | undefined;
+  };
+};
+
 @ApiTags('Clientes Pacotes')
 @ApiBearerAuth('JWT')
 @Controller('clientes-pacotes')
@@ -83,13 +99,10 @@ export class ClientesPacotesController {
       'Usuário sem permissão. Permitido apenas para ADMIN, GERENTE e RECEPCAO.',
   })
   create(
-    @Req() req: any,
+    @Req() req: Group15AuthenticatedRequest,
     @Body() dto: CreateClientePacoteDto,
   ) {
-    return this.clientesPacotesService.create(
-      getEmpresaId(req),
-      dto,
-    );
+    return this.clientesPacotesService.create(getEmpresaId(req), dto);
   }
 
   @Get()
@@ -128,10 +141,8 @@ export class ClientesPacotesController {
     description:
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
-  findAll(@Req() req: any) {
-    return this.clientesPacotesService.findAll(
-      getEmpresaId(req),
-    );
+  findAll(@Req() req: Group15AuthenticatedRequest) {
+    return this.clientesPacotesService.findAll(getEmpresaId(req));
   }
 
   @Get('cliente/:clienteId')
@@ -183,7 +194,7 @@ export class ClientesPacotesController {
     description: 'Cliente não encontrado para a empresa autenticada.',
   })
   findByCliente(
-    @Req() req: any,
+    @Req() req: Group15AuthenticatedRequest,
     @Param('clienteId', ParseUUIDPipe) clienteId: string,
   ) {
     return this.clientesPacotesService.findByCliente(
@@ -236,13 +247,10 @@ export class ClientesPacotesController {
     description: 'Pacote do cliente não encontrado para a empresa autenticada.',
   })
   usarSessao(
-    @Req() req: any,
+    @Req() req: Group15AuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.clientesPacotesService.usarSessao(
-      getEmpresaId(req),
-      id,
-    );
+    return this.clientesPacotesService.usarSessao(getEmpresaId(req), id);
   }
 
   @Patch(':id/cancelar')
@@ -281,18 +289,16 @@ export class ClientesPacotesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Pacote do cliente não encontrado para a empresa autenticada.',
   })
   cancelar(
-    @Req() req: any,
+    @Req() req: Group15AuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.clientesPacotesService.cancelar(
-      getEmpresaId(req),
-      id,
-    );
+    return this.clientesPacotesService.cancelar(getEmpresaId(req), id);
   }
 }

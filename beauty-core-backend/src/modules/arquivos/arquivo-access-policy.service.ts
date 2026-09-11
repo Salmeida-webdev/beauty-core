@@ -57,6 +57,8 @@ export class ArquivoAccessPolicyService {
       );
     }
 
-    throw new ForbiddenException('Permissão insuficiente para acessar arquivo.');
+    throw new ForbiddenException(
+      'Permissão insuficiente para acessar arquivo.',
+    );
   }
 }

@@ -34,15 +34,29 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../shared/decorators/roles.decorator';
 import { getEmpresaId } from '../../shared/utils/get-empresa-id';
 
+type Group15AuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    empresa_id: string;
+    sub: string;
+    id: string;
+    usuarioId: string;
+    clienteId: string;
+    role: string;
+    tipoUsuario: string;
+    email: string;
+    nome: string;
+    [key: string]: string | undefined;
+  };
+};
+
 @ApiTags('Comissoes')
 @ApiBearerAuth('JWT')
 @Controller('comissoes')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'GERENTE')
 export class ComissoesController {
-  constructor(
-    private readonly comissoesService: ComissoesService,
-  ) {}
+  constructor(private readonly comissoesService: ComissoesService) {}
 
   @Post()
   @ApiOperation({
@@ -79,16 +93,14 @@ export class ComissoesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   create(
-    @Req() req: any,
+    @Req() req: Group15AuthenticatedRequest,
     @Body() dto: CreateComissaoDto,
   ) {
-    return this.comissoesService.create(
-      getEmpresaId(req),
-      dto,
-    );
+    return this.comissoesService.create(getEmpresaId(req), dto);
   }
 
   @Get()
@@ -121,12 +133,11 @@ export class ComissoesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  findAll(@Req() req: any) {
-    return this.comissoesService.findAll(
-      getEmpresaId(req),
-    );
+  findAll(@Req() req: Group15AuthenticatedRequest) {
+    return this.comissoesService.findAll(getEmpresaId(req));
   }
 
   @Get(':id')
@@ -166,19 +177,17 @@ export class ComissoesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Comissão não encontrada para a empresa autenticada.',
   })
   findOne(
-    @Req() req: any,
+    @Req() req: Group15AuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.comissoesService.findOne(
-      getEmpresaId(req),
-      id,
-    );
+    return this.comissoesService.findOne(getEmpresaId(req), id);
   }
 
   @Patch(':id/pagar')
@@ -218,18 +227,16 @@ export class ComissoesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Comissão não encontrada para a empresa autenticada.',
   })
   pagar(
-    @Req() req: any,
+    @Req() req: Group15AuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.comissoesService.pagar(
-      getEmpresaId(req),
-      id,
-    );
+    return this.comissoesService.pagar(getEmpresaId(req), id);
   }
 }

@@ -9,11 +9,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  AcaoAuditoria,
-  StatusAuditoria,
-  TipoUsuarioAuditoria,
-} from '@prisma/client';
+import {} from '@prisma/client';
 import { Job, Worker } from 'bullmq';
 
 import { WHATSAPP_QUEUE } from '../constants/queue-names';
@@ -54,74 +50,80 @@ export class WhatsappWorker implements OnModuleInit, OnModuleDestroy {
       },
     );
 
-    this.worker.on('failed', async (job, error) => {
-      if (!job) return;
+    this.worker.on('failed', (job, error) => {
+      void (async () => {
+        if (!job) return;
 
-      await this.deadLetterQueueService.moveToDlq({
-        sourceQueue: WHATSAPP_QUEUE,
-        job,
-        error,
-      });
+        await this.deadLetterQueueService.moveToDlq({
+          sourceQueue: WHATSAPP_QUEUE,
+          job,
+          error,
+        });
+      })();
     });
 
-    this.worker.on('completed', async (job) => {
-      this.logger.log(
-        `[BULLMQ] job concluido queue=${WHATSAPP_QUEUE} jobId=${job.id} ${formatQueueTrace(job)} empresaId=${job.data.empresaId}`,
-      );
+    this.worker.on('completed', (job) => {
+      void (async () => {
+        this.logger.log(
+          `[BULLMQ] job concluido queue=${WHATSAPP_QUEUE} jobId=${job.id} ${formatQueueTrace(job)} empresaId=${job.data.empresaId}`,
+        );
 
-      await this.auditoriaService.registrarJob({
-        empresaId: job.data.empresaId,
-        usuarioId: job.data.usuarioId,
-        clienteId: job.data.clienteId,
-        tipoUsuario: 'SISTEMA',
-        acao: 'JOB_CONCLUIDO',
-        modulo: 'BULLMQ',
-        recurso: 'BullMQJob',
-        recursoId: String(job.id),
-        metadata: {
-          ...getQueueTraceMetadata(job),
-          queue: WHATSAPP_QUEUE,
-          worker: WhatsappWorker.name,
-          jobName: job.name,
-          status: 'completed',
-          attemptsMade: job.attemptsMade,
-          data: this.criarResumoSeguroJob(job),
-        },
-        mensagem: 'Job de WhatsApp concluido.',
-      });
+        await this.auditoriaService.registrarJob({
+          empresaId: job.data.empresaId,
+          usuarioId: job.data.usuarioId,
+          clienteId: job.data.clienteId,
+          tipoUsuario: 'SISTEMA',
+          acao: 'JOB_CONCLUIDO',
+          modulo: 'BULLMQ',
+          recurso: 'BullMQJob',
+          recursoId: String(job.id),
+          metadata: {
+            ...getQueueTraceMetadata(job),
+            queue: WHATSAPP_QUEUE,
+            worker: WhatsappWorker.name,
+            jobName: job.name,
+            status: 'completed',
+            attemptsMade: job.attemptsMade,
+            data: this.criarResumoSeguroJob(job),
+          },
+          mensagem: 'Job de WhatsApp concluido.',
+        });
+      })();
     });
 
-    this.worker.on('failed', async (job, error) => {
-      this.logger.error(
-        `[BULLMQ] job falhou queue=${WHATSAPP_QUEUE} jobId=${
-          job?.id ?? '-'
-        } empresaId=${job?.data?.empresaId ?? '-'} erro=${error.message}`,
-        error.stack,
-      );
+    this.worker.on('failed', (job, error) => {
+      void (async () => {
+        this.logger.error(
+          `[BULLMQ] job falhou queue=${WHATSAPP_QUEUE} jobId=${
+            job?.id ?? '-'
+          } empresaId=${job?.data?.empresaId ?? '-'} erro=${error.message}`,
+          error.stack,
+        );
 
-      await this.auditoriaService.registrarJob({
-        empresaId: job?.data?.empresaId,
-        usuarioId: job?.data?.usuarioId,
-        clienteId: job?.data?.clienteId,
-        tipoUsuario: 'SISTEMA',
-        acao: 'JOB_FALHOU',
-        status: 'FALHA',
-        modulo: 'BULLMQ',
-        recurso: 'BullMQJob',
-        recursoId: job?.id ? String(job.id) : undefined,
-        metadata: {
-          ...getQueueTraceMetadata(job),
-          queue: WHATSAPP_QUEUE,
-          worker: WhatsappWorker.name,
-          jobName: job?.name,
-          status: 'failed',
-          attemptsMade: job?.attemptsMade,
-          error: error.message,
-          stack: error.stack,
-          data: job ? this.criarResumoSeguroJob(job) : undefined,
-        },
-        mensagem: 'Job de WhatsApp falhou.',
-      });
+        await this.auditoriaService.registrarJob({
+          empresaId: job?.data?.empresaId,
+          usuarioId: job?.data?.usuarioId,
+          clienteId: job?.data?.clienteId,
+          tipoUsuario: 'SISTEMA',
+          acao: 'JOB_FALHOU',
+          status: 'FALHA',
+          modulo: 'BULLMQ',
+          recurso: 'BullMQJob',
+          recursoId: job?.id ? String(job.id) : undefined,
+          metadata: {
+            ...getQueueTraceMetadata(job),
+            queue: WHATSAPP_QUEUE,
+            worker: WhatsappWorker.name,
+            jobName: job?.name,
+            status: 'failed',
+            attemptsMade: job?.attemptsMade,
+            error: error.message,
+            stack: error.stack,
+            data: job ? this.criarResumoSeguroJob(job) : undefined,
+          },
+          mensagem: 'Job de WhatsApp falhou.',
+        });
+      })();
     });
   }
 
@@ -271,8 +273,14 @@ export class WhatsappWorker implements OnModuleInit, OnModuleDestroy {
     const { empresaId, tipo, metadata } = job.data;
     const metadataSegura = this.normalizarMetadata(metadata);
 
-    const origem = String(metadataSegura.origem ?? '').toLowerCase();
-    const rotina = String(metadataSegura.rotina ?? '').toLowerCase();
+    const origem =
+      typeof metadataSegura.origem === 'string'
+        ? metadataSegura.origem.toLowerCase()
+        : '';
+    const rotina =
+      typeof metadataSegura.rotina === 'string'
+        ? metadataSegura.rotina.toLowerCase()
+        : '';
 
     const tipoNormalizado = String(tipo ?? '').toUpperCase();
 

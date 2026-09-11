@@ -1,4 +1,36 @@
-﻿import { Injectable, LoggerService } from '@nestjs/common';
+function stringifyLintValue(value: unknown): string {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (value === null || value === undefined) {
+    return '';
+  }
+
+  if (
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    typeof value === 'bigint'
+  ) {
+    return value.toString();
+  }
+
+  if (typeof value === 'symbol') {
+    return value.description ?? '';
+  }
+
+  if (typeof value === 'object') {
+    try {
+      return JSON.stringify(value) ?? '';
+    } catch {
+      return '[unserializable]';
+    }
+  }
+
+  return '';
+}
+
+import { Injectable, LoggerService } from '@nestjs/common';
 
 import { RequestContextService } from '../context/request-context.service';
 
@@ -123,7 +155,7 @@ export class StructuredLoggerService implements LoggerService {
     }
 
     if (typeof value === 'number') {
-      return Number.isFinite(value) ? value : String(value);
+      return Number.isFinite(value) ? value : stringifyLintValue(value);
     }
 
     if (typeof value === 'boolean') {
@@ -135,7 +167,7 @@ export class StructuredLoggerService implements LoggerService {
     }
 
     if (typeof value === 'symbol') {
-      return String(value);
+      return stringifyLintValue(value);
     }
 
     if (typeof value === 'function') {
@@ -169,7 +201,7 @@ export class StructuredLoggerService implements LoggerService {
       return result;
     }
 
-    return String(value);
+    return stringifyLintValue(value);
   }
 
   private removeUndefined(

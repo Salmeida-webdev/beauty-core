@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Role,
-  TipoNotificacao,
-} from '@prisma/client';
+import { Role, TipoNotificacao } from '@prisma/client';
 
 import { PrismaService } from '../../database/prisma/prisma.service';
 import { TenantValidatorService } from '../../shared/tenant';
@@ -32,10 +29,7 @@ export class AutomacoesService {
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const permitido = await this.podeNotificar(
-      empresaId,
-      dto.tipo,
-    );
+    const permitido = await this.podeNotificar(empresaId, dto.tipo);
 
     this.registrarEventoEmMemoria({
       ...dto,
@@ -53,13 +47,11 @@ export class AutomacoesService {
         processado: true,
         processamento: 'assincrono',
         notificacaoGerada: false,
-        motivo:
-          'Notificação desativada nas configurações da empresa.',
+        motivo: 'Notificação desativada nas configurações da empresa.',
       };
     }
 
-    const usuarioResponsavel =
-      await this.buscarUsuarioResponsavel(empresaId);
+    const usuarioResponsavel = await this.buscarUsuarioResponsavel(empresaId);
 
     const usuarioId =
       dto.usuarioId ??
@@ -76,20 +68,15 @@ export class AutomacoesService {
       };
     }
 
-    await this.tenantValidator.validarUsuario(
+    await this.tenantValidator.validarUsuario(empresaId, usuarioId);
+
+    const job = await this.queuesService.adicionarNotificacao({
       empresaId,
       usuarioId,
-    );
-
-    const job =
-      await this.queuesService.adicionarNotificacao({
-        empresaId,
-        usuarioId,
-        titulo: dto.titulo ?? this.gerarTitulo(dto.tipo),
-        mensagem:
-          dto.mensagem ?? this.gerarMensagem(dto.tipo),
-        tipo: this.mapearTipoNotificacao(dto.tipo),
-      });
+      titulo: dto.titulo ?? this.gerarTitulo(dto.tipo),
+      mensagem: dto.mensagem ?? this.gerarMensagem(dto.tipo),
+      tipo: this.mapearTipoNotificacao(dto.tipo),
+    });
 
     return {
       processado: true,
@@ -103,11 +90,10 @@ export class AutomacoesService {
   async testarAniversario(empresaId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const job =
-      await this.queuesService.adicionarAniversario({
-        empresaId,
-        clienteId: 'teste-cliente',
-      });
+    const job = await this.queuesService.adicionarAniversario({
+      empresaId,
+      clienteId: 'teste-cliente',
+    });
 
     return {
       processado: true,
@@ -120,11 +106,10 @@ export class AutomacoesService {
   async testarRelatorio(empresaId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const job =
-      await this.queuesService.adicionarRelatorio({
-        empresaId,
-        tipo: 'FINANCEIRO',
-      });
+    const job = await this.queuesService.adicionarRelatorio({
+      empresaId,
+      tipo: 'FINANCEIRO',
+    });
 
     return {
       processado: true,
@@ -141,27 +126,23 @@ export class AutomacoesService {
       (evento) => evento.empresaId === empresaId,
     );
 
-    const porTipo =
-      eventosEmpresa.reduce<Record<string, number>>(
-        (acc, evento) => {
-          acc[evento.tipo] =
-            (acc[evento.tipo] || 0) + 1;
+    const porTipo = eventosEmpresa.reduce<Record<string, number>>(
+      (acc, evento) => {
+        acc[evento.tipo] = (acc[evento.tipo] || 0) + 1;
 
-          return acc;
-        },
-        {},
-      );
+        return acc;
+      },
+      {},
+    );
 
-    const porModulo =
-      eventosEmpresa.reduce<Record<string, number>>(
-        (acc, evento) => {
-          acc[evento.modulo] =
-            (acc[evento.modulo] || 0) + 1;
+    const porModulo = eventosEmpresa.reduce<Record<string, number>>(
+      (acc, evento) => {
+        acc[evento.modulo] = (acc[evento.modulo] || 0) + 1;
 
-          return acc;
-        },
-        {},
-      );
+        return acc;
+      },
+      {},
+    );
 
     return {
       total: eventosEmpresa.length,
@@ -202,9 +183,7 @@ export class AutomacoesService {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const config =
-      await this.configuracoesNotificacaoService.findOne(
-        empresaId,
-      );
+      await this.configuracoesNotificacaoService.findOne(empresaId);
 
     if (!config) {
       return true;
@@ -266,27 +245,18 @@ export class AutomacoesService {
 
   private gerarTitulo(tipo: TipoEventoSistema): string {
     const titulos: Record<TipoEventoSistema, string> = {
-      [TipoEventoSistema.AGENDAMENTO_CRIADO]:
-        'Novo agendamento criado',
-      [TipoEventoSistema.AGENDAMENTO_CONFIRMADO]:
-        'Agendamento confirmado',
-      [TipoEventoSistema.AGENDAMENTO_CANCELADO]:
-        'Agendamento cancelado',
-      [TipoEventoSistema.AGENDAMENTO_CONCLUIDO]:
-        'Agendamento concluído',
+      [TipoEventoSistema.AGENDAMENTO_CRIADO]: 'Novo agendamento criado',
+      [TipoEventoSistema.AGENDAMENTO_CONFIRMADO]: 'Agendamento confirmado',
+      [TipoEventoSistema.AGENDAMENTO_CANCELADO]: 'Agendamento cancelado',
+      [TipoEventoSistema.AGENDAMENTO_CONCLUIDO]: 'Agendamento concluído',
 
-      [TipoEventoSistema.PONTOS_ADICIONADOS]:
-        'Pontos adicionados',
-      [TipoEventoSistema.PONTOS_RESGATADOS]:
-        'Pontos resgatados',
-      [TipoEventoSistema.BENEFICIO_LIBERADO]:
-        'Benefício liberado',
-      [TipoEventoSistema.NIVEL_ALTERADO]:
-        'Nível de fidelidade alterado',
+      [TipoEventoSistema.PONTOS_ADICIONADOS]: 'Pontos adicionados',
+      [TipoEventoSistema.PONTOS_RESGATADOS]: 'Pontos resgatados',
+      [TipoEventoSistema.BENEFICIO_LIBERADO]: 'Benefício liberado',
+      [TipoEventoSistema.NIVEL_ALTERADO]: 'Nível de fidelidade alterado',
 
       [TipoEventoSistema.PACOTE_CRIADO]: 'Pacote criado',
-      [TipoEventoSistema.PACOTE_FINALIZADO]:
-        'Pacote finalizado',
+      [TipoEventoSistema.PACOTE_FINALIZADO]: 'Pacote finalizado',
       [TipoEventoSistema.PACOTE_VENCIDO]: 'Pacote vencido',
 
       [TipoEventoSistema.MOVIMENTACAO_FINANCEIRA]:
@@ -295,13 +265,10 @@ export class AutomacoesService {
       [TipoEventoSistema.COMISSAO_GERADA]: 'Comissão gerada',
       [TipoEventoSistema.COMISSAO_PAGA]: 'Comissão paga',
 
-      [TipoEventoSistema.CLIENTE_ANIVERSARIANTE]:
-        'Cliente aniversariante',
-      [TipoEventoSistema.CLIENTE_CADASTRADO]:
-        'Novo cliente cadastrado',
+      [TipoEventoSistema.CLIENTE_ANIVERSARIANTE]: 'Cliente aniversariante',
+      [TipoEventoSistema.CLIENTE_CADASTRADO]: 'Novo cliente cadastrado',
 
-      [TipoEventoSistema.SERVICO_CADASTRADO]:
-        'Novo serviço cadastrado',
+      [TipoEventoSistema.SERVICO_CADASTRADO]: 'Novo serviço cadastrado',
     };
 
     return titulos[tipo];
@@ -311,9 +278,7 @@ export class AutomacoesService {
     return `Evento processado automaticamente: ${tipo}`;
   }
 
-  private mapearTipoNotificacao(
-    tipo: TipoEventoSistema,
-  ): TipoNotificacao {
+  private mapearTipoNotificacao(tipo: TipoEventoSistema): TipoNotificacao {
     if (tipo.includes('AGENDAMENTO')) {
       return TipoNotificacao.AGENDAMENTO;
     }
@@ -330,10 +295,7 @@ export class AutomacoesService {
       return TipoNotificacao.PACOTE;
     }
 
-    if (
-      tipo.includes('FINANCEIRA') ||
-      tipo.includes('COMISSAO')
-    ) {
+    if (tipo.includes('FINANCEIRA') || tipo.includes('COMISSAO')) {
       return TipoNotificacao.FINANCEIRO;
     }
 
@@ -344,9 +306,7 @@ export class AutomacoesService {
     return TipoNotificacao.SISTEMA;
   }
 
-  private async buscarUsuarioResponsavel(
-    empresaId: string,
-  ) {
+  private async buscarUsuarioResponsavel(empresaId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     return this.prisma.usuario.findFirst({

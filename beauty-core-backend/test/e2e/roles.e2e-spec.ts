@@ -1,6 +1,10 @@
 ﻿import request = require('supertest');
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 import { bearer, loginAdmin } from '../helpers/auth.helper';
 import { TEST_EMAILS, TEST_PASSWORD } from '../seeds/test-seed';
 
@@ -24,7 +28,7 @@ describe('Roles E2E', () => {
     ['GERENTE', TEST_EMAILS.gerente, [200, 403]],
     ['RECEPCAO', TEST_EMAILS.recepcao, [403]],
     ['PROFISSIONAL', TEST_EMAILS.profissional, [403]],
-    ['SUPER_ADMIN', TEST_EMAILS.superAdmin, [200]]
+    ['SUPER_ADMIN', TEST_EMAILS.superAdmin, [200]],
   ])('%s em GET /usuarios', async (_role, email, expectedStatuses) => {
     const login = await loginAdmin(ctx.app, email, TEST_PASSWORD);
 
@@ -36,5 +40,3 @@ describe('Roles E2E', () => {
       });
   });
 });
-
-

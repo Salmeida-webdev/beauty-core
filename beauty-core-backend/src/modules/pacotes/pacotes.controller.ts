@@ -33,6 +33,22 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../shared/decorators/roles.decorator';
 import { getEmpresaId } from '../../shared/utils/get-empresa-id';
 
+type Group15AuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    empresa_id: string;
+    sub: string;
+    id: string;
+    usuarioId: string;
+    clienteId: string;
+    role: string;
+    tipoUsuario: string;
+    email: string;
+    nome: string;
+    [key: string]: string | undefined;
+  };
+};
+
 @ApiTags('Pacotes')
 @ApiBearerAuth('JWT')
 @Controller('pacotes')
@@ -75,10 +91,11 @@ export class PacotesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   create(
-    @Req() req: any,
+    @Req() req: Group15AuthenticatedRequest,
     @Body() dto: CreatePacoteDto,
   ) {
     return this.pacotesService.create(getEmpresaId(req), dto);
@@ -114,9 +131,10 @@ export class PacotesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  findAll(@Req() req: any) {
+  findAll(@Req() req: Group15AuthenticatedRequest) {
     return this.pacotesService.findAll(getEmpresaId(req));
   }
 
@@ -157,13 +175,14 @@ export class PacotesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Pacote não encontrado para a empresa autenticada.',
   })
   findOne(
-    @Req() req: any,
+    @Req() req: Group15AuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.pacotesService.findOne(getEmpresaId(req), id);
@@ -204,27 +223,25 @@ export class PacotesController {
     },
   })
   @ApiBadRequestResponse({
-    description: 'ID inválido, payload inválido ou dados fora das regras permitidas.',
+    description:
+      'ID inválido, payload inválido ou dados fora das regras permitidas.',
   })
   @ApiUnauthorizedResponse({
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Pacote não encontrado para a empresa autenticada.',
   })
   update(
-    @Req() req: any,
+    @Req() req: Group15AuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdatePacoteDto,
   ) {
-    return this.pacotesService.update(
-      getEmpresaId(req),
-      id,
-      dto,
-    );
+    return this.pacotesService.update(getEmpresaId(req), id, dto);
   }
 
   @Patch(':id/inativar')
@@ -258,18 +275,16 @@ export class PacotesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Pacote não encontrado para a empresa autenticada.',
   })
   inativar(
-    @Req() req: any,
+    @Req() req: Group15AuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.pacotesService.inativar(
-      getEmpresaId(req),
-      id,
-    );
+    return this.pacotesService.inativar(getEmpresaId(req), id);
   }
 }

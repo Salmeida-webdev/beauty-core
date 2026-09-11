@@ -8,13 +8,15 @@ export function getPaginationParams(query: PaginationDto) {
   const rawPage = Number(query.page ?? DEFAULT_PAGE);
   const rawLimit = Number(query.limit ?? DEFAULT_PAGE_SIZE);
 
-  const page = Number.isFinite(rawPage) && rawPage > 0
-    ? Math.floor(rawPage)
-    : DEFAULT_PAGE;
+  const page =
+    Number.isFinite(rawPage) && rawPage > 0
+      ? Math.floor(rawPage)
+      : DEFAULT_PAGE;
 
-  const limit = Number.isFinite(rawLimit) && rawLimit > 0
-    ? Math.min(Math.floor(rawLimit), MAX_PAGE_SIZE)
-    : DEFAULT_PAGE_SIZE;
+  const limit =
+    Number.isFinite(rawLimit) && rawLimit > 0
+      ? Math.min(Math.floor(rawLimit), MAX_PAGE_SIZE)
+      : DEFAULT_PAGE_SIZE;
 
   const skip = (page - 1) * limit;
 

@@ -53,6 +53,9 @@ export class TenantValidatorService {
         email: true,
         ativo: true,
         ativoPortal: true,
+        foto: true,
+        dataNascimento: true,
+        observacoes: true,
       },
     });
 
@@ -309,26 +312,22 @@ export class TenantValidatorService {
     categoriaFinanceiraId: string,
   ) {
     this.validarIdObrigatorio(empresaId, 'empresaId');
-    this.validarIdObrigatorio(
-      categoriaFinanceiraId,
-      'categoriaFinanceiraId',
-    );
+    this.validarIdObrigatorio(categoriaFinanceiraId, 'categoriaFinanceiraId');
 
-    const categoria =
-      await this.prisma.categoriaFinanceira.findFirst({
-        where: {
-          id: categoriaFinanceiraId,
-          empresaId,
-          ativo: true,
-        },
-        select: {
-          id: true,
-          empresaId: true,
-          nome: true,
-          tipo: true,
-          ativo: true,
-        },
-      });
+    const categoria = await this.prisma.categoriaFinanceira.findFirst({
+      where: {
+        id: categoriaFinanceiraId,
+        empresaId,
+        ativo: true,
+      },
+      select: {
+        id: true,
+        empresaId: true,
+        nome: true,
+        tipo: true,
+        ativo: true,
+      },
+    });
 
     if (!categoria) {
       throw new NotFoundException(

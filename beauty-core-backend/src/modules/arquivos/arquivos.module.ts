@@ -16,16 +16,9 @@ import { ArquivoAccessPolicyService } from './arquivo-access-policy.service';
 import { ArquivosCleanupService } from './arquivos-cleanup.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-    AuditoriaModule,
-  ],
+  imports: [PrismaModule, TenantModule, AuditoriaModule],
 
-  controllers: [
-    ArquivosController,
-    ArquivosDownloadController,
-  ],
+  controllers: [ArquivosController, ArquivosDownloadController],
 
   providers: [
     ArquivosService,
@@ -36,10 +29,6 @@ import { ArquivosCleanupService } from './arquivos-cleanup.service';
     ArquivosCleanupService,
   ],
 
-  exports: [
-    ArquivosDownloadService,
-    ArquivosService,
-    ArquivosCleanupService,
-  ],
+  exports: [ArquivosDownloadService, ArquivosService, ArquivosCleanupService],
 })
 export class ArquivosModule {}

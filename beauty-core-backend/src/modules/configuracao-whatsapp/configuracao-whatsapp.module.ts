@@ -7,21 +7,12 @@ import { ConfiguracaoWhatsappController } from './configuracao-whatsapp.controll
 import { ConfiguracaoWhatsappService } from './configuracao-whatsapp.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-  ],
+  imports: [PrismaModule, TenantModule],
 
-  controllers: [
-    ConfiguracaoWhatsappController,
-  ],
+  controllers: [ConfiguracaoWhatsappController],
 
-  providers: [
-    ConfiguracaoWhatsappService,
-  ],
+  providers: [ConfiguracaoWhatsappService],
 
-  exports: [
-    ConfiguracaoWhatsappService,
-  ],
+  exports: [ConfiguracaoWhatsappService],
 })
 export class ConfiguracaoWhatsappModule {}

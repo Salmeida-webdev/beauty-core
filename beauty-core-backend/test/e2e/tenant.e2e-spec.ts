@@ -1,6 +1,10 @@
 ﻿import request = require('supertest');
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 import { expectTenantOk } from '../helpers/tenant.helper';
 
 describe('Tenant E2E', () => {
@@ -29,7 +33,7 @@ describe('Tenant E2E', () => {
   it('empresa inativa', async () => {
     await (ctx.prisma as any).empresa.update({
       where: { id: ctx.seed.empresaB.id },
-      data: { ativo: false }
+      data: { ativo: false },
     });
 
     await request(ctx.app.getHttpServer())
@@ -39,5 +43,3 @@ describe('Tenant E2E', () => {
       });
   });
 });
-
-

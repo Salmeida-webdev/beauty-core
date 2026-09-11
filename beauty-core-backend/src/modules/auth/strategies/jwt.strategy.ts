@@ -38,7 +38,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     if (payload.tipo !== 'ADMIN') {
-      throw new UnauthorizedException('Token inválido para área administrativa.');
+      throw new UnauthorizedException(
+        'Token inválido para área administrativa.',
+      );
     }
 
     if (!payload.sid) {
@@ -82,10 +84,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       );
     }
 
-    await this.sessoesService.validarSessaoAdminAtiva(
-      payload.sid,
-      usuario.id,
-    );
+    await this.sessoesService.validarSessaoAdminAtiva(payload.sid, usuario.id);
 
     if (usuario.role === Role.SUPER_ADMIN) {
       if (usuario.empresaId) {

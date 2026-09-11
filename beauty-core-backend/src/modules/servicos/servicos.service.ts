@@ -13,10 +13,7 @@ export class ServicosService {
     private readonly tenantValidator: TenantValidatorService,
   ) {}
 
-  async create(
-    createServicoDto: CreateServicoDto,
-    empresaId: string,
-  ) {
+  async create(createServicoDto: CreateServicoDto, empresaId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     return this.prisma.servico.create({
@@ -44,10 +41,7 @@ export class ServicosService {
     });
   }
 
-  async findOne(
-    id: string,
-    empresaId: string,
-  ) {
+  async findOne(id: string, empresaId: string) {
     return this.buscarServicoOuFalhar(empresaId, id);
   }
 
@@ -81,10 +75,7 @@ export class ServicosService {
     return this.buscarServicoOuFalhar(empresaId, id);
   }
 
-  async inativar(
-    id: string,
-    empresaId: string,
-  ) {
+  async inativar(id: string, empresaId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     await this.buscarServicoOuFalhar(empresaId, id);
@@ -107,10 +98,7 @@ export class ServicosService {
     return this.buscarServicoInativoOuAtivoOuFalhar(empresaId, id);
   }
 
-  private async buscarServicoOuFalhar(
-    empresaId: string,
-    id: string,
-  ) {
+  private async buscarServicoOuFalhar(empresaId: string, id: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const servico = await this.prisma.servico.findFirst({

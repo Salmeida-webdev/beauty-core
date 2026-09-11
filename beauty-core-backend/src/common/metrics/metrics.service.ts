@@ -24,17 +24,7 @@ export class MetricsService {
   private readonly version = process.env.APP_VERSION ?? '1.0.0';
 
   private readonly histogramBuckets = [
-    0.005,
-    0.01,
-    0.025,
-    0.05,
-    0.1,
-    0.25,
-    0.5,
-    1,
-    2.5,
-    5,
-    10,
+    0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10,
   ];
 
   private readonly httpRequests = new Map<string, number>();
@@ -71,7 +61,9 @@ export class MetricsService {
   renderPrometheusMetrics(): string {
     const lines: string[] = [];
 
-    lines.push('# HELP beauty_core_app_info Beauty Core application information.');
+    lines.push(
+      '# HELP beauty_core_app_info Beauty Core application information.',
+    );
     lines.push('# TYPE beauty_core_app_info gauge');
     lines.push(
       `beauty_core_app_info{${this.formatLabels({
@@ -82,7 +74,9 @@ export class MetricsService {
     );
 
     lines.push('');
-    lines.push('# HELP beauty_core_http_requests_total Total HTTP requests received by the API.');
+    lines.push(
+      '# HELP beauty_core_http_requests_total Total HTTP requests received by the API.',
+    );
     lines.push('# TYPE beauty_core_http_requests_total counter');
 
     for (const [key, value] of [...this.httpRequests.entries()].sort()) {
@@ -97,7 +91,9 @@ export class MetricsService {
     }
 
     lines.push('');
-    lines.push('# HELP beauty_core_http_errors_total Total HTTP error responses by status code.');
+    lines.push(
+      '# HELP beauty_core_http_errors_total Total HTTP error responses by status code.',
+    );
     lines.push('# TYPE beauty_core_http_errors_total counter');
 
     for (const [key, value] of [...this.httpErrors.entries()].sort()) {
@@ -113,18 +109,22 @@ export class MetricsService {
     }
 
     lines.push('');
-    lines.push('# HELP beauty_core_http_request_duration_seconds HTTP request duration in seconds.');
+    lines.push(
+      '# HELP beauty_core_http_request_duration_seconds HTTP request duration in seconds.',
+    );
     lines.push('# TYPE beauty_core_http_request_duration_seconds histogram');
 
     for (const [, state] of [...this.httpRequestDurations.entries()].sort()) {
       for (const bucket of this.histogramBuckets) {
         lines.push(
-          `beauty_core_http_request_duration_seconds_bucket{${this.formatLabels({
-            method: state.labels.method,
-            route: state.labels.route,
-            status_code: state.labels.statusCode,
-            le: String(bucket),
-          })}} ${state.buckets.get(bucket) ?? 0}`,
+          `beauty_core_http_request_duration_seconds_bucket{${this.formatLabels(
+            {
+              method: state.labels.method,
+              route: state.labels.route,
+              status_code: state.labels.statusCode,
+              le: String(bucket),
+            },
+          )}} ${state.buckets.get(bucket) ?? 0}`,
         );
       }
 
@@ -197,11 +197,7 @@ export class MetricsService {
   }
 
   private createHttpRequestKey(labels: HttpRequestLabels): string {
-    return [
-      labels.method,
-      labels.route,
-      labels.statusCode,
-    ].join('|');
+    return [labels.method, labels.route, labels.statusCode].join('|');
   }
 
   private createHttpErrorKey(labels: HttpErrorLabels): string {
@@ -235,10 +231,7 @@ export class MetricsService {
   }
 
   private normalizeRoute(route: string): string {
-    return route
-      .replace(/\/+/g, '/')
-      .replace(/\?.*$/, '')
-      .trim() || 'unknown';
+    return route.replace(/\/+/g, '/').replace(/\?.*$/, '').trim() || 'unknown';
   }
 
   private normalizeLabelValue(value: string): string {

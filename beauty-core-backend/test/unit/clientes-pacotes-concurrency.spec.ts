@@ -51,9 +51,9 @@ describe('ClientesPacotesService atomic session consumption', () => {
       tenant as any,
     );
 
-    await expect(service.usarSessao('empresa-1', 'cliente-pacote-1')).resolves.toEqual(
-      updated,
-    );
+    await expect(
+      service.usarSessao('empresa-1', 'cliente-pacote-1'),
+    ).resolves.toEqual(updated);
 
     expect(prisma.clientePacote.updateMany).toHaveBeenNthCalledWith(
       1,
@@ -74,10 +74,17 @@ describe('ClientesPacotesService atomic session consumption', () => {
 
   it('rejects a losing concurrent update without decrementing again', async () => {
     const initial = pacote({ sessoesRestantes: 1 });
-    const consumed = pacote({ sessoesRestantes: 0, sessoesUsadas: 2, status: 'FINALIZADO' });
+    const consumed = pacote({
+      sessoesRestantes: 0,
+      sessoesUsadas: 2,
+      status: 'FINALIZADO',
+    });
     const prisma = {
       clientePacote: {
-        findFirst: jest.fn().mockResolvedValueOnce(initial).mockResolvedValueOnce(consumed),
+        findFirst: jest
+          .fn()
+          .mockResolvedValueOnce(initial)
+          .mockResolvedValueOnce(consumed),
         updateMany: jest.fn().mockResolvedValue({ count: 0 }),
       },
     };
@@ -88,9 +95,9 @@ describe('ClientesPacotesService atomic session consumption', () => {
       { validarEmpresaAtiva: jest.fn(), validarCliente: jest.fn() } as any,
     );
 
-    await expect(service.usarSessao('empresa-1', 'cliente-pacote-1')).rejects.toBeInstanceOf(
-      BadRequestException,
-    );
+    await expect(
+      service.usarSessao('empresa-1', 'cliente-pacote-1'),
+    ).rejects.toBeInstanceOf(BadRequestException);
     expect(prisma.clientePacote.updateMany).toHaveBeenCalledTimes(1);
   });
 });

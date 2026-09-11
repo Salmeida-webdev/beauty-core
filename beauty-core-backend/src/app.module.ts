@@ -138,7 +138,3 @@ export class AppModule implements NestModule {
     consumer.apply(MetricsMiddleware).forRoutes('*');
   }
 }
-
-
-
-

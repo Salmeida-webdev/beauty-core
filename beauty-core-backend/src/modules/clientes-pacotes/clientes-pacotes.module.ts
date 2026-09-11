@@ -10,12 +10,7 @@ import { ClientesPacotesController } from './clientes-pacotes.controller';
 import { ClientesPacotesService } from './clientes-pacotes.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-    AutomacoesModule,
-    AuditoriaModule,
-  ],
+  imports: [PrismaModule, TenantModule, AutomacoesModule, AuditoriaModule],
 
   controllers: [ClientesPacotesController],
 

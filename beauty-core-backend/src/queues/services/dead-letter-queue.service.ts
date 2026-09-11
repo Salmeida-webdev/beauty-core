@@ -19,34 +19,61 @@ import {
 } from '../constants/queue-names';
 import { getEnterpriseJobOptions } from '../utils/queue-options.util';
 
+type JobData = {
+  [key: string]: unknown;
+  empresaId?: string;
+  usuarioId?: string;
+  clienteId?: string;
+  metadata?: Record<string, unknown>;
+};
+
+type DeadLetterJobData = JobData & {
+  originalQueue: string;
+  originalJobId: string;
+  originalName: string;
+  originalData: JobData;
+  originalOpts?: unknown;
+  failedReason: string;
+  stacktrace?: string[];
+  attemptsMade: number;
+  movedToDlqAt: string;
+};
+
+type AuditoriaCompat = {
+  registrarJob?: (payload: Record<string, unknown>) => Promise<unknown>;
+  registrar?: (payload: Record<string, unknown>) => Promise<unknown>;
+  criar?: (payload: Record<string, unknown>) => Promise<unknown>;
+  registrarAuditoria?: (payload: Record<string, unknown>) => Promise<unknown>;
+};
+
 @Injectable()
 export class DeadLetterQueueService {
   private readonly logger = new Logger(DeadLetterQueueService.name);
 
   constructor(
     @Inject(DLQ_QUEUE_PROVIDER)
-    private readonly dlqQueue: Queue,
+    private readonly dlqQueue: Queue<DeadLetterJobData>,
 
     @Inject(NOTIFICACOES_QUEUE_PROVIDER)
-    private readonly notificacoesQueue: Queue,
+    private readonly notificacoesQueue: Queue<JobData>,
 
     @Inject(WHATSAPP_QUEUE_PROVIDER)
-    private readonly whatsappQueue: Queue,
+    private readonly whatsappQueue: Queue<JobData>,
 
     @Inject(CAMPANHAS_QUEUE_PROVIDER)
-    private readonly campanhasQueue: Queue,
+    private readonly campanhasQueue: Queue<JobData>,
 
     @Inject(ANIVERSARIOS_QUEUE_PROVIDER)
-    private readonly aniversariosQueue: Queue,
+    private readonly aniversariosQueue: Queue<JobData>,
 
     @Inject(RELATORIOS_QUEUE_PROVIDER)
-    private readonly relatoriosQueue: Queue,
+    private readonly relatoriosQueue: Queue<JobData>,
 
     private readonly auditoriaService: AuditoriaService,
     private readonly configService: ConfigService,
   ) {}
 
-  private getQueueByName(queueName: string): Queue {
+  private getQueueByName(queueName: string): Queue<JobData> {
     const queues: Record<string, Queue> = {
       notificacoes: this.notificacoesQueue,
       whatsapp: this.whatsappQueue,
@@ -61,12 +88,13 @@ export class DeadLetterQueueService {
       throw new BadRequestException(`Fila original inválida: ${queueName}`);
     }
 
-    return queue;
+    const typedQueue = queue as unknown as Queue<JobData>;
+    return typedQueue;
   }
 
-  private async registrarAuditoriaSegura(payload: Record<string, any>) {
+  private async registrarAuditoriaSegura(payload: Record<string, unknown>) {
     try {
-      const service = this.auditoriaService as any;
+      const service = this.auditoriaService as unknown as AuditoriaCompat;
 
       if (typeof service.registrarJob === 'function') {
         await service.registrarJob(payload);
@@ -95,9 +123,9 @@ export class DeadLetterQueueService {
     }
   }
 
-  async moveToDlq(params: {
+  async moveToDlq<T extends object>(params: {
     sourceQueue: string;
-    job: Job;
+    job: Job<T>;
     error: Error;
   }) {
     const { sourceQueue, job, error } = params;
@@ -116,14 +144,16 @@ export class DeadLetterQueueService {
       return exists;
     }
 
+    const jobData = job.data as unknown as JobData;
+
     const payload = {
       originalQueue: sourceQueue,
       originalJobId: String(job.id),
       originalName: job.name,
-      originalData: job.data,
+      originalData: jobData,
       originalOpts: job.opts,
       failedReason: error.message,
-      stacktrace: job.stacktrace,
+      stacktrace: job.stacktrace ?? undefined,
       attemptsMade,
       movedToDlqAt: new Date().toISOString(),
     };
@@ -139,9 +169,9 @@ export class DeadLetterQueueService {
     );
 
     await this.registrarAuditoriaSegura({
-      empresaId: (job.data as any)?.empresaId,
-      usuarioId: (job.data as any)?.usuarioId,
-      clienteId: (job.data as any)?.clienteId,
+      empresaId: jobData?.empresaId,
+      usuarioId: jobData?.usuarioId,
+      clienteId: jobData?.clienteId,
       acao: 'JOB_DLQ',
       status: 'FALHA',
       modulo: 'BULLMQ_DLQ',
@@ -183,7 +213,7 @@ export class DeadLetterQueueService {
       throw new NotFoundException('Job não encontrado na DLQ.');
     }
 
-    const data = dlqJob.data as any;
+    const data = dlqJob.data;
 
     const sourceQueue = this.getQueueByName(data.originalQueue);
     const originalJobId = String(data.originalJobId);

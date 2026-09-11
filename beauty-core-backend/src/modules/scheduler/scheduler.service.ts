@@ -1,11 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron } from '@nestjs/schedule';
-import {
-  AcaoAuditoria,
-  StatusAuditoria,
-  TipoUsuarioAuditoria,
-} from '@prisma/client';
+import {} from '@prisma/client';
 import { QueuesService } from '../../queues/services/queues.service';
 import { DistributedLockService } from '../../queues/services/distributed-lock.service';
 import { QueueMonitorService } from '../../queues/services/queue-monitor.service';
@@ -18,6 +14,18 @@ import {
   SCHEDULER_TIMEZONE_DEFAULT,
 } from './constants/scheduler-times';
 
+type SchedulerRuntime = {
+  isEnabled: () => boolean;
+  getTimezone: () => string;
+};
+
+type CleanableQueue = {
+  clean: (
+    grace: number,
+    limit: number,
+    type: 'completed' | 'failed',
+  ) => Promise<unknown>;
+};
 @Injectable()
 export class SchedulerService {
   private readonly logger = new Logger(SchedulerService.name);
@@ -42,10 +50,7 @@ export class SchedulerService {
 
   private isEnabled(): boolean {
     return (
-      this.configService.get<string>(
-        'SCHEDULER_ENABLED',
-        'true',
-      ) !== 'false'
+      this.configService.get<string>('SCHEDULER_ENABLED', 'true') !== 'false'
     );
   }
 
@@ -67,13 +72,9 @@ export class SchedulerService {
     const falhou = params.status === 'FALHA';
 
     await this.auditoriaService.registrar({
-      tipoUsuario: 'SISTEMA' as TipoUsuarioAuditoria,
-      acao: (
-        falhou ? 'CRON_FALHOU' : 'CRON_EXECUTADO'
-      ) as AcaoAuditoria,
-      status: (
-        falhou ? 'FALHA' : 'SUCESSO'
-      ) as StatusAuditoria,
+      tipoUsuario: 'SISTEMA',
+      acao: falhou ? 'CRON_FALHOU' : 'CRON_EXECUTADO',
+      status: falhou ? 'FALHA' : 'SUCESSO',
       modulo: 'SCHEDULER',
       recurso: 'Scheduler',
       mensagem: params.mensagem,
@@ -109,9 +110,7 @@ export class SchedulerService {
     }
 
     try {
-      this.logger.log(
-        `[SCHEDULER] rotina=${rotina} status=INICIADA`,
-      );
+      this.logger.log(`[SCHEDULER] rotina=${rotina} status=INICIADA`);
 
       await this.registrarAuditoriaScheduler({
         rotina,
@@ -145,9 +144,7 @@ export class SchedulerService {
       const tempoMs = Date.now() - startedAt;
 
       const mensagemErro =
-        error instanceof Error
-          ? error.message
-          : 'Erro desconhecido';
+        error instanceof Error ? error.message : 'Erro desconhecido';
 
       this.logger.error(
         `[SCHEDULER] rotina=${rotina} status=FALHA tempoMs=${tempoMs} erro=${mensagemErro}`,
@@ -179,15 +176,15 @@ export class SchedulerService {
   async processarAniversariantesDiarios() {
     return this.executarRotinaComLock('aniversariantes_diarios', async () => {
       return this.executarRotina('aniversarios', async () => {
-            return this.queuesService.adicionarAniversarioScheduler({
-              tipo: 'ANIVERSARIANTES_DIA',
-              dataReferencia: new Date().toISOString(),
-              metadata: {
-                origem: 'scheduler',
-                rotina: 'aniversarios',
-              },
-            });
-          });
+        return this.queuesService.adicionarAniversarioScheduler({
+          tipo: 'ANIVERSARIANTES_DIA',
+          dataReferencia: new Date().toISOString(),
+          metadata: {
+            origem: 'scheduler',
+            rotina: 'aniversarios',
+          },
+        });
+      });
     });
   }
 
@@ -197,26 +194,22 @@ export class SchedulerService {
     waitForCompletion: true,
   })
   async processarLembretesAgendamento() {
-    return this.executarRotina(
-      'lembretes_agendamento',
-      async () => {
-        return this.queuesService.adicionarWhatsappScheduler({
-          mensagem:
-            'Rotina automática de lembretes de agendamento iniciada.',
-          tipo: 'LEMBRETE_AGENDAMENTO',
-          dataReferencia: new Date().toISOString(),
-          metadata: {
-            origem: 'scheduler',
-            rotina: 'lembretes_agendamento',
-            preparadoPara: [
-              'lembrete_24h',
-              'lembrete_2h',
-              'confirmacao_automatica',
-            ],
-          },
-        });
-      },
-    );
+    return this.executarRotina('lembretes_agendamento', async () => {
+      return this.queuesService.adicionarWhatsappScheduler({
+        mensagem: 'Rotina automática de lembretes de agendamento iniciada.',
+        tipo: 'LEMBRETE_AGENDAMENTO',
+        dataReferencia: new Date().toISOString(),
+        metadata: {
+          origem: 'scheduler',
+          rotina: 'lembretes_agendamento',
+          preparadoPara: [
+            'lembrete_24h',
+            'lembrete_2h',
+            'confirmacao_automatica',
+          ],
+        },
+      });
+    });
   }
 
   @Cron(SchedulerCron.PACOTES_VENCIDOS, {
@@ -226,23 +219,19 @@ export class SchedulerService {
   })
   async processarPacotesVencidos() {
     return this.executarRotinaComLock('pacotes_vencidos', async () => {
-      return this.executarRotina(
-            'pacotes_vencidos',
-            async () => {
-              return this.queuesService.adicionarNotificacaoScheduler({
-                titulo: 'Verificação de pacotes vencidos',
-                mensagem:
-                  'Rotina automática de pacotes vencidos iniciada.',
-                tipo: 'PACOTES_VENCIDOS',
-                dataReferencia: new Date().toISOString(),
-                metadata: {
-                  origem: 'scheduler',
-                  rotina: 'pacotes_vencidos',
-                  modo: 'verificacao_segura',
-                },
-              });
-            },
-          );
+      return this.executarRotina('pacotes_vencidos', async () => {
+        return this.queuesService.adicionarNotificacaoScheduler({
+          titulo: 'Verificação de pacotes vencidos',
+          mensagem: 'Rotina automática de pacotes vencidos iniciada.',
+          tipo: 'PACOTES_VENCIDOS',
+          dataReferencia: new Date().toISOString(),
+          metadata: {
+            origem: 'scheduler',
+            rotina: 'pacotes_vencidos',
+            modo: 'verificacao_segura',
+          },
+        });
+      });
     });
   }
 
@@ -253,20 +242,17 @@ export class SchedulerService {
   })
   async processarCampanhasAgendadas() {
     return this.executarRotinaComLock('campanhas_agendadas', async () => {
-      return this.executarRotina(
-            'campanhas_agendadas',
-            async () => {
-              return this.queuesService.adicionarCampanhaScheduler({
-                tipo: 'CAMPANHAS_AGENDADAS',
-                dataReferencia: new Date().toISOString(),
-                metadata: {
-                  origem: 'scheduler',
-                  rotina: 'campanhas_agendadas',
-                  envioReal: false,
-                },
-              });
-            },
-          );
+      return this.executarRotina('campanhas_agendadas', async () => {
+        return this.queuesService.adicionarCampanhaScheduler({
+          tipo: 'CAMPANHAS_AGENDADAS',
+          dataReferencia: new Date().toISOString(),
+          metadata: {
+            origem: 'scheduler',
+            rotina: 'campanhas_agendadas',
+            envioReal: false,
+          },
+        });
+      });
     });
   }
 
@@ -277,25 +263,18 @@ export class SchedulerService {
   })
   async processarRelatoriosDiarios() {
     return this.executarRotinaComLock('relatorios_diarios', async () => {
-      return this.executarRotina(
-            'relatorios_diarios',
-            async () => {
-              return this.queuesService.adicionarRelatorioScheduler({
-                tipo: 'RELATORIOS_DIARIOS',
-                tipoRelatorio: 'GERAL',
-                dataReferencia: new Date().toISOString(),
-                metadata: {
-                  origem: 'scheduler',
-                  rotina: 'relatorios_diarios',
-                  relatorios: [
-                    'financeiro',
-                    'agendamentos',
-                    'executivo',
-                  ],
-                },
-              });
-            },
-          );
+      return this.executarRotina('relatorios_diarios', async () => {
+        return this.queuesService.adicionarRelatorioScheduler({
+          tipo: 'RELATORIOS_DIARIOS',
+          tipoRelatorio: 'GERAL',
+          dataReferencia: new Date().toISOString(),
+          metadata: {
+            origem: 'scheduler',
+            rotina: 'relatorios_diarios',
+            relatorios: ['financeiro', 'agendamentos', 'executivo'],
+          },
+        });
+      });
     });
   }
 
@@ -305,23 +284,20 @@ export class SchedulerService {
     waitForCompletion: true,
   })
   async processarLimpezaNotificacoesAntigas() {
-    return this.executarRotina(
-      'limpeza_notificacoes',
-      async () => {
-        return this.queuesService.adicionarNotificacaoScheduler({
-          titulo: 'Limpeza de notificações antigas',
-          mensagem:
-            'Rotina automática de limpeza de notificações antigas iniciada.',
-          tipo: 'LIMPEZA_NOTIFICACOES_ANTIGAS',
-          dataReferencia: new Date().toISOString(),
-          metadata: {
-            origem: 'scheduler',
-            rotina: 'limpeza_notificacoes',
-            modo: 'preparacao_sem_exclusao_critica',
-          },
-        });
-      },
-    );
+    return this.executarRotina('limpeza_notificacoes', async () => {
+      return this.queuesService.adicionarNotificacaoScheduler({
+        titulo: 'Limpeza de notificações antigas',
+        mensagem:
+          'Rotina automática de limpeza de notificações antigas iniciada.',
+        tipo: 'LIMPEZA_NOTIFICACOES_ANTIGAS',
+        dataReferencia: new Date().toISOString(),
+        metadata: {
+          origem: 'scheduler',
+          rotina: 'limpeza_notificacoes',
+          modo: 'preparacao_sem_exclusao_critica',
+        },
+      });
+    });
   }
 
   @Cron(SchedulerCron.LIMPEZA_AUDITORIA, {
@@ -330,19 +306,17 @@ export class SchedulerService {
     waitForCompletion: true,
   })
   async processarLimpezaAuditoriaAntiga() {
-    return this.executarRotina(
-      'limpeza_auditoria',
-      async () => {
-        this.logger.warn(
-          '[SCHEDULER] limpeza de auditoria apenas registrada; nenhuma auditoria crítica será apagada.',
-        );
+    return this.executarRotina('limpeza_auditoria', async () => {
+      await Promise.resolve();
+      this.logger.warn(
+        '[SCHEDULER] limpeza de auditoria apenas registrada; nenhuma auditoria crítica será apagada.',
+      );
 
-        return {
-          registrado: true,
-          exclusaoExecutada: false,
-        };
-      },
-    );
+      return {
+        registrado: true,
+        exclusaoExecutada: false,
+      };
+    });
   }
   @Cron(SchedulerCron.LIMPEZA_SESSOES, {
     name: 'limpeza_sessoes',
@@ -350,25 +324,20 @@ export class SchedulerService {
     waitForCompletion: true,
   })
   async processarLimpezaSessoes() {
-    return this.executarRotina(
-      'limpeza_sessoes',
-      async () => {
-        const result =
-          await this.sessoesService.limparSessoesExpiradasERevogadasAntigas();
+    return this.executarRotina('limpeza_sessoes', async () => {
+      const result =
+        await this.sessoesService.limparSessoesExpiradasERevogadasAntigas();
 
-        this.logger.log(
-          `[SCHEDULER] rotina=limpeza_sessoes status=CONCLUIDA result=${JSON.stringify(result)}`,
-        );
+      this.logger.log(
+        `[SCHEDULER] rotina=limpeza_sessoes status=CONCLUIDA result=${JSON.stringify(result)}`,
+      );
 
-        return {
-          limpezaExecutada: true,
-          ...result,
-        };
-      },
-    );
+      return {
+        limpezaExecutada: true,
+        ...result,
+      };
+    });
   }
-
-
 
   @Cron('0 4 * * *', {
     name: 'limpeza_arquivos_temp',
@@ -392,8 +361,6 @@ export class SchedulerService {
     });
   }
 
-
-
   private async executarRotinaComLock<T>(
     rotina: string,
     callback: () => Promise<T> | T,
@@ -405,16 +372,18 @@ export class SchedulerService {
     });
   }
 
-
   async getEnterpriseStatus() {
     return {
       scheduler: {
-        enabled: typeof (this as any).isEnabled === 'function'
-          ? (this as any).isEnabled()
-          : true,
-        timezone: typeof (this as any).getTimezone === 'function'
-          ? (this as any).getTimezone()
-          : process.env.SCHEDULER_TIMEZONE ?? 'America/Sao_Paulo',
+        enabled:
+          typeof (this as unknown as SchedulerRuntime).isEnabled === 'function'
+            ? (this as unknown as SchedulerRuntime).isEnabled()
+            : true,
+        timezone:
+          typeof (this as unknown as SchedulerRuntime).getTimezone ===
+          'function'
+            ? (this as unknown as SchedulerRuntime).getTimezone()
+            : (process.env.SCHEDULER_TIMEZONE ?? 'America/Sao_Paulo'),
       },
       locks: {
         provider: 'redis',
@@ -423,8 +392,6 @@ export class SchedulerService {
       queues: await this.queueMonitorService.getStatus(),
     };
   }
-
-
 
   @Cron('0 3 * * *', {
     name: 'limpeza_jobs_bullmq',
@@ -445,7 +412,10 @@ export class SchedulerService {
 
       const result: Record<string, unknown> = {};
 
-      for (const [name, queue] of Object.entries(queues) as [string, any][]) {
+      for (const [name, queue] of Object.entries(queues) as [
+        string,
+        CleanableQueue,
+      ][]) {
         result[name] = {
           completed: await queue.clean(completedGraceMs, limit, 'completed'),
           failed: await queue.clean(failedGraceMs, limit, 'failed'),
@@ -461,5 +431,4 @@ export class SchedulerService {
       };
     });
   }
-
 }

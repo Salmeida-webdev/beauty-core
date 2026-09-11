@@ -44,4 +44,3 @@ export class QueuesController {
     return this.deadLetterQueueService.reprocessar(jobId);
   }
 }
-

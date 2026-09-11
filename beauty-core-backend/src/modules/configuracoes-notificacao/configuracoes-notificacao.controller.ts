@@ -29,6 +29,12 @@ import { ConfiguracoesNotificacaoService } from './configuracoes-notificacao.ser
 import { CreateConfiguracaoNotificacaoDto } from './dto/create-configuracao-notificacao.dto';
 import { UpdateConfiguracaoNotificacaoDto } from './dto/update-configuracao-notificacao.dto';
 
+type ConfiguracoesNotificacaoRequest = {
+  user: {
+    empresaId: string;
+  };
+};
+
 @ApiTags('Configuracoes Notificacao')
 @ApiBearerAuth('JWT')
 @Controller('configuracoes-notificacao')
@@ -75,16 +81,14 @@ export class ConfiguracoesNotificacaoController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   create(
-    @Req() req: any,
+    @Req() req: ConfiguracoesNotificacaoRequest,
     @Body() dto: CreateConfiguracaoNotificacaoDto,
   ) {
-    return this.configuracoesNotificacaoService.create(
-      req.user.empresaId,
-      dto,
-    );
+    return this.configuracoesNotificacaoService.create(req.user.empresaId, dto);
   }
 
   @Get()
@@ -114,16 +118,15 @@ export class ConfiguracoesNotificacaoController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description:
       'Configuração de notificação não encontrada para a empresa autenticada.',
   })
-  findOne(@Req() req: any) {
-    return this.configuracoesNotificacaoService.findOne(
-      req.user.empresaId,
-    );
+  findOne(@Req() req: ConfiguracoesNotificacaoRequest) {
+    return this.configuracoesNotificacaoService.findOne(req.user.empresaId);
   }
 
   @Patch()
@@ -161,19 +164,17 @@ export class ConfiguracoesNotificacaoController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description:
       'Configuração de notificação não encontrada para a empresa autenticada.',
   })
   update(
-    @Req() req: any,
+    @Req() req: ConfiguracoesNotificacaoRequest,
     @Body() dto: UpdateConfiguracaoNotificacaoDto,
   ) {
-    return this.configuracoesNotificacaoService.update(
-      req.user.empresaId,
-      dto,
-    );
+    return this.configuracoesNotificacaoService.update(req.user.empresaId, dto);
   }
 }

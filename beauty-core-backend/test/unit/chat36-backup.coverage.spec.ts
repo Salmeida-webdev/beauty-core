@@ -84,8 +84,12 @@ describe('Chat 36 Backup Coverage', () => {
 
     expect(result.status).toBe('SUCESSO');
     expect(result.results).toHaveLength(3);
-    expect(JSON.stringify(result)).toContain('scripts/backup/postgres-backup.ps1');
-    expect(JSON.stringify(result)).toContain('scripts/uploads/uploads-backup.ps1');
+    expect(JSON.stringify(result)).toContain(
+      'scripts/backup/postgres-backup.ps1',
+    );
+    expect(JSON.stringify(result)).toContain(
+      'scripts/uploads/uploads-backup.ps1',
+    );
     expect(JSON.stringify(result)).toContain('scripts/backup/redis-backup.ps1');
     expect(execFileSync).toHaveBeenCalledTimes(3);
   });
@@ -100,9 +104,15 @@ describe('Chat 36 Backup Coverage', () => {
   });
 
   it('deve delegar execucoes agendadas para os metodos principais', () => {
-    expect(JSON.stringify(service.executarBackupPostgresAgendado())).toContain('backup_postgres_diario');
-    expect(JSON.stringify(service.executarBackupUploadsAgendado())).toContain('backup_uploads_diario');
-    expect(JSON.stringify(service.executarBackupCompletoAgendado())).toContain('backup_semanal_completo');
+    expect(JSON.stringify(service.executarBackupPostgresAgendado())).toContain(
+      'backup_postgres_diario',
+    );
+    expect(JSON.stringify(service.executarBackupUploadsAgendado())).toContain(
+      'backup_uploads_diario',
+    );
+    expect(JSON.stringify(service.executarBackupCompletoAgendado())).toContain(
+      'backup_semanal_completo',
+    );
   });
 
   it('deve executar limpeza operacional com auditoria resiliente', async () => {
@@ -116,7 +126,9 @@ describe('Chat 36 Backup Coverage', () => {
   });
 
   it('deve ignorar falha de auditoria sem quebrar operacao', async () => {
-    prisma.auditoriaSistema.create.mockRejectedValueOnce(new Error('audit down'));
+    prisma.auditoriaSistema.create.mockRejectedValueOnce(
+      new Error('audit down'),
+    );
 
     const result = service.executarBackupPostgres();
 

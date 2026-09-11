@@ -1,6 +1,10 @@
 ﻿import request = require('supertest');
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 import { bearer, loginClientePublico } from '../helpers/auth.helper';
 
 describe('Cliente Area E2E', () => {
@@ -9,7 +13,9 @@ describe('Cliente Area E2E', () => {
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
-    token = (await loginClientePublico(ctx.app, ctx.seed.empresaA.slug, ctx.prisma)).access_token;
+    token = (
+      await loginClientePublico(ctx.app, ctx.seed.empresaA.slug, ctx.prisma)
+    ).access_token;
   });
 
   afterAll(async () => {
@@ -22,7 +28,7 @@ describe('Cliente Area E2E', () => {
     '/cliente-area/me/agendamentos',
     '/cliente-area/me/fidelidade',
     '/cliente-area/me/pacotes',
-    '/cliente-area/me/notificacoes'
+    '/cliente-area/me/notificacoes',
   ])('GET %s', async (route) => {
     await request(ctx.app.getHttpServer())
       .get(route)
@@ -31,8 +37,6 @@ describe('Cliente Area E2E', () => {
   });
 
   it('sem token deve retornar 401', async () => {
-    await request(ctx.app.getHttpServer())
-      .get('/cliente-area/me')
-      .expect(401);
+    await request(ctx.app.getHttpServer()).get('/cliente-area/me').expect(401);
   });
 });

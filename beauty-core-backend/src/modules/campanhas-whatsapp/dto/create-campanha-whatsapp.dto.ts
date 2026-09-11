@@ -1,9 +1,6 @@
 import { TipoMensagemWhatsApp } from '@prisma/client';
 
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import {
   IsEnum,
@@ -52,8 +49,7 @@ export class CreateCampanhaWhatsAppDto {
   @ApiProperty({
     example:
       'Olá! Temos uma condição especial para você voltar a cuidar da sua beleza conosco.',
-    description:
-      'Conteúdo da mensagem que será usada na campanha de WhatsApp.',
+    description: 'Conteúdo da mensagem que será usada na campanha de WhatsApp.',
   })
   @IsString({
     message: 'A mensagem da campanha deve ser um texto.',

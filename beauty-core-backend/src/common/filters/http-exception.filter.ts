@@ -44,9 +44,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const requestId = request.requestId ?? responseRequestId;
     const correlationId =
-      request.correlationId ??
-      responseCorrelationId ??
-      requestId;
+      request.correlationId ?? responseCorrelationId ?? requestId;
 
     if (requestId) {
       response.setHeader('x-request-id', requestId);

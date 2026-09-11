@@ -7,21 +7,12 @@ import { ConfiguracoesNotificacaoController } from './configuracoes-notificacao.
 import { ConfiguracoesNotificacaoService } from './configuracoes-notificacao.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-  ],
+  imports: [PrismaModule, TenantModule],
 
-  controllers: [
-    ConfiguracoesNotificacaoController,
-  ],
+  controllers: [ConfiguracoesNotificacaoController],
 
-  providers: [
-    ConfiguracoesNotificacaoService,
-  ],
+  providers: [ConfiguracoesNotificacaoService],
 
-  exports: [
-    ConfiguracoesNotificacaoService,
-  ],
+  exports: [ConfiguracoesNotificacaoService],
 })
 export class ConfiguracoesNotificacaoModule {}

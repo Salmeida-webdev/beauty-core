@@ -3,7 +3,12 @@
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AcaoAuditoria, Arquivo, StatusArquivo, StatusAuditoria, TipoUsuarioAuditoria } from '@prisma/client';
+import {
+  AcaoAuditoria,
+  Arquivo,
+  StatusArquivo,
+  TipoUsuarioAuditoria,
+} from '@prisma/client';
 import { ReadStream } from 'fs';
 
 import { PrismaService } from '../../database/prisma/prisma.service';
@@ -65,7 +70,7 @@ export class ArquivosDownloadService {
     await this.registrarAuditoriaArquivo({
       arquivo,
       user,
-      acao: 'DOWNLOAD_ARQUIVO' as AcaoAuditoria,
+      acao: 'DOWNLOAD_ARQUIVO',
       origem: 'download_protegido',
       mensagem: 'Download protegido de arquivo realizado com sucesso.',
     });
@@ -108,7 +113,7 @@ export class ArquivosDownloadService {
     await this.registrarAuditoriaArquivo({
       arquivo,
       user,
-      acao: 'URL_ASSINADA' as AcaoAuditoria,
+      acao: 'URL_ASSINADA',
       origem: 'signed_url',
       mensagem: 'URL assinada gerada com sucesso.',
     });
@@ -137,7 +142,7 @@ export class ArquivosDownloadService {
 
     await this.registrarAuditoriaArquivo({
       arquivo,
-      acao: 'DOWNLOAD_ARQUIVO' as AcaoAuditoria,
+      acao: 'DOWNLOAD_ARQUIVO',
       origem: 'download_signed_url',
       mensagem: 'Download por URL assinada realizado com sucesso.',
     });
@@ -179,7 +184,6 @@ export class ArquivosDownloadService {
     });
   }
 
-
   private async registrarAuditoriaArquivo(params: {
     arquivo: Arquivo;
     user?: AuthenticatedFileUser;
@@ -199,7 +203,7 @@ export class ArquivosDownloadService {
           : undefined,
       tipoUsuario: TipoUsuarioAuditoria.SISTEMA,
       acao: params.acao,
-      status: 'SUCESSO' as StatusAuditoria,
+      status: 'SUCESSO',
       modulo: 'ARQUIVOS',
       recurso: 'Arquivo',
       recursoId: params.arquivo.id,
@@ -216,5 +220,4 @@ export class ArquivosDownloadService {
       mensagem: params.mensagem,
     });
   }
-
 }

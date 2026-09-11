@@ -30,8 +30,8 @@ import { PaginationDto } from '../../shared/dto/pagination.dto';
 import { ClienteAuthGuard } from '../auth-cliente/guards/cliente-auth.guard';
 
 import { AreaClienteService } from './area-cliente.service';
-import { EnviarPortalMensagemWhatsAppDto } from "./dto/enviar-portal-mensagem-whatsapp.dto";
-import { ArquivosDownloadService } from "../arquivos/arquivos-download.service";
+import { EnviarPortalMensagemWhatsAppDto } from './dto/enviar-portal-mensagem-whatsapp.dto';
+import { ArquivosDownloadService } from '../arquivos/arquivos-download.service';
 import { UpdatePerfilClienteDto } from './dto/update-perfil-cliente.dto';
 import { CreatePortalAgendamentoDto } from './dto/create-portal-agendamento.dto';
 import { ReschedulePortalAgendamentoDto } from './dto/reschedule-portal-agendamento.dto';
@@ -39,6 +39,13 @@ import { ClienteAuthUser } from './types/cliente-auth-user.type';
 
 type ClienteRequest = {
   user: ClienteAuthUser;
+};
+
+type AreaClienteRequest = {
+  user: {
+    empresaId: string;
+    clienteId: string;
+  };
 };
 
 @ApiTags('Ãrea Cliente')
@@ -49,7 +56,8 @@ export class AreaClienteController {
   constructor(
     private readonly areaClienteService: AreaClienteService,
 
-    private readonly arquivosDownloadService: ArquivosDownloadService,) {}
+    private readonly arquivosDownloadService: ArquivosDownloadService,
+  ) {}
 
   private getClienteAutenticado(req: ClienteRequest) {
     return {
@@ -114,11 +122,7 @@ export class AreaClienteController {
   ) {
     const { empresaId, clienteId } = this.getClienteAutenticado(req);
 
-    return this.areaClienteService.updatePerfil(
-      empresaId,
-      clienteId,
-      dto,
-    );
+    return this.areaClienteService.updatePerfil(empresaId, clienteId, dto);
   }
 
   @Get('me/agendamentos')
@@ -177,10 +181,7 @@ export class AreaClienteController {
   proximosAgendamentos(@Req() req: ClienteRequest) {
     const { empresaId, clienteId } = this.getClienteAutenticado(req);
 
-    return this.areaClienteService.proximosAgendamentos(
-      empresaId,
-      clienteId,
-    );
+    return this.areaClienteService.proximosAgendamentos(empresaId, clienteId);
   }
 
   @Get('me/ultimo-agendamento')
@@ -195,10 +196,7 @@ export class AreaClienteController {
   ultimoAgendamento(@Req() req: ClienteRequest) {
     const { empresaId, clienteId } = this.getClienteAutenticado(req);
 
-    return this.areaClienteService.ultimoAgendamento(
-      empresaId,
-      clienteId,
-    );
+    return this.areaClienteService.ultimoAgendamento(empresaId, clienteId);
   }
 
   @Post('me/agendamentos')
@@ -214,11 +212,7 @@ export class AreaClienteController {
   ) {
     const { empresaId, clienteId } = this.getClienteAutenticado(req);
 
-    return this.areaClienteService.criarAgendamento(
-      empresaId,
-      clienteId,
-      dto,
-    );
+    return this.areaClienteService.criarAgendamento(empresaId, clienteId, dto);
   }
 
   @Patch('me/agendamentos/:id/reagendar')
@@ -303,17 +297,10 @@ export class AreaClienteController {
   @ApiOkResponse({
     description: 'HistÃ³rico de pontos retornado com sucesso.',
   })
-  pontos(
-    @Req() req: ClienteRequest,
-    @Query() query: PaginationDto,
-  ) {
+  pontos(@Req() req: ClienteRequest, @Query() query: PaginationDto) {
     const { empresaId, clienteId } = this.getClienteAutenticado(req);
 
-    return this.areaClienteService.pontos(
-      empresaId,
-      clienteId,
-      query,
-    );
+    return this.areaClienteService.pontos(empresaId, clienteId, query);
   }
 
   @Get('me/beneficios')
@@ -338,20 +325,13 @@ export class AreaClienteController {
   ) {
     this.getClienteAutenticado(req);
 
-    return this.arquivosDownloadService.gerarSignedUrl(
-      id,
-      req.user as any,
-    );
+    return this.arquivosDownloadService.gerarSignedUrl(id, req.user);
   }
   @Get('me/documentos')
   async documentos(@Req() req: ClienteRequest) {
-    const { empresaId, clienteId } =
-      this.getClienteAutenticado(req);
+    const { empresaId, clienteId } = this.getClienteAutenticado(req);
 
-    return this.areaClienteService.documentos(
-      empresaId,
-      clienteId,
-    );
+    return this.areaClienteService.documentos(empresaId, clienteId);
   }
 
   @Get('me/pacotes')
@@ -371,7 +351,7 @@ export class AreaClienteController {
   @Patch('me/pacotes/:pacoteId/usar-sessao')
   async usarSessaoPacote(
     @Param('pacoteId') pacoteId: string,
-    @Req() req: any,
+    @Req() req: AreaClienteRequest,
   ) {
     return this.areaClienteService.usarSessaoPacote(
       req.user.empresaId,
@@ -433,24 +413,16 @@ export class AreaClienteController {
   @ApiOkResponse({
     description: 'NotificaÃ§Ãµes retornadas com sucesso.',
   })
-  notificacoes(
-    @Req() req: ClienteRequest,
-    @Query() query: PaginationDto,
-  ) {
+  notificacoes(@Req() req: ClienteRequest, @Query() query: PaginationDto) {
     const { empresaId, clienteId } = this.getClienteAutenticado(req);
 
-    return this.areaClienteService.notificacoes(
-      empresaId,
-      clienteId,
-      query,
-    );
+    return this.areaClienteService.notificacoes(empresaId, clienteId, query);
   }
 
   @Get('me/notificacoes/nao-lidas')
   @ApiOperation({
     summary: 'Listar minhas notificaÃ§Ãµes nÃ£o lidas',
-    description:
-      'Retorna as notificaÃ§Ãµes nÃ£o lidas do cliente autenticado.',
+    description: 'Retorna as notificaÃ§Ãµes nÃ£o lidas do cliente autenticado.',
   })
   @ApiOkResponse({
     description: 'NotificaÃ§Ãµes nÃ£o lidas retornadas com sucesso.',
@@ -458,10 +430,7 @@ export class AreaClienteController {
   notificacoesNaoLidas(@Req() req: ClienteRequest) {
     const { empresaId, clienteId } = this.getClienteAutenticado(req);
 
-    return this.areaClienteService.notificacoesNaoLidas(
-      empresaId,
-      clienteId,
-    );
+    return this.areaClienteService.notificacoesNaoLidas(empresaId, clienteId);
   }
 
   @Patch('me/notificacoes/:id/lida')
@@ -483,8 +452,7 @@ export class AreaClienteController {
     description: 'ID invÃ¡lido. O parÃ¢metro deve ser UUID.',
   })
   @ApiNotFoundResponse({
-    description:
-      'NotificaÃ§Ã£o nÃ£o encontrada para o cliente autenticado.',
+    description: 'NotificaÃ§Ã£o nÃ£o encontrada para o cliente autenticado.',
   })
   marcarNotificacaoComoLida(
     @Req() req: ClienteRequest,
@@ -499,14 +467,12 @@ export class AreaClienteController {
     );
   }
 
-
   @Post('me/mensagens-whatsapp/enviar')
   async enviarMensagemWhatsapp(
     @Req() req: ClienteRequest,
     @Body() dto: EnviarPortalMensagemWhatsAppDto,
   ) {
-    const { empresaId, clienteId } =
-      this.getClienteAutenticado(req);
+    const { empresaId, clienteId } = this.getClienteAutenticado(req);
 
     return this.areaClienteService.enviarMensagemWhatsappPortal(
       empresaId,
@@ -534,10 +500,7 @@ export class AreaClienteController {
   @ApiOkResponse({
     description: 'Mensagens de WhatsApp retornadas com sucesso.',
   })
-  mensagensWhatsapp(
-    @Req() req: ClienteRequest,
-    @Query() query: PaginationDto,
-  ) {
+  mensagensWhatsapp(@Req() req: ClienteRequest, @Query() query: PaginationDto) {
     const { empresaId, clienteId } = this.getClienteAutenticado(req);
 
     return this.areaClienteService.mensagensWhatsapp(

@@ -36,31 +36,24 @@ export class AgendamentosService {
     private readonly tenantValidator: TenantValidatorService,
   ) {}
 
-  async create(
-    createAgendamentoDto: CreateAgendamentoDto,
-    empresaId: string,
-  ) {
+  async create(createAgendamentoDto: CreateAgendamentoDto, empresaId: string) {
     const startedAt = Date.now();
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    await this.validarRelacionamentosDoAgendamento(
-      empresaId,
-      {
-        clienteId: createAgendamentoDto.clienteId,
-        profissionalId: createAgendamentoDto.profissionalId,
-        servicoId: createAgendamentoDto.servicoId,
-        unidadeId: createAgendamentoDto.unidadeId,
-      },
-    );
+    await this.validarRelacionamentosDoAgendamento(empresaId, {
+      clienteId: createAgendamentoDto.clienteId,
+      profissionalId: createAgendamentoDto.profissionalId,
+      servicoId: createAgendamentoDto.servicoId,
+      unidadeId: createAgendamentoDto.unidadeId,
+    });
 
     const agendamento = await this.prisma.$transaction(async (tx) => {
       await this.lockAgenda(tx, empresaId, [
         createAgendamentoDto.profissionalId,
       ]);
 
-      const status =
-        createAgendamentoDto.status ?? StatusAgendamento.PENDENTE;
+      const status = createAgendamentoDto.status ?? StatusAgendamento.PENDENTE;
 
       if (this.ocupaAgenda(status)) {
         await this.assertNoScheduleConflict(tx, {
@@ -130,14 +123,10 @@ export class AgendamentosService {
     return agendamento;
   }
 
-  async findAll(
-    empresaId: string,
-    query: ListAgendamentosQueryDto,
-  ) {
+  async findAll(empresaId: string, query: ListAgendamentosQueryDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const { page, limit, skip, take } =
-      getPaginationParams(query);
+    const { page, limit, skip, take } = getPaginationParams(query);
 
     const orderDirection = query.orderDirection ?? 'asc';
     const orderBy: Prisma.AgendamentoOrderByWithRelationInput = (() => {
@@ -160,9 +149,7 @@ export class AgendamentosService {
       ? new Date(query.dataInicio)
       : undefined;
 
-    const dataFim = query.dataFim
-      ? new Date(query.dataFim)
-      : undefined;
+    const dataFim = query.dataFim ? new Date(query.dataFim) : undefined;
 
     const status = query.status;
     const clienteId = query.clienteId;
@@ -170,15 +157,12 @@ export class AgendamentosService {
     const servicoId = query.servicoId;
     const unidadeId = query.unidadeId;
 
-    await this.validarFiltrosRelacionados(
-      empresaId,
-      {
-        clienteId,
-        profissionalId,
-        servicoId,
-        unidadeId,
-      },
-    );
+    await this.validarFiltrosRelacionados(empresaId, {
+      clienteId,
+      profissionalId,
+      servicoId,
+      unidadeId,
+    });
 
     const where: Prisma.AgendamentoWhereInput = {
       empresaId,
@@ -276,18 +260,10 @@ export class AgendamentosService {
       }),
     ]);
 
-    return buildPaginatedResponse(
-      data,
-      total,
-      page,
-      limit,
-    );
+    return buildPaginatedResponse(data, total, page, limit);
   }
 
-  async listarProfissionaisDisponiveis(
-    empresaId: string,
-    search?: string,
-  ) {
+  async listarProfissionaisDisponiveis(empresaId: string, search?: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const normalizedSearch = search?.trim().slice(0, 100);
@@ -317,10 +293,7 @@ export class AgendamentosService {
     });
   }
 
-  async listarUnidadesDisponiveis(
-    empresaId: string,
-    search?: string,
-  ) {
+  async listarUnidadesDisponiveis(empresaId: string, search?: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const normalizedSearch = search?.trim().slice(0, 100);
@@ -348,58 +321,49 @@ export class AgendamentosService {
       take: 50,
     });
   }
-  async findOne(
-    id: string,
-    empresaId: string,
-  ) {
-    await this.tenantValidator.validarAgendamento(
-      empresaId,
-      id,
-    );
+  async findOne(id: string, empresaId: string) {
+    await this.tenantValidator.validarAgendamento(empresaId, id);
 
-    const agendamento =
-      await this.prisma.agendamento.findFirst({
-        where: {
-          id,
-          empresaId,
-        },
-        include: {
-          cliente: {
-            select: {
-              id: true,
-              nome: true,
-              telefone: true,
-              email: true,
-            },
-          },
-          profissional: {
-            select: {
-              id: true,
-              nome: true,
-              email: true,
-            },
-          },
-          servico: {
-            select: {
-              id: true,
-              nome: true,
-              preco: true,
-              duracaoMinutos: true,
-            },
-          },
-          unidade: {
-            select: {
-              id: true,
-              nome: true,
-            },
+    const agendamento = await this.prisma.agendamento.findFirst({
+      where: {
+        id,
+        empresaId,
+      },
+      include: {
+        cliente: {
+          select: {
+            id: true,
+            nome: true,
+            telefone: true,
+            email: true,
           },
         },
-      });
+        profissional: {
+          select: {
+            id: true,
+            nome: true,
+            email: true,
+          },
+        },
+        servico: {
+          select: {
+            id: true,
+            nome: true,
+            preco: true,
+            duracaoMinutos: true,
+          },
+        },
+        unidade: {
+          select: {
+            id: true,
+            nome: true,
+          },
+        },
+      },
+    });
 
     if (!agendamento) {
-      throw new NotFoundException(
-        'Agendamento não encontrado',
-      );
+      throw new NotFoundException('Agendamento não encontrado');
     }
 
     return agendamento;
@@ -412,20 +376,14 @@ export class AgendamentosService {
   ) {
     const startedAt = Date.now();
 
-    await this.tenantValidator.validarAgendamento(
-      empresaId,
-      id,
-    );
+    await this.tenantValidator.validarAgendamento(empresaId, id);
 
-    await this.validarRelacionamentosDoAgendamento(
-      empresaId,
-      {
-        clienteId: updateAgendamentoDto.clienteId,
-        profissionalId: updateAgendamentoDto.profissionalId,
-        servicoId: updateAgendamentoDto.servicoId,
-        unidadeId: updateAgendamentoDto.unidadeId,
-      },
-    );
+    await this.validarRelacionamentosDoAgendamento(empresaId, {
+      clienteId: updateAgendamentoDto.clienteId,
+      profissionalId: updateAgendamentoDto.profissionalId,
+      servicoId: updateAgendamentoDto.servicoId,
+      unidadeId: updateAgendamentoDto.unidadeId,
+    });
 
     const agendamentoResult = await this.prisma.$transaction(async (tx) => {
       const atual = await tx.agendamento.findFirst({
@@ -493,28 +451,22 @@ export class AgendamentosService {
 
     if (
       updateAgendamentoDto.status &&
-      updateAgendamentoDto.status !==
-        agendamentoAtual.status
+      updateAgendamentoDto.status !== agendamentoAtual.status
     ) {
-      const evento = this.mapearEventoPorStatus(
-        updateAgendamentoDto.status,
-      );
+      const evento = this.mapearEventoPorStatus(updateAgendamentoDto.status);
 
       if (evento) {
         await this.automacoesService.processarEvento({
           empresaId,
           tipo: evento,
           modulo: 'AGENDAMENTOS',
-          titulo: this.gerarTituloPorStatus(
-            updateAgendamentoDto.status,
-          ),
+          titulo: this.gerarTituloPorStatus(updateAgendamentoDto.status),
           mensagem: `O agendamento foi atualizado para o status ${updateAgendamentoDto.status}.`,
           referenciaId: agendamentoAtualizado.id,
           dados: {
             agendamentoId: agendamentoAtualizado.id,
             clienteId: agendamentoAtualizado.clienteId,
-            profissionalId:
-              agendamentoAtualizado.profissionalId,
+            profissionalId: agendamentoAtualizado.profissionalId,
             servicoId: agendamentoAtualizado.servicoId,
             unidadeId: agendamentoAtualizado.unidadeId,
             statusAnterior: agendamentoAtual.status,
@@ -618,19 +570,12 @@ export class AgendamentosService {
     return agendamentoAtualizado;
   }
 
-  async cancelar(
-    id: string,
-    empresaId: string,
-  ) {
+  async cancelar(id: string, empresaId: string) {
     const startedAt = Date.now();
 
-    await this.tenantValidator.validarAgendamento(
-      empresaId,
-      id,
-    );
+    await this.tenantValidator.validarAgendamento(empresaId, id);
 
-    const agendamentoAtual =
-      await this.findOne(id, empresaId);
+    const agendamentoAtual = await this.findOne(id, empresaId);
 
     const dadosAntes = {
       status: agendamentoAtual.status,
@@ -642,25 +587,21 @@ export class AgendamentosService {
       dataHoraFim: agendamentoAtual.dataHoraFim,
     };
 
-    const result =
-      await this.prisma.agendamento.updateMany({
-        where: {
-          id,
-          empresaId,
-        },
-        data: {
-          status: StatusAgendamento.CANCELADO,
-        },
-      });
+    const result = await this.prisma.agendamento.updateMany({
+      where: {
+        id,
+        empresaId,
+      },
+      data: {
+        status: StatusAgendamento.CANCELADO,
+      },
+    });
 
     if (result.count === 0) {
-      throw new NotFoundException(
-        'Agendamento não encontrado',
-      );
+      throw new NotFoundException('Agendamento não encontrado');
     }
 
-    const agendamentoCancelado =
-      await this.findOne(id, empresaId);
+    const agendamentoCancelado = await this.findOne(id, empresaId);
 
     if (agendamentoAtual.status !== StatusAgendamento.CANCELADO) {
       await this.automacoesService.processarEvento({
@@ -673,8 +614,7 @@ export class AgendamentosService {
         dados: {
           agendamentoId: agendamentoCancelado.id,
           clienteId: agendamentoCancelado.clienteId,
-          profissionalId:
-            agendamentoCancelado.profissionalId,
+          profissionalId: agendamentoCancelado.profissionalId,
           servicoId: agendamentoCancelado.servicoId,
           unidadeId: agendamentoCancelado.unidadeId,
           statusAnterior: agendamentoAtual.status,
@@ -802,10 +742,7 @@ export class AgendamentosService {
 
     if (dados.clienteId) {
       validacoes.push(
-        this.tenantValidator.validarCliente(
-          empresaId,
-          dados.clienteId,
-        ),
+        this.tenantValidator.validarCliente(empresaId, dados.clienteId),
       );
     }
 
@@ -820,19 +757,13 @@ export class AgendamentosService {
 
     if (dados.servicoId) {
       validacoes.push(
-        this.tenantValidator.validarServico(
-          empresaId,
-          dados.servicoId,
-        ),
+        this.tenantValidator.validarServico(empresaId, dados.servicoId),
       );
     }
 
     if (dados.unidadeId) {
       validacoes.push(
-        this.tenantValidator.validarUnidade(
-          empresaId,
-          dados.unidadeId,
-        ),
+        this.tenantValidator.validarUnidade(empresaId, dados.unidadeId),
       );
     }
 
@@ -848,15 +779,10 @@ export class AgendamentosService {
       unidadeId?: string;
     },
   ) {
-    await this.validarRelacionamentosDoAgendamento(
-      empresaId,
-      filtros,
-    );
+    await this.validarRelacionamentosDoAgendamento(empresaId, filtros);
   }
 
-  private mapearEventoPorStatus(
-    status: string,
-  ): TipoEventoSistema | null {
+  private mapearEventoPorStatus(status: string): TipoEventoSistema | null {
     if (status === StatusAgendamento.CONFIRMADO) {
       return TipoEventoSistema.AGENDAMENTO_CONFIRMADO;
     }

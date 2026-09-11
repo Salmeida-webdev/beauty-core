@@ -60,13 +60,13 @@
   it('deve exportar e instanciar TenantValidatorService', () => {
     expect(ServiceClass).toBeDefined();
 
-    const service = new (ServiceClass as any)(createPrismaMock());
+    const service = new ServiceClass(createPrismaMock());
 
     expect(service).toBeDefined();
   });
 
   it('deve expor métodos públicos de validação tenant', () => {
-    const service = new (ServiceClass as any)(createPrismaMock());
+    const service = new ServiceClass(createPrismaMock());
 
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(service))
       .filter((name) => name !== 'constructor')
@@ -100,7 +100,7 @@
     prisma.empresa.findUnique.mockResolvedValue(empresa);
     prisma.empresa.findFirst.mockResolvedValue(empresa);
 
-    const service = new (ServiceClass as any)(prisma);
+    const service = new ServiceClass(prisma);
 
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(service))
       .filter((name) => name !== 'constructor')
@@ -146,7 +146,7 @@
       if (delegate.findMany) delegate.findMany.mockResolvedValue([registro]);
     }
 
-    const service = new (ServiceClass as any)(prisma);
+    const service = new ServiceClass(prisma);
 
     const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(service))
       .filter((name) => name !== 'constructor')

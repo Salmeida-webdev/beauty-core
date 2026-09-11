@@ -1,7 +1,4 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { TipoEventoSistema } from '../eventos/tipo-evento-sistema.enum';
 
@@ -53,8 +50,7 @@ export class ProcessarEventoDto {
 
   @ApiPropertyOptional({
     example: 'Evento de automação',
-    description:
-      'Título opcional do evento para identificação administrativa.',
+    description: 'Título opcional do evento para identificação administrativa.',
     maxLength: 150,
   })
   @IsOptional()
@@ -83,8 +79,7 @@ export class ProcessarEventoDto {
   @ApiPropertyOptional({
     format: 'uuid',
     example: '550e8400-e29b-41d4-a716-446655440000',
-    description:
-      'ID opcional do usuário administrativo relacionado ao evento.',
+    description: 'ID opcional do usuário administrativo relacionado ao evento.',
   })
   @IsOptional()
   @IsUUID('4', {

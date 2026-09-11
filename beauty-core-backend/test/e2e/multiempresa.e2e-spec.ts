@@ -1,7 +1,11 @@
 ﻿import * as bcrypt from 'bcrypt';
 import request = require('supertest');
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 import { bearer, loginAdmin } from '../helpers/auth.helper';
 import { TEST_PASSWORD } from '../seeds/test-seed';
 
@@ -25,8 +29,8 @@ describe('Multiempresa E2E', () => {
         email: 'admin.b.test@beautycore.com',
         senha: senhaHash,
         role: 'ADMIN',
-        ativo: true
-      }
+        ativo: true,
+      },
     });
 
     const clienteB = await (ctx.prisma as any).cliente.create({
@@ -37,12 +41,13 @@ describe('Multiempresa E2E', () => {
         email: 'cliente.b.test@beautycore.com',
         ativo: true,
         ativoPortal: true,
-        aceitouTermos: true
-      }
+        aceitouTermos: true,
+      },
     });
 
     clienteEmpresaBId = clienteB.id;
-    tokenEmpresaB = (await loginAdmin(ctx.app, adminB.email, TEST_PASSWORD)).access_token;
+    tokenEmpresaB = (await loginAdmin(ctx.app, adminB.email, TEST_PASSWORD))
+      .access_token;
   });
 
   afterAll(async () => {
@@ -65,9 +70,10 @@ describe('Multiempresa E2E', () => {
       .expect(200);
   });
 
-  it.each(['/agendamentos', '/arquivos', '/clientes-pacotes', '/notificacoes'])('%s exige autenticação', async (route) => {
-    await request(ctx.app.getHttpServer()).get(route).expect(401);
-  });
+  it.each(['/agendamentos', '/arquivos', '/clientes-pacotes', '/notificacoes'])(
+    '%s exige autenticação',
+    async (route) => {
+      await request(ctx.app.getHttpServer()).get(route).expect(401);
+    },
+  );
 });
-
-

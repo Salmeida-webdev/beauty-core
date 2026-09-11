@@ -26,6 +26,25 @@ type BackupScriptResult = {
   error?: string;
 };
 
+type BackupDeleteManyResult = {
+  count: number;
+};
+
+type BackupSessionDelegate = {
+  deleteMany: (args: {
+    where: { OR: Array<Record<string, unknown>> };
+  }) => Promise<BackupDeleteManyResult>;
+};
+
+type BackupAuditDelegate = {
+  create: (args: { data: Record<string, unknown> }) => Promise<unknown>;
+};
+
+type BackupPrismaClient = {
+  sessao?: BackupSessionDelegate;
+  auditoriaSistema?: BackupAuditDelegate;
+};
+
 @Injectable()
 export class BackupService {
   private readonly projectRoot = process.cwd();
@@ -125,7 +144,7 @@ export class BackupService {
   private async limparSessoesAntigas() {
     const cutoff = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
     let deletedCount = 0;
-    const delegate = (this.prisma as any).sessao;
+    const delegate = (this.prisma as unknown as BackupPrismaClient).sessao;
 
     if (delegate?.deleteMany) {
       const result = await delegate.deleteMany({
@@ -351,7 +370,8 @@ export class BackupService {
     dadosDepois: Record<string, unknown>,
   ) {
     try {
-      const delegate = (this.prisma as any).auditoriaSistema;
+      const delegate = (this.prisma as unknown as BackupPrismaClient)
+        .auditoriaSistema;
 
       if (!delegate?.create) {
         return;

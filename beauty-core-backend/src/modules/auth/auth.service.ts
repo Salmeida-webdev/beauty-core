@@ -1,13 +1,14 @@
-﻿import {
+import {
   Injectable,
   Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, type JwtSignOptions } from '@nestjs/jwt';
 import {
   AcaoAuditoria,
+  Role,
   StatusAuditoria,
   TipoUsuarioAuditoria,
 } from '@prisma/client';
@@ -36,6 +37,20 @@ type AuthRequestContext = {
   metodoHttp?: string;
 };
 
+type AdminTokenPayload = {
+  sub?: string;
+  sid?: string;
+  tipo?: string;
+};
+
+type AdminAuthenticatedUser = {
+  id?: string;
+  sub?: string;
+  empresaId?: string | null;
+  role?: string;
+  sessaoId?: string;
+  sid?: string;
+};
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -76,13 +91,15 @@ export class AuthService {
     });
   }
 
-
-  private async gerarAccessTokenAdmin(usuario: {
-    id: string;
-    email: string;
-    role: any;
-    empresaId: string | null;
-  }, sessaoId: string) {
+  private async gerarAccessTokenAdmin(
+    usuario: {
+      id: string;
+      email: string;
+      role: Role;
+      empresaId: string | null;
+    },
+    sessaoId: string,
+  ) {
     const expiresIn = this.configService.get<string>('JWT_EXPIRES_IN') || '8h';
 
     const payload = {
@@ -94,10 +111,12 @@ export class AuthService {
       tipo: 'ADMIN',
     };
 
-    const accessToken = await this.jwtService.signAsync(payload, {
-      secret: this.configService.getOrThrow<string>('JWT_SECRET'),
-      expiresIn: expiresIn as any,
-    });
+    const accessToken = String(
+      await this.jwtService.signAsync(payload, {
+        secret: this.configService.getOrThrow<string>('JWT_SECRET'),
+        expiresIn: expiresIn as unknown as JwtSignOptions['expiresIn'],
+      }),
+    );
 
     return {
       accessToken,
@@ -105,10 +124,13 @@ export class AuthService {
     };
   }
 
-  private async gerarRefreshTokenAdmin(usuario: {
-    id: string;
-    empresaId: string | null;
-  }, sessaoId: string) {
+  private async gerarRefreshTokenAdmin(
+    usuario: {
+      id: string;
+      empresaId: string | null;
+    },
+    sessaoId: string,
+  ) {
     const expiresIn =
       this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') || '30d';
 
@@ -121,7 +143,7 @@ export class AuthService {
 
     return this.jwtService.signAsync(payload, {
       secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
-      expiresIn: expiresIn as any,
+      expiresIn: expiresIn as unknown as JwtSignOptions['expiresIn'],
     });
   }
 
@@ -168,7 +190,7 @@ export class AuthService {
       await this.auditoriaService.registrarLoginAdmin({
         empresaId: usuario.empresaId,
         usuarioId: usuario.id,
-        tipoUsuario: usuario.role as TipoUsuarioAuditoria,
+        tipoUsuario: usuario.role,
         modulo: 'AUTH',
         rota: context?.rota,
         metodoHttp: context?.metodoHttp,
@@ -197,7 +219,7 @@ export class AuthService {
       await this.auditoriaService.registrarLoginAdmin({
         empresaId: usuario.empresaId,
         usuarioId: usuario.id,
-        tipoUsuario: usuario.role as TipoUsuarioAuditoria,
+        tipoUsuario: usuario.role,
         modulo: 'AUTH',
         rota: context?.rota,
         metodoHttp: context?.metodoHttp,
@@ -257,7 +279,7 @@ export class AuthService {
     await this.auditoriaService.registrarLoginAdmin({
       empresaId: usuario.empresaId,
       usuarioId: usuario.id,
-      tipoUsuario: usuario.role as TipoUsuarioAuditoria,
+      tipoUsuario: usuario.role,
       modulo: 'AUTH',
       rota: context?.rota,
       metodoHttp: context?.metodoHttp,
@@ -277,6 +299,7 @@ export class AuthService {
     });
 
     const { senha, ...usuarioSemSenha } = usuario;
+    void senha;
 
     return {
       access_token: access.accessToken,
@@ -290,12 +313,15 @@ export class AuthService {
   }
 
   async refresh(dto: RefreshTokenDto) {
-    let payload: any;
+    let payload: AdminTokenPayload;
 
     try {
-      payload = await this.jwtService.verifyAsync(dto.refreshToken, {
-        secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
-      });
+      payload = await this.jwtService.verifyAsync<AdminTokenPayload>(
+        dto.refreshToken,
+        {
+          secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
+        },
+      );
     } catch {
       throw new UnauthorizedException('Refresh token inválido.');
     }
@@ -393,7 +419,7 @@ export class AuthService {
     };
   }
 
-  async logout(usuarioLogado: any, dto: LogoutDto) {
+  async logout(usuarioLogado: AdminAuthenticatedUser, dto: LogoutDto) {
     const sessaoId = usuarioLogado?.sessaoId || usuarioLogado?.sid;
     const usuarioId = usuarioLogado?.id || usuarioLogado?.sub;
 
@@ -443,14 +469,15 @@ export class AuthService {
     };
   }
 
-  async logoutAll(usuarioLogado: any) {
+  async logoutAll(usuarioLogado: AdminAuthenticatedUser) {
     const usuarioId = usuarioLogado?.id || usuarioLogado?.sub;
 
     if (!usuarioId) {
       throw new UnauthorizedException('Usuário não identificado.');
     }
 
-    const result = await this.sessoesService.revogarTodasSessoesAdmin(usuarioId);
+    const result =
+      await this.sessoesService.revogarTodasSessoesAdmin(usuarioId);
 
     await this.registrarAuditoriaSessaoAdmin({
       empresaId: usuarioLogado?.empresaId,
@@ -470,7 +497,7 @@ export class AuthService {
     };
   }
 
-  async listarSessoes(usuarioLogado: any) {
+  async listarSessoes(usuarioLogado: AdminAuthenticatedUser) {
     const usuarioId = usuarioLogado?.id || usuarioLogado?.sub;
 
     if (!usuarioId) {
@@ -480,7 +507,10 @@ export class AuthService {
     return this.sessoesService.listarSessoesAdmin(usuarioId);
   }
 
-  async revogarSessaoEspecifica(usuarioLogado: any, sessaoId: string) {
+  async revogarSessaoEspecifica(
+    usuarioLogado: AdminAuthenticatedUser,
+    sessaoId: string,
+  ) {
     const usuarioId = usuarioLogado?.id || usuarioLogado?.sub;
 
     if (!usuarioId) {

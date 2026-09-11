@@ -29,11 +29,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 
   controllers: [AuthController],
 
-  providers: [
-    AuthService,
-    JwtStrategy,
-    RolesGuard,
-  ],
+  providers: [AuthService, JwtStrategy, RolesGuard],
 
   exports: [AuthService],
 })

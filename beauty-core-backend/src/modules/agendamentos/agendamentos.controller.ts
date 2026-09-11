@@ -36,14 +36,28 @@ import { AgendamentosService } from './agendamentos.service';
 import { CreateAgendamentoDto } from './dto/create-agendamento.dto';
 import { UpdateAgendamentoDto } from './dto/update-agendamento.dto';
 
+type Group14AuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    empresa_id: string;
+    sub: string;
+    id: string;
+    usuarioId: string;
+    clienteId: string;
+    role: string;
+    tipoUsuario: string;
+    email: string;
+    nome: string;
+    [key: string]: string | undefined;
+  };
+};
+
 @ApiTags('Agendamentos')
 @ApiBearerAuth('JWT')
 @Controller('agendamentos')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class AgendamentosController {
-  constructor(
-    private readonly agendamentosService: AgendamentosService,
-  ) {}
+  constructor(private readonly agendamentosService: AgendamentosService) {}
 
   @Post()
   @Roles('ADMIN', 'GERENTE', 'RECEPCAO', 'PROFISSIONAL')
@@ -88,7 +102,7 @@ export class AgendamentosController {
   })
   create(
     @Body() createAgendamentoDto: CreateAgendamentoDto,
-    @Request() req: any,
+    @Request() req: Group14AuthenticatedRequest,
   ) {
     return this.agendamentosService.create(
       createAgendamentoDto,
@@ -150,13 +164,10 @@ export class AgendamentosController {
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
   findAll(
-    @Request() req: any,
+    @Request() req: Group14AuthenticatedRequest,
     @Query() query: ListAgendamentosQueryDto,
   ) {
-    return this.agendamentosService.findAll(
-      getEmpresaId(req),
-      query,
-    );
+    return this.agendamentosService.findAll(getEmpresaId(req), query);
   }
 
   @Get('opcoes/profissionais')
@@ -169,7 +180,7 @@ export class AgendamentosController {
       'Retorna somente id e nome de profissionais ativos da empresa autenticada.',
   })
   listarProfissionaisDisponiveis(
-    @Request() req: any,
+    @Request() req: Group14AuthenticatedRequest,
     @Query('search') search?: string,
   ) {
     return this.agendamentosService.listarProfissionaisDisponiveis(
@@ -188,7 +199,7 @@ export class AgendamentosController {
       'Retorna somente id e nome de unidades ativas da empresa autenticada.',
   })
   listarUnidadesDisponiveis(
-    @Request() req: any,
+    @Request() req: Group14AuthenticatedRequest,
     @Query('search') search?: string,
   ) {
     return this.agendamentosService.listarUnidadesDisponiveis(
@@ -243,12 +254,9 @@ export class AgendamentosController {
   })
   findOne(
     @Param('id', ParseUUIDPipe) id: string,
-    @Request() req: any,
+    @Request() req: Group14AuthenticatedRequest,
   ) {
-    return this.agendamentosService.findOne(
-      id,
-      getEmpresaId(req),
-    );
+    return this.agendamentosService.findOne(id, getEmpresaId(req));
   }
 
   @Patch(':id')
@@ -304,7 +312,7 @@ export class AgendamentosController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAgendamentoDto: UpdateAgendamentoDto,
-    @Request() req: any,
+    @Request() req: Group14AuthenticatedRequest,
   ) {
     return this.agendamentosService.update(
       id,
@@ -351,11 +359,8 @@ export class AgendamentosController {
   })
   cancelar(
     @Param('id', ParseUUIDPipe) id: string,
-    @Request() req: any,
+    @Request() req: Group14AuthenticatedRequest,
   ) {
-    return this.agendamentosService.cancelar(
-      id,
-      getEmpresaId(req),
-    );
+    return this.agendamentosService.cancelar(id, getEmpresaId(req));
   }
 }

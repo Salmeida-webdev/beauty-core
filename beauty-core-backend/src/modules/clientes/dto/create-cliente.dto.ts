@@ -1,7 +1,4 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import {
   IsDateString,
@@ -54,9 +51,12 @@ export class CreateClienteDto {
     maxLength: 150,
   })
   @IsOptional()
-  @IsEmail({}, {
-    message: 'O e-mail informado é inválido.',
-  })
+  @IsEmail(
+    {},
+    {
+      message: 'O e-mail informado é inválido.',
+    },
+  )
   @MaxLength(150, {
     message: 'O e-mail deve ter no máximo 150 caracteres.',
   })
@@ -83,9 +83,12 @@ export class CreateClienteDto {
       'Data de nascimento do cliente em formato ISO. Usada para aniversários, campanhas, fidelidade e automações.',
   })
   @IsOptional()
-  @IsDateString({}, {
-    message: 'A data de nascimento deve estar em formato de data válido.',
-  })
+  @IsDateString(
+    {},
+    {
+      message: 'A data de nascimento deve estar em formato de data válido.',
+    },
+  )
   dataNascimento?: string;
 
   @ApiPropertyOptional({

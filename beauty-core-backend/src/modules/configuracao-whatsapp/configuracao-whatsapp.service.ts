@@ -14,20 +14,16 @@ export class ConfiguracaoWhatsappService {
     private readonly tenantValidator: TenantValidatorService,
   ) {}
 
-  async createOrUpdate(
-    empresaId: string,
-    dto: CreateConfiguracaoWhatsAppDto,
-  ) {
+  async createOrUpdate(empresaId: string, dto: CreateConfiguracaoWhatsAppDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const dados = this.sanitizarDto(dto);
 
-    const existente =
-      await this.prisma.configuracaoWhatsApp.findUnique({
-        where: {
-          empresaId,
-        },
-      });
+    const existente = await this.prisma.configuracaoWhatsApp.findUnique({
+      where: {
+        empresaId,
+      },
+    });
 
     if (existente) {
       return this.prisma.configuracaoWhatsApp.update({
@@ -56,26 +52,20 @@ export class ConfiguracaoWhatsappService {
   async findOne(empresaId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const configuracao =
-      await this.prisma.configuracaoWhatsApp.findUnique({
-        where: {
-          empresaId,
-        },
-      });
+    const configuracao = await this.prisma.configuracaoWhatsApp.findUnique({
+      where: {
+        empresaId,
+      },
+    });
 
     if (!configuracao) {
-      throw new NotFoundException(
-        'Configuração WhatsApp não encontrada.',
-      );
+      throw new NotFoundException('Configuração WhatsApp não encontrada.');
     }
 
     return configuracao;
   }
 
-  async update(
-    empresaId: string,
-    dto: UpdateConfiguracaoWhatsAppDto,
-  ) {
+  async update(empresaId: string, dto: UpdateConfiguracaoWhatsAppDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     await this.findOne(empresaId);
@@ -98,9 +88,7 @@ export class ConfiguracaoWhatsappService {
     const configuracao = await this.findOne(empresaId);
 
     if (!configuracao.numeroWhatsApp) {
-      throw new NotFoundException(
-        'Número de WhatsApp não configurado.',
-      );
+      throw new NotFoundException('Número de WhatsApp não configurado.');
     }
 
     const numeroLimpo = configuracao.numeroWhatsApp.replace(/\D/g, '');

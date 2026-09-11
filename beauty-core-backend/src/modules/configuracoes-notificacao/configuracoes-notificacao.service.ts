@@ -13,18 +13,14 @@ export class ConfiguracoesNotificacaoService {
     private readonly tenantValidator: TenantValidatorService,
   ) {}
 
-  async create(
-    empresaId: string,
-    dto: CreateConfiguracaoNotificacaoDto,
-  ) {
+  async create(empresaId: string, dto: CreateConfiguracaoNotificacaoDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const existente =
-      await this.prisma.configuracaoNotificacao.findUnique({
-        where: {
-          empresaId,
-        },
-      });
+    const existente = await this.prisma.configuracaoNotificacao.findUnique({
+      where: {
+        empresaId,
+      },
+    });
 
     if (existente) {
       throw new ConflictException(
@@ -45,29 +41,24 @@ export class ConfiguracoesNotificacaoService {
   async findOne(empresaId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    let configuracao =
-      await this.prisma.configuracaoNotificacao.findUnique({
-        where: {
+    let configuracao = await this.prisma.configuracaoNotificacao.findUnique({
+      where: {
+        empresaId,
+      },
+    });
+
+    if (!configuracao) {
+      configuracao = await this.prisma.configuracaoNotificacao.create({
+        data: {
           empresaId,
         },
       });
-
-    if (!configuracao) {
-      configuracao =
-        await this.prisma.configuracaoNotificacao.create({
-          data: {
-            empresaId,
-          },
-        });
     }
 
     return configuracao;
   }
 
-  async update(
-    empresaId: string,
-    dto: UpdateConfiguracaoNotificacaoDto,
-  ) {
+  async update(empresaId: string, dto: UpdateConfiguracaoNotificacaoDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     await this.findOne(empresaId);

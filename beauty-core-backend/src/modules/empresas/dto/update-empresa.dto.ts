@@ -22,7 +22,9 @@ export class UpdateEmpresaDto {
   @IsString()
   @MinLength(2)
   @MaxLength(120)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   nome?: string;
 
   @ApiPropertyOptional({
@@ -38,7 +40,7 @@ export class UpdateEmpresaDto {
     message:
       'O slug deve conter apenas letras minúsculas, números e hífens, sem espaços.',
   })
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toLowerCase() : value,
   )
   slug?: string;
@@ -50,7 +52,9 @@ export class UpdateEmpresaDto {
   @IsOptional()
   @IsString()
   @Length(8, 20)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   telefone?: string;
 
   @ApiPropertyOptional({
@@ -60,7 +64,7 @@ export class UpdateEmpresaDto {
   @IsOptional()
   @IsEmail()
   @MaxLength(120)
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toLowerCase() : value,
   )
   email?: string;
@@ -72,7 +76,9 @@ export class UpdateEmpresaDto {
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   logo?: string;
 
   @ApiPropertyOptional({
@@ -91,12 +97,15 @@ export class UpdateEmpresaDto {
   @IsString()
   @MaxLength(180)
   @Matches(/^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-    message:
-      'O domínio deve ser válido e informado sem http:// ou https://.',
+    message: 'O domínio deve ser válido e informado sem http:// ou https://.',
   })
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string'
-      ? value.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/$/, '')
+      ? value
+          .trim()
+          .toLowerCase()
+          .replace(/^https?:\/\//, '')
+          .replace(/\/$/, '')
       : value,
   )
   dominio?: string;

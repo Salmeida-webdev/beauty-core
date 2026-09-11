@@ -1,15 +1,8 @@
 import { CanalWhatsApp } from '@prisma/client';
 
-import {
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import {
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class CreateConfiguracaoWhatsAppDto {
   @ApiPropertyOptional({

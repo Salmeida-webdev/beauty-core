@@ -28,7 +28,7 @@ function normalizeLogin(body: any): LoginResponse {
     access_token: accessToken,
     refresh_token: refreshToken,
     expires_in: body.expires_in ?? body.expiresIn,
-    raw: body
+    raw: body,
   };
 }
 
@@ -36,7 +36,7 @@ export async function loginAdmin(
   app: INestApplication,
   email = TEST_EMAILS.admin,
   senha = TEST_PASSWORD,
-  options?: { forceNew?: boolean }
+  options?: { forceNew?: boolean },
 ): Promise<LoginResponse> {
   const cacheKey = email;
 
@@ -58,7 +58,9 @@ export async function loginAdmin(
       return cached;
     }
 
-    throw new Error('Rate limit em /auth/login sem token em cache para ' + email);
+    throw new Error(
+      'Rate limit em /auth/login sem token em cache para ' + email,
+    );
   }
 
   const login = normalizeLogin(response.body);
@@ -67,7 +69,10 @@ export async function loginAdmin(
   return login;
 }
 
-export async function loginSuperAdmin(app: INestApplication, options?: { forceNew?: boolean }) {
+export async function loginSuperAdmin(
+  app: INestApplication,
+  options?: { forceNew?: boolean },
+) {
   return loginAdmin(app, TEST_EMAILS.superAdmin, TEST_PASSWORD, options);
 }
 
@@ -75,7 +80,7 @@ export async function loginClientePublico(
   app: INestApplication,
   slug: string,
   prisma?: PrismaClient,
-  options?: { forceNew?: boolean }
+  options?: { forceNew?: boolean },
 ): Promise<LoginResponse> {
   const cacheKey = slug + ':' + TEST_CLIENTE.telefone;
 
@@ -86,7 +91,7 @@ export async function loginClientePublico(
   const solicitar = await request(app.getHttpServer())
     .post('/public/' + slug + '/auth-cliente/solicitar-codigo')
     .send({
-      telefone: TEST_CLIENTE.telefone
+      telefone: TEST_CLIENTE.telefone,
     })
     .expect((res) => {
       expect([200, 201, 429]).toContain(res.status);
@@ -111,11 +116,11 @@ export async function loginClientePublico(
   if (!codigo && prisma && (prisma as any).codigoAcessoCliente) {
     const row = await (prisma as any).codigoAcessoCliente.findFirst({
       where: {
-        telefone: TEST_CLIENTE.telefone
+        telefone: TEST_CLIENTE.telefone,
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     });
 
     codigo = row?.codigo;
@@ -127,7 +132,7 @@ export async function loginClientePublico(
     .post('/public/' + slug + '/auth-cliente/verificar-codigo')
     .send({
       telefone: TEST_CLIENTE.telefone,
-      codigo
+      codigo,
     })
     .expect((res) => {
       expect([200, 201]).toContain(res.status);

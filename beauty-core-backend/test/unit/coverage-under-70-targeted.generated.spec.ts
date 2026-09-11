@@ -13,7 +13,13 @@ import {
 
 installCoverageSmokeSilencer();
 
-const targetsPath = path.join(process.cwd(), 'test', 'unit', 'generated-targets', 'coverage-targets-under-70.json');
+const targetsPath = path.join(
+  process.cwd(),
+  'test',
+  'unit',
+  'generated-targets',
+  'coverage-targets-under-70.json',
+);
 
 const TARGETS = fs.existsSync(targetsPath)
   ? JSON.parse(fs.readFileSync(targetsPath, 'utf8')).targets
@@ -111,13 +117,23 @@ function createDelegateMock() {
     findFirstOrThrow: jest.fn(async () => record),
     findMany: jest.fn(async () => [record]),
     count: jest.fn(async () => 1),
-    create: jest.fn(async (args?: any) => ({ ...record, ...(args?.data ?? {}) })),
+    create: jest.fn(async (args?: any) => ({
+      ...record,
+      ...(args?.data ?? {}),
+    })),
     createMany: jest.fn(async () => ({ count: 1 })),
-    update: jest.fn(async (args?: any) => ({ ...record, ...(args?.data ?? {}) })),
+    update: jest.fn(async (args?: any) => ({
+      ...record,
+      ...(args?.data ?? {}),
+    })),
     updateMany: jest.fn(async () => ({ count: 1 })),
     delete: jest.fn(async () => record),
     deleteMany: jest.fn(async () => ({ count: 1 })),
-    upsert: jest.fn(async (args?: any) => ({ ...record, ...(args?.create ?? {}), ...(args?.update ?? {}) })),
+    upsert: jest.fn(async (args?: any) => ({
+      ...record,
+      ...(args?.create ?? {}),
+      ...(args?.update ?? {}),
+    })),
     aggregate: jest.fn(async () => ({
       _sum: { valor: 100, pontos: 10, saldoPontos: 100, quantidade: 1 },
       _count: { _all: 1, id: 1 },
@@ -212,7 +228,10 @@ function createRichMock() {
       }
 
       const booleanPrefixes = ['pode', 'can', 'tem'];
-      if (booleanPrefixes.some((prefix) => prop.startsWith(prefix)) || prop.toLowerCase().includes('permissao')) {
+      if (
+        booleanPrefixes.some((prefix) => prop.startsWith(prefix)) ||
+        prop.toLowerCase().includes('permissao')
+      ) {
         obj[prop] = jest.fn(async () => true);
         return obj[prop];
       }
@@ -258,7 +277,11 @@ function createRichMock() {
         return obj[prop];
       }
 
-      if (prop === 'mkdirSync' || prop === 'writeFileSync' || prop === 'unlinkSync') {
+      if (
+        prop === 'mkdirSync' ||
+        prop === 'writeFileSync' ||
+        prop === 'unlinkSync'
+      ) {
         obj[prop] = jest.fn(() => undefined);
         return obj[prop];
       }
@@ -334,7 +357,9 @@ function patchInstance(instance: any) {
 }
 
 function instantiate(Exported: any) {
-  const deps = Array.from({ length: Math.max(Exported.length || 0, 20) }, () => createRichMock());
+  const deps = Array.from({ length: Math.max(Exported.length || 0, 20) }, () =>
+    createRichMock(),
+  );
 
   try {
     return patchInstance(new Exported(...deps));
@@ -394,17 +419,31 @@ function argsForMethod(method: string) {
 
   if (method === 'catch') {
     return [
-      [new Error('Erro controlado'), { switchToHttp: () => ({ getRequest: () => req, getResponse: () => res }) }],
+      [
+        new Error('Erro controlado'),
+        {
+          switchToHttp: () => ({
+            getRequest: () => req,
+            getResponse: () => res,
+          }),
+        },
+      ],
     ];
   }
 
   if (method === 'intercept') {
     return [
-      [context, { handle: () => ({ pipe: () => ({ subscribe: () => undefined }) }) }],
+      [
+        context,
+        { handle: () => ({ pipe: () => ({ subscribe: () => undefined }) }) },
+      ],
     ];
   }
 
-  if (method.toLowerCase().includes('process') || method.toLowerCase().includes('handle')) {
+  if (
+    method.toLowerCase().includes('process') ||
+    method.toLowerCase().includes('handle')
+  ) {
     return [[job], [job, 'token-test']];
   }
 
@@ -480,7 +519,7 @@ describe('Chat 33.4.1 - arquivos com métrica abaixo de 70%', () => {
 
       it('deve exercitar somente o alvo abaixo de 70', async () => {
         const mod = require(target.requirePath);
-        const exportedValues = Object.values(mod) as any[];
+        const exportedValues = Object.values(mod);
 
         for (const exported of exportedValues) {
           if (typeof exported !== 'function') continue;

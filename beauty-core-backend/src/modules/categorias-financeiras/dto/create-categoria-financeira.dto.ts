@@ -2,11 +2,7 @@ import { CategoriaFinanceiraTipo } from '@prisma/client';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateCategoriaFinanceiraDto {
   @ApiProperty({

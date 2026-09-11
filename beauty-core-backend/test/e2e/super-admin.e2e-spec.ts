@@ -1,6 +1,10 @@
 ﻿import request = require('supertest');
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 import { bearer, loginSuperAdmin } from '../helpers/auth.helper';
 
 describe('SUPER_ADMIN E2E', () => {
@@ -44,5 +48,3 @@ describe('SUPER_ADMIN E2E', () => {
       .expect(200);
   });
 });
-
-

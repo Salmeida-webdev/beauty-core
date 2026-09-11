@@ -13,7 +13,7 @@ export class ConfiguracaoFidelidadeService {
   async create(empresaId: string, dto: any) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const dados = this.sanitizarDto(dto);
+    const dados = this.sanitizarDto(dto as Record<string, any>);
 
     return this.prisma.configuracaoFidelidade.upsert({
       where: {
@@ -42,7 +42,7 @@ export class ConfiguracaoFidelidadeService {
   async update(empresaId: string, dto: any) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const dados = this.sanitizarDto(dto);
+    const dados = this.sanitizarDto(dto as Record<string, any>);
 
     return this.prisma.configuracaoFidelidade.upsert({
       where: {

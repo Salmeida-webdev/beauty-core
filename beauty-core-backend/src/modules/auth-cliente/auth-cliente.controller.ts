@@ -1,13 +1,6 @@
-﻿import { LogoutClienteDto } from './dto/logout-cliente.dto';
+import { LogoutClienteDto } from './dto/logout-cliente.dto';
 import { RefreshClienteTokenDto } from './dto/refresh-cliente-token.dto';
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 
 import { Throttle } from '@nestjs/throttler';
 
@@ -37,12 +30,30 @@ import { SolicitarCodigoDto } from './dto/solicitar-codigo.dto';
 import { VerificarCodigoDto } from './dto/verificar-codigo.dto';
 import { ClienteAuthGuard } from './guards/cliente-auth.guard';
 
+type AuthClienteRequestUser = {
+  id?: string;
+  sub: string;
+  clienteId?: string;
+  empresaId: string;
+  sessaoId?: string;
+  sid?: string;
+};
+
+type AuthClienteRequest = {
+  headers?: Record<string, string | string[] | undefined>;
+  ip?: string;
+  socket?: { remoteAddress?: string | null };
+  connection?: { remoteAddress?: string | null };
+  originalUrl?: string;
+  url?: string;
+  method?: string;
+  user: AuthClienteRequestUser;
+};
+
 @ApiTags('Auth Cliente')
 @Controller('auth-cliente')
 export class AuthClienteController {
-  constructor(
-    private readonly authClienteService: AuthClienteService,
-  ) {}
+  constructor(private readonly authClienteService: AuthClienteService) {}
 
   @Post('solicitar-codigo')
   @Throttle({
@@ -71,8 +82,7 @@ export class AuthClienteController {
         slug: {
           type: 'string',
           example: 'beauty-core-demo',
-          description:
-            'Slug pÃºblico da empresa. Informe slug ou domÃ­nio.',
+          description: 'Slug pÃºblico da empresa. Informe slug ou domÃ­nio.',
         },
         dominio: {
           type: 'string',
@@ -118,7 +128,7 @@ export class AuthClienteController {
       'Muitas solicitaÃ§Ãµes de cÃ³digo. Aguarde antes de tentar novamente.',
   })
   solicitarCodigo(
-    @Req() req: any,
+    @Req() req: AuthClienteRequest,
     @Body() dto: SolicitarCodigoDto,
   ) {
     return this.authClienteService.solicitarCodigo(dto, {
@@ -161,8 +171,7 @@ export class AuthClienteController {
         slug: {
           type: 'string',
           example: 'beauty-core-demo',
-          description:
-            'Slug pÃºblico da empresa. Informe slug ou domÃ­nio.',
+          description: 'Slug pÃºblico da empresa. Informe slug ou domÃ­nio.',
         },
         dominio: {
           type: 'string',
@@ -218,7 +227,7 @@ export class AuthClienteController {
       'Muitas tentativas de verificaÃ§Ã£o. Aguarde antes de tentar novamente.',
   })
   verificarCodigo(
-    @Req() req: any,
+    @Req() req: AuthClienteRequest,
     @Body() dto: VerificarCodigoDto,
   ) {
     return this.authClienteService.verificarCodigo(dto, {
@@ -228,7 +237,6 @@ export class AuthClienteController {
       metodoHttp: getRequestMethod(req),
     });
   }
-
 
   @Throttle({
     default: {
@@ -264,10 +272,7 @@ export class AuthClienteController {
   @ApiBody({
     type: LogoutClienteDto,
   })
-  logout(
-    @Req() req: any,
-    @Body() dto: LogoutClienteDto,
-  ) {
+  logout(@Req() req: AuthClienteRequest, @Body() dto: LogoutClienteDto) {
     return this.authClienteService.logoutCliente(req.user, dto);
   }
 
@@ -277,7 +282,7 @@ export class AuthClienteController {
   @ApiOperation({
     summary: 'Encerrar todas as sessÃµes do cliente',
   })
-  logoutAll(@Req() req: any) {
+  logoutAll(@Req() req: AuthClienteRequest) {
     return this.authClienteService.logoutAllCliente(req.user);
   }
 
@@ -287,7 +292,7 @@ export class AuthClienteController {
   @ApiOperation({
     summary: 'Listar sessÃµes ativas do cliente',
   })
-  sessoes(@Req() req: any) {
+  sessoes(@Req() req: AuthClienteRequest) {
     return this.authClienteService.listarSessoesCliente(req.user);
   }
 
@@ -320,7 +325,7 @@ export class AuthClienteController {
   @ApiNotFoundResponse({
     description: 'Cliente autenticado nÃ£o encontrado.',
   })
-  me(@Req() req: any) {
+  me(@Req() req: AuthClienteRequest) {
     return this.authClienteService.me(
       req.user.clienteId ?? req.user.sub,
       req.user.empresaId,
@@ -343,8 +348,7 @@ export class AuthClienteController {
         aceitouTermos: {
           type: 'boolean',
           example: true,
-          description:
-            'Confirma se o cliente aceitou os termos de uso.',
+          description: 'Confirma se o cliente aceitou os termos de uso.',
         },
       },
       required: ['aceitouTermos'],
@@ -372,10 +376,7 @@ export class AuthClienteController {
   @ApiNotFoundResponse({
     description: 'Cliente autenticado nÃ£o encontrado.',
   })
-  aceitarTermos(
-    @Req() req: any,
-    @Body() dto: AceitarTermosDto,
-  ) {
+  aceitarTermos(@Req() req: AuthClienteRequest, @Body() dto: AceitarTermosDto) {
     return this.authClienteService.aceitarTermos(
       req.user.clienteId ?? req.user.sub,
       req.user.empresaId,

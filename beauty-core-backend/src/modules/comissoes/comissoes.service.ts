@@ -5,10 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import {
-  StatusPagamento,
-  TipoUsuarioAuditoria,
-} from '@prisma/client';
+import { StatusPagamento, TipoUsuarioAuditoria } from '@prisma/client';
 
 import { PrismaService } from '../../database/prisma/prisma.service';
 import { TenantValidatorService } from '../../shared/tenant';
@@ -35,17 +32,15 @@ export class ComissoesService {
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const profissional =
-      await this.tenantValidator.validarProfissional(
-        empresaId,
-        dto.profissionalId,
-      );
+    const profissional = await this.tenantValidator.validarProfissional(
+      empresaId,
+      dto.profissionalId,
+    );
 
-    const agendamento =
-      await this.tenantValidator.validarAgendamento(
-        empresaId,
-        dto.agendamentoId,
-      );
+    const agendamento = await this.tenantValidator.validarAgendamento(
+      empresaId,
+      dto.agendamentoId,
+    );
 
     if (agendamento.profissionalId !== dto.profissionalId) {
       throw new BadRequestException(
@@ -75,9 +70,9 @@ export class ComissoesService {
       tipo: TipoEventoSistema.COMISSAO_GERADA,
       modulo: 'COMISSOES',
       titulo: 'Comissão gerada',
-      mensagem: `Comissão de R$ ${Number(
-        comissao.valorComissao,
-      ).toFixed(2)} gerada para o profissional.`,
+      mensagem: `Comissão de R$ ${Number(comissao.valorComissao).toFixed(
+        2,
+      )} gerada para o profissional.`,
       referenciaId: comissao.id,
       dados: {
         comissaoId: comissao.id,
@@ -189,16 +184,15 @@ export class ComissoesService {
       status: comissaoAtual.status,
     };
 
-    const result =
-      await this.prisma.comissaoProfissional.updateMany({
-        where: {
-          id,
-          empresaId,
-        },
-        data: {
-          status: StatusPagamento.PAGO,
-        },
-      });
+    const result = await this.prisma.comissaoProfissional.updateMany({
+      where: {
+        id,
+        empresaId,
+      },
+      data: {
+        status: StatusPagamento.PAGO,
+      },
+    });
 
     if (result.count === 0) {
       throw new NotFoundException('Comissão não encontrada');
@@ -212,9 +206,9 @@ export class ComissoesService {
         tipo: TipoEventoSistema.COMISSAO_PAGA,
         modulo: 'COMISSOES',
         titulo: 'Comissão paga',
-        mensagem: `Comissão de R$ ${Number(
-          comissaoPaga.valorComissao,
-        ).toFixed(2)} foi paga.`,
+        mensagem: `Comissão de R$ ${Number(comissaoPaga.valorComissao).toFixed(
+          2,
+        )} foi paga.`,
         referenciaId: comissaoPaga.id,
         dados: {
           comissaoId: comissaoPaga.id,

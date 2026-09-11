@@ -1,10 +1,4 @@
-import {
-  Body,
-  Controller,
-  Param,
-  Post,
-  Req,
-} from '@nestjs/common';
+import { Body, Controller, Param, Post, Req } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import {
   ApiBadRequestResponse,
@@ -29,12 +23,12 @@ import { AuthClienteService } from './auth-cliente.service';
 import { SolicitarCodigoDto } from './dto/solicitar-codigo.dto';
 import { VerificarCodigoDto } from './dto/verificar-codigo.dto';
 
+type AuthClientePublicAuditRequest = Parameters<typeof getRequestIp>[0];
+
 @ApiTags('Auth Cliente Público')
 @Controller('public/:slug/auth-cliente')
 export class AuthClientePublicoController {
-  constructor(
-    private readonly authClienteService: AuthClienteService,
-  ) {}
+  constructor(private readonly authClienteService: AuthClienteService) {}
 
   @Post('solicitar-codigo')
   @Throttle({
@@ -101,7 +95,7 @@ export class AuthClientePublicoController {
       'Muitas solicitações de código. Aguarde antes de tentar novamente.',
   })
   solicitarCodigoPorSlug(
-    @Req() req: any,
+    @Req() req: AuthClientePublicAuditRequest,
     @Param('slug') slug: string,
     @Body() dto: SolicitarCodigoDto,
   ) {
@@ -199,7 +193,7 @@ export class AuthClientePublicoController {
       'Muitas tentativas de verificação. Aguarde antes de tentar novamente.',
   })
   verificarCodigoPorSlug(
-    @Req() req: any,
+    @Req() req: AuthClientePublicAuditRequest,
     @Param('slug') slug: string,
     @Body() dto: VerificarCodigoDto,
   ) {

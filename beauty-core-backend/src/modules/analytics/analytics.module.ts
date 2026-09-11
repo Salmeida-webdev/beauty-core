@@ -7,21 +7,12 @@ import { AnalyticsController } from './analytics.controller';
 import { AnalyticsService } from './analytics.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-  ],
+  imports: [PrismaModule, TenantModule],
 
-  controllers: [
-    AnalyticsController,
-  ],
+  controllers: [AnalyticsController],
 
-  providers: [
-    AnalyticsService,
-  ],
+  providers: [AnalyticsService],
 
-  exports: [
-    AnalyticsService,
-  ],
+  exports: [AnalyticsService],
 })
 export class AnalyticsModule {}

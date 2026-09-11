@@ -17,6 +17,18 @@ import { AutomacoesService } from '../automacoes/automacoes.service';
 import { TipoEventoSistema } from '../automacoes/eventos/tipo-evento-sistema.enum';
 import { AuditoriaService } from '../auditoria/auditoria.service';
 
+type PacoteAuditoria = {
+  id?: unknown;
+  empresaId?: unknown;
+  nome?: unknown;
+  descricao?: unknown;
+  valor?: unknown;
+  quantidadeSessoes?: unknown;
+  validadeDias?: unknown;
+  ativo?: unknown;
+  createdAt?: unknown;
+  updatedAt?: unknown;
+};
 @Injectable()
 export class PacotesService {
   private readonly logger = new Logger(PacotesService.name);
@@ -264,7 +276,7 @@ export class PacotesService {
     return pacote;
   }
 
-  private montarDadosAuditoria(pacote: any) {
+  private montarDadosAuditoria(pacote: PacoteAuditoria) {
     return {
       id: pacote.id,
       empresaId: pacote.empresaId,

@@ -1,6 +1,10 @@
 ﻿import request = require('supertest');
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 
 describe('Metrics E2E', () => {
   let ctx: E2eContext;
@@ -63,4 +67,3 @@ describe('Metrics E2E', () => {
     expect(response.text).toContain('beauty_core_app_info');
   });
 });
-

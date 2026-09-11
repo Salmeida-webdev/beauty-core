@@ -14,18 +14,26 @@
           if (['length', 'name', 'prototype'].includes(staticName)) continue;
 
           if (typeof value[staticName] === 'function') {
-            callables.push([exportName + '.' + staticName, value[staticName].bind(value)]);
+            callables.push([
+              exportName + '.' + staticName,
+              value[staticName].bind(value),
+            ]);
           }
         }
 
         try {
           const instance = new value();
 
-          for (const methodName of Object.getOwnPropertyNames(Object.getPrototypeOf(instance))) {
+          for (const methodName of Object.getOwnPropertyNames(
+            Object.getPrototypeOf(instance),
+          )) {
             if (methodName === 'constructor') continue;
 
             if (typeof instance[methodName] === 'function') {
-              callables.push([exportName + '#' + methodName, instance[methodName].bind(instance)]);
+              callables.push([
+                exportName + '#' + methodName,
+                instance[methodName].bind(instance),
+              ]);
             }
           }
         } catch {
@@ -36,7 +44,7 @@
       if (value && typeof value === 'object') {
         for (const [methodName, method] of Object.entries(value)) {
           if (typeof method === 'function') {
-            callables.push([exportName + '.' + methodName, (method as Function).bind(value)]);
+            callables.push([exportName + '.' + methodName, method.bind(value)]);
           }
         }
       }

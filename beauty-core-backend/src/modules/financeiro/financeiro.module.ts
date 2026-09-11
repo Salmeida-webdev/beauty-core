@@ -10,12 +10,7 @@ import { FinanceiroController } from './financeiro.controller';
 import { FinanceiroService } from './financeiro.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-    AutomacoesModule,
-    AuditoriaModule,
-  ],
+  imports: [PrismaModule, TenantModule, AutomacoesModule, AuditoriaModule],
 
   controllers: [FinanceiroController],
 

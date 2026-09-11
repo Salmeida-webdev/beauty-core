@@ -19,37 +19,37 @@ function baseEnv(overrides: Record<string, unknown> = {}) {
 describe('Env validation required production secrets', () => {
   it('deve exigir OTP_SECRET', () => {
     expect(() => validateEnv(baseEnv({ OTP_SECRET: '' }))).toThrow(
-      /OTP_SECRET/
+      /OTP_SECRET/,
     );
   });
 
   it('deve exigir OTP_SECRET com minimo de 32 caracteres', () => {
     expect(() => validateEnv(baseEnv({ OTP_SECRET: 'curto' }))).toThrow(
-      /OTP_SECRET/
+      /OTP_SECRET/,
     );
   });
 
   it('deve exigir REDIS_PASSWORD em producao', () => {
     expect(() => validateEnv(baseEnv({ REDIS_PASSWORD: '' }))).toThrow(
-      /REDIS_PASSWORD/
+      /REDIS_PASSWORD/,
     );
   });
 
   it('deve exigir REDIS_PASSWORD forte em producao', () => {
     expect(() => validateEnv(baseEnv({ REDIS_PASSWORD: 'curto' }))).toThrow(
-      /REDIS_PASSWORD/
+      /REDIS_PASSWORD/,
     );
   });
 
   it('deve exigir METRICS_TOKEN em producao', () => {
     expect(() => validateEnv(baseEnv({ METRICS_TOKEN: '' }))).toThrow(
-      /METRICS_TOKEN/
+      /METRICS_TOKEN/,
     );
   });
 
   it('deve exigir METRICS_TOKEN forte em producao', () => {
     expect(() => validateEnv(baseEnv({ METRICS_TOKEN: 'curto' }))).toThrow(
-      /METRICS_TOKEN/
+      /METRICS_TOKEN/,
     );
   });
 
@@ -61,4 +61,3 @@ describe('Env validation required production secrets', () => {
     expect(result.METRICS_TOKEN).toHaveLength(32);
   });
 });
-

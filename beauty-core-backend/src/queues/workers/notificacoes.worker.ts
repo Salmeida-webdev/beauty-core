@@ -1,4 +1,7 @@
-import { formatQueueTrace, getQueueTraceMetadata } from '../utils/queue-trace.util';
+import {
+  formatQueueTrace,
+  getQueueTraceMetadata,
+} from '../utils/queue-trace.util';
 import {
   Injectable,
   Logger,
@@ -6,12 +9,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  AcaoAuditoria,
-  StatusAuditoria,
-  TipoNotificacao,
-  TipoUsuarioAuditoria,
-} from '@prisma/client';
+import { TipoNotificacao } from '@prisma/client';
 import { Job, Worker } from 'bullmq';
 
 import { NOTIFICACOES_QUEUE } from '../constants/queue-names';
@@ -22,9 +20,7 @@ import { AuditoriaService } from '../../modules/auditoria/auditoria.service';
 import { DeadLetterQueueService } from '../services/dead-letter-queue.service';
 
 @Injectable()
-export class NotificacoesWorker
-  implements OnModuleInit, OnModuleDestroy
-{
+export class NotificacoesWorker implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(NotificacoesWorker.name);
   private worker?: Worker<NotificacaoJob>;
 
@@ -41,94 +37,96 @@ export class NotificacoesWorker
       async (job: Job<NotificacaoJob>) => this.processar(job),
       {
         connection: {
-          host:
-            this.configService.get<string>('REDIS_HOST') ||
-            'localhost',
-          port: Number(
-            this.configService.get<string>('REDIS_PORT') ||
-              6379,
-          ),
+          host: this.configService.get<string>('REDIS_HOST') || 'localhost',
+          port: Number(this.configService.get<string>('REDIS_PORT') || 6379),
           password:
-            this.configService.get<string>('REDIS_PASSWORD') ||
-            undefined,
+            this.configService.get<string>('REDIS_PASSWORD') || undefined,
           maxRetriesPerRequest: null,
         },
-      
-      concurrency: Number(this.configService.get('QUEUE_CONCURRENCY_NOTIFICATIONS', this.configService.get('QUEUE_CONCURRENCY_NOTIFICACOES', 5))),
-    },
+
+        concurrency: Number(
+          this.configService.get(
+            'QUEUE_CONCURRENCY_NOTIFICATIONS',
+            this.configService.get('QUEUE_CONCURRENCY_NOTIFICACOES', 5),
+          ),
+        ),
+      },
     );
 
-    this.worker.on('failed', async (job, error) => {
-      if (!job) return;
+    this.worker.on('failed', (job, error) => {
+      void (async () => {
+        if (!job) return;
 
-      await this.deadLetterQueueService.moveToDlq({
-        sourceQueue: NOTIFICACOES_QUEUE,
-        job,
-        error,
-      });
+        await this.deadLetterQueueService.moveToDlq({
+          sourceQueue: NOTIFICACOES_QUEUE,
+          job,
+          error,
+        });
+      })();
     });
 
+    this.worker.on('completed', (job) => {
+      void (async () => {
+        this.logger.log(
+          `[BULLMQ] job concluido queue=${NOTIFICACOES_QUEUE} jobId=${job.id} ${formatQueueTrace(job)} empresaId=${job.data.empresaId}`,
+        );
 
-    this.worker.on('completed', async (job) => {
-      this.logger.log(
-        `[BULLMQ] job concluido queue=${NOTIFICACOES_QUEUE} jobId=${job.id} ${formatQueueTrace(job)} empresaId=${job.data.empresaId}`,
-      );
-
-      await this.auditoriaService.registrarJob({
-        empresaId: job.data.empresaId,
-        usuarioId: job.data.usuarioId,
-        clienteId: job.data.clienteId,
-        tipoUsuario: 'SISTEMA' as TipoUsuarioAuditoria,
-        acao: 'JOB_CONCLUIDO' as AcaoAuditoria,
-        modulo: 'BULLMQ',
-        recurso: 'BullMQJob',
-        recursoId: String(job.id),
-        metadata: {
-          ...getQueueTraceMetadata(job),
-          queue: NOTIFICACOES_QUEUE,
-          worker: NotificacoesWorker.name,
-          jobName: job.name,
-          status: 'completed',
-          attemptsMade: job.attemptsMade,
-          data: this.criarResumoSeguroJob(job),
-        },
-        mensagem: 'Job de notificaÃ§Ã£o concluido.',
-      });
+        await this.auditoriaService.registrarJob({
+          empresaId: job.data.empresaId,
+          usuarioId: job.data.usuarioId,
+          clienteId: job.data.clienteId,
+          tipoUsuario: 'SISTEMA',
+          acao: 'JOB_CONCLUIDO',
+          modulo: 'BULLMQ',
+          recurso: 'BullMQJob',
+          recursoId: String(job.id),
+          metadata: {
+            ...getQueueTraceMetadata(job),
+            queue: NOTIFICACOES_QUEUE,
+            worker: NotificacoesWorker.name,
+            jobName: job.name,
+            status: 'completed',
+            attemptsMade: job.attemptsMade,
+            data: this.criarResumoSeguroJob(job),
+          },
+          mensagem: 'Job de notificaÃ§Ã£o concluido.',
+        });
+      })();
     });
 
-    this.worker.on('failed', async (job, error) => {
-      this.logger.error(
-        `[BULLMQ] job falhou queue=${NOTIFICACOES_QUEUE} jobId=${
-          job?.id ?? '-'
-        } empresaId=${
-          job?.data?.empresaId ?? '-'
-        } erro=${error.message}`,
-        error.stack,
-      );
+    this.worker.on('failed', (job, error) => {
+      void (async () => {
+        this.logger.error(
+          `[BULLMQ] job falhou queue=${NOTIFICACOES_QUEUE} jobId=${
+            job?.id ?? '-'
+          } empresaId=${job?.data?.empresaId ?? '-'} erro=${error.message}`,
+          error.stack,
+        );
 
-      await this.auditoriaService.registrarJob({
-        empresaId: job?.data?.empresaId,
-        usuarioId: job?.data?.usuarioId,
-        clienteId: job?.data?.clienteId,
-        tipoUsuario: 'SISTEMA' as TipoUsuarioAuditoria,
-        acao: 'JOB_FALHOU' as AcaoAuditoria,
-        status: 'FALHA' as StatusAuditoria,
-        modulo: 'BULLMQ',
-        recurso: 'BullMQJob',
-        recursoId: job?.id ? String(job.id) : undefined,
-        metadata: {
-          ...getQueueTraceMetadata(job),
-          queue: NOTIFICACOES_QUEUE,
-          worker: NotificacoesWorker.name,
-          jobName: job?.name,
-          status: 'failed',
-          attemptsMade: job?.attemptsMade,
-          error: error.message,
-          stack: error.stack,
-          data: job ? this.criarResumoSeguroJob(job) : undefined,
-        },
-        mensagem: 'Job de notificaÃ§Ã£o falhou.',
-      });
+        await this.auditoriaService.registrarJob({
+          empresaId: job?.data?.empresaId,
+          usuarioId: job?.data?.usuarioId,
+          clienteId: job?.data?.clienteId,
+          tipoUsuario: 'SISTEMA',
+          acao: 'JOB_FALHOU',
+          status: 'FALHA',
+          modulo: 'BULLMQ',
+          recurso: 'BullMQJob',
+          recursoId: job?.id ? String(job.id) : undefined,
+          metadata: {
+            ...getQueueTraceMetadata(job),
+            queue: NOTIFICACOES_QUEUE,
+            worker: NotificacoesWorker.name,
+            jobName: job?.name,
+            status: 'failed',
+            attemptsMade: job?.attemptsMade,
+            error: error.message,
+            stack: error.stack,
+            data: job ? this.criarResumoSeguroJob(job) : undefined,
+          },
+          mensagem: 'Job de notificaÃ§Ã£o falhou.',
+        });
+      })();
     });
   }
 
@@ -143,14 +141,8 @@ export class NotificacoesWorker
       `[BULLMQ] job iniciado queue=${NOTIFICACOES_QUEUE} jobId=${job.id} ${formatQueueTrace(job)} empresaId=${job.data.empresaId}`,
     );
 
-    const {
-      empresaId,
-      usuarioId,
-      clienteId,
-      titulo,
-      mensagem,
-      metadata,
-    } = job.data;
+    const { empresaId, usuarioId, clienteId, titulo, mensagem, metadata } =
+      job.data;
 
     const tipo = job.data.tipo as TipoNotificacao | undefined;
     const metadataSegura = this.normalizarMetadata(metadata);
@@ -159,13 +151,13 @@ export class NotificacoesWorker
       empresaId,
       usuarioId,
       clienteId,
-      tipoUsuario: 'SISTEMA' as TipoUsuarioAuditoria,
-      acao: 'JOB_INICIADO' as AcaoAuditoria,
+      tipoUsuario: 'SISTEMA',
+      acao: 'JOB_INICIADO',
       modulo: 'BULLMQ',
       recurso: 'BullMQJob',
       recursoId: String(job.id),
       metadata: {
-          ...getQueueTraceMetadata(job),
+        ...getQueueTraceMetadata(job),
         queue: NOTIFICACOES_QUEUE,
         worker: NotificacoesWorker.name,
         jobName: job.name,
@@ -182,10 +174,7 @@ export class NotificacoesWorker
     });
 
     if (this.ehJobGlobalDoScheduler(job)) {
-      return this.processarJobGlobalDoScheduler(
-        job,
-        startedAt,
-      );
+      return this.processarJobGlobalDoScheduler(job, startedAt);
     }
 
     if (!tipo) {
@@ -212,14 +201,13 @@ export class NotificacoesWorker
       );
     }
 
-    const notificacao =
-      await this.notificacoesService.criarAutomatica({
-        empresaId,
-        usuarioId,
-        tipo,
-        titulo,
-        mensagem,
-      });
+    const notificacao = await this.notificacoesService.criarAutomatica({
+      empresaId,
+      usuarioId,
+      tipo,
+      titulo,
+      mensagem,
+    });
 
     return {
       status: 'ok',
@@ -236,12 +224,7 @@ export class NotificacoesWorker
     job: Job<NotificacaoJob>,
     startedAt: number,
   ) {
-    const {
-      empresaId,
-      usuarioId,
-      clienteId,
-      metadata,
-    } = job.data;
+    const { empresaId, usuarioId, clienteId, metadata } = job.data;
 
     const metadataSegura = this.normalizarMetadata(metadata);
     const tipo = String(job.data.tipo ?? '').toUpperCase();
@@ -254,13 +237,13 @@ export class NotificacoesWorker
       empresaId,
       usuarioId,
       clienteId,
-      tipoUsuario: 'SISTEMA' as TipoUsuarioAuditoria,
-      acao: 'PROCESSAR_JOB' as AcaoAuditoria,
+      tipoUsuario: 'SISTEMA',
+      acao: 'PROCESSAR_JOB',
       modulo: 'BULLMQ',
       recurso: 'BullMQJob',
       recursoId: String(job.id),
       metadata: {
-          ...getQueueTraceMetadata(job),
+        ...getQueueTraceMetadata(job),
         queue: NOTIFICACOES_QUEUE,
         worker: NotificacoesWorker.name,
         jobName: job.name,
@@ -296,8 +279,14 @@ export class NotificacoesWorker
     const { empresaId, metadata } = job.data;
     const metadataSegura = this.normalizarMetadata(metadata);
 
-    const origem = String(metadataSegura.origem ?? '').toLowerCase();
-    const rotina = String(metadataSegura.rotina ?? '').toLowerCase();
+    const origem =
+      typeof metadataSegura.origem === 'string'
+        ? metadataSegura.origem.toLowerCase()
+        : '';
+    const rotina =
+      typeof metadataSegura.rotina === 'string'
+        ? metadataSegura.rotina.toLowerCase()
+        : '';
     const tipoNormalizado = String(job.data.tipo ?? '').toUpperCase();
 
     return (
@@ -321,9 +310,7 @@ export class NotificacoesWorker
     );
   }
 
-  private normalizarMetadata(
-    metadata: unknown,
-  ): Record<string, unknown> {
+  private normalizarMetadata(metadata: unknown): Record<string, unknown> {
     if (!metadata || typeof metadata !== 'object') {
       return {};
     }

@@ -7,17 +7,10 @@ import { ServicosService } from './servicos.service';
 import { ServicosController } from './servicos.controller';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-  ],
+  imports: [PrismaModule, TenantModule],
 
-  controllers: [
-    ServicosController,
-  ],
+  controllers: [ServicosController],
 
-  providers: [
-    ServicosService,
-  ],
+  providers: [ServicosService],
 })
 export class ServicosModule {}

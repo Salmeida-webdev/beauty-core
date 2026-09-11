@@ -31,9 +31,13 @@ import { QueueMonitorService } from './services/queue-monitor.service';
 import { QueueMetricsService } from './services/queue-metrics.service';
 import { QueueShutdownService } from './services/queue-shutdown.service';
 
+type QueueConnection = NonNullable<
+  ConstructorParameters<typeof Queue>[1]
+>['connection'];
+
 const dlqQueueProvider: Provider = {
   provide: DLQ_QUEUE_PROVIDER,
-  useFactory: (connection: any) => {
+  useFactory: (connection: QueueConnection) => {
     return new Queue(DLQ_QUEUE, {
       connection,
     });
@@ -130,7 +134,6 @@ function getRedisOptions(configService: ConfigService) {
     CampanhasWorker,
     AniversariosWorker,
     RelatoriosWorker,
-    ,
     dlqQueueProvider,
     DistributedLockService,
     DeadLetterQueueService,
@@ -142,7 +145,6 @@ function getRedisOptions(configService: ConfigService) {
   exports: [
     QueuesService,
     REDIS_CONNECTION,
-    ,
     DistributedLockService,
     DeadLetterQueueService,
     QueueMonitorService,

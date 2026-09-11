@@ -9,7 +9,9 @@ describe('NiveisFidelidadeController', () => {
       controllers: [NiveisFidelidadeController],
     }).compile();
 
-    controller = module.get<NiveisFidelidadeController>(NiveisFidelidadeController);
+    controller = module.get<NiveisFidelidadeController>(
+      NiveisFidelidadeController,
+    );
   });
 
   it('should be defined', () => {

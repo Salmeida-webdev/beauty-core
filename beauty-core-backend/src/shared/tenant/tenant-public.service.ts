@@ -30,9 +30,7 @@ export class TenantPublicService {
     });
 
     if (!empresa) {
-      throw new NotFoundException(
-        'Empresa não encontrada ou inativa.',
-      );
+      throw new NotFoundException('Empresa não encontrada ou inativa.');
     }
 
     return this.montarTenantPublico(empresa);
@@ -58,18 +56,13 @@ export class TenantPublicService {
     });
 
     if (!empresa) {
-      throw new NotFoundException(
-        'Empresa não encontrada ou inativa.',
-      );
+      throw new NotFoundException('Empresa não encontrada ou inativa.');
     }
 
     return this.montarTenantPublico(empresa);
   }
 
-  async resolverTenantPublico(params: {
-    slug?: string;
-    dominio?: string;
-  }) {
+  async resolverTenantPublico(params: { slug?: string; dominio?: string }) {
     if (params.slug) {
       return this.resolverPorSlug(params.slug);
     }
@@ -78,9 +71,7 @@ export class TenantPublicService {
       return this.resolverPorDominio(params.dominio);
     }
 
-    throw new BadRequestException(
-      'Informe o slug ou domínio da empresa.',
-    );
+    throw new BadRequestException('Informe o slug ou domínio da empresa.');
   }
 
   private normalizarSlug(slug: string): string {
@@ -99,9 +90,7 @@ export class TenantPublicService {
 
   private normalizarDominio(dominio: string): string {
     if (!dominio || typeof dominio !== 'string') {
-      throw new BadRequestException(
-        'Domínio da empresa é obrigatório.',
-      );
+      throw new BadRequestException('Domínio da empresa é obrigatório.');
     }
 
     const dominioNormalizado = dominio
@@ -113,9 +102,7 @@ export class TenantPublicService {
       .split(':')[0];
 
     if (!dominioNormalizado) {
-      throw new BadRequestException(
-        'Domínio da empresa é obrigatório.',
-      );
+      throw new BadRequestException('Domínio da empresa é obrigatório.');
     }
 
     return dominioNormalizado;

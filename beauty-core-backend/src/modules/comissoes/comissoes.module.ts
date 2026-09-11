@@ -10,12 +10,7 @@ import { ComissoesController } from './comissoes.controller';
 import { ComissoesService } from './comissoes.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-    AutomacoesModule,
-    AuditoriaModule,
-  ],
+  imports: [PrismaModule, TenantModule, AutomacoesModule, AuditoriaModule],
 
   controllers: [ComissoesController],
 

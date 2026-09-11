@@ -1,6 +1,10 @@
 ﻿import request = require('supertest');
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 import { bearer, loginSuperAdmin } from '../helpers/auth.helper';
 
 describe('Scheduler E2E', () => {
@@ -26,7 +30,7 @@ describe('Scheduler E2E', () => {
   it.each([
     '/scheduler/teste/aniversarios',
     '/scheduler/teste/campanhas',
-    '/scheduler/teste/relatorios'
+    '/scheduler/teste/relatorios',
   ])('POST %s', async (route) => {
     await request(ctx.app.getHttpServer())
       .post(route)
@@ -36,5 +40,3 @@ describe('Scheduler E2E', () => {
       });
   });
 });
-
-

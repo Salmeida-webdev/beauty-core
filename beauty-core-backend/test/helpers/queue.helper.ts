@@ -7,7 +7,7 @@ export async function waitForCondition(
   options?: {
     timeoutMs?: number;
     intervalMs?: number;
-  }
+  },
 ) {
   const timeoutMs = options?.timeoutMs ?? 10000;
   const intervalMs = options?.intervalMs ?? 250;
@@ -23,5 +23,3 @@ export async function waitForCondition(
 
   throw new Error('Timeout aguardando condição assíncrona.');
 }
-
-

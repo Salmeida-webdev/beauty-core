@@ -11,13 +11,13 @@ export function createTempUploadFile(params?: {
 
   fs.writeFileSync(
     filePath,
-    params?.content ?? Buffer.from('%PDF-1.4\n% Beauty Core test PDF\n')
+    params?.content ?? Buffer.from('%PDF-1.4\n% Beauty Core test PDF\n'),
   );
 
   return {
     dir,
     filePath,
-    cleanup: () => fs.rmSync(dir, { recursive: true, force: true })
+    cleanup: () => fs.rmSync(dir, { recursive: true, force: true }),
   };
 }
 
@@ -30,8 +30,6 @@ export function createBlockedTempFile() {
   return {
     dir,
     filePath,
-    cleanup: () => fs.rmSync(dir, { recursive: true, force: true })
+    cleanup: () => fs.rmSync(dir, { recursive: true, force: true }),
   };
 }
-
-

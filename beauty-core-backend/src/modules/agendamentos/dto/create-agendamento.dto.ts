@@ -1,9 +1,6 @@
 import { StatusAgendamento } from '@prisma/client';
 
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import {
   IsDateString,
@@ -61,22 +58,26 @@ export class CreateAgendamentoDto {
 
   @ApiProperty({
     example: '2026-06-14T14:00:00.000Z',
-    description:
-      'Data e hora de início do agendamento em formato ISO 8601.',
+    description: 'Data e hora de início do agendamento em formato ISO 8601.',
   })
-  @IsDateString({}, {
-    message: 'A data e hora de início deve estar em formato válido.',
-  })
+  @IsDateString(
+    {},
+    {
+      message: 'A data e hora de início deve estar em formato válido.',
+    },
+  )
   dataHoraInicio: string;
 
   @ApiProperty({
     example: '2026-06-14T15:00:00.000Z',
-    description:
-      'Data e hora de fim do agendamento em formato ISO 8601.',
+    description: 'Data e hora de fim do agendamento em formato ISO 8601.',
   })
-  @IsDateString({}, {
-    message: 'A data e hora de fim deve estar em formato válido.',
-  })
+  @IsDateString(
+    {},
+    {
+      message: 'A data e hora de fim deve estar em formato válido.',
+    },
+  )
   dataHoraFim: string;
 
   @ApiPropertyOptional({

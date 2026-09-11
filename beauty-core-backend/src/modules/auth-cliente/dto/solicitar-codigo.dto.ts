@@ -1,13 +1,5 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
-import {
-  IsOptional,
-  IsString,
-  Length,
-  Matches,
-} from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, Length, Matches } from 'class-validator';
 
 export class SolicitarCodigoDto {
   @ApiProperty({
@@ -40,8 +32,7 @@ export class SolicitarCodigoDto {
     message: 'O slug da empresa deve ter entre 2 e 80 caracteres.',
   })
   @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
-    message:
-      'O slug deve conter apenas letras minúsculas, números e hífens.',
+    message: 'O slug deve conter apenas letras minúsculas, números e hífens.',
   })
   slug?: string;
 

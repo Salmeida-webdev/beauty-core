@@ -52,9 +52,12 @@ export class UpdatePacoteDto {
     minimum: 0,
   })
   @IsOptional()
-  @IsNumber({}, {
-    message: 'O valor do pacote deve ser um número.',
-  })
+  @IsNumber(
+    {},
+    {
+      message: 'O valor do pacote deve ser um número.',
+    },
+  )
   @Min(0, {
     message: 'O valor do pacote deve ser maior ou igual a 0.',
   })
@@ -62,8 +65,7 @@ export class UpdatePacoteDto {
 
   @ApiPropertyOptional({
     example: 6,
-    description:
-      'Quantidade total atualizada de sessões incluídas no pacote.',
+    description: 'Quantidade total atualizada de sessões incluídas no pacote.',
     minimum: 1,
   })
   @IsOptional()

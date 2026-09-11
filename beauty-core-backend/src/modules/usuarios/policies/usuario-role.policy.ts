@@ -130,9 +130,7 @@ export class UsuarioRolePolicy {
     const isChangingRole = currentTargetRole !== newTargetRole;
 
     if (isSameUser && isChangingRole) {
-      throw new ForbiddenException(
-        'Usuário não pode alterar a própria role.',
-      );
+      throw new ForbiddenException('Usuário não pode alterar a própria role.');
     }
   }
 

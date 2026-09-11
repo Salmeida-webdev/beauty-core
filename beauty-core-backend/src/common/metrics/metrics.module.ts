@@ -14,4 +14,3 @@ import { MetricsService } from './metrics.service';
   exports: [MetricsService, MetricsMiddleware],
 })
 export class MetricsModule {}
-

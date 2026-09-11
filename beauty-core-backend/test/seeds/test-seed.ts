@@ -8,12 +8,12 @@ export const TEST_EMAILS = {
   admin: 'admin.test@beautycore.com',
   gerente: 'gerente.test@beautycore.com',
   recepcao: 'recepcao.test@beautycore.com',
-  profissional: 'profissional.test@beautycore.com'
+  profissional: 'profissional.test@beautycore.com',
 };
 
 export const TEST_CLIENTE = {
   telefone: '83999990001',
-  email: 'cliente.test@beautycore.com'
+  email: 'cliente.test@beautycore.com',
 };
 
 export type TestSeedResult = {
@@ -37,7 +37,11 @@ function getModel(modelName: string) {
 }
 
 function getEnumValues(enumName: string) {
-  return Prisma.dmmf.datamodel.enums.find((item) => item.name === enumName)?.values.map((value) => value.name) ?? [];
+  return (
+    Prisma.dmmf.datamodel.enums
+      .find((item) => item.name === enumName)
+      ?.values.map((value) => value.name) ?? []
+  );
 }
 
 function modelDelegate(modelName: string) {
@@ -65,7 +69,9 @@ function sanitizeData(modelName: string, defaults: Record<string, any>) {
     if (Object.prototype.hasOwnProperty.call(defaults, field.name)) {
       if (field.kind === 'enum') {
         const values = getEnumValues(field.type);
-        data[field.name] = values.includes(defaults[field.name]) ? defaults[field.name] : values[0];
+        data[field.name] = values.includes(defaults[field.name])
+          ? defaults[field.name]
+          : values[0];
       } else {
         data[field.name] = defaults[field.name];
       }
@@ -108,14 +114,22 @@ function sanitizeData(modelName: string, defaults: Record<string, any>) {
   return data;
 }
 
-async function createModel(prisma: PrismaClient, modelName: string, defaults: Record<string, any>) {
+async function createModel(
+  prisma: PrismaClient,
+  modelName: string,
+  defaults: Record<string, any>,
+) {
   const delegate = modelDelegate(modelName);
   const data = sanitizeData(modelName, defaults);
 
   return (prisma as any)[delegate].create({ data });
 }
 
-async function createIfModelExists(prisma: PrismaClient, modelName: string, defaults: Record<string, any>) {
+async function createIfModelExists(
+  prisma: PrismaClient,
+  modelName: string,
+  defaults: Record<string, any>,
+) {
   if (!getModel(modelName)) {
     return null;
   }
@@ -123,7 +137,9 @@ async function createIfModelExists(prisma: PrismaClient, modelName: string, defa
   return createModel(prisma, modelName, defaults);
 }
 
-export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedResult> {
+export async function seedTestDatabase(
+  prisma: PrismaClient,
+): Promise<TestSeedResult> {
   const senhaHash = await bcrypt.hash(TEST_PASSWORD, 10);
 
   const empresaA = await createModel(prisma, 'Empresa', {
@@ -133,7 +149,7 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
     telefone: '83999990000',
     plano: 'PREMIUM',
     ativo: true,
-    corPrimaria: '#111827'
+    corPrimaria: '#111827',
   });
 
   const empresaB = await createModel(prisma, 'Empresa', {
@@ -143,7 +159,7 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
     telefone: '83999990002',
     plano: 'PRO',
     ativo: true,
-    corPrimaria: '#111827'
+    corPrimaria: '#111827',
   });
 
   const superAdmin = await createModel(prisma, 'Usuario', {
@@ -153,7 +169,7 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
     senha: senhaHash,
     password: senhaHash,
     role: 'SUPER_ADMIN',
-    ativo: true
+    ativo: true,
   });
 
   const admin = await createModel(prisma, 'Usuario', {
@@ -163,7 +179,7 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
     senha: senhaHash,
     password: senhaHash,
     role: 'ADMIN',
-    ativo: true
+    ativo: true,
   });
 
   const gerente = await createModel(prisma, 'Usuario', {
@@ -173,7 +189,7 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
     senha: senhaHash,
     password: senhaHash,
     role: 'GERENTE',
-    ativo: true
+    ativo: true,
   });
 
   const recepcao = await createModel(prisma, 'Usuario', {
@@ -183,7 +199,7 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
     senha: senhaHash,
     password: senhaHash,
     role: 'RECEPCAO',
-    ativo: true
+    ativo: true,
   });
 
   const profissional = await createModel(prisma, 'Usuario', {
@@ -193,7 +209,7 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
     senha: senhaHash,
     password: senhaHash,
     role: 'PROFISSIONAL',
-    ativo: true
+    ativo: true,
   });
 
   const cliente = await createModel(prisma, 'Cliente', {
@@ -204,7 +220,7 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
     ativo: true,
     ativoPortal: true,
     aceitouTermos: true,
-    dataAceiteTermos: new Date()
+    dataAceiteTermos: new Date(),
   });
 
   const unidade = await createIfModelExists(prisma, 'Unidade', {
@@ -212,7 +228,7 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
     nome: 'Unidade Teste',
     telefone: '83999990003',
     ativa: true,
-    ativo: true
+    ativo: true,
   });
 
   const servico = await createIfModelExists(prisma, 'Servico', {
@@ -222,7 +238,7 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
     preco: 120,
     valor: 120,
     duracaoMinutos: 60,
-    ativo: true
+    ativo: true,
   });
 
   const pacote = await createIfModelExists(prisma, 'Pacote', {
@@ -232,7 +248,7 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
     quantidadeSessoes: 5,
     valor: 500,
     preco: 500,
-    ativo: true
+    ativo: true,
   });
 
   await createIfModelExists(prisma, 'Notificacao', {
@@ -242,7 +258,7 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
     mensagem: 'Mensagem de teste automatizado.',
     tipo: 'SISTEMA',
     status: 'NAO_LIDA',
-    lida: false
+    lida: false,
   });
 
   return {
@@ -253,13 +269,11 @@ export async function seedTestDatabase(prisma: PrismaClient): Promise<TestSeedRe
       admin,
       gerente,
       recepcao,
-      profissional
+      profissional,
     },
     cliente,
     unidade,
     servico,
-    pacote
+    pacote,
   };
 }
-
-

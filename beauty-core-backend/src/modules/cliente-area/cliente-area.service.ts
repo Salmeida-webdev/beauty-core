@@ -62,7 +62,11 @@ export class ClienteAreaService {
     );
   }
 
-  async proximosAgendamentos(auth: ClienteAreaAuth, _query: ClienteAreaQueryDto) {
+  async proximosAgendamentos(
+    auth: ClienteAreaAuth,
+    _query: ClienteAreaQueryDto,
+  ) {
+    void _query;
     const { empresaId, clienteId } = this.getAuth(auth);
     const data = await this.areaClienteService.proximosAgendamentos(
       empresaId,
@@ -171,6 +175,7 @@ export class ClienteAreaService {
   }
 
   async historico(auth: ClienteAreaAuth, _query: ClienteAreaQueryDto) {
+    void _query;
     const { empresaId, clienteId } = this.getAuth(auth);
     return {
       data: await this.areaClienteService.historico(empresaId, clienteId),

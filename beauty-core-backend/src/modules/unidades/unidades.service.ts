@@ -13,10 +13,7 @@ export class UnidadesService {
     private readonly tenantValidator: TenantValidatorService,
   ) {}
 
-  async create(
-    createUnidadeDto: CreateUnidadeDto,
-    empresaId: string,
-  ) {
+  async create(createUnidadeDto: CreateUnidadeDto, empresaId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     return this.prisma.unidade.create({
@@ -41,10 +38,7 @@ export class UnidadesService {
     });
   }
 
-  async findOne(
-    id: string,
-    empresaId: string,
-  ) {
+  async findOne(id: string, empresaId: string) {
     return this.buscarUnidadeOuFalhar(empresaId, id);
   }
 
@@ -67,18 +61,13 @@ export class UnidadesService {
     });
 
     if (result.count === 0) {
-      throw new NotFoundException(
-        'Unidade não encontrada',
-      );
+      throw new NotFoundException('Unidade não encontrada');
     }
 
     return this.buscarUnidadeOuFalhar(empresaId, id);
   }
 
-  async inativar(
-    id: string,
-    empresaId: string,
-  ) {
+  async inativar(id: string, empresaId: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     await this.buscarUnidadeOuFalhar(empresaId, id);
@@ -95,21 +84,13 @@ export class UnidadesService {
     });
 
     if (result.count === 0) {
-      throw new NotFoundException(
-        'Unidade não encontrada',
-      );
+      throw new NotFoundException('Unidade não encontrada');
     }
 
-    return this.buscarUnidadeInativaOuAtivaOuFalhar(
-      empresaId,
-      id,
-    );
+    return this.buscarUnidadeInativaOuAtivaOuFalhar(empresaId, id);
   }
 
-  private async buscarUnidadeOuFalhar(
-    empresaId: string,
-    id: string,
-  ) {
+  private async buscarUnidadeOuFalhar(empresaId: string, id: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const unidade = await this.prisma.unidade.findFirst({
@@ -121,9 +102,7 @@ export class UnidadesService {
     });
 
     if (!unidade) {
-      throw new NotFoundException(
-        'Unidade não encontrada',
-      );
+      throw new NotFoundException('Unidade não encontrada');
     }
 
     return unidade;
@@ -141,9 +120,7 @@ export class UnidadesService {
     });
 
     if (!unidade) {
-      throw new NotFoundException(
-        'Unidade não encontrada',
-      );
+      throw new NotFoundException('Unidade não encontrada');
     }
 
     return unidade;

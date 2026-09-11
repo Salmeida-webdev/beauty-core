@@ -50,13 +50,21 @@ describe('Chat 36 LGPD Coverage', () => {
         findMany: jest.fn().mockResolvedValue([{ id: 'sessao-pacote-1' }]),
       },
       movimentacaoFinanceira: {
-        findMany: jest.fn().mockResolvedValue([{ id: 'mov-fin-1', token: 'nao-exportar' }]),
+        findMany: jest
+          .fn()
+          .mockResolvedValue([{ id: 'mov-fin-1', token: 'nao-exportar' }]),
       },
       arquivo: {
-        findMany: jest.fn().mockResolvedValue([{ id: 'arquivo-1', refreshTokenHash: 'segredo' }]),
+        findMany: jest
+          .fn()
+          .mockResolvedValue([
+            { id: 'arquivo-1', refreshTokenHash: 'segredo' },
+          ]),
       },
       sessao: {
-        findMany: jest.fn().mockResolvedValue([{ id: 'sessao-1', refreshTokenHash: 'segredo' }]),
+        findMany: jest
+          .fn()
+          .mockResolvedValue([{ id: 'sessao-1', refreshTokenHash: 'segredo' }]),
       },
       codigoAcessoCliente: {
         updateMany: jest.fn().mockResolvedValue({ count: 2 }),
@@ -163,7 +171,9 @@ describe('Chat 36 LGPD Coverage', () => {
   it('deve retornar arrays vazios quando delegates opcionais nao existirem ou falharem', async () => {
     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
     delete prisma.notificacao;
-    prisma.mensagemWhatsApp.findMany.mockRejectedValue(new Error('indisponivel'));
+    prisma.mensagemWhatsApp.findMany.mockRejectedValue(
+      new Error('indisponivel'),
+    );
 
     const result = await service.exportarCliente(clienteId, request);
 
@@ -239,36 +249,42 @@ describe('Chat 36 LGPD Coverage', () => {
 
   it('deve manter operacao LGPD mesmo se auditoria falhar', async () => {
     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
-    prisma.cliente.update.mockResolvedValue(mockCliente({ nome: 'Cliente anonimizado' }));
-    prisma.auditoriaSistema.create.mockRejectedValue(new Error('auditoria indisponivel'));
-
-    await expect(service.anonimizarCliente(clienteId, request)).resolves.toEqual(
-      expect.objectContaining({ success: true, clienteId }),
+    prisma.cliente.update.mockResolvedValue(
+      mockCliente({ nome: 'Cliente anonimizado' }),
     );
+    prisma.auditoriaSistema.create.mockRejectedValue(
+      new Error('auditoria indisponivel'),
+    );
+
+    await expect(
+      service.anonimizarCliente(clienteId, request),
+    ).resolves.toEqual(expect.objectContaining({ success: true, clienteId }));
   });
 
   it('deve lancar NotFoundException quando cliente nao existir', async () => {
     prisma.cliente.findFirst.mockResolvedValue(null);
 
-    await expect(service.exportarCliente(clienteId, request)).rejects.toBeInstanceOf(
-      NotFoundException,
-    );
+    await expect(
+      service.exportarCliente(clienteId, request),
+    ).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it('deve lancar ForbiddenException quando cliente nao pertencer a empresa do usuario', async () => {
-    prisma.cliente.findFirst.mockResolvedValue(mockCliente({ empresaId: 'empresa-errada' }));
-
-    await expect(service.exportarCliente(clienteId, request)).rejects.toBeInstanceOf(
-      ForbiddenException,
+    prisma.cliente.findFirst.mockResolvedValue(
+      mockCliente({ empresaId: 'empresa-errada' }),
     );
+
+    await expect(
+      service.exportarCliente(clienteId, request),
+    ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
   it('deve lancar ForbiddenException quando nao houver campo anonimizavel', async () => {
     prisma.cliente.findFirst.mockResolvedValue({ id: clienteId, empresaId });
 
-    await expect(service.anonimizarCliente(clienteId, request)).rejects.toBeInstanceOf(
-      ForbiddenException,
-    );
+    await expect(
+      service.anonimizarCliente(clienteId, request),
+    ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
   it('controller deve delegar exportacao e anonimizacao para o service', async () => {
@@ -279,9 +295,19 @@ describe('Chat 36 LGPD Coverage', () => {
 
     const controller = new LgpdController(mockService);
 
-    await expect(controller.exportarCliente(clienteId, request)).resolves.toEqual({ clienteId });
-    await expect(controller.anonimizarCliente(clienteId, request)).resolves.toEqual({ success: true });
-    expect(mockService.exportarCliente).toHaveBeenCalledWith(clienteId, request);
-    expect(mockService.anonimizarCliente).toHaveBeenCalledWith(clienteId, request);
+    await expect(
+      controller.exportarCliente(clienteId, request),
+    ).resolves.toEqual({ clienteId });
+    await expect(
+      controller.anonimizarCliente(clienteId, request),
+    ).resolves.toEqual({ success: true });
+    expect(mockService.exportarCliente).toHaveBeenCalledWith(
+      clienteId,
+      request,
+    );
+    expect(mockService.anonimizarCliente).toHaveBeenCalledWith(
+      clienteId,
+      request,
+    );
   });
 });

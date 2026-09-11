@@ -6,12 +6,7 @@ import {
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import {
-  IsEnum,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 
 import { PaginationDto } from '../../../shared/dto/pagination.dto';
 

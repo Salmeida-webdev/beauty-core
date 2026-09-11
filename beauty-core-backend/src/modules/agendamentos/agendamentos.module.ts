@@ -10,12 +10,7 @@ import { AgendamentosController } from './agendamentos.controller';
 import { AgendamentosService } from './agendamentos.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-    AutomacoesModule,
-    AuditoriaModule,
-  ],
+  imports: [PrismaModule, TenantModule, AutomacoesModule, AuditoriaModule],
 
   controllers: [AgendamentosController],
 

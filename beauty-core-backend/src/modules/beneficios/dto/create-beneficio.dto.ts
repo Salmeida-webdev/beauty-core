@@ -1,7 +1,4 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import {
   IsInt,
@@ -15,8 +12,7 @@ import {
 export class CreateBeneficioDto {
   @ApiProperty({
     example: 'Desconto especial',
-    description:
-      'Nome do benefício de fidelidade que será exibido no sistema.',
+    description: 'Nome do benefício de fidelidade que será exibido no sistema.',
     minLength: 2,
     maxLength: 120,
   })

@@ -1,7 +1,10 @@
 import { LogoutClienteDto } from './dto/logout-cliente.dto';
 import { RefreshClienteTokenDto } from './dto/refresh-cliente-token.dto';
 import { parseUserAgent } from '../../shared/utils/device.util';
-import { durationToDate, durationToSeconds } from '../../shared/utils/duration.util';
+import {
+  durationToDate,
+  durationToSeconds,
+} from '../../shared/utils/duration.util';
 import { SessoesService } from '../sessoes/sessoes.service';
 import { createHmac, randomInt, randomUUID, timingSafeEqual } from 'crypto';
 import { ConfigService } from '@nestjs/config';
@@ -14,7 +17,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, type JwtSignOptions } from '@nestjs/jwt';
 
 import {
   AcaoAuditoria,
@@ -43,6 +46,20 @@ type TenantPublicoInput = {
   dominio?: string;
 };
 
+type ClienteTokenPayload = {
+  sub?: string;
+  sid?: string;
+  tipo?: string;
+};
+
+type ClienteAuthenticatedUser = {
+  id?: string;
+  sub?: string;
+  clienteId?: string;
+  empresaId?: string | null;
+  sessaoId?: string;
+  sid?: string;
+};
 @Injectable()
 export class AuthClienteService {
   private readonly logger = new Logger(AuthClienteService.name);
@@ -83,7 +100,6 @@ export class AuthClienteService {
     });
   }
 
-
   private async gerarAccessTokenCliente(
     cliente: {
       id: string;
@@ -105,10 +121,12 @@ export class AuthClienteService {
       tipo: 'CLIENTE',
     };
 
-    const accessToken = await this.jwtService.signAsync(payload, {
-      secret: this.configService.getOrThrow<string>('JWT_CLIENT_SECRET'),
-      expiresIn: expiresIn as any,
-    });
+    const accessToken = String(
+      await this.jwtService.signAsync(payload, {
+        secret: this.configService.getOrThrow<string>('JWT_CLIENT_SECRET'),
+        expiresIn: expiresIn as unknown as JwtSignOptions['expiresIn'],
+      }),
+    );
 
     return {
       accessToken,
@@ -134,8 +152,10 @@ export class AuthClienteService {
     };
 
     return this.jwtService.signAsync(payload, {
-      secret: this.configService.getOrThrow<string>('JWT_CLIENT_REFRESH_SECRET'),
-      expiresIn: expiresIn as any,
+      secret: this.configService.getOrThrow<string>(
+        'JWT_CLIENT_REFRESH_SECRET',
+      ),
+      expiresIn: expiresIn as unknown as JwtSignOptions['expiresIn'],
     });
   }
 
@@ -201,9 +221,7 @@ export class AuthClienteService {
     const temDominio = Boolean(dto.dominio?.trim());
 
     if (!temSlug && !temDominio) {
-      throw new BadRequestException(
-        'Informe o slug ou domÃ­nio da empresa.',
-      );
+      throw new BadRequestException('Informe o slug ou domÃ­nio da empresa.');
     }
 
     if (temSlug && temDominio) {
@@ -218,10 +236,7 @@ export class AuthClienteService {
     });
   }
 
-  async solicitarCodigo(
-    dto: SolicitarCodigoDto,
-    context?: RequestContext,
-  ) {
+  async solicitarCodigo(dto: SolicitarCodigoDto, context?: RequestContext) {
     const startedAt = Date.now();
 
     const tenant = await this.resolverTenantPublico(dto);
@@ -271,9 +286,7 @@ export class AuthClienteService {
         },
       });
 
-      throw new NotFoundException(
-        'Cliente ainda nÃ£o estÃ¡ cadastrado.',
-      );
+      throw new NotFoundException('Cliente ainda nÃ£o estÃ¡ cadastrado.');
     }
 
     if (!cliente.ativoPortal) {
@@ -293,8 +306,7 @@ export class AuthClienteService {
         metodoHttp: context?.metodoHttp,
         ip: context?.ip,
         userAgent: context?.userAgent,
-        mensagem:
-          'Tentativa de solicitar cÃ³digo com portal desativado.',
+        mensagem: 'Tentativa de solicitar cÃ³digo com portal desativado.',
         metadata: {
           telefone: cliente.telefone,
           tenant: {
@@ -330,9 +342,7 @@ export class AuthClienteService {
     );
 
     const expiraEm = new Date();
-    expiraEm.setMinutes(
-      expiraEm.getMinutes() + this.obterOtpExpiresMinutes(),
-    );
+    expiraEm.setMinutes(expiraEm.getMinutes() + this.obterOtpExpiresMinutes());
 
     await this.prisma.codigoAcessoCliente.create({
       data: {
@@ -387,10 +397,7 @@ export class AuthClienteService {
     };
   }
 
-  async verificarCodigo(
-    dto: VerificarCodigoDto,
-    context?: RequestContext,
-  ) {
+  async verificarCodigo(dto: VerificarCodigoDto, context?: RequestContext) {
     const startedAt = Date.now();
 
     const tenant = await this.resolverTenantPublico(dto);
@@ -453,8 +460,7 @@ export class AuthClienteService {
         metodoHttp: context?.metodoHttp,
         ip: context?.ip,
         userAgent: context?.userAgent,
-        mensagem:
-          'Tentativa de verificar cÃ³digo com portal desativado.',
+        mensagem: 'Tentativa de verificar cÃ³digo com portal desativado.',
         metadata: {
           telefone: cliente.telefone,
           tenant: {
@@ -525,18 +531,17 @@ export class AuthClienteService {
       throw new UnauthorizedException('CÃ³digo invÃ¡lido ou expirado.');
     }
 
-    const codigoAtualizado =
-      await this.prisma.codigoAcessoCliente.updateMany({
-        where: {
-          id: codigo.id,
-          empresaId,
-          clienteId: cliente.id,
-          usado: false,
-        },
-        data: {
-          usado: true,
-        },
-      });
+    const codigoAtualizado = await this.prisma.codigoAcessoCliente.updateMany({
+      where: {
+        id: codigo.id,
+        empresaId,
+        clienteId: cliente.id,
+        usado: false,
+      },
+      data: {
+        usado: true,
+      },
+    });
 
     if (codigoAtualizado.count === 0) {
       const tempoMs = Date.now() - startedAt;
@@ -566,9 +571,7 @@ export class AuthClienteService {
         },
       });
 
-      throw new BadRequestException(
-        'Este cÃ³digo jÃ¡ foi utilizado.',
-      );
+      throw new BadRequestException('Este cÃ³digo jÃ¡ foi utilizado.');
     }
 
     const clienteAtualizado = await this.prisma.cliente.updateMany({
@@ -599,8 +602,7 @@ export class AuthClienteService {
         metodoHttp: context?.metodoHttp,
         ip: context?.ip,
         userAgent: context?.userAgent,
-        mensagem:
-          'Falha ao atualizar Ãºltimo acesso do cliente.',
+        mensagem: 'Falha ao atualizar Ãºltimo acesso do cliente.',
         metadata: {
           telefone: cliente.telefone,
           tenant: {
@@ -642,10 +644,7 @@ export class AuthClienteService {
       expiraEm: durationToDate(refreshExpiresIn),
     });
 
-    const access = await this.gerarAccessTokenCliente(
-      clienteFinal,
-      sessaoId,
-    );
+    const access = await this.gerarAccessTokenCliente(clienteFinal, sessaoId);
 
     const tempoMs = Date.now() - startedAt;
 
@@ -692,14 +691,17 @@ export class AuthClienteService {
   }
 
   async refreshCliente(dto: RefreshClienteTokenDto) {
-    let payload: any;
+    let payload: ClienteTokenPayload;
 
     try {
-      payload = await this.jwtService.verifyAsync(dto.refreshToken, {
-        secret: this.configService.getOrThrow<string>(
-          'JWT_CLIENT_REFRESH_SECRET',
-        ),
-      });
+      payload = await this.jwtService.verifyAsync<ClienteTokenPayload>(
+        dto.refreshToken,
+        {
+          secret: this.configService.getOrThrow<string>(
+            'JWT_CLIENT_REFRESH_SECRET',
+          ),
+        },
+      );
     } catch {
       throw new UnauthorizedException('Refresh token invÃ¡lido.');
     }
@@ -748,13 +750,17 @@ export class AuthClienteService {
         },
       });
 
-      throw new UnauthorizedException('Refresh token reutilizado ou invÃ¡lido.');
+      throw new UnauthorizedException(
+        'Refresh token reutilizado ou invÃ¡lido.',
+      );
     }
 
     const cliente = sessao.cliente;
 
     if (!cliente || !cliente.ativo || !cliente.ativoPortal) {
-      throw new UnauthorizedException('Cliente inativo ou sem acesso ao portal.');
+      throw new UnauthorizedException(
+        'Cliente inativo ou sem acesso ao portal.',
+      );
     }
 
     if (!cliente.empresa || !cliente.empresa.ativo) {
@@ -797,7 +803,10 @@ export class AuthClienteService {
     };
   }
 
-  async logoutCliente(clienteLogado: any, dto: LogoutClienteDto) {
+  async logoutCliente(
+    clienteLogado: ClienteAuthenticatedUser,
+    dto: LogoutClienteDto,
+  ) {
     const sessaoId = clienteLogado?.sessaoId || clienteLogado?.sid;
     const clienteId =
       clienteLogado?.clienteId || clienteLogado?.id || clienteLogado?.sub;
@@ -834,7 +843,7 @@ export class AuthClienteService {
     await this.sessoesService.revogarSessaoCliente(sessao.id, clienteId);
 
     await this.registrarAuditoriaSessaoCliente({
-      empresaId: clienteLogado?.empresaId,
+      empresaId: clienteLogado?.empresaId ?? undefined,
       clienteId,
       sessaoId: sessao.id,
       acao: AcaoAuditoria.LOGOUT_CLIENTE,
@@ -847,7 +856,7 @@ export class AuthClienteService {
     };
   }
 
-  async logoutAllCliente(clienteLogado: any) {
+  async logoutAllCliente(clienteLogado: ClienteAuthenticatedUser) {
     const clienteId =
       clienteLogado?.clienteId || clienteLogado?.id || clienteLogado?.sub;
 
@@ -859,7 +868,7 @@ export class AuthClienteService {
       await this.sessoesService.revogarTodasSessoesCliente(clienteId);
 
     await this.registrarAuditoriaSessaoCliente({
-      empresaId: clienteLogado?.empresaId,
+      empresaId: clienteLogado?.empresaId ?? undefined,
       clienteId,
       acao: AcaoAuditoria.LOGOUT_ALL_CLIENTE,
       status: StatusAuditoria.SUCESSO,
@@ -875,7 +884,7 @@ export class AuthClienteService {
     };
   }
 
-  async listarSessoesCliente(clienteLogado: any) {
+  async listarSessoesCliente(clienteLogado: ClienteAuthenticatedUser) {
     const clienteId =
       clienteLogado?.clienteId || clienteLogado?.id || clienteLogado?.sub;
 
@@ -885,7 +894,6 @@ export class AuthClienteService {
 
     return this.sessoesService.listarSessoesCliente(clienteId);
   }
-
 
   async me(clienteId: string, empresaId: string) {
     const cliente = await this.prisma.cliente.findFirst({
@@ -949,16 +957,13 @@ export class AuthClienteService {
         metodoHttp: context?.metodoHttp,
         ip: context?.ip,
         userAgent: context?.userAgent,
-        mensagem:
-          'Cliente tentou prosseguir sem aceitar os termos.',
+        mensagem: 'Cliente tentou prosseguir sem aceitar os termos.',
         metadata: {
           tempoMs,
         },
       });
 
-      throw new BadRequestException(
-        'Ã‰ necessÃ¡rio aceitar os termos.',
-      );
+      throw new BadRequestException('Ã‰ necessÃ¡rio aceitar os termos.');
     }
 
     const resultado = await this.prisma.cliente.updateMany({
@@ -992,8 +997,7 @@ export class AuthClienteService {
         metodoHttp: context?.metodoHttp,
         ip: context?.ip,
         userAgent: context?.userAgent,
-        mensagem:
-          'Falha ao aceitar termos: cliente nÃ£o encontrado.',
+        mensagem: 'Falha ao aceitar termos: cliente nÃ£o encontrado.',
         metadata: {
           tempoMs,
         },

@@ -1,12 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import {
-  IsNumber,
-  IsString,
-  IsUUID,
-  MaxLength,
-  Min,
-} from 'class-validator';
+import { IsNumber, IsString, IsUUID, MaxLength, Min } from 'class-validator';
 
 export class PontuarPorValorDto {
   @ApiProperty({
@@ -26,9 +20,12 @@ export class PontuarPorValorDto {
       'Valor gasto pelo cliente que será convertido em pontos conforme a configuração de fidelidade da empresa.',
     minimum: 0.01,
   })
-  @IsNumber({}, {
-    message: 'O valor gasto deve ser um número.',
-  })
+  @IsNumber(
+    {},
+    {
+      message: 'O valor gasto deve ser um número.',
+    },
+  )
   @Min(0.01, {
     message: 'O valor gasto deve ser maior ou igual a 0.01.',
   })

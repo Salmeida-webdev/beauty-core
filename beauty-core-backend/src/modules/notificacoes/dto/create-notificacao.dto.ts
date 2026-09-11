@@ -57,8 +57,7 @@ export class CreateNotificacaoDto {
 
   @ApiProperty({
     example: 'Um novo agendamento foi criado no sistema.',
-    description:
-      'Mensagem detalhada da notificação exibida ao usuário.',
+    description: 'Mensagem detalhada da notificação exibida ao usuário.',
     minLength: 2,
     maxLength: 500,
   })

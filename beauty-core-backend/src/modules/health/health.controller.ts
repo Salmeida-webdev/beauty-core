@@ -1,8 +1,4 @@
-import {
-  Controller,
-  Get,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 
 import {
   ApiOkResponse,
@@ -43,7 +39,6 @@ export class HealthController {
   }
 
   @UseGuards(JwtAuthGuard)
-
   @Get('database')
   @ApiOperation({
     summary: 'Verificar status do banco de dados',
@@ -73,7 +68,6 @@ export class HealthController {
   }
 
   @UseGuards(JwtAuthGuard)
-
   @Get('redis')
   @ApiOperation({
     summary: 'Verificar status do Redis',
@@ -103,7 +97,6 @@ export class HealthController {
   }
 
   @UseGuards(JwtAuthGuard)
-
   @Get('summary')
   @ApiOperation({
     summary: 'Verificar status detalhado da infraestrutura',
@@ -140,13 +133,9 @@ export class HealthController {
     return this.healthService.checkFullHealth();
   }
 
-
   @UseGuards(JwtAuthGuard)
-
-
   @Get('queues')
   healthQueues() {
     return this.healthService.checkQueues();
   }
-
 }

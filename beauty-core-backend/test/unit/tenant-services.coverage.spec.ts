@@ -31,7 +31,7 @@
     };
 
     expect(() => {
-      new (ServiceClass as any)(prismaMock);
+      new ServiceClass(prismaMock);
     }).not.toThrow();
   });
 });

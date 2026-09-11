@@ -17,16 +17,10 @@ import { ConfiguracoesNotificacaoModule } from '../configuracoes-notificacao/con
     ConfiguracoesNotificacaoModule,
   ],
 
-  controllers: [
-    AutomacoesController,
-  ],
+  controllers: [AutomacoesController],
 
-  providers: [
-    AutomacoesService,
-  ],
+  providers: [AutomacoesService],
 
-  exports: [
-    AutomacoesService,
-  ],
+  exports: [AutomacoesService],
 })
 export class AutomacoesModule {}

@@ -35,6 +35,23 @@ type RelacionamentosMensagemWhatsApp = {
   templateId?: string;
 };
 
+type MensagemAuditoria = {
+  id: string;
+  empresaId: string;
+  clienteId: string | null;
+  cliente?: { nome: string } | null;
+  usuarioId: string | null;
+  usuario?: { nome: string } | null;
+  templateId: string | null;
+  template?: { nome: string } | null;
+  tipo: TipoMensagemWhatsApp;
+  destinatario: string;
+  status: StatusMensagemWhatsApp;
+  dataEnvio: Date | null;
+  erro: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
 @Injectable()
 export class MensagensWhatsappService {
   private readonly logger = new Logger(MensagensWhatsappService.name);
@@ -247,10 +264,20 @@ export class MensagensWhatsappService {
   async findAll(empresaId: string, query: PaginationDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
+    const queryFilters = query as unknown as Record<string, unknown>;
     await this.validarFiltrosRelacionados(empresaId, {
-      clienteId: query['clienteId'],
-      usuarioId: query['usuarioId'],
-      templateId: query['templateId'],
+      clienteId:
+        typeof queryFilters['clienteId'] === 'string'
+          ? queryFilters['clienteId']
+          : undefined,
+      usuarioId:
+        typeof queryFilters['usuarioId'] === 'string'
+          ? queryFilters['usuarioId']
+          : undefined,
+      templateId:
+        typeof queryFilters['templateId'] === 'string'
+          ? queryFilters['templateId']
+          : undefined,
     });
 
     const { page, limit, skip, take } = getPaginationParams(query);
@@ -599,15 +626,22 @@ export class MensagensWhatsappService {
     empresaId: string,
     query: PaginationDto,
   ): Prisma.MensagemWhatsAppWhereInput {
-    const dataInicio = query['dataInicio']
-      ? new Date(query['dataInicio'])
+    const queryFilters = query as unknown as Record<string, unknown>;
+    const parseDateFilter = (value: unknown): Date | undefined =>
+      typeof value === 'string' ||
+      typeof value === 'number' ||
+      value instanceof Date
+        ? new Date(value)
+        : undefined;
+    const dataInicio = parseDateFilter(queryFilters['dataInicio'])
+      ? new Date(String(query['dataInicio']))
       : undefined;
 
-    const dataFim = query['dataFim'] ? new Date(query['dataFim']) : undefined;
+    const dataFim = parseDateFilter(queryFilters['dataFim']);
 
-    const status = query['status'] as StatusMensagemWhatsApp | undefined;
+    const status = queryFilters['status'] as StatusMensagemWhatsApp | undefined;
 
-    const tipo = query['tipo'] as TipoMensagemWhatsApp | undefined;
+    const tipo = queryFilters['tipo'] as TipoMensagemWhatsApp | undefined;
 
     return {
       empresaId,
@@ -661,7 +695,7 @@ export class MensagensWhatsappService {
     };
   }
 
-  private montarDadosAuditoria(mensagem: any) {
+  private montarDadosAuditoria(mensagem: MensagemAuditoria) {
     return {
       id: mensagem.id,
       empresaId: mensagem.empresaId,

@@ -6,10 +6,7 @@ export interface AniversarioJob {
 
   dataReferencia?: string;
 
-  tipo?:
-    | 'ANIVERSARIANTES_DIA'
-    | 'ANIVERSARIO_CLIENTE'
-    | 'ANIVERSARIO_USUARIO';
+  tipo?: 'ANIVERSARIANTES_DIA' | 'ANIVERSARIO_CLIENTE' | 'ANIVERSARIO_USUARIO';
 
   nome?: string;
   telefone?: string;

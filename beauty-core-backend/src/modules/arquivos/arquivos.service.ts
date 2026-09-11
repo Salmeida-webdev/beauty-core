@@ -1,4 +1,11 @@
-import { AcaoAuditoria, ArquivoVisibilidade, Prisma, Role, StatusArquivo, StatusAuditoria, TipoArquivo, TipoUsuarioAuditoria } from '@prisma/client';
+import {
+  ArquivoVisibilidade,
+  Prisma,
+  Role,
+  StatusArquivo,
+  TipoArquivo,
+  TipoUsuarioAuditoria,
+} from '@prisma/client';
 import {
   BadRequestException,
   ForbiddenException,
@@ -20,6 +27,21 @@ import { AuditoriaService } from '../auditoria/auditoria.service';
 import { StorageFactory } from './storage/storage.factory';
 import { UploadDocumentoPrivadoDto } from './dto/upload-documento-privado.dto';
 
+type ArquivoAuditoria = {
+  id: string;
+  empresaId: string;
+  clienteId: string | null;
+  usuarioId: string | null;
+  servicoId: string | null;
+  tipo: TipoArquivo;
+  status: StatusArquivo;
+  nomeOriginal: string;
+  nomeArquivo: string;
+  mimeType: string;
+  tamanhoBytes: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
 @Injectable()
 export class ArquivosService {
   private readonly logger = new Logger(ArquivosService.name);
@@ -63,7 +85,7 @@ export class ArquivosService {
     };
   }
 
-  private montarDadosAuditoriaArquivo(arquivo: any) {
+  private montarDadosAuditoriaArquivo(arquivo: ArquivoAuditoria) {
     return {
       id: arquivo.id,
       empresaId: arquivo.empresaId,
@@ -82,7 +104,7 @@ export class ArquivosService {
   }
 
   private async registrarUploadArquivo(
-    arquivo: any,
+    arquivo: ArquivoAuditoria,
     mensagem: string,
     tempoMs?: number,
   ) {
@@ -133,8 +155,6 @@ export class ArquivosService {
       'Logo da empresa enviada com sucesso.',
       tempoMs,
     );
-
-    
 
     return arquivo;
   }
@@ -249,7 +269,7 @@ export class ArquivosService {
       usuarioId,
       tipoUsuario:
         usuarioLogado.role in TipoUsuarioAuditoria
-          ? (usuarioLogado.role as unknown as TipoUsuarioAuditoria)
+          ? usuarioLogado.role
           : TipoUsuarioAuditoria.SISTEMA,
       modulo: 'ARQUIVOS',
       recurso: 'Arquivo',
@@ -379,10 +399,7 @@ export class ArquivosService {
     return arquivos;
   }
 
-  async listarGaleria(
-    empresaId: string,
-    query: PaginationDto,
-  ) {
+  async listarGaleria(empresaId: string, query: PaginationDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     return this.buscarArquivosPaginados(empresaId, {
@@ -422,10 +439,7 @@ export class ArquivosService {
     return arquivo;
   }
 
-  async findAll(
-    empresaId: string,
-    query: PaginationDto,
-  ) {
+  async findAll(empresaId: string, query: PaginationDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     return this.buscarArquivosPaginados(empresaId, query);
@@ -437,11 +451,7 @@ export class ArquivosService {
     return this.buscarArquivoOuFalhar(empresaId, id);
   }
 
-  async findByTipo(
-    empresaId: string,
-    tipo: TipoArquivo,
-    query: PaginationDto,
-  ) {
+  async findByTipo(empresaId: string, tipo: TipoArquivo, query: PaginationDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     return this.buscarArquivosPaginados(empresaId, {
@@ -455,10 +465,7 @@ export class ArquivosService {
 
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const arquivoAntes = await this.buscarArquivoOuFalhar(
-      empresaId,
-      id,
-    );
+    const arquivoAntes = await this.buscarArquivoOuFalhar(empresaId, id);
 
     const resultado = await this.prisma.arquivo.updateMany({
       where: {
@@ -546,13 +553,20 @@ export class ArquivosService {
       }
     })();
 
-    const dataInicio = query['dataInicio']
-      ? new Date(query['dataInicio'])
+    const queryFilters = query as unknown as Record<string, unknown>;
+
+    const parseDateFilter = (value: unknown): Date | undefined =>
+      typeof value === 'string' ||
+      typeof value === 'number' ||
+      value instanceof Date
+        ? new Date(value)
+        : undefined;
+
+    const dataInicio = parseDateFilter(queryFilters['dataInicio'])
+      ? new Date(String(query['dataInicio']))
       : undefined;
 
-    const dataFim = query['dataFim']
-      ? new Date(query['dataFim'])
-      : undefined;
+    const dataFim = parseDateFilter(queryFilters['dataFim']);
 
     const where: Prisma.ArquivoWhereInput = {
       empresaId,
@@ -613,10 +627,7 @@ export class ArquivosService {
     return buildPaginatedResponse(data, total, page, limit);
   }
 
-  private async buscarArquivoOuFalhar(
-    empresaId: string,
-    id: string,
-  ) {
+  private async buscarArquivoOuFalhar(empresaId: string, id: string) {
     await this.tenantValidator.validarArquivo(empresaId, id);
 
     const arquivo = await this.prisma.arquivo.findFirst({
@@ -649,43 +660,30 @@ export class ArquivosService {
 
     if (filtros.clienteId) {
       validacoes.push(
-        this.tenantValidator.validarCliente(
-          empresaId,
-          filtros.clienteId,
-        ),
+        this.tenantValidator.validarCliente(empresaId, filtros.clienteId),
       );
     }
 
     if (filtros.usuarioId) {
       validacoes.push(
-        this.tenantValidator.validarUsuario(
-          empresaId,
-          filtros.usuarioId,
-        ),
+        this.tenantValidator.validarUsuario(empresaId, filtros.usuarioId),
       );
     }
 
     if (filtros.servicoId) {
       validacoes.push(
-        this.tenantValidator.validarServico(
-          empresaId,
-          filtros.servicoId,
-        ),
+        this.tenantValidator.validarServico(empresaId, filtros.servicoId),
       );
     }
 
     if (filtros.unidadeId) {
       validacoes.push(
-        this.tenantValidator.validarUnidade(
-          empresaId,
-          filtros.unidadeId,
-        ),
+        this.tenantValidator.validarUnidade(empresaId, filtros.unidadeId),
       );
     }
 
     await Promise.all(validacoes);
   }
-
 
   private validarDocumentoPdfPrivado(file: Express.Multer.File): void {
     const originalName = file.originalname || '';
@@ -770,14 +768,12 @@ export class ArquivosService {
       },
     });
 
-
-
     await this.auditoriaService.registrar({
       empresaId,
       usuarioId,
       tipoUsuario: TipoUsuarioAuditoria.SISTEMA,
-      acao: 'UPLOAD_ARQUIVO' as AcaoAuditoria,
-      status: 'SUCESSO' as StatusAuditoria,
+      acao: 'UPLOAD_ARQUIVO',
+      status: 'SUCESSO',
       modulo: 'ARQUIVOS',
       recurso: 'Arquivo',
       recursoId: arquivo.id,
@@ -806,5 +802,4 @@ export class ArquivosService {
     });
     return arquivo;
   }
-
 }

@@ -1,4 +1,4 @@
-﻿import {
+import {
   Body,
   Controller,
   Delete,
@@ -37,12 +37,31 @@ import {
   getRequestUserAgent,
 } from '../../common/utils/audit-request.util';
 
+type AuthenticatedControllerUser = {
+  id?: string;
+  sub: string;
+  empresaId: string;
+  usuarioId?: string;
+  clienteId?: string;
+  role?: string;
+  tipoUsuario?: string;
+};
+
+type AuthenticatedControllerRequest = {
+  headers?: Record<string, string | string[] | undefined>;
+  ip?: string;
+  socket?: { remoteAddress?: string | null };
+  connection?: { remoteAddress?: string | null };
+  originalUrl?: string;
+  url?: string;
+  method?: string;
+  user: AuthenticatedControllerUser;
+};
+
 @ApiTags('Auth Admin')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   @Throttle({
@@ -101,11 +120,12 @@ export class AuthController {
   })
   @ApiResponse({
     status: 429,
-    description: 'Muitas tentativas de login. Aguarde antes de tentar novamente.',
+    description:
+      'Muitas tentativas de login. Aguarde antes de tentar novamente.',
   })
   async login(
     @Body() loginDto: LoginDto,
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
   ) {
     return this.authService.login(loginDto, {
       ip: getRequestIp(req),
@@ -166,10 +186,7 @@ export class AuthController {
       },
     },
   })
-  logout(
-    @Req() req: any,
-    @Body() dto: LogoutDto,
-  ) {
+  logout(@Req() req: AuthenticatedControllerRequest, @Body() dto: LogoutDto) {
     return this.authService.logout(req.user, dto);
   }
 
@@ -190,7 +207,7 @@ export class AuthController {
       },
     },
   })
-  logoutAll(@Req() req: any) {
+  logoutAll(@Req() req: AuthenticatedControllerRequest) {
     return this.authService.logoutAll(req.user);
   }
 
@@ -219,7 +236,7 @@ export class AuthController {
       ],
     },
   })
-  sessoes(@Req() req: any) {
+  sessoes(@Req() req: AuthenticatedControllerRequest) {
     return this.authService.listarSessoes(req.user);
   }
 
@@ -244,7 +261,7 @@ export class AuthController {
     },
   })
   revogarSessao(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('sessaoId') sessaoId: string,
   ) {
     return this.authService.revogarSessaoEspecifica(req.user, sessaoId);
@@ -273,7 +290,7 @@ export class AuthController {
   @ApiUnauthorizedResponse({
     description: 'Token ausente, inválido, expirado ou sessão revogada.',
   })
-  perfil(@Req() req: any) {
+  perfil(@Req() req: AuthenticatedControllerRequest) {
     return req.user;
   }
 }

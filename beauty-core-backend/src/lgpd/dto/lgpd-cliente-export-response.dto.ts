@@ -32,13 +32,15 @@ export class LgpdClienteExportResponseDto {
   agendamentos!: Record<string, unknown>[];
 
   @ApiProperty({
-    description: 'Informações de pontos, fidelidade ou histórico de pontos quando disponíveis.',
+    description:
+      'Informações de pontos, fidelidade ou histórico de pontos quando disponíveis.',
     type: Object,
   })
   pontos!: Record<string, unknown>;
 
   @ApiProperty({
-    description: 'Pacotes, sessões ou vínculos comerciais do cliente quando disponíveis.',
+    description:
+      'Pacotes, sessões ou vínculos comerciais do cliente quando disponíveis.',
     type: Object,
   })
   pacotes!: Record<string, unknown>;
@@ -88,7 +90,8 @@ export class LgpdAnonimizacaoResponseDto {
   camposAnonimizados!: string[];
 
   @ApiProperty({
-    example: 'Movimentações financeiras e auditoria histórica foram preservadas.',
+    example:
+      'Movimentações financeiras e auditoria histórica foram preservadas.',
     description: 'Observação operacional sobre integridade histórica.',
   })
   observacao!: string;

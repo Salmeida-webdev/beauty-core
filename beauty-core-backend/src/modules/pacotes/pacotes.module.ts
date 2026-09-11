@@ -10,12 +10,7 @@ import { AutomacoesModule } from '../automacoes/automacoes.module';
 import { AuditoriaModule } from '../auditoria/auditoria.module';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-    AutomacoesModule,
-    AuditoriaModule,
-  ],
+  imports: [PrismaModule, TenantModule, AutomacoesModule, AuditoriaModule],
 
   controllers: [PacotesController],
 

@@ -1,7 +1,4 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import {
   IsNotEmpty,
@@ -26,7 +23,8 @@ export class CreateServicoDto {
   nome: string;
 
   @ApiPropertyOptional({
-    example: 'Procedimento estético facial completo com higienização, esfoliação e hidratação.',
+    example:
+      'Procedimento estético facial completo com higienização, esfoliação e hidratação.',
     description:
       'Descrição opcional do serviço, usada para explicar detalhes do procedimento, benefícios ou observações internas.',
   })
@@ -42,9 +40,12 @@ export class CreateServicoDto {
       'Duração estimada do serviço em minutos. Usada para controle da agenda e disponibilidade de horários.',
     minimum: 1,
   })
-  @IsNumber({}, {
-    message: 'A duração do serviço deve ser um número.',
-  })
+  @IsNumber(
+    {},
+    {
+      message: 'A duração do serviço deve ser um número.',
+    },
+  )
   @Min(1, {
     message: 'A duração do serviço deve ser no mínimo 1 minuto.',
   })
@@ -52,13 +53,15 @@ export class CreateServicoDto {
 
   @ApiProperty({
     example: 150,
-    description:
-      'Preço do serviço. Deve ser maior ou igual a zero.',
+    description: 'Preço do serviço. Deve ser maior ou igual a zero.',
     minimum: 0,
   })
-  @IsNumber({}, {
-    message: 'O preço do serviço deve ser um número.',
-  })
+  @IsNumber(
+    {},
+    {
+      message: 'O preço do serviço deve ser um número.',
+    },
+  )
   @Min(0, {
     message: 'O preço do serviço deve ser maior ou igual a 0.',
   })

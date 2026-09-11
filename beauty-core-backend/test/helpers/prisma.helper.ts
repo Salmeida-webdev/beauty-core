@@ -14,9 +14,9 @@ export function createTestPrismaClient() {
   return new PrismaClient({
     datasources: {
       db: {
-        url: process.env.DATABASE_URL_TEST
-      }
-    }
+        url: process.env.DATABASE_URL_TEST,
+      },
+    },
   });
 }
 
@@ -24,20 +24,22 @@ export async function resetTestDatabase(prisma: PrismaClient) {
   assertTestDatabase();
 
   const tables = await prisma.$queryRawUnsafe<Array<{ tablename: string }>>(
-    "SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename <> '_prisma_migrations'"
+    "SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND tablename <> '_prisma_migrations'",
   );
 
   if (!tables.length) {
     return;
   }
 
-  const tableNames = tables.map((table) => '"public"."' + table.tablename + '"').join(', ');
+  const tableNames = tables
+    .map((table) => '"public"."' + table.tablename + '"')
+    .join(', ');
 
-  await prisma.$executeRawUnsafe('TRUNCATE TABLE ' + tableNames + ' RESTART IDENTITY CASCADE;');
+  await prisma.$executeRawUnsafe(
+    'TRUNCATE TABLE ' + tableNames + ' RESTART IDENTITY CASCADE;',
+  );
 }
 
 export function modelExists(modelName: string) {
   return Prisma.dmmf.datamodel.models.some((model) => model.name === modelName);
 }
-
-

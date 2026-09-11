@@ -9,22 +9,12 @@ import { FidelidadeService } from './fidelidade.service';
 import { FidelidadeController } from './fidelidade.controller';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-    AutomacoesModule,
-  ],
+  imports: [PrismaModule, TenantModule, AutomacoesModule],
 
-  controllers: [
-    FidelidadeController,
-  ],
+  controllers: [FidelidadeController],
 
-  providers: [
-    FidelidadeService,
-  ],
+  providers: [FidelidadeService],
 
-  exports: [
-    FidelidadeService,
-  ],
+  exports: [FidelidadeService],
 })
 export class FidelidadeModule {}

@@ -32,6 +32,17 @@ import { CreateUnidadeDto } from './dto/create-unidade.dto';
 import { UpdateUnidadeDto } from './dto/update-unidade.dto';
 import { UnidadesService } from './unidades.service';
 
+type CompanyAuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    sub?: string;
+    id?: string;
+    usuarioId?: string;
+    clienteId?: string;
+    role?: import('@prisma/client').Role;
+  };
+};
+
 @ApiTags('Unidades')
 @ApiBearerAuth('JWT')
 @Controller('unidades')
@@ -74,16 +85,14 @@ export class UnidadesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   create(
     @Body() createUnidadeDto: CreateUnidadeDto,
-    @Request() req: any,
+    @Request() req: CompanyAuthenticatedRequest,
   ) {
-    return this.unidadesService.create(
-      createUnidadeDto,
-      req.user.empresaId,
-    );
+    return this.unidadesService.create(createUnidadeDto, req.user.empresaId);
   }
 
   @Get()
@@ -116,12 +125,11 @@ export class UnidadesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  findAll(@Request() req: any) {
-    return this.unidadesService.findAll(
-      req.user.empresaId,
-    );
+  findAll(@Request() req: CompanyAuthenticatedRequest) {
+    return this.unidadesService.findAll(req.user.empresaId);
   }
 
   @Get(':id')
@@ -161,19 +169,17 @@ export class UnidadesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Unidade não encontrada para a empresa autenticada.',
   })
   findOne(
     @Param('id', ParseUUIDPipe) id: string,
-    @Request() req: any,
+    @Request() req: CompanyAuthenticatedRequest,
   ) {
-    return this.unidadesService.findOne(
-      id,
-      req.user.empresaId,
-    );
+    return this.unidadesService.findOne(id, req.user.empresaId);
   }
 
   @Patch(':id')
@@ -211,13 +217,15 @@ export class UnidadesController {
     },
   })
   @ApiBadRequestResponse({
-    description: 'ID inválido, payload inválido ou dados fora das regras permitidas.',
+    description:
+      'ID inválido, payload inválido ou dados fora das regras permitidas.',
   })
   @ApiUnauthorizedResponse({
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Unidade não encontrada para a empresa autenticada.',
@@ -225,7 +233,7 @@ export class UnidadesController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUnidadeDto: UpdateUnidadeDto,
-    @Request() req: any,
+    @Request() req: CompanyAuthenticatedRequest,
   ) {
     return this.unidadesService.update(
       id,
@@ -265,18 +273,16 @@ export class UnidadesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description: 'Unidade não encontrada para a empresa autenticada.',
   })
   inativar(
     @Param('id', ParseUUIDPipe) id: string,
-    @Request() req: any,
+    @Request() req: CompanyAuthenticatedRequest,
   ) {
-    return this.unidadesService.inativar(
-      id,
-      req.user.empresaId,
-    );
+    return this.unidadesService.inativar(id, req.user.empresaId);
   }
 }

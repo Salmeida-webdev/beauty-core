@@ -15,10 +15,22 @@
 installCoverageSmokeSilencer();
 
 const infrastructureFiles = [
-  ...discoverFiles(process.cwd() + '/src/common', (filePath) => filePath.endsWith('.ts') && !filePath.endsWith('.spec.ts')),
-  ...discoverFiles(process.cwd() + '/src/shared', (filePath) => filePath.endsWith('.ts') && !filePath.endsWith('.spec.ts')),
-  ...discoverFiles(process.cwd() + '/src/config', (filePath) => filePath.endsWith('.ts') && !filePath.endsWith('.spec.ts')),
-  ...discoverFiles(process.cwd() + '/src/queues', (filePath) => filePath.endsWith('.ts') && !filePath.endsWith('.spec.ts')),
+  ...discoverFiles(
+    process.cwd() + '/src/common',
+    (filePath) => filePath.endsWith('.ts') && !filePath.endsWith('.spec.ts'),
+  ),
+  ...discoverFiles(
+    process.cwd() + '/src/shared',
+    (filePath) => filePath.endsWith('.ts') && !filePath.endsWith('.spec.ts'),
+  ),
+  ...discoverFiles(
+    process.cwd() + '/src/config',
+    (filePath) => filePath.endsWith('.ts') && !filePath.endsWith('.spec.ts'),
+  ),
+  ...discoverFiles(
+    process.cwd() + '/src/queues',
+    (filePath) => filePath.endsWith('.ts') && !filePath.endsWith('.spec.ts'),
+  ),
 ].filter((filePath) => {
   const normalized = filePath.replace(/\\/g, '/');
 
@@ -55,45 +67,58 @@ describe('Chat 33.3 - Infrastructure Expanded Coverage', () => {
 
           const name = String(exportedValue.name ?? '');
 
-          if (name.endsWith('Controller') || name.endsWith('Service') || name.endsWith('Guard') || name.endsWith('Strategy') || name.endsWith('Filter') || name.endsWith('Interceptor') || name.endsWith('Worker')) {
+          if (
+            name.endsWith('Controller') ||
+            name.endsWith('Service') ||
+            name.endsWith('Guard') ||
+            name.endsWith('Strategy') ||
+            name.endsWith('Filter') ||
+            name.endsWith('Interceptor') ||
+            name.endsWith('Worker')
+          ) {
             const instance = createInstance(exportedValue);
 
             if (instance) {
-              if (name.endsWith('Guard') && typeof instance.canActivate === 'function') {
-                try {
-                  await runWithTimeout(() => instance.canActivate(createExecutionContextLike()));
-                } catch {}
-              }
-
-              if (name.endsWith('Filter') && typeof instance.catch === 'function') {
+              if (
+                name.endsWith('Guard') &&
+                typeof instance.canActivate === 'function'
+              ) {
                 try {
                   await runWithTimeout(() =>
-                    instance.catch(
-                      new Error('Erro de teste'),
-                      {
-                        switchToHttp: () => ({
-                          getRequest: () => createRequestLike(),
-                          getResponse: () => createResponseLike(),
-                        }),
-                      },
-                    ),
+                    instance.canActivate(createExecutionContextLike()),
                   );
                 } catch {}
               }
 
-              if (name.endsWith('Interceptor') && typeof instance.intercept === 'function') {
+              if (
+                name.endsWith('Filter') &&
+                typeof instance.catch === 'function'
+              ) {
                 try {
                   await runWithTimeout(() =>
-                    instance.intercept(
-                      createExecutionContextLike(),
-                      {
-                        handle: () => ({
-                          pipe: () => ({
-                            subscribe: () => undefined,
-                          }),
+                    instance.catch(new Error('Erro de teste'), {
+                      switchToHttp: () => ({
+                        getRequest: () => createRequestLike(),
+                        getResponse: () => createResponseLike(),
+                      }),
+                    }),
+                  );
+                } catch {}
+              }
+
+              if (
+                name.endsWith('Interceptor') &&
+                typeof instance.intercept === 'function'
+              ) {
+                try {
+                  await runWithTimeout(() =>
+                    instance.intercept(createExecutionContextLike(), {
+                      handle: () => ({
+                        pipe: () => ({
+                          subscribe: () => undefined,
                         }),
-                      },
-                    ),
+                      }),
+                    }),
                   );
                 } catch {}
               }
@@ -131,9 +156,15 @@ describe('Chat 33.3 - Infrastructure Expanded Coverage', () => {
   }
 
   it('deve carregar classes por sufixo quando existirem', () => {
-    const serviceClasses = infrastructureFiles.flatMap((filePath) => loadExportedClasses(filePath, 'Service'));
-    const controllerClasses = infrastructureFiles.flatMap((filePath) => loadExportedClasses(filePath, 'Controller'));
+    const serviceClasses = infrastructureFiles.flatMap((filePath) =>
+      loadExportedClasses(filePath, 'Service'),
+    );
+    const controllerClasses = infrastructureFiles.flatMap((filePath) =>
+      loadExportedClasses(filePath, 'Controller'),
+    );
 
-    expect(serviceClasses.length + controllerClasses.length).toBeGreaterThanOrEqual(0);
+    expect(
+      serviceClasses.length + controllerClasses.length,
+    ).toBeGreaterThanOrEqual(0);
   });
 });

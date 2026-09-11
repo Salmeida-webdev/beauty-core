@@ -1,3 +1,35 @@
+function stringifyLintValue(value: unknown): string {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (value === null || value === undefined) {
+    return '';
+  }
+
+  if (
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    typeof value === 'bigint'
+  ) {
+    return value.toString();
+  }
+
+  if (typeof value === 'symbol') {
+    return value.description ?? '';
+  }
+
+  if (typeof value === 'object') {
+    try {
+      return JSON.stringify(value) ?? '';
+    } catch {
+      return '[unserializable]';
+    }
+  }
+
+  return '';
+}
+
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -130,7 +162,7 @@ export class MetaWhatsappCloudProvider {
       const value: unknown = await response.json();
       if (typeof value !== 'object' || value === null || Array.isArray(value))
         return {};
-      return value as MetaWhatsappPayload;
+      return value;
     } catch {
       return {};
     }
@@ -144,7 +176,7 @@ export class MetaWhatsappCloudProvider {
   private resumirErro(payload: MetaWhatsappPayload): string {
     const value =
       payload.error?.message || payload.error?.type || 'resposta sem detalhes';
-    return String(value)
+    return stringifyLintValue(value)
       .replace(/[\r\n]+/g, ' ')
       .slice(0, 300);
   }

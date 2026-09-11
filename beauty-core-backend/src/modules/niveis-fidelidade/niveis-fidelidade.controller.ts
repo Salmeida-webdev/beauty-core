@@ -33,6 +33,17 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../shared/decorators/roles.decorator';
 
+type CompanyAuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    sub?: string;
+    id?: string;
+    usuarioId?: string;
+    clienteId?: string;
+    role?: import('@prisma/client').Role;
+  };
+};
+
 @ApiTags('Niveis Fidelidade')
 @ApiBearerAuth('JWT')
 @Controller('niveis-fidelidade')
@@ -75,10 +86,11 @@ export class NiveisFidelidadeController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   create(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Body() dto: CreateNivelFidelidadeDto,
   ) {
     return this.niveisFidelidadeService.create(req.user.empresaId, dto);
@@ -115,7 +127,7 @@ export class NiveisFidelidadeController {
     description:
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
-  findAll(@Req() req: any) {
+  findAll(@Req() req: CompanyAuthenticatedRequest) {
     return this.niveisFidelidadeService.findAll(req.user.empresaId);
   }
 
@@ -162,7 +174,7 @@ export class NiveisFidelidadeController {
       'Nível de fidelidade não encontrado para a empresa autenticada.',
   })
   findOne(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.niveisFidelidadeService.findOne(req.user.empresaId, id);
@@ -194,7 +206,8 @@ export class NiveisFidelidadeController {
         empresaId: '550e8400-e29b-41d4-a716-446655440000',
         nome: 'Ouro',
         pontosMinimos: 1000,
-        beneficios: 'Atendimento prioritário, desconto especial e bônus exclusivo.',
+        beneficios:
+          'Atendimento prioritário, desconto especial e bônus exclusivo.',
         ativo: true,
         createdAt: '2026-06-14T10:00:00.000Z',
         updatedAt: '2026-06-14T11:00:00.000Z',
@@ -202,20 +215,22 @@ export class NiveisFidelidadeController {
     },
   })
   @ApiBadRequestResponse({
-    description: 'ID inválido, payload inválido ou dados fora das regras permitidas.',
+    description:
+      'ID inválido, payload inválido ou dados fora das regras permitidas.',
   })
   @ApiUnauthorizedResponse({
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description:
       'Nível de fidelidade não encontrado para a empresa autenticada.',
   })
   update(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateNivelFidelidadeDto,
   ) {
@@ -251,14 +266,15 @@ export class NiveisFidelidadeController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description:
       'Nível de fidelidade não encontrado para a empresa autenticada.',
   })
   remove(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.niveisFidelidadeService.remove(req.user.empresaId, id);

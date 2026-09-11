@@ -1,3 +1,5 @@
+import type { FileFilterCallback } from 'multer';
+import type { Request } from 'express';
 import { BadRequestException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { existsSync, mkdirSync } from 'fs';
@@ -111,12 +113,16 @@ export function multerStorageOptions(pasta: string) {
       },
     }),
 
-    fileFilter: (_req, file, callback) => {
+    fileFilter: (
+      _req: Request,
+      file: Express.Multer.File,
+      callback: FileFilterCallback,
+    ) => {
       try {
         validateFile(pasta, file);
         callback(null, true);
       } catch (error) {
-        callback(error as Error, false);
+        callback(error as Error);
       }
     },
 
@@ -151,9 +157,11 @@ export const multerMemoryConfig = {
   storage: memoryStorage(),
 
   fileFilter: (
-    _req: any,
+    _req: Request,
+
     file: Express.Multer.File,
-    callback: (error: Error | null, acceptFile: boolean) => void,
+
+    callback: FileFilterCallback,
   ) => {
     const originalName = file.originalname || '';
     const lastDotIndex = originalName.lastIndexOf('.');
@@ -163,12 +171,11 @@ export const multerMemoryConfig = {
     if (chat31BlockedExtensions.includes(extension)) {
       return callback(
         new BadRequestException('Tipo de arquivo bloqueado por segurança.'),
-        false,
       );
     }
 
     if (!chat31AllowedMimeTypes.includes(file.mimetype)) {
-      return callback(new BadRequestException('MIME type não permitido.'), false);
+      return callback(new BadRequestException('MIME type não permitido.'));
     }
 
     return callback(null, true);

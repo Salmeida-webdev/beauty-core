@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { QueueMonitorService } from './queue-monitor.service';
 
+type QueueMetricsSnapshot = {
+  completed: number;
+  failed: number;
+  total: number;
+};
 @Injectable()
 export class QueueMetricsService {
   constructor(private readonly queueMonitorService: QueueMonitorService) {}
@@ -10,9 +15,16 @@ export class QueueMetricsService {
 
     return Object.entries(status).reduce(
       (acc, [queueName, queueStatus]: [string, any]) => {
-        const completed = Number(queueStatus.completed ?? 0);
-        const failed = Number(queueStatus.failed ?? 0);
-        const dlq = queueName === 'dlq' ? Number(queueStatus.total ?? 0) : 0;
+        const completed = Number(
+          (queueStatus as QueueMetricsSnapshot).completed ?? 0,
+        );
+        const failed = Number(
+          (queueStatus as QueueMetricsSnapshot).failed ?? 0,
+        );
+        const dlq =
+          queueName === 'dlq'
+            ? Number((queueStatus as QueueMetricsSnapshot).total ?? 0)
+            : 0;
         const finalized = completed + failed + dlq;
 
         acc[queueName] = {

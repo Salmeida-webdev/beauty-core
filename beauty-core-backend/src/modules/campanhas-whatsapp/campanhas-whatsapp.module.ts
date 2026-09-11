@@ -11,23 +11,12 @@ import { CampanhasWhatsappController } from './campanhas-whatsapp.controller';
 import { CampanhasWhatsappService } from './campanhas-whatsapp.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-    QueuesModule,
-    AuditoriaModule,
-  ],
+  imports: [PrismaModule, TenantModule, QueuesModule, AuditoriaModule],
 
-  controllers: [
-    CampanhasWhatsappController,
-  ],
+  controllers: [CampanhasWhatsappController],
 
-  providers: [
-    CampanhasWhatsappService,
-  ],
+  providers: [CampanhasWhatsappService],
 
-  exports: [
-    CampanhasWhatsappService,
-  ],
+  exports: [CampanhasWhatsappService],
 })
 export class CampanhasWhatsappModule {}

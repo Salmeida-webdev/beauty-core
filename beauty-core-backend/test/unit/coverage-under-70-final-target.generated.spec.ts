@@ -240,7 +240,11 @@ function delegate(mode: Mode) {
     updateMany: jest.fn(async () => ({ count: count() })),
     delete: jest.fn(async () => item),
     deleteMany: jest.fn(async () => ({ count: count() })),
-    upsert: jest.fn(async (args?: any) => ({ ...item, ...(args?.create ?? {}), ...(args?.update ?? {}) })),
+    upsert: jest.fn(async (args?: any) => ({
+      ...item,
+      ...(args?.create ?? {}),
+      ...(args?.update ?? {}),
+    })),
     aggregate: jest.fn(async () => ({
       _sum: {
         valor: mode === 'empty' ? null : item.valor,
@@ -331,11 +335,13 @@ function rich(mode: Mode = 'happy') {
                 : mode === 'public'
                   ? 'S3'
                   : 'LOCAL',
-            SIGNED_URL_SECRET: mode === 'invalid' ? '' : 'signed-url-secret-test',
+            SIGNED_URL_SECRET:
+              mode === 'invalid' ? '' : 'signed-url-secret-test',
             SIGNED_URL_EXPIRES_IN_SECONDS: mode === 'expired' ? '0' : '900',
             JWT_SECRET: mode === 'invalid' ? '' : 'jwt-secret-test',
             JWT_REFRESH_SECRET: 'jwt-refresh-secret-test',
-            JWT_CLIENT_SECRET: mode === 'invalid' ? '' : 'jwt-client-secret-test',
+            JWT_CLIENT_SECRET:
+              mode === 'invalid' ? '' : 'jwt-client-secret-test',
             JWT_CLIENT_REFRESH_SECRET: 'jwt-client-refresh-secret-test',
             SCHEDULER_ENABLED: mode === 'false' ? 'false' : 'true',
             SCHEDULER_TIMEZONE: 'America/Fortaleza',
@@ -357,13 +363,16 @@ function rich(mode: Mode = 'happy') {
       }
 
       if (prop === 'signAsync') {
-        target[prop] = jest.fn(async () => (mode === 'invalid' ? '' : 'token-test'));
+        target[prop] = jest.fn(async () =>
+          mode === 'invalid' ? '' : 'token-test',
+        );
         return target[prop];
       }
 
       if (prop === 'verify' || prop === 'verifyAsync') {
         target[prop] = jest.fn(async () => {
-          if (mode === 'invalid') throw new UnauthorizedException('Token inválido');
+          if (mode === 'invalid')
+            throw new UnauthorizedException('Token inválido');
           return {
             sub: UUID_A,
             empresaId: mode === 'crossTenant' ? EMPRESA_B : EMPRESA_A,
@@ -437,11 +446,20 @@ function rich(mode: Mode = 'happy') {
       }
 
       if (prop === 'statSync') {
-        target[prop] = jest.fn(() => ({ size: item.tamanho, isFile: () => true, isDirectory: () => false }));
+        target[prop] = jest.fn(() => ({
+          size: item.tamanho,
+          isFile: () => true,
+          isDirectory: () => false,
+        }));
         return target[prop];
       }
 
-      if (prop === 'mkdirSync' || prop === 'writeFileSync' || prop === 'unlinkSync' || prop === 'rmSync') {
+      if (
+        prop === 'mkdirSync' ||
+        prop === 'writeFileSync' ||
+        prop === 'unlinkSync' ||
+        prop === 'rmSync'
+      ) {
         target[prop] = jest.fn(() => {
           if (mode === 'throw') throw new Error('FS final error');
           return undefined;
@@ -528,7 +546,9 @@ function patch(instance: any, mode: Mode) {
 }
 
 function instantiate(Exported: any, mode: Mode) {
-  const deps = Array.from({ length: Math.max(Exported.length || 0, 24) }, () => rich(mode));
+  const deps = Array.from({ length: Math.max(Exported.length || 0, 24) }, () =>
+    rich(mode),
+  );
 
   try {
     return patch(new Exported(...deps), mode);
@@ -544,11 +564,15 @@ function instantiate(Exported: any, mode: Mode) {
 function allMethods(instance: any) {
   if (!instance) return [];
 
-  const protoMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(instance))
+  const protoMethods = Object.getOwnPropertyNames(
+    Object.getPrototypeOf(instance),
+  )
     .filter((name) => name !== 'constructor')
     .filter((name) => typeof instance[name] === 'function');
 
-  const ownMethods = Object.keys(instance).filter((name) => typeof instance[name] === 'function');
+  const ownMethods = Object.keys(instance).filter(
+    (name) => typeof instance[name] === 'function',
+  );
 
   return Array.from(new Set([...protoMethods, ...ownMethods]));
 }
@@ -589,8 +613,24 @@ function httpHost(mode: Mode) {
                   'user-agent': 'Coverage Final Agent',
                   'x-forwarded-for': '127.0.0.1,10.0.0.1',
                 },
-          user: mode === 'null' ? undefined : { id: UUID_A, sub: UUID_A, empresaId: EMPRESA_A, role: 'ADMIN' },
-          cliente: mode === 'null' ? undefined : { id: UUID_A, sub: UUID_A, empresaId: EMPRESA_A, role: 'CLIENTE' },
+          user:
+            mode === 'null'
+              ? undefined
+              : {
+                  id: UUID_A,
+                  sub: UUID_A,
+                  empresaId: EMPRESA_A,
+                  role: 'ADMIN',
+                },
+          cliente:
+            mode === 'null'
+              ? undefined
+              : {
+                  id: UUID_A,
+                  sub: UUID_A,
+                  empresaId: EMPRESA_A,
+                  role: 'CLIENTE',
+                },
         }),
       getResponse: () => createResponseLike(),
     }),
@@ -646,8 +686,17 @@ function methodArgs(method: string, mode: Mode) {
 
   if (method === 'catch') {
     return [
-      [new BadRequestException(['campo inválido', 'payload inválido']), httpHost(mode)],
-      [new BadRequestException({ message: ['erro um', 'erro dois'], error: 'Bad Request' }), httpHost(mode)],
+      [
+        new BadRequestException(['campo inválido', 'payload inválido']),
+        httpHost(mode),
+      ],
+      [
+        new BadRequestException({
+          message: ['erro um', 'erro dois'],
+          error: 'Bad Request',
+        }),
+        httpHost(mode),
+      ],
       [new BadRequestException('string bad request'), httpHost(mode)],
       [new UnauthorizedException('Não autorizado'), httpHost(mode)],
       [new ForbiddenException('Sem permissão'), httpHost(mode)],
@@ -698,8 +747,16 @@ function methodArgs(method: string, mode: Mode) {
     ];
   }
 
-  if (method.toLowerCase().includes('process') || method.toLowerCase().includes('handle')) {
-    return [[job(mode)], [job(mode), 'token-test'], [{ ...job(mode), data: {} }], [{ ...job(mode), data: null }]];
+  if (
+    method.toLowerCase().includes('process') ||
+    method.toLowerCase().includes('handle')
+  ) {
+    return [
+      [job(mode)],
+      [job(mode), 'token-test'],
+      [{ ...job(mode), data: {} }],
+      [{ ...job(mode), data: null }],
+    ];
   }
 
   return [
@@ -774,10 +831,22 @@ async function exercisePlainFunction(fn: any, mode: Mode) {
     { originalname: 'imagem.jpeg', mimetype: 'image/jpeg', size: 1024 },
     { originalname: 'imagem.png', mimetype: 'image/png', size: 1024 },
     { originalname: 'imagem.webp', mimetype: 'image/webp', size: 1024 },
-    { originalname: 'arquivo.exe', mimetype: 'application/x-msdownload', size: 1024 },
-    { originalname: 'script.js', mimetype: 'application/javascript', size: 1024 },
+    {
+      originalname: 'arquivo.exe',
+      mimetype: 'application/x-msdownload',
+      size: 1024,
+    },
+    {
+      originalname: 'script.js',
+      mimetype: 'application/javascript',
+      size: 1024,
+    },
     { originalname: 'sem-extensao', mimetype: '', size: 0 },
-    { originalname: '../path.pdf', mimetype: 'application/pdf', size: 999999999 },
+    {
+      originalname: '../path.pdf',
+      mimetype: 'application/pdf',
+      size: 999999999,
+    },
   ];
 
   const calls: any[][] = [
@@ -845,7 +914,7 @@ describe('Chat 33.4.3 - final target remaining below 70', () => {
       for (const mode of modes) {
         it('deve exercitar alvo em modo ' + mode, async () => {
           const mod = require(modulePath);
-          const values = Object.values(mod) as any[];
+          const values = Object.values(mod);
 
           for (const exported of values) {
             if (typeof exported === 'function') {
@@ -876,7 +945,10 @@ describe('Chat 33.4.3 - final target remaining below 70', () => {
 
                   for (const args of methodArgs(method, mode).slice(0, 90)) {
                     try {
-                      await runWithTimeout(() => instance[method](...args), 800);
+                      await runWithTimeout(
+                        () => instance[method](...args),
+                        800,
+                      );
                     } catch {}
                   }
                 }

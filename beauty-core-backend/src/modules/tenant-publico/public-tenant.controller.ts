@@ -8,12 +8,24 @@ import {
 
 import { TenantPublicService } from '../../shared/tenant';
 
+type TenantPublicData = {
+  nome?: string | null;
+  slug?: string | null;
+  logo?: string | null;
+  corPrimaria?: string | null;
+  corSecundaria?: string | null;
+  dominio?: string | null;
+  whatsapp?: string | null;
+  telefone?: string | null;
+  configuracaoWhatsApp?: { numeroWhatsApp?: string | null } | null;
+  portalClienteAtivo?: boolean | null;
+  ativoPortal?: boolean | null;
+};
+
 @ApiTags('Tenant Público')
 @Controller('public/tenant')
 export class PublicTenantController {
-  constructor(
-    private readonly tenantPublicService: TenantPublicService,
-  ) {}
+  constructor(private readonly tenantPublicService: TenantPublicService) {}
 
   @Get(':slug')
   @ApiOperation({
@@ -47,7 +59,7 @@ export class PublicTenantController {
   async resolverTenantPorSlug(@Param('slug') slug: string) {
     const tenant = await this.tenantPublicService.resolverPorSlug(slug);
 
-    const dados = tenant as any;
+    const dados = tenant as unknown as TenantPublicData;
 
     return {
       data: {
@@ -63,9 +75,7 @@ export class PublicTenantController {
           dados?.configuracaoWhatsApp?.numeroWhatsApp ??
           null,
         portalClienteAtivo:
-          dados?.portalClienteAtivo ??
-          dados?.ativoPortal ??
-          true,
+          dados?.portalClienteAtivo ?? dados?.ativoPortal ?? true,
       },
       meta: {},
     };

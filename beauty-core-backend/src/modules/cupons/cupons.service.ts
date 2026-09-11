@@ -76,9 +76,7 @@ export class CuponsService {
 
     this.validarPeriodoCupom(dto.dataInicio, dto.dataFim);
 
-    const codigo = dto.codigo
-      ? dto.codigo.toUpperCase().trim()
-      : undefined;
+    const codigo = dto.codigo ? dto.codigo.toUpperCase().trim() : undefined;
 
     if (codigo) {
       const cupomExistente = await this.prisma.cupom.findFirst({
@@ -92,9 +90,7 @@ export class CuponsService {
       });
 
       if (cupomExistente) {
-        throw new BadRequestException(
-          'Já existe outro cupom com este código',
-        );
+        throw new BadRequestException('Já existe outro cupom com este código');
       }
     }
 
@@ -180,9 +176,7 @@ export class CuponsService {
       cupom.quantidadeMaxima !== null &&
       cupom.quantidadeUtilizada >= cupom.quantidadeMaxima
     ) {
-      throw new BadRequestException(
-        'Cupom atingiu o limite máximo de uso',
-      );
+      throw new BadRequestException('Cupom atingiu o limite máximo de uso');
     }
 
     return {

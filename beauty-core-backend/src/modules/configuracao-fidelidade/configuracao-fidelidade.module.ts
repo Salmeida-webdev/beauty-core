@@ -7,21 +7,12 @@ import { ConfiguracaoFidelidadeController } from './configuracao-fidelidade.cont
 import { ConfiguracaoFidelidadeService } from './configuracao-fidelidade.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-  ],
+  imports: [PrismaModule, TenantModule],
 
-  controllers: [
-    ConfiguracaoFidelidadeController,
-  ],
+  controllers: [ConfiguracaoFidelidadeController],
 
-  providers: [
-    ConfiguracaoFidelidadeService,
-  ],
+  providers: [ConfiguracaoFidelidadeService],
 
-  exports: [
-    ConfiguracaoFidelidadeService,
-  ],
+  exports: [ConfiguracaoFidelidadeService],
 })
 export class ConfiguracaoFidelidadeModule {}

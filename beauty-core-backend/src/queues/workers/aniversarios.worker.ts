@@ -1,4 +1,7 @@
-import { formatQueueTrace, getQueueTraceMetadata } from '../utils/queue-trace.util';
+import {
+  formatQueueTrace,
+  getQueueTraceMetadata,
+} from '../utils/queue-trace.util';
 import {
   Injectable,
   Logger,
@@ -6,11 +9,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  AcaoAuditoria,
-  StatusAuditoria,
-  TipoUsuarioAuditoria,
-} from '@prisma/client';
+import {} from '@prisma/client';
 import { Job, Worker } from 'bullmq';
 
 import { ANIVERSARIOS_QUEUE } from '../constants/queue-names';
@@ -20,12 +19,8 @@ import { AuditoriaService } from '../../modules/auditoria/auditoria.service';
 import { DeadLetterQueueService } from '../services/dead-letter-queue.service';
 
 @Injectable()
-export class AniversariosWorker
-  implements OnModuleInit, OnModuleDestroy
-{
-  private readonly logger = new Logger(
-    AniversariosWorker.name,
-  );
+export class AniversariosWorker implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(AniversariosWorker.name);
 
   private worker?: Worker<AniversarioJob>;
 
@@ -38,47 +33,39 @@ export class AniversariosWorker
   onModuleInit() {
     this.worker = new Worker<AniversarioJob>(
       ANIVERSARIOS_QUEUE,
-      async (job: Job<AniversarioJob>) =>
-        this.processar(job),
+      async (job: Job<AniversarioJob>) => this.processar(job),
       {
         connection: {
-          host:
-            this.configService.get<string>(
-              'REDIS_HOST',
-            ) || 'localhost',
+          host: this.configService.get<string>('REDIS_HOST') || 'localhost',
 
-          port: Number(
-            this.configService.get<string>(
-              'REDIS_PORT',
-            ) || 6379,
-          ),
+          port: Number(this.configService.get<string>('REDIS_PORT') || 6379),
 
           password:
-            this.configService.get<string>(
-              'REDIS_PASSWORD',
-            ) || undefined,
+            this.configService.get<string>('REDIS_PASSWORD') || undefined,
 
           maxRetriesPerRequest: null,
         },
-      
-      concurrency: Number(this.configService.get('QUEUE_CONCURRENCY_ANIVERSARIOS', 3)),
-    },
+
+        concurrency: Number(
+          this.configService.get('QUEUE_CONCURRENCY_ANIVERSARIOS', 3),
+        ),
+      },
     );
 
-    this.worker.on('failed', async (job, error) => {
-      if (!job) return;
+    this.worker.on('failed', (job, error) => {
+      void (async () => {
+        if (!job) return;
 
-      await this.deadLetterQueueService.moveToDlq({
-        sourceQueue: ANIVERSARIOS_QUEUE,
-        job,
-        error,
-      });
+        await this.deadLetterQueueService.moveToDlq({
+          sourceQueue: ANIVERSARIOS_QUEUE,
+          job,
+          error,
+        });
+      })();
     });
 
-
-    this.worker.on(
-      'completed',
-      async (job) => {
+    this.worker.on('completed', (job) => {
+      void (async () => {
         this.logger.log(
           `[BULLMQ] job concluido queue=${ANIVERSARIOS_QUEUE} jobId=${job.id} ${formatQueueTrace(job)} empresaId=${job.data.empresaId}`,
         );
@@ -90,11 +77,9 @@ export class AniversariosWorker
 
           clienteId: job.data.clienteId,
 
-          tipoUsuario:
-            'SISTEMA' as TipoUsuarioAuditoria,
+          tipoUsuario: 'SISTEMA',
 
-          acao:
-            'JOB_CONCLUIDO' as AcaoAuditoria,
+          acao: 'JOB_CONCLUIDO',
 
           modulo: 'BULLMQ',
 
@@ -103,31 +88,26 @@ export class AniversariosWorker
           recursoId: String(job.id),
 
           metadata: {
-          ...getQueueTraceMetadata(job),
+            ...getQueueTraceMetadata(job),
             queue: ANIVERSARIOS_QUEUE,
             worker: AniversariosWorker.name,
             jobName: job.name,
             status: 'completed',
             attemptsMade: job.attemptsMade,
-            dataReferencia:
-              job.data.dataReferencia,
+            dataReferencia: job.data.dataReferencia,
           },
 
-          mensagem:
-            'Job de aniversÃ¡rios concluido.',
+          mensagem: 'Job de aniversÃ¡rios concluido.',
         });
-      },
-    );
+      })();
+    });
 
-    this.worker.on(
-      'failed',
-      async (job, error) => {
+    this.worker.on('failed', (job, error) => {
+      void (async () => {
         this.logger.error(
           `[BULLMQ] job falhou queue=${ANIVERSARIOS_QUEUE} jobId=${
             job?.id ?? '-'
-          } empresaId=${
-            job?.data?.empresaId ?? '-'
-          } erro=${error.message}`,
+          } empresaId=${job?.data?.empresaId ?? '-'} erro=${error.message}`,
           error.stack,
         );
 
@@ -138,49 +118,40 @@ export class AniversariosWorker
 
           clienteId: job?.data?.clienteId,
 
-          tipoUsuario:
-            'SISTEMA' as TipoUsuarioAuditoria,
+          tipoUsuario: 'SISTEMA',
 
-          acao:
-            'JOB_FALHOU' as AcaoAuditoria,
+          acao: 'JOB_FALHOU',
 
-          status:
-            'FALHA' as StatusAuditoria,
+          status: 'FALHA',
 
           modulo: 'BULLMQ',
 
           recurso: 'BullMQJob',
 
-          recursoId: job?.id
-            ? String(job.id)
-            : undefined,
+          recursoId: job?.id ? String(job.id) : undefined,
 
           metadata: {
-          ...getQueueTraceMetadata(job),
+            ...getQueueTraceMetadata(job),
             queue: ANIVERSARIOS_QUEUE,
             worker: AniversariosWorker.name,
             jobName: job?.name,
             status: 'failed',
             attemptsMade: job?.attemptsMade,
             error: error.message,
-            dataReferencia:
-              job?.data?.dataReferencia,
+            dataReferencia: job?.data?.dataReferencia,
           },
 
-          mensagem:
-            'Job de aniversÃ¡rios falhou.',
+          mensagem: 'Job de aniversÃ¡rios falhou.',
         });
-      },
-    );
+      })();
+    });
   }
 
   async onModuleDestroy() {
     await this.worker?.close();
   }
 
-  private async processar(
-    job: Job<AniversarioJob>,
-  ) {
+  private async processar(job: Job<AniversarioJob>) {
     const startedAt = Date.now();
 
     const {
@@ -205,11 +176,9 @@ export class AniversariosWorker
 
       clienteId,
 
-      tipoUsuario:
-        'SISTEMA' as TipoUsuarioAuditoria,
+      tipoUsuario: 'SISTEMA',
 
-      acao:
-        'JOB_INICIADO' as AcaoAuditoria,
+      acao: 'JOB_INICIADO',
 
       modulo: 'BULLMQ',
 
@@ -218,7 +187,7 @@ export class AniversariosWorker
       recursoId: String(job.id),
 
       metadata: {
-          ...getQueueTraceMetadata(job),
+        ...getQueueTraceMetadata(job),
         queue: ANIVERSARIOS_QUEUE,
         worker: AniversariosWorker.name,
         jobName: job.name,
@@ -231,8 +200,7 @@ export class AniversariosWorker
         ...metadata,
       },
 
-      mensagem:
-        'Job de aniversÃ¡rios iniciado.',
+      mensagem: 'Job de aniversÃ¡rios iniciado.',
     });
 
     return {
@@ -244,8 +212,7 @@ export class AniversariosWorker
       nome,
       telefone,
       mensagem,
-      tempoMs:
-        Date.now() - startedAt,
+      tempoMs: Date.now() - startedAt,
     };
   }
 }

@@ -97,7 +97,10 @@ export class EmpresasService {
     });
   }
 
-  private async validarSlugDisponivel(slug: string, empresaIdIgnorado?: string) {
+  private async validarSlugDisponivel(
+    slug: string,
+    empresaIdIgnorado?: string,
+  ) {
     const empresaExistente = await this.prisma.empresa.findFirst({
       where: {
         slug,

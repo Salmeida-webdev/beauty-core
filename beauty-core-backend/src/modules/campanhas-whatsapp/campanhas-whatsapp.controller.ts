@@ -35,6 +35,22 @@ import { CampanhasWhatsappService } from './campanhas-whatsapp.service';
 import { CreateCampanhaWhatsAppDto } from './dto/create-campanha-whatsapp.dto';
 import { UpdateCampanhaWhatsAppDto } from './dto/update-campanha-whatsapp.dto';
 
+type Group14AuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    empresa_id: string;
+    sub: string;
+    id: string;
+    usuarioId: string;
+    clienteId: string;
+    role: string;
+    tipoUsuario: string;
+    email: string;
+    nome: string;
+    [key: string]: string | undefined;
+  };
+};
+
 @ApiTags('WhatsApp Campanhas')
 @ApiBearerAuth('JWT')
 @Controller('campanhas-whatsapp')
@@ -79,16 +95,14 @@ export class CampanhasWhatsappController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   create(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Body() dto: CreateCampanhaWhatsAppDto,
   ) {
-    return this.campanhasWhatsappService.create(
-      getEmpresaId(req),
-      dto,
-    );
+    return this.campanhasWhatsappService.create(getEmpresaId(req), dto);
   }
 
   @Get()
@@ -106,7 +120,8 @@ export class CampanhasWhatsappController {
           id: '550e8400-e29b-41d4-a716-446655440000',
           empresaId: '550e8400-e29b-41d4-a716-446655440000',
           nome: 'Campanha de Retorno',
-          descricao: 'Campanha para clientes que não agendam há mais de 30 dias.',
+          descricao:
+            'Campanha para clientes que não agendam há mais de 30 dias.',
           mensagem: 'Olá, Maria! Temos uma condição especial para você voltar.',
           status: 'RASCUNHO',
           canal: 'WHATSAPP',
@@ -121,12 +136,11 @@ export class CampanhasWhatsappController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  findAll(@Req() req: any) {
-    return this.campanhasWhatsappService.findAll(
-      getEmpresaId(req),
-    );
+  findAll(@Req() req: Group14AuthenticatedRequest) {
+    return this.campanhasWhatsappService.findAll(getEmpresaId(req));
   }
 
   @Get(':id')
@@ -166,19 +180,18 @@ export class CampanhasWhatsappController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
-    description: 'Campanha de WhatsApp não encontrada para a empresa autenticada.',
+    description:
+      'Campanha de WhatsApp não encontrada para a empresa autenticada.',
   })
   findOne(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.campanhasWhatsappService.findOne(
-      getEmpresaId(req),
-      id,
-    );
+    return this.campanhasWhatsappService.findOne(getEmpresaId(req), id);
   }
 
   @Patch(':id')
@@ -216,27 +229,26 @@ export class CampanhasWhatsappController {
     },
   })
   @ApiBadRequestResponse({
-    description: 'ID inválido, payload inválido ou dados obrigatórios ausentes.',
+    description:
+      'ID inválido, payload inválido ou dados obrigatórios ausentes.',
   })
   @ApiUnauthorizedResponse({
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
-    description: 'Campanha de WhatsApp não encontrada para a empresa autenticada.',
+    description:
+      'Campanha de WhatsApp não encontrada para a empresa autenticada.',
   })
   update(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateCampanhaWhatsAppDto,
   ) {
-    return this.campanhasWhatsappService.update(
-      getEmpresaId(req),
-      id,
-      dto,
-    );
+    return this.campanhasWhatsappService.update(getEmpresaId(req), id, dto);
   }
 
   @Patch(':id/cancelar')
@@ -271,18 +283,17 @@ export class CampanhasWhatsappController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
-    description: 'Campanha de WhatsApp não encontrada para a empresa autenticada.',
+    description:
+      'Campanha de WhatsApp não encontrada para a empresa autenticada.',
   })
   cancelar(
-    @Req() req: any,
+    @Req() req: Group14AuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.campanhasWhatsappService.cancelar(
-      getEmpresaId(req),
-      id,
-    );
+    return this.campanhasWhatsappService.cancelar(getEmpresaId(req), id);
   }
 }

@@ -25,9 +25,10 @@ export class HealthService {
   ) {}
 
   async checkApi(): Promise<HealthCheckResponse> {
+    await Promise.resolve();
     return {
       status: 'ok',
-      };
+    };
   }
 
   async checkDatabase(): Promise<HealthCheckResponse> {
@@ -61,6 +62,7 @@ export class HealthService {
   }
 
   async checkScheduler(): Promise<HealthCheckResponse> {
+    await Promise.resolve();
     const schedulerEnabled =
       this.configService.get<string>('SCHEDULER_ENABLED') ?? 'true';
 
@@ -92,14 +94,13 @@ export class HealthService {
   }
 
   async checkHealth() {
-    const [api, database, redis, scheduler, bullmq] =
-      await Promise.all([
-        this.checkApi(),
-        this.checkDatabase(),
-        this.checkRedis(),
-        this.checkScheduler(),
-        this.checkBullMq(),
-      ]);
+    const [api, database, redis, scheduler, bullmq] = await Promise.all([
+      this.checkApi(),
+      this.checkDatabase(),
+      this.checkRedis(),
+      this.checkScheduler(),
+      this.checkBullMq(),
+    ]);
 
     return {
       api: api.status,
@@ -112,25 +113,23 @@ export class HealthService {
   }
 
   async checkFullHealth() {
-    const [api, database, redis, scheduler, bullmq] =
-      await Promise.all([
-        this.checkApi(),
-        this.checkDatabase(),
-        this.checkRedis(),
-        this.checkScheduler(),
-        this.checkBullMq(),
-      ]);
+    const [api, database, redis, scheduler, bullmq] = await Promise.all([
+      this.checkApi(),
+      this.checkDatabase(),
+      this.checkRedis(),
+      this.checkScheduler(),
+      this.checkBullMq(),
+    ]);
 
-    const status =
-      [
-        api.status,
-        database.status,
-        redis.status,
-        scheduler.status,
-        bullmq.status,
-      ].every((item) => item === 'ok' || item === 'disabled')
-        ? 'ok'
-        : 'error';
+    const status = [
+      api.status,
+      database.status,
+      redis.status,
+      scheduler.status,
+      bullmq.status,
+    ].every((item) => item === 'ok' || item === 'disabled')
+      ? 'ok'
+      : 'error';
 
     return {
       status,
@@ -144,7 +143,6 @@ export class HealthService {
       timestamp: new Date().toISOString(),
     };
   }
-
 
   async checkQueues(): Promise<any> {
     const startedAt = Date.now();
@@ -166,5 +164,4 @@ export class HealthService {
       };
     }
   }
-
 }

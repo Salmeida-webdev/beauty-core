@@ -1,12 +1,5 @@
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
-import {
-  Prisma,
-  TipoUsuarioAuditoria,
-} from '@prisma/client';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Prisma, TipoUsuarioAuditoria } from '@prisma/client';
 
 import { PrismaService } from '../../database/prisma/prisma.service';
 import { PaginationDto } from '../../shared/dto/pagination.dto';
@@ -79,8 +72,9 @@ export class ClientesService {
       mensagem: 'Cliente criado com sucesso.',
     });
 
-    const usuarioResponsavel =
-      await this.buscarUsuarioResponsavel(cliente.empresaId);
+    const usuarioResponsavel = await this.buscarUsuarioResponsavel(
+      cliente.empresaId,
+    );
 
     await this.automacoesService.processarEvento({
       empresaId: cliente.empresaId,
@@ -239,18 +233,18 @@ export class ClientesService {
         nome: clienteAntes.nome,
         telefone: clienteAntes.telefone,
         email: clienteAntes.email,
-        foto: clienteAntes['foto'],
-        dataNascimento: clienteAntes['dataNascimento'],
-        observacoes: clienteAntes['observacoes'],
+        foto: clienteAntes.foto,
+        dataNascimento: clienteAntes.dataNascimento,
+        observacoes: clienteAntes.observacoes,
         ativo: clienteAntes.ativo,
       },
       dadosDepois: {
         nome: clienteDepois.nome,
         telefone: clienteDepois.telefone,
         email: clienteDepois.email,
-        foto: clienteDepois['foto'],
-        dataNascimento: clienteDepois['dataNascimento'],
-        observacoes: clienteDepois['observacoes'],
+        foto: clienteDepois.foto,
+        dataNascimento: clienteDepois.dataNascimento,
+        observacoes: clienteDepois.observacoes,
         ativo: clienteDepois.ativo,
       },
       metadata: {

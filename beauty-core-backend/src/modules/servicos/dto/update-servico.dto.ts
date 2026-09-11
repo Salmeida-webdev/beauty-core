@@ -52,9 +52,12 @@ export class UpdateServicoDto {
     minimum: 1,
   })
   @IsOptional()
-  @IsNumber({}, {
-    message: 'A duração do serviço deve ser um número.',
-  })
+  @IsNumber(
+    {},
+    {
+      message: 'A duração do serviço deve ser um número.',
+    },
+  )
   @Min(1, {
     message: 'A duração do serviço deve ser no mínimo 1 minuto.',
   })
@@ -62,14 +65,16 @@ export class UpdateServicoDto {
 
   @ApiPropertyOptional({
     example: 180,
-    description:
-      'Preço atualizado do serviço. Deve ser maior ou igual a zero.',
+    description: 'Preço atualizado do serviço. Deve ser maior ou igual a zero.',
     minimum: 0,
   })
   @IsOptional()
-  @IsNumber({}, {
-    message: 'O preço do serviço deve ser um número.',
-  })
+  @IsNumber(
+    {},
+    {
+      message: 'O preço do serviço deve ser um número.',
+    },
+  )
   @Min(0, {
     message: 'O preço do serviço deve ser maior ou igual a 0.',
   })

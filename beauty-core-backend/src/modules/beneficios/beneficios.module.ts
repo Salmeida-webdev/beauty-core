@@ -7,21 +7,12 @@ import { BeneficiosService } from './beneficios.service';
 import { BeneficiosController } from './beneficios.controller';
 
 @Module({
-  imports: [
-    PrismaModule,
-    TenantModule,
-  ],
+  imports: [PrismaModule, TenantModule],
 
-  controllers: [
-    BeneficiosController,
-  ],
+  controllers: [BeneficiosController],
 
-  providers: [
-    BeneficiosService,
-  ],
+  providers: [BeneficiosService],
 
-  exports: [
-    BeneficiosService,
-  ],
+  exports: [BeneficiosService],
 })
 export class BeneficiosModule {}

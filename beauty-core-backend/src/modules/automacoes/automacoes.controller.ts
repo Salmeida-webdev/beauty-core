@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 
 import {
   ApiBadRequestResponse,
@@ -28,14 +21,23 @@ import { Roles } from '../../shared/decorators/roles.decorator';
 
 import { ProcessarEventoDto } from './dto/processar-evento.dto';
 
+type CompanyAuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    sub?: string;
+    id?: string;
+    usuarioId?: string;
+    clienteId?: string;
+    role?: import('@prisma/client').Role;
+  };
+};
+
 @ApiTags('Automacoes')
 @ApiBearerAuth('JWT')
 @Controller('automacoes')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class AutomacoesController {
-  constructor(
-    private readonly automacoesService: AutomacoesService,
-  ) {}
+  constructor(private readonly automacoesService: AutomacoesService) {}
 
   @Post('eventos')
   @Roles('ADMIN', 'GERENTE')
@@ -46,7 +48,8 @@ export class AutomacoesController {
   })
   @ApiBody({
     type: ProcessarEventoDto,
-    description: 'Dados do evento que será processado pela camada de automações.',
+    description:
+      'Dados do evento que será processado pela camada de automações.',
   })
   @ApiCreatedResponse({
     description: 'Evento de automação processado com sucesso.',
@@ -70,10 +73,11 @@ export class AutomacoesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   processarEvento(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Body() dto: ProcessarEventoDto,
   ) {
     return this.automacoesService.processarEvento({
@@ -102,12 +106,11 @@ export class AutomacoesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  testarAniversario(@Req() req: any) {
-    return this.automacoesService.testarAniversario(
-      req.user.empresaId,
-    );
+  testarAniversario(@Req() req: CompanyAuthenticatedRequest) {
+    return this.automacoesService.testarAniversario(req.user.empresaId);
   }
 
   @Post('teste-relatorio')
@@ -130,12 +133,11 @@ export class AutomacoesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  testarRelatorio(@Req() req: any) {
-    return this.automacoesService.testarRelatorio(
-      req.user.empresaId,
-    );
+  testarRelatorio(@Req() req: CompanyAuthenticatedRequest) {
+    return this.automacoesService.testarRelatorio(req.user.empresaId);
   }
 
   @Get('eventos')
@@ -163,11 +165,10 @@ export class AutomacoesController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  listarEventos(@Req() req: any) {
-    return this.automacoesService.listarEventos(
-      req.user.empresaId,
-    );
+  listarEventos(@Req() req: CompanyAuthenticatedRequest) {
+    return this.automacoesService.listarEventos(req.user.empresaId);
   }
 }

@@ -36,15 +36,34 @@ import { getEmpresaId } from '../../shared/utils/get-empresa-id';
 import { NotificacoesService } from './notificacoes.service';
 import { CreateNotificacaoDto } from './dto/create-notificacao.dto';
 
+type AuthenticatedControllerUser = {
+  id?: string;
+  sub: string;
+  empresaId: string;
+  usuarioId?: string;
+  clienteId?: string;
+  role?: string;
+  tipoUsuario?: string;
+};
+
+type AuthenticatedControllerRequest = {
+  headers?: Record<string, string | string[] | undefined>;
+  ip?: string;
+  socket?: { remoteAddress?: string | null };
+  connection?: { remoteAddress?: string | null };
+  originalUrl?: string;
+  url?: string;
+  method?: string;
+  user: AuthenticatedControllerUser;
+};
+
 @ApiTags('Notificacoes')
 @ApiBearerAuth('JWT')
 @Controller('notificacoes')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'GERENTE', 'RECEPCAO', 'PROFISSIONAL')
 export class NotificacoesController {
-  constructor(
-    private readonly notificacoesService: NotificacoesService,
-  ) {}
+  constructor(private readonly notificacoesService: NotificacoesService) {}
 
   @Post()
   @ApiOperation({
@@ -85,13 +104,10 @@ export class NotificacoesController {
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
   create(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Body() dto: CreateNotificacaoDto,
   ) {
-    return this.notificacoesService.create(
-      getEmpresaId(req),
-      dto,
-    );
+    return this.notificacoesService.create(getEmpresaId(req), dto);
   }
 
   @Get()
@@ -144,7 +160,7 @@ export class NotificacoesController {
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
   findAll(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Query() query: PaginationDto,
   ) {
     return this.notificacoesService.findAll(
@@ -204,7 +220,7 @@ export class NotificacoesController {
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
   findNaoLidas(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Query() query: PaginationDto,
   ) {
     return this.notificacoesService.findNaoLidas(
@@ -246,11 +262,8 @@ export class NotificacoesController {
     description:
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
-  resumo(@Req() req: any) {
-    return this.notificacoesService.resumo(
-      getEmpresaId(req),
-      req.user.sub,
-    );
+  resumo(@Req() req: AuthenticatedControllerRequest) {
+    return this.notificacoesService.resumo(getEmpresaId(req), req.user.sub);
   }
 
   @Get(':id')
@@ -298,7 +311,7 @@ export class NotificacoesController {
       'Notificação não encontrada para o usuário e empresa autenticados.',
   })
   findOne(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.notificacoesService.findOne(
@@ -345,7 +358,7 @@ export class NotificacoesController {
       'Notificação não encontrada para o usuário e empresa autenticados.',
   })
   marcarComoLida(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.notificacoesService.marcarComoLida(
@@ -392,7 +405,7 @@ export class NotificacoesController {
       'Notificação não encontrada para o usuário e empresa autenticados.',
   })
   arquivar(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.notificacoesService.arquivar(
@@ -438,13 +451,9 @@ export class NotificacoesController {
       'Notificação não encontrada para o usuário e empresa autenticados.',
   })
   remove(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.notificacoesService.remove(
-      getEmpresaId(req),
-      req.user.sub,
-      id,
-    );
+    return this.notificacoesService.remove(getEmpresaId(req), req.user.sub, id);
   }
 }

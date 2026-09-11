@@ -34,6 +34,17 @@ import { TemplatesWhatsappService } from './templates-whatsapp.service';
 import { CreateTemplateWhatsAppDto } from './dto/create-template-whatsapp.dto';
 import { UpdateTemplateWhatsAppDto } from './dto/update-template-whatsapp.dto';
 
+type CompanyAuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    sub?: string;
+    id?: string;
+    usuarioId?: string;
+    clienteId?: string;
+    role?: import('@prisma/client').Role;
+  };
+};
+
 @ApiTags('WhatsApp Templates')
 @ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -77,16 +88,14 @@ export class TemplatesWhatsappController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   create(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Body() dto: CreateTemplateWhatsAppDto,
   ) {
-    return this.templatesWhatsappService.create(
-      req.user.empresaId,
-      dto,
-    );
+    return this.templatesWhatsappService.create(req.user.empresaId, dto);
   }
 
   @Get()
@@ -118,12 +127,11 @@ export class TemplatesWhatsappController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  findAll(@Req() req: any) {
-    return this.templatesWhatsappService.findAll(
-      req.user.empresaId,
-    );
+  findAll(@Req() req: CompanyAuthenticatedRequest) {
+    return this.templatesWhatsappService.findAll(req.user.empresaId);
   }
 
   @Get(':id')
@@ -162,20 +170,18 @@ export class TemplatesWhatsappController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description:
       'Template de WhatsApp não encontrado para a empresa autenticada.',
   })
   findOne(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.templatesWhatsappService.findOne(
-      req.user.empresaId,
-      id,
-    );
+    return this.templatesWhatsappService.findOne(req.user.empresaId, id);
   }
 
   @Patch(':id')
@@ -213,28 +219,26 @@ export class TemplatesWhatsappController {
     },
   })
   @ApiBadRequestResponse({
-    description: 'ID inválido, payload inválido ou dados fora das regras permitidas.',
+    description:
+      'ID inválido, payload inválido ou dados fora das regras permitidas.',
   })
   @ApiUnauthorizedResponse({
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description:
       'Template de WhatsApp não encontrado para a empresa autenticada.',
   })
   update(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTemplateWhatsAppDto,
   ) {
-    return this.templatesWhatsappService.update(
-      req.user.empresaId,
-      id,
-      dto,
-    );
+    return this.templatesWhatsappService.update(req.user.empresaId, id, dto);
   }
 
   @Patch(':id/inativar')
@@ -268,19 +272,17 @@ export class TemplatesWhatsappController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
     description:
       'Template de WhatsApp não encontrado para a empresa autenticada.',
   })
   inativar(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    return this.templatesWhatsappService.inativar(
-      req.user.empresaId,
-      id,
-    );
+    return this.templatesWhatsappService.inativar(req.user.empresaId, id);
   }
 }

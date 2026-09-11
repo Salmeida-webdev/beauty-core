@@ -32,6 +32,17 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../shared/decorators/roles.decorator';
 
+type CompanyAuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    sub?: string;
+    id?: string;
+    usuarioId?: string;
+    clienteId?: string;
+    role?: import('@prisma/client').Role;
+  };
+};
+
 @ApiTags('Categorias Financeiras')
 @ApiBearerAuth('JWT')
 @Controller('categorias-financeiras')
@@ -74,10 +85,11 @@ export class CategoriasFinanceirasController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   create(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Body() dto: CreateCategoriaFinanceiraDto,
   ) {
     return this.categoriasFinanceirasService.create(req.user.empresaId, dto);
@@ -110,9 +122,10 @@ export class CategoriasFinanceirasController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  findAll(@Req() req: any) {
+  findAll(@Req() req: CompanyAuthenticatedRequest) {
     return this.categoriasFinanceirasService.findAll(req.user.empresaId);
   }
 
@@ -150,13 +163,15 @@ export class CategoriasFinanceirasController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
-    description: 'Categoria financeira não encontrada para a empresa autenticada.',
+    description:
+      'Categoria financeira não encontrada para a empresa autenticada.',
   })
   findOne(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.categoriasFinanceirasService.findOne(req.user.empresaId, id);
@@ -194,19 +209,22 @@ export class CategoriasFinanceirasController {
     },
   })
   @ApiBadRequestResponse({
-    description: 'ID inválido, payload inválido ou dados obrigatórios ausentes.',
+    description:
+      'ID inválido, payload inválido ou dados obrigatórios ausentes.',
   })
   @ApiUnauthorizedResponse({
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
-    description: 'Categoria financeira não encontrada para a empresa autenticada.',
+    description:
+      'Categoria financeira não encontrada para a empresa autenticada.',
   })
   update(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateCategoriaFinanceiraDto,
   ) {
@@ -251,13 +269,15 @@ export class CategoriasFinanceirasController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   @ApiNotFoundResponse({
-    description: 'Categoria financeira não encontrada para a empresa autenticada.',
+    description:
+      'Categoria financeira não encontrada para a empresa autenticada.',
   })
   inativar(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.categoriasFinanceirasService.inativar(req.user.empresaId, id);

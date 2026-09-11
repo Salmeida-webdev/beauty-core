@@ -1,9 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, UseGuards } from '@nestjs/common';
 
 import {
   ApiBearerAuth,
@@ -21,7 +16,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 
 import { Roles } from '../../shared/decorators/roles.decorator';
-import { Role } from '@prisma/client';
 
 @ApiTags('Scheduler')
 @ApiBearerAuth('JWT')
@@ -29,9 +23,7 @@ import { Role } from '@prisma/client';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'GERENTE', 'SUPER_ADMIN')
 export class SchedulerController {
-  constructor(
-    private readonly schedulerService: SchedulerService,
-  ) {}
+  constructor(private readonly schedulerService: SchedulerService) {}
 
   @Get('status')
   @ApiOperation({
@@ -60,7 +52,8 @@ export class SchedulerController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   status() {
     return this.schedulerService.getStatus();
@@ -73,7 +66,8 @@ export class SchedulerController {
       'Executa manualmente a rotina de aniversariantes diários. Endpoint administrativo usado para testar o Scheduler, enfileiramento BullMQ e processamento de notificações/aniversários.',
   })
   @ApiCreatedResponse({
-    description: 'Rotina de aniversariantes executada ou enfileirada com sucesso.',
+    description:
+      'Rotina de aniversariantes executada ou enfileirada com sucesso.',
     schema: {
       example: {
         success: true,
@@ -86,7 +80,8 @@ export class SchedulerController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   testarAniversarios() {
     return this.schedulerService.processarAniversariantesDiarios();
@@ -112,7 +107,8 @@ export class SchedulerController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   testarLembretes() {
     return this.schedulerService.processarLembretesAgendamento();
@@ -125,7 +121,8 @@ export class SchedulerController {
       'Executa manualmente a rotina de verificação de pacotes vencidos. Endpoint administrativo usado para testar notificações, filas e processamento assíncrono relacionado a pacotes de clientes.',
   })
   @ApiCreatedResponse({
-    description: 'Rotina de pacotes vencidos executada ou enfileirada com sucesso.',
+    description:
+      'Rotina de pacotes vencidos executada ou enfileirada com sucesso.',
     schema: {
       example: {
         success: true,
@@ -138,7 +135,8 @@ export class SchedulerController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   testarPacotesVencidos() {
     return this.schedulerService.processarPacotesVencidos();
@@ -151,7 +149,8 @@ export class SchedulerController {
       'Executa manualmente a rotina de campanhas WhatsApp agendadas. Endpoint administrativo usado para validar o processamento de campanhas, filas BullMQ e workers de comunicação.',
   })
   @ApiCreatedResponse({
-    description: 'Rotina de campanhas agendadas executada ou enfileirada com sucesso.',
+    description:
+      'Rotina de campanhas agendadas executada ou enfileirada com sucesso.',
     schema: {
       example: {
         success: true,
@@ -164,7 +163,8 @@ export class SchedulerController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   testarCampanhas() {
     return this.schedulerService.processarCampanhasAgendadas();
@@ -177,7 +177,8 @@ export class SchedulerController {
       'Executa manualmente a rotina de relatórios diários. Endpoint administrativo usado para testar geração, enfileiramento e processamento de relatórios automáticos da empresa.',
   })
   @ApiCreatedResponse({
-    description: 'Rotina de relatórios diários executada ou enfileirada com sucesso.',
+    description:
+      'Rotina de relatórios diários executada ou enfileirada com sucesso.',
     schema: {
       example: {
         success: true,
@@ -190,7 +191,8 @@ export class SchedulerController {
     description: 'Token Admin ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   testarRelatorios() {
     return this.schedulerService.processarRelatoriosDiarios();
@@ -219,10 +221,10 @@ export class SchedulerController {
     description: 'Token Admin ausente, inválido, expirado ou sessão revogada.',
   })
   @ApiForbiddenResponse({
-    description: 'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
+    description:
+      'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   testarLimpezaSessoes() {
     return this.schedulerService.processarLimpezaSessoes();
   }
-
 }

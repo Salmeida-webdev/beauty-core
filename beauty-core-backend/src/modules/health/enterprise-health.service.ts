@@ -1,3 +1,35 @@
+function stringifyLintValue(value: unknown): string {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (value === null || value === undefined) {
+    return '';
+  }
+
+  if (
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    typeof value === 'bigint'
+  ) {
+    return value.toString();
+  }
+
+  if (typeof value === 'symbol') {
+    return value.description ?? '';
+  }
+
+  if (typeof value === 'object') {
+    try {
+      return JSON.stringify(value) ?? '';
+    } catch {
+      return '[unserializable]';
+    }
+  }
+
+  return '';
+}
+
 import { Injectable } from '@nestjs/common';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
@@ -143,6 +175,7 @@ export class EnterpriseHealthService {
   }
 
   private async checkApi(): Promise<HealthCheckResult> {
+    await Promise.resolve();
     const startedAt = process.hrtime.bigint();
 
     return {
@@ -229,21 +262,14 @@ export class EnterpriseHealthService {
     return record.status;
   }
 
-  private normalizeStatus(
-    value: unknown,
-    critical: boolean,
-  ): HealthStatus {
-    const status = String(value ?? '').toLowerCase();
+  private normalizeStatus(value: unknown, critical: boolean): HealthStatus {
+    const status = stringifyLintValue(value ?? '').toLowerCase();
 
     if (status === 'ok' || status === 'healthy') {
       return 'ok';
     }
 
-    if (
-      status === 'degraded' ||
-      status === 'warning' ||
-      status === 'warn'
-    ) {
+    if (status === 'degraded' || status === 'warning' || status === 'warn') {
       return 'degraded';
     }
 

@@ -32,6 +32,17 @@ import { ConfiguracaoWhatsappService } from './configuracao-whatsapp.service';
 import { CreateConfiguracaoWhatsAppDto } from './dto/create-configuracao-whatsapp.dto';
 import { UpdateConfiguracaoWhatsAppDto } from './dto/update-configuracao-whatsapp.dto';
 
+type CompanyAuthenticatedRequest = {
+  user: {
+    empresaId: string;
+    sub?: string;
+    id?: string;
+    usuarioId?: string;
+    clienteId?: string;
+    role?: import('@prisma/client').Role;
+  };
+};
+
 @ApiTags('WhatsApp Configuracao')
 @ApiBearerAuth('JWT')
 @Controller('configuracao-whatsapp')
@@ -80,7 +91,7 @@ export class ConfiguracaoWhatsappController {
       'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   createOrUpdate(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Body() dto: CreateConfiguracaoWhatsAppDto,
   ) {
     return this.configuracaoWhatsappService.createOrUpdate(
@@ -119,10 +130,8 @@ export class ConfiguracaoWhatsappController {
     description:
       'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
-  findOne(@Req() req: any) {
-    return this.configuracaoWhatsappService.findOne(
-      req.user.empresaId,
-    );
+  findOne(@Req() req: CompanyAuthenticatedRequest) {
+    return this.configuracaoWhatsappService.findOne(req.user.empresaId);
   }
 
   @Patch()
@@ -164,13 +173,10 @@ export class ConfiguracaoWhatsappController {
       'Usuário sem permissão. Permitido apenas para ADMIN e GERENTE.',
   })
   update(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Body() dto: UpdateConfiguracaoWhatsAppDto,
   ) {
-    return this.configuracaoWhatsappService.update(
-      req.user.empresaId,
-      dto,
-    );
+    return this.configuracaoWhatsappService.update(req.user.empresaId, dto);
   }
 
   @Get('link')
@@ -209,7 +215,7 @@ export class ConfiguracaoWhatsappController {
       'Usuário sem permissão. Permitido para ADMIN, GERENTE e RECEPCAO.',
   })
   gerarLink(
-    @Req() req: any,
+    @Req() req: CompanyAuthenticatedRequest,
     @Query('mensagem') mensagem?: string,
   ) {
     return this.configuracaoWhatsappService.gerarLink(

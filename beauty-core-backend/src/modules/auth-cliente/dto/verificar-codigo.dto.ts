@@ -1,13 +1,5 @@
-﻿import {
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
-import {
-  IsOptional,
-  IsString,
-  Length,
-  Matches,
-} from 'class-validator';
+﻿import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, Length, Matches } from 'class-validator';
 
 export class VerificarCodigoDto {
   @ApiProperty({

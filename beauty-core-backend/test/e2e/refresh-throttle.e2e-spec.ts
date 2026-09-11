@@ -1,6 +1,10 @@
 ﻿import request = require('supertest');
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 
 describe('Refresh Throttle E2E', () => {
   let ctx: E2eContext;
@@ -27,7 +31,9 @@ describe('Refresh Throttle E2E', () => {
       statuses.push(response.status);
     }
 
-    expect(statuses.slice(0, 10).every((status) => [400, 401].includes(status))).toBe(true);
+    expect(
+      statuses.slice(0, 10).every((status) => [400, 401].includes(status)),
+    ).toBe(true);
     expect(statuses[10]).toBe(429);
   });
 
@@ -45,8 +51,9 @@ describe('Refresh Throttle E2E', () => {
       statuses.push(response.status);
     }
 
-    expect(statuses.slice(0, 10).every((status) => [400, 401].includes(status))).toBe(true);
+    expect(
+      statuses.slice(0, 10).every((status) => [400, 401].includes(status)),
+    ).toBe(true);
     expect(statuses[10]).toBe(429);
   });
 });
-

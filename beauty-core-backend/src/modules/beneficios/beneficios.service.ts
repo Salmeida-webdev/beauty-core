@@ -60,30 +60,22 @@ export class BeneficiosService {
     return this.buscarBeneficioOuFalhar(empresaId, id);
   }
 
-  async update(
-    empresaId: string,
-    id: string,
-    dto: UpdateBeneficioDto,
-  ) {
+  async update(empresaId: string, id: string, dto: UpdateBeneficioDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
-    const beneficioAntes = await this.buscarBeneficioOuFalhar(
-      empresaId,
-      id,
-    );
+    const beneficioAntes = await this.buscarBeneficioOuFalhar(empresaId, id);
 
     if (dto.nome && dto.nome !== beneficioAntes.nome) {
-      const beneficioComMesmoNome =
-        await this.prisma.beneficio.findFirst({
-          where: {
-            empresaId,
-            nome: dto.nome,
-            ativo: true,
-            id: {
-              not: id,
-            },
+      const beneficioComMesmoNome = await this.prisma.beneficio.findFirst({
+        where: {
+          empresaId,
+          nome: dto.nome,
+          ativo: true,
+          id: {
+            not: id,
           },
-        });
+        },
+      });
 
       if (beneficioComMesmoNome) {
         throw new BadRequestException(
@@ -132,16 +124,10 @@ export class BeneficiosService {
       throw new NotFoundException('Benefício não encontrado');
     }
 
-    return this.buscarBeneficioInativoOuAtivoOuFalhar(
-      empresaId,
-      id,
-    );
+    return this.buscarBeneficioInativoOuAtivoOuFalhar(empresaId, id);
   }
 
-  private async buscarBeneficioOuFalhar(
-    empresaId: string,
-    id: string,
-  ) {
+  private async buscarBeneficioOuFalhar(empresaId: string, id: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const beneficio = await this.prisma.beneficio.findFirst({

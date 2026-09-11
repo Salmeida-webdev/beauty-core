@@ -52,21 +52,15 @@ export class NiveisFidelidadeService {
     return this.buscarNivelOuFalhar(empresaId, id);
   }
 
-  async update(
-    empresaId: string,
-    id: string,
-    dto: UpdateNivelFidelidadeDto,
-  ) {
+  async update(empresaId: string, id: string, dto: UpdateNivelFidelidadeDto) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const nivelAntes = await this.buscarNivelOuFalhar(empresaId, id);
 
     if (
       (dto.nome && dto.nome !== nivelAntes.nome) ||
-      (
-        dto.pontosMinimos !== undefined &&
-        dto.pontosMinimos !== nivelAntes.pontosMinimos
-      )
+      (dto.pontosMinimos !== undefined &&
+        dto.pontosMinimos !== nivelAntes.pontosMinimos)
     ) {
       await this.validarNivelDuplicado(empresaId, {
         nome: dto.nome,
@@ -88,9 +82,7 @@ export class NiveisFidelidadeService {
     });
 
     if (result.count === 0) {
-      throw new NotFoundException(
-        'Nível de fidelidade não encontrado',
-      );
+      throw new NotFoundException('Nível de fidelidade não encontrado');
     }
 
     return this.buscarNivelOuFalhar(empresaId, id);
@@ -109,18 +101,13 @@ export class NiveisFidelidadeService {
     });
 
     if (result.count === 0) {
-      throw new NotFoundException(
-        'Nível de fidelidade não encontrado',
-      );
+      throw new NotFoundException('Nível de fidelidade não encontrado');
     }
 
     return nivelAntes;
   }
 
-  private async buscarNivelOuFalhar(
-    empresaId: string,
-    id: string,
-  ) {
+  private async buscarNivelOuFalhar(empresaId: string, id: string) {
     await this.tenantValidator.validarEmpresaAtiva(empresaId);
 
     const nivel = await this.prisma.nivelFidelidade.findFirst({
@@ -131,9 +118,7 @@ export class NiveisFidelidadeService {
     });
 
     if (!nivel) {
-      throw new NotFoundException(
-        'Nível de fidelidade não encontrado',
-      );
+      throw new NotFoundException('Nível de fidelidade não encontrado');
     }
 
     return nivel;
@@ -148,20 +133,19 @@ export class NiveisFidelidadeService {
     },
   ) {
     if (params.nome) {
-      const nivelComMesmoNome =
-        await this.prisma.nivelFidelidade.findFirst({
-          where: {
-            empresaId,
-            nome: params.nome,
-            ...(params.ignorarId
-              ? {
-                  id: {
-                    not: params.ignorarId,
-                  },
-                }
-              : {}),
-          },
-        });
+      const nivelComMesmoNome = await this.prisma.nivelFidelidade.findFirst({
+        where: {
+          empresaId,
+          nome: params.nome,
+          ...(params.ignorarId
+            ? {
+                id: {
+                  not: params.ignorarId,
+                },
+              }
+            : {}),
+        },
+      });
 
       if (nivelComMesmoNome) {
         throw new BadRequestException(

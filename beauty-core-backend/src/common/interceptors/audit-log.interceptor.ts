@@ -1,4 +1,4 @@
-﻿import {
+import {
   CallHandler,
   ExecutionContext,
   Injectable,
@@ -26,6 +26,23 @@ type RequestWithContextIds = Request & {
   correlationId?: string;
 };
 
+type AuditRequestUser = {
+  id?: string;
+  sub?: string;
+  empresaId?: string | null;
+  clienteId?: string | null;
+  role?: string;
+};
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'Erro desconhecido';
+}
+
+function getErrorStatus(error: unknown): number | undefined {
+  if (typeof error !== 'object' || error === null) return undefined;
+  const status = (error as { status?: unknown }).status;
+  return typeof status === 'number' ? status : undefined;
+}
 @Injectable()
 export class AuditLogInterceptor implements NestInterceptor {
   private readonly logger = new Logger(AuditLogInterceptor.name);
@@ -35,15 +52,14 @@ export class AuditLogInterceptor implements NestInterceptor {
     private readonly requestContext: RequestContextService,
   ) {}
 
-  intercept(
-    context: ExecutionContext,
-    next: CallHandler,
-  ): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<RequestWithContextIds>();
 
     const startedAt = Date.now();
 
-    const user = getRequestUser(request);
+    const user = getRequestUser(request) as unknown as
+      | AuditRequestUser
+      | undefined;
 
     const rota = getRequestRoute(request);
     const metodoHttp = getRequestMethod(request);
@@ -51,31 +67,30 @@ export class AuditLogInterceptor implements NestInterceptor {
     const userAgent = getRequestUserAgent(request);
 
     const empresaId = user?.empresaId;
-    const tipoUsuario = getTipoUsuarioAuditoria(user);
+    const tipoUsuario = getTipoUsuarioAuditoria({
+      ...(user ?? {}),
+      clienteId: user?.clienteId ?? undefined,
+    });
     const isCliente = tipoUsuario === 'CLIENTE' || user?.role === 'CLIENTE';
 
     const usuarioId = isCliente ? undefined : user?.sub || user?.id;
     const clienteId = isCliente
-      ? user?.clienteId ?? user?.sub ?? user?.id
+      ? (user?.clienteId ?? user?.sub ?? user?.id)
       : user?.clienteId;
 
     const contextData = this.requestContext.getContext();
 
-    const requestId =
-      contextData?.requestId ??
-      request.requestId;
+    const requestId = contextData?.requestId ?? request.requestId;
 
     const correlationId =
-      contextData?.correlationId ??
-      request.correlationId ??
-      requestId;
+      contextData?.correlationId ?? request.correlationId ?? requestId;
 
     this.requestContext.setContextData({
       requestId,
       correlationId,
-      empresaId,
+      empresaId: empresaId ?? undefined,
       usuarioId,
-      clienteId,
+      clienteId: clienteId ?? undefined,
       role: user?.role,
       method: metodoHttp,
       route: rota,
@@ -103,7 +118,9 @@ export class AuditLogInterceptor implements NestInterceptor {
             usuarioId,
             clienteId,
             tipoUsuario,
-            acao: this.mapearAcao(metodoHttp, rota),
+            acao: this.mapearAcao(metodoHttp, rota) as unknown as Parameters<
+              AuditoriaService['registrarSucesso']
+            >[0]['acao'],
             modulo: this.mapearModulo(rota),
             rota,
             metodoHttp,
@@ -120,7 +137,7 @@ export class AuditLogInterceptor implements NestInterceptor {
         }
       }),
 
-      catchError((error) => {
+      catchError((error: unknown) => {
         const tempoMs = Date.now() - startedAt;
 
         this.logger.error(
@@ -130,9 +147,7 @@ export class AuditLogInterceptor implements NestInterceptor {
             empresaId ?? '-'
           } usuarioId=${usuarioId ?? '-'} clienteId=${
             clienteId ?? '-'
-          } status=FALHA tempoMs=${tempoMs} erro=${
-            error?.message ?? 'Erro desconhecido'
-          }`,
+          } status=FALHA tempoMs=${tempoMs} erro=${getErrorMessage(error)}`,
         );
 
         if (this.deveAuditar(rota, metodoHttp)) {
@@ -141,7 +156,9 @@ export class AuditLogInterceptor implements NestInterceptor {
             usuarioId,
             clienteId,
             tipoUsuario,
-            acao: this.mapearAcao(metodoHttp, rota),
+            acao: this.mapearAcao(metodoHttp, rota) as unknown as Parameters<
+              AuditoriaService['registrarSucesso']
+            >[0]['acao'],
             modulo: this.mapearModulo(rota),
             rota,
             metodoHttp,
@@ -151,12 +168,11 @@ export class AuditLogInterceptor implements NestInterceptor {
               requestId: requestId ?? null,
               correlationId: correlationId ?? null,
               tempoMs,
-              statusCode: error?.status,
+              statusCode: getErrorStatus(error),
             },
             tempoMs,
             mensagem:
-              error?.message ??
-              'Falha durante requisição HTTP.',
+              getErrorMessage(error) ?? 'Falha durante requisição HTTP.',
           });
         }
 
@@ -165,10 +181,7 @@ export class AuditLogInterceptor implements NestInterceptor {
     );
   }
 
-  private deveAuditar(
-    rota: string,
-    metodoHttp: string,
-  ): boolean {
+  private deveAuditar(rota: string, metodoHttp: string): boolean {
     if (!rota) return false;
 
     if (rota.startsWith('/health')) return false;
@@ -208,10 +221,7 @@ export class AuditLogInterceptor implements NestInterceptor {
     return partes[0].replace(/-/g, '_').toUpperCase();
   }
 
-  private mapearAcao(
-    metodoHttp: string,
-    rota: string,
-  ): any {
+  private mapearAcao(metodoHttp: string, rota: string): string {
     if (rota.includes('/auth-cliente/verificar-codigo')) {
       return 'LOGIN_CLIENTE';
     }

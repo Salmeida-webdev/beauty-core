@@ -6,13 +6,8 @@ import { PublicTenantController } from './public-tenant.controller';
 import { TenantPublicoController } from './tenant-publico.controller';
 
 @Module({
-  imports: [
-    TenantModule,
-  ],
+  imports: [TenantModule],
 
-  controllers: [
-    TenantPublicoController,
-    PublicTenantController,
-  ],
+  controllers: [TenantPublicoController, PublicTenantController],
 })
 export class TenantPublicoModule {}

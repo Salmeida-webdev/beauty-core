@@ -33,6 +33,27 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../../shared/decorators/roles.decorator';
 
+type AuthenticatedControllerUser = {
+  id?: string;
+  sub: string;
+  empresaId: string;
+  usuarioId?: string;
+  clienteId?: string;
+  role?: string;
+  tipoUsuario?: string;
+};
+
+type AuthenticatedControllerRequest = {
+  headers?: Record<string, string | string[] | undefined>;
+  ip?: string;
+  socket?: { remoteAddress?: string | null };
+  connection?: { remoteAddress?: string | null };
+  originalUrl?: string;
+  url?: string;
+  method?: string;
+  user: AuthenticatedControllerUser;
+};
+
 @ApiTags('Fidelidade')
 @ApiBearerAuth('JWT')
 @Controller('fidelidade')
@@ -78,7 +99,7 @@ export class FidelidadeController {
       'Usuário sem permissão. Permitido apenas para ADMIN, GERENTE e RECEPCAO.',
   })
   create(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Body() dto: CreateFidelidadeDto,
   ) {
     return this.fidelidadeService.create(req.user.empresaId, dto);
@@ -120,10 +141,11 @@ export class FidelidadeController {
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
   @ApiNotFoundResponse({
-    description: 'Cliente ou fidelidade não encontrada para a empresa autenticada.',
+    description:
+      'Cliente ou fidelidade não encontrada para a empresa autenticada.',
   })
   saldo(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('id', ParseUUIDPipe) clienteId: string,
   ) {
     return this.fidelidadeService.saldo(req.user.empresaId, clienteId);
@@ -163,10 +185,11 @@ export class FidelidadeController {
       'Usuário sem permissão. Permitido apenas para ADMIN, GERENTE e RECEPCAO.',
   })
   @ApiNotFoundResponse({
-    description: 'Cliente ou fidelidade não encontrada para a empresa autenticada.',
+    description:
+      'Cliente ou fidelidade não encontrada para a empresa autenticada.',
   })
   adicionarPontos(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Body() dto: AdicionarPontosDto,
   ) {
     return this.fidelidadeService.adicionarPontos(req.user.empresaId, dto);
@@ -211,7 +234,7 @@ export class FidelidadeController {
       'Cliente, fidelidade ou benefício não encontrado para a empresa autenticada.',
   })
   resgatarPontos(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Body() dto: ResgatarPontosDto,
   ) {
     return this.fidelidadeService.resgatarPontos(req.user.empresaId, dto);
@@ -259,7 +282,7 @@ export class FidelidadeController {
     description: 'Cliente não encontrado para a empresa autenticada.',
   })
   historico(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('clienteId', ParseUUIDPipe) clienteId: string,
   ) {
     return this.fidelidadeService.historico(req.user.empresaId, clienteId);
@@ -301,10 +324,11 @@ export class FidelidadeController {
       'Usuário sem permissão. Permitido apenas para ADMIN, GERENTE e RECEPCAO.',
   })
   @ApiNotFoundResponse({
-    description: 'Cliente ou fidelidade não encontrada para a empresa autenticada.',
+    description:
+      'Cliente ou fidelidade não encontrada para a empresa autenticada.',
   })
   pontuarPorValor(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Body() dto: PontuarPorValorDto,
   ) {
     return this.fidelidadeService.pontuarPorValor(req.user.empresaId, dto);
@@ -348,10 +372,11 @@ export class FidelidadeController {
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
   @ApiNotFoundResponse({
-    description: 'Cliente ou fidelidade não encontrada para a empresa autenticada.',
+    description:
+      'Cliente ou fidelidade não encontrada para a empresa autenticada.',
   })
   beneficioDisponivel(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('clienteId', ParseUUIDPipe) clienteId: string,
   ) {
     return this.fidelidadeService.beneficioDisponivel(
@@ -399,10 +424,11 @@ export class FidelidadeController {
       'Usuário sem permissão. Permitido para ADMIN, GERENTE, RECEPCAO e PROFISSIONAL.',
   })
   @ApiNotFoundResponse({
-    description: 'Cliente ou fidelidade não encontrada para a empresa autenticada.',
+    description:
+      'Cliente ou fidelidade não encontrada para a empresa autenticada.',
   })
   nivelAtual(
-    @Req() req: any,
+    @Req() req: AuthenticatedControllerRequest,
     @Param('clienteId', ParseUUIDPipe) clienteId: string,
   ) {
     return this.fidelidadeService.nivelAtual(req.user.empresaId, clienteId);

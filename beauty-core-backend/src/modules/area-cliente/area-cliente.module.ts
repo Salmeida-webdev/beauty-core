@@ -3,9 +3,9 @@ import { Module } from '@nestjs/common';
 import { PrismaModule } from '../../database/prisma/prisma.module';
 import { TenantModule } from '../../shared/tenant';
 import { AgendamentosModule } from '../agendamentos/agendamentos.module';
-import { MensagensWhatsappModule } from "../mensagens-whatsapp/mensagens-whatsapp.module";
-import { ArquivosModule } from "../arquivos/arquivos.module";
-import { ClientesPacotesModule } from "../clientes-pacotes/clientes-pacotes.module";
+import { MensagensWhatsappModule } from '../mensagens-whatsapp/mensagens-whatsapp.module';
+import { ArquivosModule } from '../arquivos/arquivos.module';
+import { ClientesPacotesModule } from '../clientes-pacotes/clientes-pacotes.module';
 
 import { AreaClienteController } from './area-cliente.controller';
 import { AreaClienteService } from './area-cliente.service';
@@ -20,16 +20,10 @@ import { AreaClienteService } from './area-cliente.service';
     AgendamentosModule,
   ],
 
-  controllers: [
-    AreaClienteController,
-  ],
+  controllers: [AreaClienteController],
 
-  providers: [
-    AreaClienteService,
-  ],
+  providers: [AreaClienteService],
 
-  exports: [
-    AreaClienteService,
-  ],
+  exports: [AreaClienteService],
 })
 export class AreaClienteModule {}
