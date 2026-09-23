@@ -45,6 +45,7 @@ RUN apk add --no-cache openssl wget dumb-init   && addgroup -S appgroup   && add
 COPY --from=prod-deps --chown=appuser:appgroup /app/node_modules ./node_modules
 COPY --from=builder --chown=appuser:appgroup /app/dist ./dist
 COPY --from=builder --chown=appuser:appgroup /app/prisma ./prisma
+COPY --chown=appuser:appgroup prisma/bootstrap.js ./prisma/bootstrap.js
 COPY --chown=appuser:appgroup package*.json ./
 
 RUN mkdir -p /app/uploads/public /app/uploads/private /app/uploads/temp   && chown -R appuser:appgroup /app/uploads
@@ -57,4 +58,4 @@ EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s   CMD wget -qO- http://localhost:3000/health || exit 1
 
-CMD ["sh", "-c", "npx prisma migrate deploy && exec dumb-init node dist/src/main.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node prisma/bootstrap.js && exec dumb-init node dist/src/main.js"]
