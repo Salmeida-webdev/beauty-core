@@ -1,4 +1,4 @@
-import { Global, Module, Provider } from '@nestjs/common';
+﻿import { Global, Module, Provider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
@@ -64,6 +64,7 @@ function getRedisOptions(configService: ConfigService) {
     port: Number(configService.get<string>('REDIS_PORT') || 6379),
 
     password: configService.get<string>('REDIS_PASSWORD') || undefined,
+    tls: {},
 
     maxRetriesPerRequest: null,
   };
@@ -153,3 +154,4 @@ function getRedisOptions(configService: ConfigService) {
   ].filter(Boolean) as any[],
 })
 export class QueuesModule {}
+
