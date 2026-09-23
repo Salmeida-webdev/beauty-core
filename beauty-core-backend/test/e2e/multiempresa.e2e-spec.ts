@@ -1,5 +1,8 @@
-﻿import * as bcrypt from 'bcrypt';
-import request = require('supertest');
+import * as bcrypt from 'bcrypt';
+import { INestApplication } from '@nestjs/common';
+import { Role } from '@prisma/client';
+import request from 'supertest';
+import type { Server } from 'node:net';
 
 import {
   bootstrapE2eTestApp,
@@ -9,33 +12,53 @@ import {
 import { bearer, loginAdmin } from '../helpers/auth.helper';
 import { TEST_PASSWORD } from '../seeds/test-seed';
 
+function getHttpApp(app: E2eContext['app']): INestApplication<Server> {
+  return app as INestApplication<Server>;
+}
+
+function getSeedString(
+  record: Record<string, unknown>,
+  fieldName: string,
+): string {
+  const value = record[fieldName];
+
+  if (typeof value !== 'string' || value.length === 0) {
+    throw new Error(`Seed inválido: ${fieldName} não é uma string.`);
+  }
+
+  return value;
+}
+
 describe('Multiempresa E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
   let tokenEmpresaA: string;
   let tokenEmpresaB: string;
   let clienteEmpresaBId: string;
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
+    httpApp = getHttpApp(ctx.app);
 
-    tokenEmpresaA = (await loginAdmin(ctx.app)).access_token;
+    tokenEmpresaA = (await loginAdmin(httpApp)).access_token;
 
     const senhaHash = await bcrypt.hash(TEST_PASSWORD, 10);
+    const empresaBId = getSeedString(ctx.seed.empresaB, 'id');
 
-    const adminB = await (ctx.prisma as any).usuario.create({
+    const adminB = await ctx.prisma.usuario.create({
       data: {
-        empresaId: ctx.seed.empresaB.id,
+        empresaId: empresaBId,
         nome: 'Admin Empresa B',
         email: 'admin.b.test@beautycore.com',
         senha: senhaHash,
-        role: 'ADMIN',
+        role: Role.ADMIN,
         ativo: true,
       },
     });
 
-    const clienteB = await (ctx.prisma as any).cliente.create({
+    const clienteB = await ctx.prisma.cliente.create({
       data: {
-        empresaId: ctx.seed.empresaB.id,
+        empresaId: empresaBId,
         nome: 'Cliente Empresa B',
         telefone: '83999990009',
         email: 'cliente.b.test@beautycore.com',
@@ -46,7 +69,7 @@ describe('Multiempresa E2E', () => {
     });
 
     clienteEmpresaBId = clienteB.id;
-    tokenEmpresaB = (await loginAdmin(ctx.app, adminB.email, TEST_PASSWORD))
+    tokenEmpresaB = (await loginAdmin(httpApp, adminB.email, TEST_PASSWORD))
       .access_token;
   });
 
@@ -55,7 +78,7 @@ describe('Multiempresa E2E', () => {
   });
 
   it('Empresa A não deve acessar cliente da Empresa B', async () => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .get('/clientes/' + clienteEmpresaBId)
       .set('Authorization', bearer(tokenEmpresaA))
       .expect((res) => {
@@ -64,7 +87,7 @@ describe('Multiempresa E2E', () => {
   });
 
   it('Empresa B deve acessar seu próprio cliente', async () => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .get('/clientes/' + clienteEmpresaBId)
       .set('Authorization', bearer(tokenEmpresaB))
       .expect(200);
@@ -73,7 +96,7 @@ describe('Multiempresa E2E', () => {
   it.each(['/agendamentos', '/arquivos', '/clientes-pacotes', '/notificacoes'])(
     '%s exige autenticação',
     async (route) => {
-      await request(ctx.app.getHttpServer()).get(route).expect(401);
+      await request(httpApp.getHttpServer()).get(route).expect(401);
     },
   );
 });

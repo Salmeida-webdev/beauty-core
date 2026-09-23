@@ -1,4 +1,4 @@
-﻿import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { PrismaModule } from '../../database/prisma/prisma.module';
 import { TenantModule } from '../../shared/tenant';
@@ -7,6 +7,7 @@ import { ArquivosController } from './arquivos.controller';
 import { ArquivosService } from './arquivos.service';
 
 import { LocalStorageService } from './storage/local-storage.service';
+import { S3StorageService } from './storage/providers/s3-storage.service';
 
 import { AuditoriaModule } from '../auditoria/auditoria.module';
 import { StorageFactory } from './storage/storage.factory';
@@ -23,6 +24,7 @@ import { ArquivosCleanupService } from './arquivos-cleanup.service';
   providers: [
     ArquivosService,
     LocalStorageService,
+    S3StorageService,
     StorageFactory,
     ArquivosDownloadService,
     ArquivoAccessPolicyService,

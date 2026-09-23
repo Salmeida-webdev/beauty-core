@@ -75,13 +75,15 @@ export class BackupService {
         logs: this.pathStatus('logs/backups'),
       },
       scripts: {
-        postgresBackup: this.pathStatus('scripts/backup/postgres-backup.ps1'),
-        postgresRestore: this.pathStatus('scripts/backup/postgres-restore.ps1'),
-        uploadsBackup: this.pathStatus('scripts/uploads/uploads-backup.ps1'),
-        uploadsRestore: this.pathStatus('scripts/uploads/uploads-restore.ps1'),
-        redisBackup: this.pathStatus('scripts/backup/redis-backup.ps1'),
-        redisRestore: this.pathStatus('scripts/backup/redis-restore.ps1'),
-        validateRestore: this.pathStatus('scripts/backup/validate-restore.ps1'),
+        postgresBackup: this.pathStatus('scripts/backup/postgres-backup.sh'),
+        postgresRestore: this.pathStatus(
+          'scripts/backup/postgres-restore-verify.sh',
+        ),
+        uploadsBackup: this.pathStatus('scripts/uploads/uploads-backup.sh'),
+        uploadsRestore: this.pathStatus('scripts/uploads/uploads-restore.sh'),
+        redisBackup: this.pathStatus('scripts/backup/redis-backup.sh'),
+        redisRestore: this.pathStatus('scripts/backup/redis-restore.sh'),
+        validateRestore: this.pathStatus('scripts/backup/validate-restore.sh'),
       },
       scheduler: {
         backupPostgresDiario: '0 2 * * *',
@@ -275,7 +277,7 @@ export class BackupService {
     const results: BackupScriptResult[] = [];
 
     for (const script of scripts) {
-      results.push(this.executarScriptPowerShell(script));
+      results.push(this.executarScriptPosix(script));
     }
 
     const payload = {
@@ -293,7 +295,7 @@ export class BackupService {
     return payload;
   }
 
-  private executarScriptPowerShell(script: string): BackupScriptResult {
+  private executarScriptPosix(script: string): BackupScriptResult {
     const scriptPath = resolve(this.projectRoot, script);
 
     if (!existsSync(scriptPath)) {
@@ -301,18 +303,12 @@ export class BackupService {
     }
 
     try {
-      const output = execFileSync(
-        'powershell',
-        ['-ExecutionPolicy', 'Bypass', '-File', scriptPath],
-        {
-          cwd: this.projectRoot,
-          encoding: 'utf8',
-          stdio: ['ignore', 'pipe', 'pipe'],
-          timeout: Number(
-            process.env.BACKUP_SCRIPT_TIMEOUT_MS ?? 15 * 60 * 1000,
-          ),
-        },
-      );
+      const output = execFileSync('sh', [scriptPath], {
+        cwd: this.projectRoot,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'pipe'],
+        timeout: Number(process.env.BACKUP_SCRIPT_TIMEOUT_MS ?? 15 * 60 * 1000),
+      });
 
       return {
         script,
@@ -350,17 +346,24 @@ export class BackupService {
 
   private scriptsForJob(job: BackupJobName) {
     if (job === 'backup_postgres_diario') {
-      return ['scripts/backup/postgres-backup.ps1'];
+      return [
+        'scripts/backup/postgres-backup.sh',
+        'scripts/backup/backup-external-upload.sh',
+      ];
     }
 
     if (job === 'backup_uploads_diario') {
-      return ['scripts/uploads/uploads-backup.ps1'];
+      return [
+        'scripts/uploads/uploads-backup.sh',
+        'scripts/backup/backup-external-upload.sh',
+      ];
     }
 
     return [
-      'scripts/backup/postgres-backup.ps1',
-      'scripts/uploads/uploads-backup.ps1',
-      'scripts/backup/redis-backup.ps1',
+      'scripts/backup/postgres-backup.sh',
+      'scripts/uploads/uploads-backup.sh',
+      'scripts/backup/redis-backup.sh',
+      'scripts/backup/backup-external-upload.sh',
     ];
   }
 

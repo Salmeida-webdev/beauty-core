@@ -71,6 +71,7 @@
     "security:audit:prod:high": "npm audit --omit=dev --audit-level=high"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.1131.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",

@@ -1,0 +1,352 @@
+# Beauty Core - Chat B - B28 - Auditoria estrutural dos testes gerados
+
+- Inicio: 2026-09-13T12:48:45.9710844-03:00
+- Fim: 2026-09-13T12:48:50.5337061-03:00
+- Script: B28-v1
+- Modo: somente leitura; o relatorio e o unico artefato criado.
+- Pasta unica de relatorios do Chat B: `beauty-core-backend\docs\chat-b\`
+
+## Objetivo
+
+- Inspecionar a estrutura real dos tres testes que concentram 311 diagnosticos.
+- Procurar a origem efetiva de sua geracao em scripts e arquivos de configuracao.
+- Nao alterar codigo, testes gerados, configuracao ou historico Git.
+
+## Estatisticas dos arquivos
+
+- `coverage-under-70-branch-matrix.generated.spec.ts`: linhas 873; require 4; async 31; await 3; linhas com any 11
+- `coverage-under-70-targeted.generated.spec.ts`: linhas 571; require 4; async 29; await 3; linhas com any 10
+- `coverage-under-70-final-target.generated.spec.ts`: linhas 973; require 4; async 31; await 4; linhas com any 12
+
+## Estrutura inicial e final
+
+### `coverage-under-70-branch-matrix.generated.spec.ts`
+
+- Inicio do arquivo:
+  - 1: const fs = require('fs');
+  - 2: const path = require('path');
+  - 3: 
+  - 4: import {
+  - 5:   BadRequestException,
+  - 6:   ConflictException,
+  - 7:   ForbiddenException,
+  - 8:   HttpException,
+  - 9:   InternalServerErrorException,
+  - 10:   NotFoundException,
+  - 11:   UnauthorizedException,
+  - 12: } from '@nestjs/common';
+  - 13: 
+  - 14: import {
+  - 15:   createDto,
+  - 16:   createExecutionContextLike,
+  - 17:   createRequestLike,
+  - 18:   createResponseLike,
+  - 19:   createScenarios,
+  - 20:   installCoverageSmokeSilencer,
+  - 21:   runWithTimeout,
+  - 22: } from './helpers/coverage-smoke.helper';
+  - 23: 
+  - 24: installCoverageSmokeSilencer();
+  - 25: 
+  - 26: const targetsPath = path.join(
+  - 27:   process.cwd(),
+  - 28:   'test',
+  - 29:   'unit',
+  - 30:   'generated-targets',
+  - 31:   'coverage-targets-under-70.json',
+  - 32: );
+  - 33: 
+  - 34: const TARGETS = fs.existsSync(targetsPath)
+  - 35:   ? JSON.parse(fs.readFileSync(targetsPath, 'utf8')).targets
+  - 36:   : [];
+  - 37: 
+  - 38: type MockMode =
+  - 39:   | 'happy'
+  - 40:   | 'null'
+  - 41:   | 'empty'
+  - 42:   | 'false'
+  - 43:   | 'throw'
+  - 44:   | 'inactive'
+  - 45:   | 'crossTenant'
+  - 46:   | 'expired'
+  - 47:   | 'invalid'
+  - 48:   | 'public'
+  - 49:   | 'private';
+  - 50: 
+- Final do arquivo:
+  - 854: 
+  - 855:                 for (const args of argsForMethod(method, mode).slice(0, 70)) {
+  - 856:                   try {
+  - 857:                     await runWithTimeout(() => instance[method](...args), 700);
+  - 858:                   } catch {}
+  - 859:                 }
+  - 860:               }
+  - 861: 
+  - 862:               continue;
+  - 863:             }
+  - 864: 
+  - 865:             await exerciseExportedFunction(exported, mode);
+  - 866:           }
+  - 867: 
+  - 868:           expect(mod).toBeDefined();
+  - 869:         });
+  - 870:       }
+  - 871:     });
+  - 872:   }
+  - 873: });
+
+### `coverage-under-70-targeted.generated.spec.ts`
+
+- Inicio do arquivo:
+  - 1: const fs = require('fs');
+  - 2: const path = require('path');
+  - 3: 
+  - 4: import {
+  - 5:   createDto,
+  - 6:   createExecutionContextLike,
+  - 7:   createRequestLike,
+  - 8:   createResponseLike,
+  - 9:   createScenarios,
+  - 10:   installCoverageSmokeSilencer,
+  - 11:   runWithTimeout,
+  - 12: } from './helpers/coverage-smoke.helper';
+  - 13: 
+  - 14: installCoverageSmokeSilencer();
+  - 15: 
+  - 16: const targetsPath = path.join(
+  - 17:   process.cwd(),
+  - 18:   'test',
+  - 19:   'unit',
+  - 20:   'generated-targets',
+  - 21:   'coverage-targets-under-70.json',
+  - 22: );
+  - 23: 
+  - 24: const TARGETS = fs.existsSync(targetsPath)
+  - 25:   ? JSON.parse(fs.readFileSync(targetsPath, 'utf8')).targets
+  - 26:   : [];
+  - 27: 
+  - 28: function createRecord(overrides: Record<string, any> = {}) {
+  - 29:   return {
+  - 30:     id: '00000000-0000-4000-8000-000000000001',
+  - 31:     empresaId: '00000000-0000-4000-8000-000000000101',
+  - 32:     clienteId: '00000000-0000-4000-8000-000000000001',
+  - 33:     usuarioId: '00000000-0000-4000-8000-000000000001',
+  - 34:     profissionalId: '00000000-0000-4000-8000-000000000001',
+  - 35:     servicoId: '00000000-0000-4000-8000-000000000001',
+  - 36:     unidadeId: '00000000-0000-4000-8000-000000000001',
+  - 37:     pacoteId: '00000000-0000-4000-8000-000000000001',
+  - 38:     categoriaId: '00000000-0000-4000-8000-000000000001',
+  - 39:     agendamentoId: '00000000-0000-4000-8000-000000000001',
+  - 40:     arquivoId: '00000000-0000-4000-8000-000000000001',
+  - 41:     nome: 'Registro Target',
+  - 42:     titulo: 'Título Target',
+  - 43:     descricao: 'Descrição Target',
+  - 44:     telefone: '83999999999',
+  - 45:     email: 'target@beautycore.local',
+  - 46:     role: 'ADMIN',
+  - 47:     status: 'ATIVO',
+  - 48:     tipo: 'RECEITA',
+  - 49:     canal: 'SISTEMA',
+  - 50:     valor: 100,
+- Final do arquivo:
+  - 552:               }
+  - 553: 
+  - 554:               for (const args of argsForMethod(method).slice(0, 50)) {
+  - 555:                 try {
+  - 556:                   await runWithTimeout(() => instance[method](...args), 600);
+  - 557:                 } catch {}
+  - 558:               }
+  - 559:             }
+  - 560: 
+  - 561:             continue;
+  - 562:           }
+  - 563: 
+  - 564:           await exerciseExportedFunction(exported);
+  - 565:         }
+  - 566: 
+  - 567:         expect(mod).toBeDefined();
+  - 568:       });
+  - 569:     });
+  - 570:   }
+  - 571: });
+
+### `coverage-under-70-final-target.generated.spec.ts`
+
+- Inicio do arquivo:
+  - 1: const fs = require('fs');
+  - 2: const path = require('path');
+  - 3: 
+  - 4: import {
+  - 5:   BadRequestException,
+  - 6:   ConflictException,
+  - 7:   ForbiddenException,
+  - 8:   HttpException,
+  - 9:   InternalServerErrorException,
+  - 10:   NotFoundException,
+  - 11:   UnauthorizedException,
+  - 12: } from '@nestjs/common';
+  - 13: 
+  - 14: import {
+  - 15:   createDto,
+  - 16:   createExecutionContextLike,
+  - 17:   createRequestLike,
+  - 18:   createResponseLike,
+  - 19:   installCoverageSmokeSilencer,
+  - 20:   runWithTimeout,
+  - 21: } from './helpers/coverage-smoke.helper';
+  - 22: 
+  - 23: installCoverageSmokeSilencer();
+  - 24: 
+  - 25: const UUID_A = '00000000-0000-4000-8000-000000000001';
+  - 26: const UUID_B = '00000000-0000-4000-8000-000000000002';
+  - 27: const EMPRESA_A = '00000000-0000-4000-8000-000000000101';
+  - 28: const EMPRESA_B = '00000000-0000-4000-8000-000000000102';
+  - 29: 
+  - 30: type Mode =
+  - 31:   | 'happy'
+  - 32:   | 'null'
+  - 33:   | 'empty'
+  - 34:   | 'false'
+  - 35:   | 'throw'
+  - 36:   | 'inactive'
+  - 37:   | 'crossTenant'
+  - 38:   | 'expired'
+  - 39:   | 'invalid'
+  - 40:   | 'public'
+  - 41:   | 'private'
+  - 42:   | 'zero'
+  - 43:   | 'negative'
+  - 44:   | 'undefined';
+  - 45: 
+  - 46: const TARGET_PATHS = [
+  - 47:   '../../src/modules/area-cliente/area-cliente.service',
+  - 48:   '../../src/modules/arquivos/storage/multer.config',
+  - 49:   '../../src/modules/cupons/cupons.service',
+  - 50:   '../../src/queues/workers/aniversarios.worker',
+- Final do arquivo:
+  - 954:                 }
+  - 955: 
+  - 956:                 continue;
+  - 957:               }
+  - 958: 
+  - 959:               await exercisePlainFunction(exported, mode);
+  - 960:               continue;
+  - 961:             }
+  - 962: 
+  - 963:             for (const fn of walkFunctions(exported)) {
+  - 964:               await exercisePlainFunction(fn, mode);
+  - 965:             }
+  - 966:           }
+  - 967: 
+  - 968:           expect(mod).toBeDefined();
+  - 969:         });
+  - 970:       }
+  - 971:     });
+  - 972:   }
+  - 973: });
+
+## Busca ampliada da origem
+
+- `.backup-chat39\src\modules\arquivos\storage\local-storage.service.ts` linha 11: import { access, mkdir, rename, writeFile } from 'fs/promises';
+- `.backup-chat39\src\modules\arquivos\storage\local-storage.service.ts` linha 76: await writeFile(caminhoAbsoluto, input.file.buffer);
+- `dist\src\modules\arquivos\storage\local-storage.service.js` linha 48: await (0, promises_1.writeFile)(caminhoAbsoluto, input.file.buffer);
+- `scripts\chat31-add-auditoria-actions.js` linha 45: fs.writeFileSync(filePath, content);
+- `scripts\chat31-fix-cleanup-never.js` linha 17: fs.writeFileSync(filePath, content);
+- `scripts\chat31-fix-controller-import-block.js` linha 77: fs.writeFileSync(filePath, content);
+- `scripts\chat31-fix-controller-imports.js` linha 85: fs.writeFileSync(filePath, content);
+- `scripts\chat31-fix-controller-imports-final.js` linha 89: fs.writeFileSync(filePath, content);
+- `scripts\chat31-fix-gerar-url.js` linha 52: fs.writeFileSync(filePath, content);
+- `scripts\chat31-fix-multer-bad-request.js` linha 36: fs.writeFileSync(filePath, content);
+- `scripts\chat31-fix-service-double-comma.js` linha 14: fs.writeFileSync(filePath, content);
+- `scripts\chat31-fix-service-prisma-imports.js` linha 30: fs.writeFileSync(filePath, content);
+- `scripts\chat31-fix-upload-audit-scope.js` linha 126: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-arquivos-controller-upload-privado.js` linha 103: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-arquivos-module.js` linha 57: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-arquivos-module-cleanup.js` linha 43: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-arquivos-module-etapa5.js` linha 60: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-arquivos-service-upload-privado.js` linha 117: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-arquivo-url-nullable.js` linha 16: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-download-audit.js` linha 136: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-main-uploads.js` linha 71: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-multer-enterprise.js` linha 97: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-private-upload-roles.js` linha 21: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-scheduler-module-cleanup.js` linha 21: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-scheduler-service-cleanup.js` linha 64: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-storage-multer-config.js` linha 105: fs.writeFileSync(filePath, content);
+- `scripts\chat31-patch-upload-audit.js` linha 60: fs.writeFileSync(filePath, content);
+- `scripts\chat31-update-prisma-storage.js` linha 129: fs.writeFileSync(schemaPath, schema);
+- `scripts\chat32-allow-super-admin-scheduler.cjs` linha 78: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-create-base.cjs` linha 24: function writeFile(file, content) {
+- `scripts\chat32-create-base.cjs` linha 29: fs.writeFileSync(full, content.trimStart(), "utf8");
+- `scripts\chat32-create-base.cjs` linha 110: writeFile(
+- `scripts\chat32-create-base.cjs` linha 148: writeFile(
+- `scripts\chat32-create-base.cjs` linha 184: writeFile(
+- `scripts\chat32-create-base.cjs` linha 217: writeFile(
+- `scripts\chat32-create-base.cjs` linha 308: writeFile(
+- `scripts\chat32-create-base.cjs` linha 401: writeFile(
+- `scripts\chat32-create-base.cjs` linha 445: writeFile(
+- `scripts\chat32-create-base.cjs` linha 726: writeFile(
+- `scripts\chat32-create-base.cjs` linha 770: writeFile(
+- `scripts\chat32-env-cleanup-jobs.cjs` linha 24: fs.writeFileSync(envFile, "", "utf8");
+- `scripts\chat32-env-cleanup-jobs.cjs` linha 62: fs.writeFileSync(envFile, content, "utf8");
+- `scripts\chat32-env-cleanup-jobs.cjs` linha 293: fs.writeFileSync(schedulerFile, content, "utf8");
+- `scripts\chat32-fix-duplicate-cron.cjs` linha 63: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-fix-health-service.cjs` linha 181: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-fix-queues-module.cjs` linha 193: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-fix-queues-service-return.cjs` linha 73: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-fix-scheduler-constants-import.cjs` linha 51: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-fix-scheduler-imports-definitivo.cjs` linha 206: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-fix-scheduler-imports-principais.cjs` linha 66: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-force-fix-schedule-import.cjs` linha 75: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-force-super-admin-scheduler-controller.cjs` linha 78: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-health-scheduler-status.cjs` linha 44: fs.writeFileSync(full(file), content, "utf8");
+- `scripts\chat32-patch-queues-module.cjs` linha 234: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-patch-queues-service.cjs` linha 24: function writeFile(filePath, content) {
+- `scripts\chat32-patch-queues-service.cjs` linha 32: fs.writeFileSync(full, content.trimStart(), "utf8");
+- `scripts\chat32-patch-queues-service.cjs` linha 36: writeFile(
+- `scripts\chat32-patch-queues-service.cjs` linha 94: writeFile(
+- `scripts\chat32-patch-workers-dlq-concurrency.cjs` linha 245: fs.writeFileSync(full, content, "utf8");
+- `scripts\chat32-prisma-auditoria-dlq.cjs` linha 84: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-scheduler-locks.cjs` linha 234: fs.writeFileSync(file, content, "utf8");
+- `scripts\chat32-workers-dlq-concurrency-safe.cjs` linha 360: fs.writeFileSync(full, content, "utf8");
+- `src\modules\arquivos\storage\local-storage.service.ts` linha 11: import { access, mkdir, rename, writeFile } from 'fs/promises';
+- `src\modules\arquivos\storage\local-storage.service.ts` linha 68: await writeFile(caminhoAbsoluto, input.file.buffer);
+- `test\helpers\upload.helper.ts` linha 12: fs.writeFileSync(
+- `test\helpers\upload.helper.ts` linha 28: fs.writeFileSync(filePath, Buffer.from('blocked'));
+- `test\unit\backup-external-upload.spec.ts` linha 48: await fsp.writeFile(sourcePath, content);
+- `test\unit\backup-external-upload.spec.ts` linha 63: await fsp.writeFile(candidatePath, 'candidate');
+- `test\unit\backup-external-upload.spec.ts` linha 64: await fsp.writeFile(candidatePath + '.sha256', 'checksum');
+- `test\unit\backup-external-upload.spec.ts` linha 65: await fsp.writeFile(path.join(tempDirectory, 'ignored.enc'), 'ignored');
+- `test\unit\backup-external-upload.spec.ts` linha 66: await fsp.writeFile(path.join(tempDirectory, 'ignored.json'), 'ignored');
+- `test\unit\chat03-retention-runtime.spec.ts` linha 7: writeFileSync,
+- `test\unit\chat03-retention-runtime.spec.ts` linha 30: writeFileSync(oldFile, 'old');
+- `test\unit\chat03-retention-runtime.spec.ts` linha 31: writeFileSync(recentFile, 'recent');
+- `test\unit\coverage-under-70-branch-matrix.generated.spec.ts` linha 31: 'coverage-targets-under-70.json',
+- `test\unit\coverage-under-70-branch-matrix.generated.spec.ts` linha 448: prop === 'writeFileSync' ||
+- `test\unit\coverage-under-70-final-target.generated.spec.ts` linha 459: prop === 'writeFileSync' ||
+- `test\unit\coverage-under-70-targeted.generated.spec.ts` linha 21: 'coverage-targets-under-70.json',
+- `test\unit\coverage-under-70-targeted.generated.spec.ts` linha 282: prop === 'writeFileSync' ||
+- `test\unit\generated-targets\generate-under-70-targets.cjs` linha 7: const outJson = path.join(outDir, 'coverage-targets-under-70.json');
+- `test\unit\generated-targets\generate-under-70-targets.cjs` linha 115: fs.writeFileSync(outJson, JSON.stringify({ min: MIN, generatedAt: new Date().toISOString(), targets: targets }, null, 2));
+
+## Leitura operacional
+
+- Os arquivos sao testes efetivos por seguirem o padrao de descoberta do Jest.
+- A correcao deve preferir a origem de geracao quando ela for identificada.
+- Se nao houver origem automatica, a limpeza devera ser feita em lotes pequenos e testados.
+
+## Operacoes nao executadas
+
+- Nenhum arquivo foi alterado.
+- Nenhum teste, build, E2E, migration ou workflow foi executado.
+- Nenhum stage, commit, push, merge, tag, release ou deploy foi executado.
+- Nenhum segredo ou valor de ambiente foi lido ou impresso.
+
+## Classificacao final do B28
+
+- `PASS_WITH_ATTENTION` - estrutura e origem pesquisadas; proxima etapa deve aplicar uma correcao controlada.
+
+## Integridade
+
+- Este relatorio foi gerado automaticamente pelo script B28.
+- O script nao altera o projeto.

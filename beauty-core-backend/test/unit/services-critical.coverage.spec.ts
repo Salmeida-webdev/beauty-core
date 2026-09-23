@@ -124,7 +124,7 @@ const TARGETS: TargetService[] = [
   },
 ];
 
-function createRecord(overrides: Record<string, any> = {}) {
+function createRecord(overrides: Record<string, unknown> = {}) {
   return {
     id: UUID_A,
     empresaId: EMPRESA_A,
@@ -336,7 +336,7 @@ function loadServiceClass(target: TargetService): ServiceConstructor | null {
     if (isServiceConstructor(exported)) return exported;
 
     const serviceLike = Object.values(mod).find(
-      (value: unknown) =>
+      (value: unknown): value is ServiceConstructor =>
         isServiceConstructor(value) && value.name.includes('Service'),
     );
     if (serviceLike) return serviceLike;
@@ -483,7 +483,9 @@ describe('Chat 33.2 - Services crÃƒÆ’Ã‚Â­ticos smoke coverage', () => 
       it('deve importar e instanciar o service quando existir', () => {
         const ServiceClass = loadServiceClass(target);
 
-        expect(ServiceClass).toBeDefined();
+        if (ServiceClass === null) {
+          throw new Error(`Service não encontrado: ${target.label}.`);
+        }
 
         const instance = createServiceInstance(ServiceClass);
 
@@ -492,6 +494,9 @@ describe('Chat 33.2 - Services crÃƒÆ’Ã‚Â­ticos smoke coverage', () => 
 
       it('deve expor mÃƒÆ’Ã‚Â©todos pÃƒÆ’Ã‚Âºblicos no service', () => {
         const ServiceClass = loadServiceClass(target);
+        if (ServiceClass === null) {
+          throw new Error(`Service não encontrado: ${target.label}.`);
+        }
         const instance = createServiceInstance(ServiceClass);
         const methods = getPublicMethods(instance);
 
@@ -500,6 +505,9 @@ describe('Chat 33.2 - Services crÃƒÆ’Ã‚Â­ticos smoke coverage', () => 
 
       it('deve exercitar mÃƒÆ’Ã‚Â©todos pÃƒÆ’Ã‚Âºblicos com mocks seguros', () => {
         const ServiceClass = loadServiceClass(target);
+        if (ServiceClass === null) {
+          throw new Error(`Service não encontrado: ${target.label}.`);
+        }
         const instance = createServiceInstance(ServiceClass);
         const methods = getPublicMethods(instance);
         const scenarios = createScenarios();

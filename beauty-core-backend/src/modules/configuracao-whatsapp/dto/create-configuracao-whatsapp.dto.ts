@@ -72,4 +72,20 @@ export class CreateConfiguracaoWhatsAppDto {
     message: 'O campo usarModoDemonstracao deve ser verdadeiro ou falso.',
   })
   usarModoDemonstracao?: boolean;
+
+  @IsOptional()
+  @IsString()
+  metaWabaId?: string;
+
+  @IsOptional()
+  @IsString()
+  metaPhoneNumberId?: string;
+
+  @IsOptional()
+  @IsString()
+  metaAccessTokenRef?: string;
+
+  @IsOptional()
+  @IsString()
+  metaApiVersion?: string;
 }

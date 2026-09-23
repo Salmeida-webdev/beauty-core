@@ -1,10 +1,10 @@
 import { ConfigService } from '@nestjs/config';
 import { Queue } from 'bullmq';
 
+import { RequestContextService } from '../../src/common/context/request-context.service';
 import { BackupService } from '../../src/backup/backup.service';
 import { PrismaService } from '../../src/database/prisma/prisma.service';
 import { QueuesService } from '../../src/queues/services/queues.service';
-import { RequestContextService } from '../../src/common/context/request-context.service';
 
 describe('Chat 03 - retencao fisica BullMQ', () => {
   it('limpa jobs completed/failed por fila com limites definidos', async () => {
@@ -52,16 +52,17 @@ describe('Chat 03 - retencao fisica BullMQ', () => {
         create: jest.fn().mockResolvedValue({ id: 'audit-id' }),
       },
     } as unknown as PrismaService;
+    const limparJobsAntigos = jest.fn().mockResolvedValue({
+      status: 'SUCESSO' as const,
+      retentionCompletedJobsDays: 30,
+      retentionFailedJobsDays: 90,
+      cleanLimitPerQueueAndStatus: 10000,
+      completedRemoved: 2,
+      failedRemoved: 1,
+      queues: [],
+    });
     const queues = {
-      limparJobsAntigos: jest.fn().mockResolvedValue({
-        status: 'SUCESSO' as const,
-        retentionCompletedJobsDays: 30,
-        retentionFailedJobsDays: 90,
-        cleanLimitPerQueueAndStatus: 10000,
-        completedRemoved: 2,
-        failedRemoved: 1,
-        queues: [],
-      }),
+      limparJobsAntigos,
     } as unknown as QueuesService;
     const service = new BackupService(prisma, queues);
 
@@ -70,9 +71,20 @@ describe('Chat 03 - retencao fisica BullMQ', () => {
       (item) => item.job === 'limpeza_jobs_antigos',
     );
 
-    expect(queues.limparJobsAntigos).toHaveBeenCalledTimes(1);
-    expect(jobs?.status).toBe('SUCESSO');
-    expect(jobs?.completedRemoved).toBe(2);
-    expect(jobs?.failedRemoved).toBe(1);
+    if (
+      !jobs ||
+      jobs.job !== 'limpeza_jobs_antigos' ||
+      jobs.status !== 'SUCESSO'
+    ) {
+      throw new Error('Resultado de retenção de jobs não foi executado.');
+    }
+
+    expect(limparJobsAntigos).toHaveBeenCalledTimes(1);
+    if (!jobs || !('completedRemoved' in jobs) || !('failedRemoved' in jobs)) {
+      throw new Error('Resultado de retenção sem contadores de jobs.');
+    }
+    expect(jobs.status).toBe('SUCESSO');
+    expect(jobs.completedRemoved).toBe(2);
+    expect(jobs.failedRemoved).toBe(1);
   });
 });

@@ -1,0 +1,604 @@
+# Beauty Core - Chat B - B06 - Escopo do Portal Cliente 1.0
+
+- Inicio: 2026-09-13T11:10:13.9925679-03:00
+- Fim: 2026-09-13T11:10:14.2362085-03:00
+- Script: B06-v1
+- Modo: somente leitura; o relatorio e o unico artefato criado.
+- Pasta unica de relatorios do Chat B: `beauty-core-backend\docs\chat-b\`
+
+## Escopo
+
+- Classificar evidencias do Portal como pronta, parcial, demonstrativa, dependente de Meta ou fora do escopo.
+- Inventariar rotas, componentes, contratos, autenticacao e funcionalidades do cliente.
+- Comparar referencias no frontend, backend e documentacao sem inventar endpoints.
+- Separar existencia de arquivo de comprovacao funcional em runtime.
+- Nao alterar codigo nem documentacao existente neste bloco.
+
+## Baseline da execucao
+
+- Branch: `main`
+- HEAD curto: `7da9794`
+- Git status exit code: 0
+- Entradas locais antes da auditoria: 35
+- Arquivos analisados por marcadores: 1138
+
+## Rotas e estrutura do Portal
+
+- Diretorios de rota do Portal localizados: 11
+- Rota/segmento: `beauty-core-ui\src\app\portal\agendamentos`
+- Rota/segmento: `beauty-core-ui\src\app\portal\beneficios`
+- Rota/segmento: `beauty-core-ui\src\app\portal\documentos`
+- Rota/segmento: `beauty-core-ui\src\app\portal\fidelidade`
+- Rota/segmento: `beauty-core-ui\src\app\portal\historico`
+- Rota/segmento: `beauty-core-ui\src\app\portal\mensagens`
+- Rota/segmento: `beauty-core-ui\src\app\portal\mensagens\enviar`
+- Rota/segmento: `beauty-core-ui\src\app\portal\notificacoes`
+- Rota/segmento: `beauty-core-ui\src\app\portal\pacotes`
+- Rota/segmento: `beauty-core-ui\src\app\portal\perfil`
+- Rota/segmento: `beauty-core-ui\src\app\portal\primeiro-acesso`
+- Arquivos do Portal: 17
+
+### Rotas e funcionalidades do Portal
+- `beauty-core-backend\docs\api-client.md`; linha 5; marcador `portal`
+- `beauty-core-backend\docs\api-client.md`; linha 7; marcador `portal`
+- `beauty-core-backend\docs\api-client.md`; linha 26; marcador `perfil`
+- `beauty-core-backend\docs\api-client.md`; linha 28; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 29; marcador `fidelidade`
+- `beauty-core-backend\docs\api-client.md`; linha 30; marcador `pacotes`
+- `beauty-core-backend\docs\api-client.md`; linha 31; marcador `notific`
+- `beauty-core-backend\docs\api-client.md`; linha 32; marcador `mensagens`
+- `beauty-core-backend\docs\api-client.md`; linha 48; marcador `portal`
+- `beauty-core-backend\docs\api-client.md`; linha 189; marcador `portal`
+- `beauty-core-backend\docs\api-client.md`; linha 195; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 196; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 197; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 198; marcador `fidelidade`
+- `beauty-core-backend\docs\api-client.md`; linha 200; marcador `beneficios`
+- `beauty-core-backend\docs\api-client.md`; linha 201; marcador `pacotes`
+- `beauty-core-backend\docs\api-client.md`; linha 202; marcador `pacotes`
+- `beauty-core-backend\docs\api-client.md`; linha 203; marcador `notific`
+- `beauty-core-backend\docs\api-client.md`; linha 204; marcador `notific`
+- `beauty-core-backend\docs\api-client.md`; linha 205; marcador `notific`
+- `beauty-core-backend\docs\api-client.md`; linha 206; marcador `mensagens`
+- `beauty-core-backend\docs\api-client.md`; linha 207; marcador `historico`
+- `beauty-core-backend\docs\api-client.md`; linha 220; marcador `portal`
+- `beauty-core-backend\docs\api-client.md`; linha 224; marcador `perfil`
+- `beauty-core-backend\docs\api-client.md`; linha 256; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 257; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 258; marcador `fidelidade`
+- `beauty-core-backend\docs\api-client.md`; linha 260; marcador `pacotes`
+- `beauty-core-backend\docs\api-client.md`; linha 261; marcador `notific`
+- `beauty-core-backend\docs\api-client.md`; linha 271; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 275; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 276; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 277; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 290; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 291; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 296; marcador `fidelidade`
+- `beauty-core-backend\docs\api-client.md`; linha 300; marcador `fidelidade`
+- `beauty-core-backend\docs\api-client.md`; linha 302; marcador `beneficios`
+- `beauty-core-backend\docs\api-client.md`; linha 320; marcador `pacotes`
+- `beauty-core-backend\docs\api-client.md`; linha 324; marcador `pacotes`
+- `beauty-core-backend\docs\api-client.md`; linha 325; marcador `pacotes`
+- `beauty-core-backend\docs\api-client.md`; linha 329; marcador `pacotes`
+- `beauty-core-backend\docs\api-client.md`; linha 330; marcador `pacotes`
+- `beauty-core-backend\docs\api-client.md`; linha 345; marcador `mensagens`
+- `beauty-core-backend\docs\api-client.md`; linha 345; marcador `notific`
+- `beauty-core-backend\docs\api-client.md`; linha 349; marcador `notific`
+- `beauty-core-backend\docs\api-client.md`; linha 350; marcador `notific`
+- `beauty-core-backend\docs\api-client.md`; linha 351; marcador `notific`
+- `beauty-core-backend\docs\api-client.md`; linha 352; marcador `mensagens`
+- `beauty-core-backend\docs\api-client.md`; linha 356; marcador `notific`
+- `beauty-core-backend\docs\api-client.md`; linha 358; marcador `mensagens`
+- `beauty-core-backend\docs\api-client.md`; linha 367; marcador `historico`
+- `beauty-core-backend\docs\api-client.md`; linha 371; marcador `agendamento`
+- `beauty-core-backend\docs\api-client.md`; linha 372; marcador `pacotes`
+- `beauty-core-backend\docs\api-client.md`; linha 376; marcador `notific`
+- `beauty-core-backend\docs\api-client.md`; linha 377; marcador `mensagens`
+- `beauty-core-backend\docs\api-client.md`; linha 403; marcador `portal`
+- `beauty-core-backend\docs\architecture.md`; linha 16; marcador `portal`
+- `beauty-core-backend\docs\architecture.md`; linha 23; marcador `portal`
+- `beauty-core-backend\docs\architecture.md`; linha 59; marcador `agendamento`
+- `beauty-core-backend\docs\architecture.md`; linha 62; marcador `fidelidade`
+- `beauty-core-backend\docs\architecture.md`; linha 65; marcador `pacotes`
+- `beauty-core-backend\docs\architecture.md`; linha 68; marcador `notific`
+- `beauty-core-backend\docs\architecture.md`; linha 95; marcador `fidelidade`
+- `beauty-core-backend\docs\architecture.md`; linha 96; marcador `pacotes`
+- `beauty-core-backend\docs\architecture.md`; linha 110; marcador `portal`
+- `beauty-core-backend\docs\architecture.md`; linha 116; marcador `agendamento`
+- `beauty-core-backend\docs\architecture.md`; linha 118; marcador `pacotes`
+- `beauty-core-backend\docs\architecture.md`; linha 121; marcador `notific`
+- `beauty-core-backend\docs\architecture.md`; linha 122; marcador `mensagens`
+- `beauty-core-backend\docs\architecture.md`; linha 125; marcador `notific`
+- `beauty-core-backend\docs\architecture.md`; linha 143; marcador `fidelidade`
+- `beauty-core-backend\docs\architecture.md`; linha 144; marcador `pacotes`
+- `beauty-core-backend\docs\architecture.md`; linha 174; marcador `notific`
+- `beauty-core-backend\docs\architecture.md`; linha 193; marcador `pacotes`
+- `beauty-core-backend\src\app.module.ts`; linha 16; marcador `agendamento`
+- `beauty-core-backend\src\app.module.ts`; linha 17; marcador `fidelidade`
+- `beauty-core-backend\src\app.module.ts`; linha 19; marcador `beneficios`
+- `beauty-core-backend\src\app.module.ts`; linha 20; marcador `fidelidade`
+- `beauty-core-backend\src\app.module.ts`; linha 21; marcador `fidelidade`
+- `beauty-core-backend\src\app.module.ts`; linha 22; marcador `pacotes`
+- `beauty-core-backend\src\app.module.ts`; linha 23; marcador `pacotes`
+- `beauty-core-backend\src\app.module.ts`; linha 27; marcador `notific`
+- `beauty-core-backend\src\app.module.ts`; linha 28; marcador `notific`
+- `beauty-core-backend\src\app.module.ts`; linha 33; marcador `mensagens`
+- `beauty-core-backend\src\app.module.ts`; linha 88; marcador `agendamento`
+- `beauty-core-backend\src\app.module.ts`; linha 89; marcador `fidelidade`
+- `beauty-core-backend\src\app.module.ts`; linha 91; marcador `beneficios`
+- `beauty-core-backend\src\app.module.ts`; linha 92; marcador `fidelidade`
+- `beauty-core-backend\src\app.module.ts`; linha 93; marcador `fidelidade`
+- `beauty-core-backend\src\app.module.ts`; linha 94; marcador `pacotes`
+- `beauty-core-backend\src\app.module.ts`; linha 95; marcador `pacotes`
+- `beauty-core-backend\src\app.module.ts`; linha 99; marcador `notific`
+- `beauty-core-backend\src\app.module.ts`; linha 100; marcador `notific`
+- `beauty-core-backend\src\app.module.ts`; linha 105; marcador `mensagens`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 213; marcador `mensagens`
+- `beauty-core-backend\src\config\swagger.config.ts`; linha 7; marcador `portal`
+- `beauty-core-backend\src\lgpd\dto\lgpd-cliente-export-response.dto.ts`; linha 26; marcador `perfil`
+- `beauty-core-backend\src\lgpd\dto\lgpd-cliente-export-response.dto.ts`; linha 29; marcador `agendamento`
+- `beauty-core-backend\src\lgpd\dto\lgpd-cliente-export-response.dto.ts`; linha 32; marcador `agendamento`
+- `beauty-core-backend\src\lgpd\dto\lgpd-cliente-export-response.dto.ts`; linha 36; marcador `fidelidade`
+- `beauty-core-backend\src\lgpd\dto\lgpd-cliente-export-response.dto.ts`; linha 43; marcador `pacotes`
+- `beauty-core-backend\src\lgpd\dto\lgpd-cliente-export-response.dto.ts`; linha 46; marcador `pacotes`
+- `beauty-core-backend\src\lgpd\dto\lgpd-cliente-export-response.dto.ts`; linha 49; marcador `notific`
+- `beauty-core-backend\src\lgpd\dto\lgpd-cliente-export-response.dto.ts`; linha 52; marcador `notific`
+- `beauty-core-backend\src\lgpd\dto\lgpd-cliente-export-response.dto.ts`; linha 55; marcador `mensagens`
+- `beauty-core-backend\src\lgpd\dto\lgpd-cliente-export-response.dto.ts`; linha 58; marcador `mensagens`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 57; marcador `agendamento`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 58; marcador `notific`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 59; marcador `mensagens`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 67; marcador `fidelidade`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 69; marcador `fidelidade`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 70; marcador `fidelidade`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 70; marcador `historico`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 71; marcador `fidelidade`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 71; marcador `historico`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 72; marcador `historico`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 73; marcador `fidelidade`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 79; marcador `pacotes`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 80; marcador `pacotes`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 93; marcador `perfil`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 94; marcador `agendamento`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 96; marcador `pacotes`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 99; marcador `notific`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 100; marcador `mensagens`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 112; marcador `perfil`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 113; marcador `agendamento`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 115; marcador `pacotes`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 118; marcador `notific`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 119; marcador `mensagens`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 30; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 35; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 36; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 37; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 55; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 57; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 59; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 60; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 65; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 67; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 70; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 71; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 74; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 104; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 107; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 108; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 116; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 118; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 133; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 168; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 170; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 186; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 205; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 213; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 215; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 219; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 224; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 253; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 259; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 265; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 267; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 271; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 276; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 277; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 280; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 310; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 314; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 317; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 319; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 327; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 329; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 333; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 338; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 348; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 358; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 364; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.module.ts`; linha 9; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.module.ts`; linha 10; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.module.ts`; linha 15; marcador `agendamento`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.module.ts`; linha 17; marcador `agendamento`
+- Evidencias limitadas a 180 ocorrencias.
+
+### Autenticacao e protecao do Portal
+- `beauty-core-backend\docs\api-client.md`; linha 5; marcador `refresh`
+- `beauty-core-backend\docs\api-client.md`; linha 116; marcador `refresh`
+- `beauty-core-backend\docs\api-client.md`; linha 132; marcador `refresh`
+- `beauty-core-backend\docs\api-client.md`; linha 160; marcador `refresh`
+- `beauty-core-backend\docs\api-client.md`; linha 164; marcador `refresh`
+- `beauty-core-backend\docs\api-client.md`; linha 169; marcador `refresh`
+- `beauty-core-backend\docs\api-client.md`; linha 176; marcador `refresh`
+- `beauty-core-backend\docs\api-client.md`; linha 182; marcador `refresh`
+- `beauty-core-backend\docs\api-client.md`; linha 183; marcador `refresh`
+- `beauty-core-backend\docs\api-client.md`; linha 220; marcador `area-cliente`
+- `beauty-core-backend\docs\api-client.md`; linha 403; marcador `refresh`
+- `beauty-core-backend\docs\production-checklist.md`; linha 20; marcador `refresh`
+- `beauty-core-backend\src\app.module.ts`; linha 39; marcador `area-cliente`
+- `beauty-core-backend\src\backup\backup.service.ts`; linha 33; marcador `session`
+- `beauty-core-backend\src\backup\backup.service.ts`; linha 44; marcador `session`
+- `beauty-core-backend\src\common\metrics\guards\metrics-auth.guard.ts`; linha 5; marcador `Unauthorized`
+- `beauty-core-backend\src\common\metrics\guards\metrics-auth.guard.ts`; linha 28; marcador `Unauthorized`
+- `beauty-core-backend\src\common\metrics\guards\metrics-auth.guard.ts`; linha 47; marcador `Unauthorized`
+- `beauty-core-backend\src\config\env.validation.ts`; linha 9; marcador `refresh`
+- `beauty-core-backend\src\config\env.validation.ts`; linha 10; marcador `refresh`
+- `beauty-core-backend\src\config\env.validation.ts`; linha 11; marcador `OTP`
+- `beauty-core-backend\src\config\env.validation.ts`; linha 69; marcador `refresh`
+- `beauty-core-backend\src\config\env.validation.ts`; linha 70; marcador `refresh`
+- `beauty-core-backend\src\config\env.validation.ts`; linha 71; marcador `OTP`
+- `beauty-core-backend\src\config\env.validation.ts`; linha 89; marcador `refresh`
+- `beauty-core-backend\src\config\env.validation.ts`; linha 90; marcador `refresh`
+- `beauty-core-backend\src\config\env.validation.ts`; linha 95; marcador `refresh`
+- `beauty-core-backend\src\config\env.validation.ts`; linha 96; marcador `refresh`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 421; marcador `refresh`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 422; marcador `refresh`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 428; marcador `OTP`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 26; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 96; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 159; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 245; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 302; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 350; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 10; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 93; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 130; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 172; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 221; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 275; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 328; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 381; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 418; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 447; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 488; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 536; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\analytics\analytics.controller.ts`; linha 591; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\area-cliente\area-cliente.controller.ts`; linha 25; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\area-cliente\area-cliente.controller.ts`; linha 32; marcador `area-cliente`
+- `beauty-core-backend\src\modules\area-cliente\area-cliente.controller.ts`; linha 54; marcador `area-cliente`
+- `beauty-core-backend\src\modules\area-cliente\area-cliente.controller.ts`; linha 78; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\area-cliente\area-cliente.controller.ts`; linha 110; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\area-cliente\area-cliente.controller.ts`; linha 154; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\area-cliente\area-cliente.module.ts`; linha 10; marcador `area-cliente`
+- `beauty-core-backend\src\modules\area-cliente\area-cliente.module.ts`; linha 11; marcador `area-cliente`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 1; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 31; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 109; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 169; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 237; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 308; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 377; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 446; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 503; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 558; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 615; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 681; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 729; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 772; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\arquivos\arquivos.controller.ts`; linha 836; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auditoria\auditoria.controller.ts`; linha 13; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auditoria\auditoria.controller.ts`; linha 155; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auditoria\auditoria.controller.ts`; linha 237; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auditoria\auditoria.controller.ts`; linha 322; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auditoria\auditoria.controller.ts`; linha 404; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auditoria\auditoria.controller.ts`; linha 481; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auditoria\auditoria.controller.ts`; linha 559; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auditoria\auditoria.controller.ts`; linha 617; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auditoria\auditoria.service.ts`; linha 72; marcador `refresh`
+- `beauty-core-backend\src\modules\auditoria\auditoria.service.ts`; linha 74; marcador `refresh`
+- `beauty-core-backend\src\modules\auditoria\auditoria.service.ts`; linha 83; marcador `OTP`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 24; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 30; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 76; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 103; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 118; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 144; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 148; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 151; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 158; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 163; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 164; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 166; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 167; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 176; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.controller.ts`; linha 290; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 5; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 31; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 127; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 135; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 141; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 145; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 180; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 207; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 236; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 241; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 243; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 244; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 253; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 259; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 306; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 315; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 320; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 322; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 326; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 326; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 329; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 330; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 330; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 334; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 334; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 353; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 356; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 357; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 358; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 361; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 373; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 373; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 379; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 383; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 386; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 391; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 392; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 394; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 396; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 397; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 407; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 409; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 417; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 427; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 444; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 445; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 446; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 449; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 450; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 451; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 476; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 504; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\auth.service.ts`; linha 517; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\dto\logout.dto.ts`; linha 7; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\dto\logout.dto.ts`; linha 11; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\dto\refresh-[sensitive data omitted]`; linha 4; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\dto\refresh-[sensitive data omitted]`; linha 8; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\dto\refresh-[sensitive data omitted]`; linha 12; marcador `refresh`
+- `beauty-core-backend\src\modules\auth\strategies\jwt.strategy.ts`; linha 1; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\strategies\jwt.strategy.ts`; linha 37; marcador `Unauthorized`
+- `beauty-core-backend\src\modules\auth\strategies\jwt.strategy.ts`; linha 41; marcador `Unauthorized`
+- Evidencias limitadas a 160 ocorrencias.
+
+### Contratos, services e dependencias externas
+- `beauty-core-backend\docs\api-client.md`; linha 42; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 73; marcador `POST /`
+- `beauty-core-backend\docs\api-client.md`; linha 103; marcador `POST /`
+- `beauty-core-backend\docs\api-client.md`; linha 164; marcador `POST /`
+- `beauty-core-backend\docs\api-client.md`; linha 193; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 194; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 195; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 196; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 197; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 198; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 199; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 200; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 201; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 202; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 203; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 204; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 206; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 206; marcador `WhatsApp`
+- `beauty-core-backend\docs\api-client.md`; linha 207; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 228; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 251; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 275; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 276; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 277; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 300; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 301; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 302; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 324; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 325; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 349; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 350; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 352; marcador `GET /`
+- `beauty-core-backend\docs\api-client.md`; linha 352; marcador `WhatsApp`
+- `beauty-core-backend\docs\api-client.md`; linha 367; marcador `GET /`
+- `beauty-core-backend\docs\architecture.md`; linha 69; marcador `WhatsApp`
+- `beauty-core-backend\docs\architecture.md`; linha 77; marcador `service`
+- `beauty-core-backend\docs\architecture.md`; linha 125; marcador `notification`
+- `beauty-core-backend\docs\architecture.md`; linha 175; marcador `WhatsApp`
+- `beauty-core-backend\docs\architecture.md`; linha 289; marcador `query`
+- `beauty-core-backend\src\app.module.ts`; linha 31; marcador `WhatsApp`
+- `beauty-core-backend\src\app.module.ts`; linha 32; marcador `WhatsApp`
+- `beauty-core-backend\src\app.module.ts`; linha 33; marcador `WhatsApp`
+- `beauty-core-backend\src\app.module.ts`; linha 34; marcador `WhatsApp`
+- `beauty-core-backend\src\app.module.ts`; linha 103; marcador `WhatsApp`
+- `beauty-core-backend\src\app.module.ts`; linha 104; marcador `WhatsApp`
+- `beauty-core-backend\src\app.module.ts`; linha 105; marcador `WhatsApp`
+- `beauty-core-backend\src\app.module.ts`; linha 106; marcador `WhatsApp`
+- `beauty-core-backend\src\app.module.ts`; linha 112; marcador `service`
+- `beauty-core-backend\src\backup\backup.controller.ts`; linha 10; marcador `service`
+- `beauty-core-backend\src\backup\backup.controller.ts`; linha 21; marcador `service`
+- `beauty-core-backend\src\backup\backup.controller.ts`; linha 29; marcador `service`
+- `beauty-core-backend\src\backup\backup.controller.ts`; linha 38; marcador `service`
+- `beauty-core-backend\src\backup\backup.controller.ts`; linha 47; marcador `service`
+- `beauty-core-backend\src\backup\backup.controller.ts`; linha 54; marcador `service`
+- `beauty-core-backend\src\backup\backup.controller.ts`; linha 61; marcador `service`
+- `beauty-core-backend\src\backup\backup.module.ts`; linha 4; marcador `service`
+- `beauty-core-backend\src\backup\backup.module.ts`; linha 9; marcador `service`
+- `beauty-core-backend\src\backup\backup.service.ts`; linha 14; marcador `service`
+- `beauty-core-backend\src\backup\backup.service.ts`; linha 15; marcador `service`
+- `beauty-core-backend\src\backup\backup.service.ts`; linha 49; marcador `service`
+- `beauty-core-backend\src\backup\backup.service.ts`; linha 59; marcador `service`
+- `beauty-core-backend\src\backup\backup.service.ts`; linha 60; marcador `service`
+- `beauty-core-backend\src\backup\backup.service.ts`; linha 213; marcador `service`
+- `beauty-core-backend\src\backup\backup.service.ts`; linha 220; marcador `service`
+- `beauty-core-backend\src\backup\backup.service.ts`; linha 233; marcador `service`
+- `beauty-core-backend\src\common\context\request-context.module.ts`; linha 2; marcador `service`
+- `beauty-core-backend\src\common\context\request-context.module.ts`; linha 6; marcador `service`
+- `beauty-core-backend\src\common\context\request-context.module.ts`; linha 7; marcador `service`
+- `beauty-core-backend\src\common\context\request-context.service.ts`; linha 6; marcador `service`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 12; marcador `service`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 13; marcador `service`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 51; marcador `service`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 52; marcador `service`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 116; marcador `service`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 122; marcador `service`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 129; marcador `Meta`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 154; marcador `service`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 160; marcador `service`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 167; marcador `Meta`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 213; marcador `WhatsApp`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 214; marcador `WhatsApp`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 217; marcador `WhatsApp`
+- `beauty-core-backend\src\common\interceptors\audit-log.interceptor.ts`; linha 218; marcador `WhatsApp`
+- `beauty-core-backend\src\common\logger\structured-logger.module.ts`; linha 4; marcador `service`
+- `beauty-core-backend\src\common\logger\structured-logger.module.ts`; linha 9; marcador `service`
+- `beauty-core-backend\src\common\logger\structured-logger.module.ts`; linha 10; marcador `service`
+- `beauty-core-backend\src\common\logger\structured-logger.service.ts`; linha 33; marcador `service`
+- `beauty-core-backend\src\common\logger\structured-logger.service.ts`; linha 35; marcador `service`
+- `beauty-core-backend\src\common\logger\structured-logger.service.ts`; linha 54; marcador `service`
+- `beauty-core-backend\src\common\logger\structured-logger.service.ts`; linha 55; marcador `service`
+- `beauty-core-backend\src\common\logger\structured-logger.service.ts`; linha 92; marcador `service`
+- `beauty-core-backend\src\common\metrics\interceptors\http-metrics.interceptor.ts`; linha 10; marcador `service`
+- `beauty-core-backend\src\common\metrics\interceptors\http-metrics.interceptor.ts`; linha 36; marcador `service`
+- `beauty-core-backend\src\common\metrics\interceptors\http-metrics.interceptor.ts`; linha 80; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.controller.ts`; linha 35; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.controller.ts`; linha 36; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.controller.ts`; linha 51; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.controller.ts`; linha 52; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.controller.ts`; linha 59; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.controller.ts`; linha 68; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.controller.ts`; linha 71; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.controller.ts`; linha 74; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.controller.ts`; linha 77; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.module.ts`; linha 7; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.module.ts`; linha 13; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.module.ts`; linha 14; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.service.ts`; linha 21; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.service.ts`; linha 22; marcador `service`
+- `beauty-core-backend\src\common\metrics\metrics.service.ts`; linha 70; marcador `service`
+- `beauty-core-backend\src\common\metrics\middleware\metrics.middleware.ts`; linha 4; marcador `service`
+- `beauty-core-backend\src\common\metrics\middleware\metrics.middleware.ts`; linha 22; marcador `service`
+- `beauty-core-backend\src\common\metrics\middleware\metrics.middleware.ts`; linha 35; marcador `service`
+- `beauty-core-backend\src\common\middleware\request-id.middleware.ts`; linha 4; marcador `service`
+- `beauty-core-backend\src\common\middleware\request-id.middleware.ts`; linha 13; marcador `service`
+- `beauty-core-backend\src\database\prisma\prisma.module.ts`; linha 2; marcador `service`
+- `beauty-core-backend\src\database\prisma\prisma.module.ts`; linha 5; marcador `service`
+- `beauty-core-backend\src\database\prisma\prisma.module.ts`; linha 6; marcador `service`
+- `beauty-core-backend\src\database\prisma\prisma.service.ts`; linha 5; marcador `service`
+- `beauty-core-backend\src\lgpd\dto\lgpd-cliente-export-response.dto.ts`; linha 55; marcador `WhatsApp`
+- `beauty-core-backend\src\lgpd\dto\lgpd-cliente-export-response.dto.ts`; linha 58; marcador `WhatsApp`
+- `beauty-core-backend\src\lgpd\lgpd.controller.ts`; linha 11; marcador `service`
+- `beauty-core-backend\src\lgpd\lgpd.controller.ts`; linha 42; marcador `service`
+- `beauty-core-backend\src\lgpd\lgpd.controller.ts`; linha 58; marcador `service`
+- `beauty-core-backend\src\lgpd\lgpd.controller.ts`; linha 75; marcador `service`
+- `beauty-core-backend\src\lgpd\lgpd.module.ts`; linha 4; marcador `service`
+- `beauty-core-backend\src\lgpd\lgpd.module.ts`; linha 10; marcador `service`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 7; marcador `service`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 49; marcador `service`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 50; marcador `service`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 59; marcador `WhatsApp`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 60; marcador `WhatsApp`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 100; marcador `WhatsApp`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 119; marcador `WhatsApp`
+- `beauty-core-backend\src\lgpd\lgpd.service.ts`; linha 213; marcador `WhatsApp`
+- `beauty-core-backend\src\main.ts`; linha 12; marcador `service`
+- `beauty-core-backend\src\main.ts`; linha 13; marcador `service`
+- `beauty-core-backend\src\main.ts`; linha 62; marcador `service`
+- `beauty-core-backend\src\main.ts`; linha 108; marcador `service`
+- `beauty-core-backend\src\main.ts`; linha 109; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 9; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 24; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 30; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 35; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 60; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 107; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 120; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 126; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 150; marcador `Meta`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 168; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 170; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 170; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 184; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 186; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 203; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 205; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 259; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 317; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.controller.ts`; linha 364; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.module.ts`; linha 10; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.module.ts`; linha 17; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.module.ts`; linha 19; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 13; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 14; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 15; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 24; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 25; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 29; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 30; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 33; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 34; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 35; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 36; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 75; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 100; marcador `service`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 117; marcador `Meta`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 126; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 129; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 131; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 133; marcador `query`
+- `beauty-core-backend\src\modules\agendamentos\agendamentos.service.ts`; linha 148; marcador `query`
+- Evidencias limitadas a 180 ocorrencias.
+
+## Matriz preliminar de escopo
+
+| Categoria | Evidencia procurada | Limite da conclusao |
+|---|---|---|
+| Pronta | rota/contrato/componente e teste existente | arquivo presente nao prova runtime completo |
+| Parcial | parte da rota, contrato ou fluxo presente | exige validacao dos pontos ausentes |
+| Demonstrativa | tela, mock, fixture ou fluxo sem backend comprovado | nao equivale a operacao comercial |
+| Dependente de Meta | referencias WhatsApp/Meta ou credenciais externas | depende de configuracao e testes autorizados |
+| Fora do escopo | ausencia de evidencia no escopo analisado | ausencia nao e prova absoluta de inexistencia |
+
+## Leitura dos gates
+
+- Evidencias de rotas/funcionalidades localizadas; classificacao final exige leitura contextual e testes.
+- Evidencias de autenticacao/protecao localizadas; cobertura efetiva nao foi provada em runtime.
+- Evidencias de contratos/services localizadas; nenhum endpoint novo foi inventado.
+- Nenhuma funcionalidade foi reclassificada como pronta somente por marcador textual.
+
+## Operacoes nao executadas
+
+- Nenhuma rota foi acessada por browser neste bloco.
+- Nenhum teste frontend/backend foi executado.
+- Nenhuma chamada Meta/WhatsApp foi realizada.
+- Migrations e escritas em banco/Redis: nao executadas.
+- Stage/commit/push/merge/tag/release: nao executados.
+- Deploy: nao executado.
+- Segredos e valores de ambiente: nao lidos nem impressos.
+
+## Classificacao final do B06
+
+- `PASS_WITH_ATTENTION` - inventario e matriz preliminar de escopo concluidos; a classificacao definitiva de cada funcionalidade exige validacao funcional e contextual.
+
+## Integridade
+
+- Este relatorio foi gerado automaticamente pelo script B06.
+- O script nao altera codigo nem documentacao existente e grava o relatorio na pasta unica do Chat B.

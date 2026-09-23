@@ -1,7 +1,8 @@
-﻿import { Injectable, NotImplementedException } from '@nestjs/common';
+import { Injectable, NotImplementedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TipoArmazenamento } from '@prisma/client';
 import { LocalStorageService } from './local-storage.service';
+import { S3StorageService } from './providers/s3-storage.service';
 import { StorageProvider } from './storage.interface';
 
 @Injectable()
@@ -9,6 +10,7 @@ export class StorageFactory {
   constructor(
     private readonly config: ConfigService,
     private readonly localStorage: LocalStorageService,
+    private readonly s3Storage: S3StorageService,
   ) {}
 
   getProvider(): StorageProvider {
@@ -19,9 +21,7 @@ export class StorageFactory {
         return this.localStorage;
 
       case TipoArmazenamento.S3:
-        throw new NotImplementedException(
-          'Provider S3 preparado, mas ainda não implementado.',
-        );
+        return this.s3Storage;
 
       case TipoArmazenamento.CLOUDINARY:
         throw new NotImplementedException(

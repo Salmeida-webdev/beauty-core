@@ -1,7 +1,4 @@
-import {
-  CanalWhatsApp,
-  StatusMensagemWhatsApp,
-} from '@prisma/client';
+import { CanalWhatsApp, StatusMensagemWhatsApp } from '@prisma/client';
 
 import { MensagensWhatsappService } from '../../src/modules/mensagens-whatsapp/mensagens-whatsapp.service';
 import { MetaWhatsappProviderError } from '../../src/modules/mensagens-whatsapp/providers/meta-whatsapp-cloud.provider';
@@ -9,7 +6,9 @@ import { MetaWhatsappProviderError } from '../../src/modules/mensagens-whatsapp/
 const empresaId = 'empresa-chat03';
 const mensagemId = 'mensagem-chat03';
 
-function criarRegistro(status = StatusMensagemWhatsApp.PENDENTE) {
+function criarRegistro(
+  status: StatusMensagemWhatsApp = StatusMensagemWhatsApp.PENDENTE,
+) {
   return {
     id: mensagemId,
     empresaId,
@@ -20,6 +19,22 @@ function criarRegistro(status = StatusMensagemWhatsApp.PENDENTE) {
   };
 }
 
+type MessageRecord = ReturnType<typeof criarRegistro>;
+type UpdateArguments = {
+  where: { id: string };
+  data: {
+    status: StatusMensagemWhatsApp;
+    erro: null;
+    dataEnvio: Date;
+    metaMessageId: string;
+    metaStatus: string;
+    metaStatusUpdatedAt: Date;
+  };
+};
+type MessageUpdateMock = jest.MockedFunction<
+  (args: UpdateArguments) => Promise<MessageRecord>
+>;
+
 function criarService(options: {
   providerResult?: { messageId: string };
   providerError?: MetaWhatsappProviderError;
@@ -29,13 +44,15 @@ function criarService(options: {
   const finalRecord = criarRegistro(
     options.finalStatus ?? StatusMensagemWhatsApp.ENVIADA,
   );
+  const update: MessageUpdateMock = jest.fn();
+  update.mockResolvedValue(finalRecord);
   const prisma = {
     mensagemWhatsApp: {
       findFirst: jest
         .fn()
         .mockResolvedValueOnce(initial)
         .mockResolvedValue(finalRecord),
-      update: jest.fn().mockResolvedValue(finalRecord),
+      update,
       updateMany: jest.fn().mockResolvedValue({ count: 1 }),
     },
     configuracaoWhatsApp: {
@@ -51,7 +68,9 @@ function criarService(options: {
       ? jest.fn().mockRejectedValue(options.providerError)
       : jest
           .fn()
-          .mockResolvedValue(options.providerResult ?? { messageId: 'wamid.TESTE' }),
+          .mockResolvedValue(
+            options.providerResult ?? { messageId: 'wamid.TESTE' },
+          ),
   };
   const tenantValidator = {
     validarEmpresaAtiva: jest.fn().mockResolvedValue(undefined),
@@ -74,7 +93,9 @@ function criarService(options: {
 
 describe('MensagensWhatsappService - fluxo Meta e worker', () => {
   it('persiste o messageId retornado pelo provider', async () => {
-    const harness = criarService({ providerResult: { messageId: 'wamid.SUCESSO' } });
+    const harness = criarService({
+      providerResult: { messageId: 'wamid.SUCESSO' },
+    });
 
     await harness.service.processarMensagemEnfileirada(
       empresaId,
@@ -84,15 +105,12 @@ describe('MensagensWhatsappService - fluxo Meta e worker', () => {
     );
 
     expect(harness.provider.enviarTexto).toHaveBeenCalledTimes(1);
-    expect(harness.prisma.mensagemWhatsApp.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          status: StatusMensagemWhatsApp.ENVIADA,
-          metaMessageId: 'wamid.SUCESSO',
-          metaStatus: 'sent',
-        }),
-      }),
-    );
+    const updateCall =
+      harness.prisma.mensagemWhatsApp.update.mock.calls[0]?.[0];
+
+    expect(updateCall?.data.status).toBe(StatusMensagemWhatsApp.ENVIADA);
+    expect(updateCall?.data.metaMessageId).toBe('wamid.SUCESSO');
+    expect(updateCall?.data.metaStatus).toBe('sent');
   });
 
   it('nao relanca erro 4xx definitivo para novo retry do BullMQ', async () => {

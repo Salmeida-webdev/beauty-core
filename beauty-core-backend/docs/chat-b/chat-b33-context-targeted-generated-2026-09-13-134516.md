@@ -1,0 +1,356 @@
+# Beauty Core - Chat B - B33 - Contexto do teste targeted gerado
+
+- Inicio: 2026-09-13T13:45:16.4245002-03:00
+- Fim: 2026-09-13T13:45:27.4609516-03:00
+- Script: B33-v1
+- Modo: somente leitura; o relatorio e o unico artefato criado.
+- Pasta unica de relatorios do Chat B: `beauty-core-backend\docs\chat-b\`
+
+## Objetivo
+
+- Mapear os diagnosticos restantes com linha de codigo e contexto curto.
+- Preparar correcao tipada sem desabilitar regras e sem alterar o arquivo nesta etapa.
+
+- ESLint exit code: 1
+- Diagnosticos: 78
+
+## Regras
+
+- `@typescript-eslint/no-unsafe-return`: 29
+- `@typescript-eslint/require-await`: 26
+- `@typescript-eslint/no-unsafe-member-access`: 9
+- `@typescript-eslint/no-unsafe-assignment`: 5
+- `@typescript-eslint/no-unsafe-call`: 5
+- `@typescript-eslint/no-require-imports`: 2
+- `@typescript-eslint/no-unsafe-argument`: 2
+
+## Diagnosticos com contexto
+
+- Linha 126, coluna 34; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 125:   return {
+  - 126:     findUnique: jest.fn(async () => record),
+  - 127:     findUniqueOrThrow: jest.fn(async () => record),
+- Linha 127, coluna 41; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 126:     findUnique: jest.fn(async () => record),
+  - 127:     findUniqueOrThrow: jest.fn(async () => record),
+  - 128:     findFirst: jest.fn(async () => record),
+- Linha 128, coluna 33; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 127:     findUniqueOrThrow: jest.fn(async () => record),
+  - 128:     findFirst: jest.fn(async () => record),
+  - 129:     findFirstOrThrow: jest.fn(async () => record),
+- Linha 129, coluna 40; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 128:     findFirst: jest.fn(async () => record),
+  - 129:     findFirstOrThrow: jest.fn(async () => record),
+  - 130:     findMany: jest.fn(async () => [record]),
+- Linha 130, coluna 32; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 129:     findFirstOrThrow: jest.fn(async () => record),
+  - 130:     findMany: jest.fn(async () => [record]),
+  - 131:     count: jest.fn(async () => 1),
+- Linha 131, coluna 29; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 130:     findMany: jest.fn(async () => [record]),
+  - 131:     count: jest.fn(async () => 1),
+  - 132:     create: jest.fn(async (args?: any) => ({
+- Linha 132, coluna 40; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 131:     count: jest.fn(async () => 1),
+  - 132:     create: jest.fn(async (args?: any) => ({
+  - 133:       ...record,
+- Linha 132, coluna 44; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 131:     count: jest.fn(async () => 1),
+  - 132:     create: jest.fn(async (args?: any) => ({
+  - 133:       ...record,
+- Linha 134, coluna 17; regra `@typescript-eslint/no-unsafe-member-access`; Unsafe member access .data on an `any` value.
+  - 133:       ...record,
+  - 134:       ...(args?.data ?? {}),
+  - 135:     })),
+- Linha 136, coluna 34; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 135:     })),
+  - 136:     createMany: jest.fn(async () => ({ count: 1 })),
+  - 137:     update: jest.fn(async (args?: any) => ({
+- Linha 137, coluna 40; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 136:     createMany: jest.fn(async () => ({ count: 1 })),
+  - 137:     update: jest.fn(async (args?: any) => ({
+  - 138:       ...record,
+- Linha 137, coluna 44; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 136:     createMany: jest.fn(async () => ({ count: 1 })),
+  - 137:     update: jest.fn(async (args?: any) => ({
+  - 138:       ...record,
+- Linha 139, coluna 17; regra `@typescript-eslint/no-unsafe-member-access`; Unsafe member access .data on an `any` value.
+  - 138:       ...record,
+  - 139:       ...(args?.data ?? {}),
+  - 140:     })),
+- Linha 141, coluna 34; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 140:     })),
+  - 141:     updateMany: jest.fn(async () => ({ count: 1 })),
+  - 142:     delete: jest.fn(async () => record),
+- Linha 142, coluna 30; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 141:     updateMany: jest.fn(async () => ({ count: 1 })),
+  - 142:     delete: jest.fn(async () => record),
+  - 143:     deleteMany: jest.fn(async () => ({ count: 1 })),
+- Linha 143, coluna 34; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 142:     delete: jest.fn(async () => record),
+  - 143:     deleteMany: jest.fn(async () => ({ count: 1 })),
+  - 144:     upsert: jest.fn(async (args?: any) => ({
+- Linha 144, coluna 40; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 143:     deleteMany: jest.fn(async () => ({ count: 1 })),
+  - 144:     upsert: jest.fn(async (args?: any) => ({
+  - 145:       ...record,
+- Linha 144, coluna 44; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 143:     deleteMany: jest.fn(async () => ({ count: 1 })),
+  - 144:     upsert: jest.fn(async (args?: any) => ({
+  - 145:       ...record,
+- Linha 146, coluna 17; regra `@typescript-eslint/no-unsafe-member-access`; Unsafe member access .create on an `any` value.
+  - 145:       ...record,
+  - 146:       ...(args?.create ?? {}),
+  - 147:       ...(args?.update ?? {}),
+- Linha 147, coluna 17; regra `@typescript-eslint/no-unsafe-member-access`; Unsafe member access .update on an `any` value.
+  - 146:       ...(args?.create ?? {}),
+  - 147:       ...(args?.update ?? {}),
+  - 148:     })),
+- Linha 149, coluna 33; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 148:     })),
+  - 149:     aggregate: jest.fn(async () => ({
+  - 150:       _sum: { valor: 100, pontos: 10, saldoPontos: 100, quantidade: 1 },
+- Linha 156, coluna 31; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 155:     })),
+  - 156:     groupBy: jest.fn(async () => [
+  - 157:       {
+- Linha 183, coluna 24; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 182: 
+  - 183:       if (prop in obj) return obj[prop];
+  - 184: 
+- Linha 187, coluna 44; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 186:         obj[prop] = jest.fn(async (input: any) => {
+  - 187:           if (typeof input === 'function') return input(proxy);
+  - 188:           if (Array.isArray(input)) return Promise.all(input);
+- Linha 187, coluna 51; regra `@typescript-eslint/no-unsafe-call`; Unsafe call of an `any` typed value.
+  - 186:         obj[prop] = jest.fn(async (input: any) => {
+  - 187:           if (typeof input === 'function') return input(proxy);
+  - 188:           if (Array.isArray(input)) return Promise.all(input);
+- Linha 189, coluna 11; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 188:           if (Array.isArray(input)) return Promise.all(input);
+  - 189:           return input;
+  - 190:         });
+- Linha 191, coluna 9; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 190:         });
+  - 191:         return obj[prop];
+  - 192:       }
+- Linha 195, coluna 38; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 194:       if (prop === '$connect' || prop === '$disconnect') {
+  - 195:         obj[prop] = jest.fn(async () => undefined);
+  - 196:         return obj[prop];
+- Linha 196, coluna 9; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 195:         obj[prop] = jest.fn(async () => undefined);
+  - 196:         return obj[prop];
+  - 197:       }
+- Linha 200, coluna 38; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 199:       if (prop === '$executeRaw') {
+  - 200:         obj[prop] = jest.fn(async () => 1);
+  - 201:         return obj[prop];
+- Linha 201, coluna 9; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 200:         obj[prop] = jest.fn(async () => 1);
+  - 201:         return obj[prop];
+  - 202:       }
+- Linha 205, coluna 38; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 204:       if (prop === '$queryRaw' || prop === '$runCommandRaw') {
+  - 205:         obj[prop] = jest.fn(async () => []);
+  - 206:         return obj[prop];
+- Linha 206, coluna 9; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 205:         obj[prop] = jest.fn(async () => []);
+  - 206:         return obj[prop];
+  - 207:       }
+- Linha 226, coluna 11; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 225: 
+  - 226:           return values[key] ?? fallback ?? 'test-value';
+  - 227:         });
+- Linha 229, coluna 9; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 228: 
+  - 229:         return obj[prop];
+  - 230:       }
+- Linha 234, coluna 9; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 233:         obj[prop] = jest.fn(() => '[sensitive data omitted]
+  - 234:         return obj[prop];
+  - 235:       }
+- Linha 238, coluna 38; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 237:       if (prop === 'signAsync') {
+  - 238:         obj[prop] = jest.fn(async () => '[sensitive data omitted]
+  - 239:         return obj[prop];
+- Linha 239, coluna 9; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 238:         obj[prop] = jest.fn(async () => '[sensitive data omitted]
+  - 239:         return obj[prop];
+  - 240:       }
+- Linha 247, coluna 38; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 246:       ) {
+  - 247:         obj[prop] = jest.fn(async () => true);
+  - 248:         return obj[prop];
+- Linha 248, coluna 9; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 247:         obj[prop] = jest.fn(async () => true);
+  - 248:         return obj[prop];
+  - 249:       }
+- Linha 283, coluna 38; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 282:       if (recordPrefixes.some((prefix) => prop.startsWith(prefix))) {
+  - 283:         obj[prop] = jest.fn(async () => record);
+  - 284:         return obj[prop];
+- Linha 284, coluna 9; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 283:         obj[prop] = jest.fn(async () => record);
+  - 284:         return obj[prop];
+  - 285:       }
+- Linha 289, coluna 9; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 288:         obj[prop] = jest.fn(() => true);
+  - 289:         return obj[prop];
+  - 290:       }
+- Linha 298, coluna 9; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 297:         obj[prop] = jest.fn(() => undefined);
+  - 298:         return obj[prop];
+  - 299:       }
+- Linha 303, coluna 9; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 302:         obj[prop] = jest.fn(() => Buffer.from('teste'));
+  - 303:         return obj[prop];
+  - 304:       }
+- Linha 310, coluna 7; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 309: 
+  - 310:       return delegates.get(prop);
+  - 311:     },
+- Linha 314, coluna 3; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 313: 
+  - 314:   return proxy;
+  - 315: }
+- Linha 318, coluna 18; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 317: function patchInstance(instance: any) {
+  - 318:   if (!instance) return instance;
+  - 319: 
+- Linha 354, coluna 7; regra `@typescript-eslint/no-unsafe-assignment`; Unsafe assignment of an `any` value.
+  - 353:     try {
+  - 354:       instance[name] = createRichMock();
+  - 355:     } catch {
+- Linha 354, coluna 16; regra `@typescript-eslint/no-unsafe-member-access`; Unsafe member access [name] on an `any` value.
+  - 353:     try {
+  - 354:       instance[name] = createRichMock();
+  - 355:     } catch {
+- Linha 361, coluna 14; regra `@typescript-eslint/no-unsafe-member-access`; Unsafe member access .logger on an `any` value.
+  - 360:   try {
+  - 361:     instance.logger = {
+  - 362:       log: jest.fn(),
+- Linha 372, coluna 3; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 371: 
+  - 372:   return instance;
+  - 373: }
+- Linha 376, coluna 46; regra `@typescript-eslint/no-unsafe-argument`; Unsafe argument of type `any` assigned to a parameter of type `number`.
+  - 375: function instantiate(Exported: any) {
+  - 376:   const deps = Array.from({ length: Math.max(Exported.length || 0, 20) }, () =>
+  - 377:     createRichMock(),
+- Linha 376, coluna 55; regra `@typescript-eslint/no-unsafe-member-access`; Unsafe member access .length on an `any` value.
+  - 375: function instantiate(Exported: any) {
+  - 376:   const deps = Array.from({ length: Math.max(Exported.length || 0, 20) }, () =>
+  - 377:     createRichMock(),
+- Linha 377, coluna 5; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 376:   const deps = Array.from({ length: Math.max(Exported.length || 0, 20) }, () =>
+  - 377:     createRichMock(),
+  - 378:   );
+- Linha 381, coluna 5; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 380:   try {
+  - 381:     return patchInstance(new Exported(...deps));
+  - 382:   } catch {
+- Linha 381, coluna 26; regra `@typescript-eslint/no-unsafe-call`; Unsafe construction of an `any` typed value.
+  - 380:   try {
+  - 381:     return patchInstance(new Exported(...deps));
+  - 382:   } catch {
+- Linha 384, coluna 7; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 383:     try {
+  - 384:       return patchInstance(new Exported());
+  - 385:     } catch {
+- Linha 384, coluna 28; regra `@typescript-eslint/no-unsafe-call`; Unsafe construction of an `any` typed value.
+  - 383:     try {
+  - 384:       return patchInstance(new Exported());
+  - 385:     } catch {
+- Linha 396, coluna 39; regra `@typescript-eslint/no-unsafe-member-access`; Unsafe member access [name] on an `any` value.
+  - 395:     .filter((name) => name !== 'constructor')
+  - 396:     .filter((name) => typeof instance[name] === 'function');
+  - 397: }
+- Linha 407, coluna 38; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 406:     progress: 0,
+  - 407:     updateProgress: jest.fn(async () => undefined),
+  - 408:     log: jest.fn(async () => undefined),
+- Linha 408, coluna 27; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 407:     updateProgress: jest.fn(async () => undefined),
+  - 408:     log: jest.fn(async () => undefined),
+  - 409:     moveToFailed: jest.fn(async () => undefined),
+- Linha 409, coluna 36; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 408:     log: jest.fn(async () => undefined),
+  - 409:     moveToFailed: jest.fn(async () => undefined),
+  - 410:     moveToCompleted: jest.fn(async () => undefined),
+- Linha 410, coluna 39; regra `@typescript-eslint/require-await`; Async arrow function has no 'await' expression.
+  - 409:     moveToFailed: jest.fn(async () => undefined),
+  - 410:     moveToCompleted: jest.fn(async () => undefined),
+  - 411:   };
+- Linha 417, coluna 9; regra `@typescript-eslint/no-unsafe-assignment`; Unsafe assignment of an `any` value.
+  - 416:   const req = createRequestLike();
+  - 417:   const res = createResponseLike();
+  - 418:   const context = createExecutionContextLike();
+- Linha 423, coluna 29; regra `@typescript-eslint/require-await`; Async arrow function 'callback' has no 'await' expression.
+  - 422:   const id = '00000000-0000-4000-8000-000000000001';
+  - 423:   const callback = async () => ({ ok: true, status: 'ok' });
+  - 424: 
+- Linha 443, coluna 32; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 442:             getRequest: () => req,
+  - 443:             getResponse: () => res,
+  - 444:           }),
+- Linha 519, coluna 34; regra `@typescript-eslint/no-unsafe-call`; Unsafe call of an `any` typed value.
+  - 518:     try {
+  - 519:       await runWithTimeout(() => fn(...args), 500);
+  - 520:     } catch {
+- Linha 519, coluna 34; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 518:     try {
+  - 519:       await runWithTimeout(() => fn(...args), 500);
+  - 520:     } catch {
+- Linha 534, coluna 15; regra `@typescript-eslint/no-unsafe-assignment`; Unsafe assignment of an `any` value.
+  - 533:       it('deve importar o alvo', () => {
+  - 534:         const mod = require(target.requirePath);
+  - 535:         expect(mod).toBeDefined();
+- Linha 534, coluna 21; regra `@typescript-eslint/no-require-imports`; A `require()` style import is forbidden.
+  - 533:       it('deve importar o alvo', () => {
+  - 534:         const mod = require(target.requirePath);
+  - 535:         expect(mod).toBeDefined();
+- Linha 539, coluna 15; regra `@typescript-eslint/no-unsafe-assignment`; Unsafe assignment of an `any` value.
+  - 538:       it('deve exercitar somente o alvo abaixo de 70', async () => {
+  - 539:         const mod = require(target.requirePath);
+  - 540:         const exportedValues = Object.values(mod);
+- Linha 539, coluna 21; regra `@typescript-eslint/no-require-imports`; A `require()` style import is forbidden.
+  - 538:       it('deve exercitar somente o alvo abaixo de 70', async () => {
+  - 539:         const mod = require(target.requirePath);
+  - 540:         const exportedValues = Object.values(mod);
+- Linha 540, coluna 46; regra `@typescript-eslint/no-unsafe-argument`; Unsafe argument of type `any` assigned to a parameter of type `ArrayLike<unknown> | { [s: string]: unknown; }`.
+  - 539:         const mod = require(target.requirePath);
+  - 540:         const exportedValues = Object.values(mod);
+  - 541: 
+- Linha 556, coluna 19; regra `@typescript-eslint/no-unsafe-assignment`; Unsafe assignment of an `any` value.
+  - 555:           ) {
+  - 556:             const instance = instantiate(exported);
+  - 557: 
+- Linha 574, coluna 46; regra `@typescript-eslint/no-unsafe-call`; Unsafe call of an `any` typed value.
+  - 573:                 try {
+  - 574:                   await runWithTimeout(() => instance[method](...args), 600);
+  - 575:                 } catch {
+- Linha 574, coluna 46; regra `@typescript-eslint/no-unsafe-return`; Unsafe return of a value of type `any`.
+  - 573:                 try {
+  - 574:                   await runWithTimeout(() => instance[method](...args), 600);
+  - 575:                 } catch {
+- Linha 574, coluna 55; regra `@typescript-eslint/no-unsafe-member-access`; Unsafe member access [method] on an `any` value.
+  - 573:                 try {
+  - 574:                   await runWithTimeout(() => instance[method](...args), 600);
+  - 575:                 } catch {
+
+## Operacoes nao executadas
+
+- Nenhum arquivo foi alterado.
+- Nenhum teste, build, E2E, migration ou workflow foi executado.
+- Nenhum stage, commit, push, merge, tag, release ou deploy foi executado.
+- Nenhum segredo ou valor de ambiente foi lido ou impresso.
+
+## Classificacao final do B33
+
+- `PASS_WITH_ATTENTION` - contexto detalhado coletado para correcao seletiva.
+
+## Integridade
+
+- Este relatorio foi gerado automaticamente pelo script B33.
+- O script nao altera o projeto.

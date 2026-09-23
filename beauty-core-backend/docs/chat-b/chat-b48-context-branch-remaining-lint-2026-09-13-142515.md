@@ -1,0 +1,308 @@
+# Beauty Core - Chat B - B48 - Contexto do lint restante branch-matrix
+
+- Inicio: 2026-09-13T14:25:15.6362684-03:00
+- Fim: 2026-09-13T14:25:25.0484490-03:00
+- Script: B48-v1
+- Modo: somente leitura; o relatorio e o unico artefato criado.
+- Pasta unica de relatorios do Chat B: `beauty-core-backend\docs\chat-b\`
+
+## Objetivo
+
+- Capturar os diagnosticos atuais apos o B47.
+- Registrar contexto das funcoes e callbacks ainda apontados pelo ESLint.
+- Nao alterar codigo, configuracao, dependencias ou historico Git.
+
+## Diagnosticos
+
+- ESLint exit code: 1
+- 
+- C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\test\unit\coverage-under-70-branch-matrix.generated.spec.ts
+-     8:6   error    'DelegateArgs' is defined but never used        @typescript-eslint/no-unused-vars
+-    78:7   error    'UUID_B' is assigned a value but never used     @typescript-eslint/no-unused-vars
+-   213:34  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   217:41  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   222:33  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   226:40  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   231:32  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   235:29  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   239:40  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   241:7   error    Unsafe return of a value of type `any`          @typescript-eslint/no-unsafe-return
+-   241:37  error    Unsafe member access .data on an `any` value    @typescript-eslint/no-unsafe-member-access
+-   243:34  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   247:40  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   249:7   error    Unsafe return of a value of type `any`          @typescript-eslint/no-unsafe-return
+-   249:37  error    Unsafe member access .data on an `any` value    @typescript-eslint/no-unsafe-member-access
+-   251:34  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   255:30  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   259:34  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   263:40  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   265:7   error    Unsafe return of a value of type `any`          @typescript-eslint/no-unsafe-return
+-   265:37  error    Unsafe member access .create on an `any` value  @typescript-eslint/no-unsafe-member-access
+-   265:62  error    Unsafe member access .update on an `any` value  @typescript-eslint/no-unsafe-member-access
+-   267:33  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   294:31  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   393:38  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   400:38  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   458:38  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   606:25  error    Unsafe assignment of an `any` value             @typescript-eslint/no-unsafe-assignment
+-   619:26  error    Unsafe return of a value of type `any`          @typescript-eslint/no-unsafe-return
+-   659:9   error    Unsafe assignment of an `any` value             @typescript-eslint/no-unsafe-assignment
+-   667:18  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   670:18  error    Async arrow function has no 'await' expression  @typescript-eslint/require-await
+-   818:37  warning  Unsafe spread of an `any[]` array type          @typescript-eslint/no-unsafe-argument
+-   891:48  error    Unsafe return of a value of type error          @typescript-eslint/no-unsafe-return
+-   891:65  warning  Unsafe spread of an `any[]` array type          @typescript-eslint/no-unsafe-argument
+- 
+- Ô£û 35 problems (33 errors, 2 warnings)
+- 
+
+## Contextos selecionados
+
+- Linhas 205-275:
+  - 205: 
+  - 206:   const maybeThrow = () => {
+  - 207:     if (mode === 'throw') {
+  - 208:       throw new Error('Erro controlado de branch coverage');
+  - 209:     }
+  - 210:   };
+  - 211: 
+  - 212:   return {
+  - 213:     findUnique: jest.fn(async () => {
+  - 214:       maybeThrow();
+  - 215:       return maybeRecord();
+  - 216:     }),
+  - 217:     findUniqueOrThrow: jest.fn(async () => {
+  - 218:       maybeThrow();
+  - 219:       if (mode === 'null') throw new NotFoundException('Não encontrado');
+  - 220:       return record;
+  - 221:     }),
+  - 222:     findFirst: jest.fn(async () => {
+  - 223:       maybeThrow();
+  - 224:       return maybeRecord();
+  - 225:     }),
+  - 226:     findFirstOrThrow: jest.fn(async () => {
+  - 227:       maybeThrow();
+  - 228:       if (mode === 'null') throw new NotFoundException('Não encontrado');
+  - 229:       return record;
+  - 230:     }),
+  - 231:     findMany: jest.fn(async () => {
+  - 232:       maybeThrow();
+  - 233:       return maybeMany();
+  - 234:     }),
+  - 235:     count: jest.fn(async () => {
+  - 236:       maybeThrow();
+  - 237:       return maybeCount();
+  - 238:     }),
+  - 239:     create: jest.fn(async (args?: any) => {
+  - 240:       maybeThrow();
+  - 241:       return { ...record, ...(args?.data ?? {}) };
+  - 242:     }),
+  - 243:     createMany: jest.fn(async () => {
+  - 244:       maybeThrow();
+  - 245:       return { count: maybeCount() };
+  - 246:     }),
+  - 247:     update: jest.fn(async (args?: any) => {
+  - 248:       maybeThrow();
+  - 249:       return { ...record, ...(args?.data ?? {}) };
+  - 250:     }),
+  - 251:     updateMany: jest.fn(async () => {
+  - 252:       maybeThrow();
+  - 253:       return { count: maybeCount() };
+  - 254:     }),
+  - 255:     delete: jest.fn(async () => {
+  - 256:       maybeThrow();
+  - 257:       return record;
+  - 258:     }),
+  - 259:     deleteMany: jest.fn(async () => {
+  - 260:       maybeThrow();
+  - 261:       return { count: maybeCount() };
+  - 262:     }),
+  - 263:     upsert: jest.fn(async (args?: any) => {
+  - 264:       maybeThrow();
+  - 265:       return { ...record, ...(args?.create ?? {}), ...(args?.update ?? {}) };
+  - 266:     }),
+  - 267:     aggregate: jest.fn(async () => {
+  - 268:       maybeThrow();
+  - 269:       return {
+  - 270:         _sum: {
+  - 271:           valor: mode === 'empty' ? null : 100,
+  - 272:           pontos: mode === 'empty' ? null : 10,
+  - 273:           saldoPontos: mode === 'empty' ? null : 100,
+  - 274:           quantidade: mode === 'empty' ? null : 1,
+  - 275:         },
+- Linhas 285-305:
+  - 285:           valor: mode === 'empty' ? null : 100,
+  - 286:           createdAt: new Date(),
+  - 287:         },
+  - 288:         _max: {
+  - 289:           valor: mode === 'empty' ? null : 100,
+  - 290:           createdAt: new Date(),
+  - 291:         },
+  - 292:       };
+  - 293:     }),
+  - 294:     groupBy: jest.fn(async () => {
+  - 295:       maybeThrow();
+  - 296: 
+  - 297:       if (mode === 'empty') return [];
+  - 298: 
+  - 299:       return [
+  - 300:         {
+  - 301:           status: record.status,
+  - 302:           tipo: record.tipo,
+  - 303:           categoriaId: UUID_A,
+  - 304:           profissionalId: UUID_A,
+  - 305:           servicoId: UUID_A,
+- Linhas 385-410:
+  - 385:       }
+  - 386: 
+  - 387:       if (prop === 'sign') {
+  - 388:         obj[prop] = jest.fn(() => (mode === 'invalid' ? '' : '[sensitive data omitted]
+  - 389:         return obj[prop];
+  - 390:       }
+  - 391: 
+  - 392:       if (prop === 'signAsync') {
+  - 393:         obj[prop] = jest.fn(async () =>
+  - 394:           mode === 'invalid' ? '' : '[sensitive data omitted]
+  - 395:         );
+  - 396:         return obj[prop];
+  - 397:       }
+  - 398: 
+  - 399:       if (prop === 'verify' || prop === 'verifyAsync') {
+  - 400:         obj[prop] = jest.fn(async () => {
+  - 401:           if (mode === 'invalid')
+  - 402:             throw new UnauthorizedException('[sensitive data omitted]
+  - 403:           return {
+  - 404:             sub: UUID_A,
+  - 405:             empresaId: EMPRESA_A,
+  - 406:             role: 'ADMIN',
+  - 407:             sid: 'sid-test',
+  - 408:           };
+  - 409:         });
+  - 410:         return obj[prop];
+- Linhas 448-465:
+  - 448:         'marcar',
+  - 449:         'aceitar',
+  - 450:         'reprocessar',
+  - 451:         'mover',
+  - 452:         'finalizar',
+  - 453:         'confirmar',
+  - 454:         'reprovar',
+  - 455:       ];
+  - 456: 
+  - 457:       if (recordPrefixes.some((prefix) => prop.startsWith(prefix))) {
+  - 458:         obj[prop] = jest.fn(async () => {
+  - 459:           if (mode === 'throw') throw new Error('Mock branch error');
+  - 460:           if (mode === 'null') return null;
+  - 461:           if (mode === 'empty') return [];
+  - 462:           return record;
+  - 463:         });
+  - 464:         return obj[prop];
+  - 465:       }
+- Linhas 595-625:
+  - 595:           }),
+  - 596:     opts: {},
+  - 597:     attemptsMade: mode === 'throw' ? 3 : 0,
+  - 598:     progress: 0,
+  - 599:     updateProgress: jest.fn(() => Promise.resolve(undefined)),
+  - 600:     log: jest.fn(() => Promise.resolve(undefined)),
+  - 601:     moveToFailed: jest.fn(() => Promise.resolve(undefined)),
+  - 602:     moveToCompleted: jest.fn(() => Promise.resolve(undefined)),
+  - 603:   };
+  - 604: }
+  - 605: 
+  - 606: function createHttpHost(exceptionResponse = createResponseLike()) {
+  - 607:   return {
+  - 608:     switchToHttp: () => ({
+  - 609:       getRequest: () =>
+  - 610:         createRequestLike({
+  - 611:           method: 'POST',
+  - 612:           originalUrl: '/coverage/filter',
+  - 613:           url: '/coverage/filter',
+  - 614:           headers: {
+  - 615:             'user-agent': 'Coverage Branch Agent',
+  - 616:             'x-forwarded-for': '127.0.0.1,10.0.0.1',
+  - 617:           },
+  - 618:         }),
+  - 619:       getResponse: () => exceptionResponse,
+  - 620:     }),
+  - 621:   };
+  - 622: }
+  - 623: 
+  - 624: function argsForMethod(method: string, mode: MockMode) {
+  - 625:   const dto = {
+- Linhas 655-675:
+  - 655:             role: 'CLIENTE',
+  - 656:           },
+  - 657:   });
+  - 658: 
+  - 659:   const res = createResponseLike();
+  - 660:   const context = createExecutionContextLike();
+  - 661:   const job = createJobLike(mode);
+  - 662: 
+  - 663:   const empresaId = mode === 'crossTenant' ? EMPRESA_B : EMPRESA_A;
+  - 664:   const id = mode === 'invalid' ? 'id-invalido' : UUID_A;
+  - 665:   const callback =
+  - 666:     mode === 'throw'
+  - 667:       ? async () => {
+  - 668:           throw new Error('Callback branch error');
+  - 669:         }
+  - 670:       : async () => ({ ok: true, status: 'ok' });
+  - 671: 
+  - 672:   if (method === 'executarRotina') {
+  - 673:     return [
+  - 674:       ['rotina_teste', callback],
+  - 675:       ['limpeza_sessoes', callback],
+- Linhas 805-825:
+  - 805:     [-1],
+  - 806:     [new Error('Erro controlado')],
+  - 807:     [createRichMock(mode)],
+  - 808:     [createRichMock(mode), createRequestLike(), createResponseLike()],
+  - 809:   ];
+  - 810: 
+  - 811:   for (const file of fileVariants) {
+  - 812:     calls.push([createRequestLike(), file, jest.fn()]);
+  - 813:     calls.push([createRequestLike(), file, jest.fn((error: unknown) => error)]);
+  - 814:   }
+  - 815: 
+  - 816:   for (const args of calls) {
+  - 817:     try {
+  - 818:       await runWithTimeout(() => fn(...args), 600);
+  - 819:     } catch {
+  - 820:       /* Intentionally ignore expected probe failures. */
+  - 821:     }
+  - 822:   }
+  - 823: }
+  - 824: 
+  - 825: describe('Chat 33.4.2 - branch matrix para alvos abaixo de 70%', () => {
+- Linhas 884-898:
+  - 884:                   method === 'afterApplicationShutdown'
+  - 885:                 ) {
+  - 886:                   continue;
+  - 887:                 }
+  - 888: 
+  - 889:                 for (const args of argsForMethod(method, mode).slice(0, 70)) {
+  - 890:                   try {
+  - 891:                     await runWithTimeout(() => instance[method](...args), 700);
+  - 892:                   } catch {
+  - 893:                     /* Intentionally ignore expected probe failures. */
+  - 894:                   }
+  - 895:                 }
+  - 896:               }
+  - 897: 
+  - 898:               continue;
+
+## Operacoes nao executadas
+
+- Nenhum arquivo foi alterado.
+- Nenhum teste, build, E2E, migration ou workflow foi executado.
+- Nenhum stage, commit, push, merge, tag, release ou deploy foi executado.
+- Nenhum segredo ou valor de ambiente foi lido ou impresso.
+
+## Classificacao final do B48
+
+- `PASS_WITH_ATTENTION` - contexto do lint restante coletado para correcao seletiva.
+
+## Integridade
+
+- Este relatorio foi gerado automaticamente pelo script B48.
+- O script nao altera o projeto.

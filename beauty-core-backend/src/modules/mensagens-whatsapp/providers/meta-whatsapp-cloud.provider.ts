@@ -33,6 +33,10 @@ function stringifyLintValue(value: unknown): string {
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+export type MetaWhatsappSendOptions = {
+  phoneNumberId?: string;
+};
+
 type MetaWhatsappPayload = {
   messages?: Array<{ id?: unknown }>;
   error?: { message?: unknown; type?: unknown };
@@ -60,13 +64,14 @@ export class MetaWhatsappCloudProvider {
   async enviarTexto(
     destinatario: string,
     mensagem: string,
+    options?: MetaWhatsappSendOptions,
   ): Promise<MetaWhatsappSendResult> {
     const token = this.configService
       .get<string>('META_WHATSAPP_ACCESS_TOKEN')
       ?.trim();
-    const phoneNumberId = this.configService
-      .get<string>('META_WHATSAPP_PHONE_NUMBER_ID')
-      ?.trim();
+    const phoneNumberId =
+      options?.phoneNumberId?.trim() ||
+      this.configService.get<string>('META_WHATSAPP_PHONE_NUMBER_ID')?.trim();
     const apiVersion = this.configService
       .get<string>('META_WHATSAPP_API_VERSION')
       ?.trim();

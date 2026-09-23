@@ -1,4 +1,6 @@
-﻿import request = require('supertest');
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import type { Server } from 'node:net';
 
 import {
   bootstrapE2eTestApp,
@@ -9,11 +11,13 @@ import { bearer, loginSuperAdmin } from '../helpers/auth.helper';
 
 describe('SUPER_ADMIN E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
   let token: string;
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
-    token = (await loginSuperAdmin(ctx.app)).access_token;
+    httpApp = ctx.app as INestApplication<Server>;
+    token = (await loginSuperAdmin(httpApp)).access_token;
   });
 
   afterAll(async () => {
@@ -21,28 +25,28 @@ describe('SUPER_ADMIN E2E', () => {
   });
 
   it('deve acessar empresas', async () => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .get('/empresas')
       .set('Authorization', bearer(token))
       .expect(200);
   });
 
   it('deve acessar usuários', async () => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .get('/usuarios')
       .set('Authorization', bearer(token))
       .expect(200);
   });
 
   it('deve acessar scheduler', async () => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .get('/scheduler/status')
       .set('Authorization', bearer(token))
       .expect(200);
   });
 
   it('deve acessar filas/health', async () => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .get('/health/queues')
       .set('Authorization', bearer(token))
       .expect(200);

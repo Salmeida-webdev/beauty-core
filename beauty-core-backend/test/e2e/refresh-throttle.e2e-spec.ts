@@ -1,4 +1,6 @@
-﻿import request = require('supertest');
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import type { Server } from 'node:net';
 
 import {
   bootstrapE2eTestApp,
@@ -8,9 +10,11 @@ import {
 
 describe('Refresh Throttle E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
+    httpApp = ctx.app as INestApplication<Server>;
   });
 
   afterAll(async () => {
@@ -21,7 +25,7 @@ describe('Refresh Throttle E2E', () => {
     const statuses: number[] = [];
 
     for (let i = 0; i < 11; i++) {
-      const response = await request(ctx.app.getHttpServer())
+      const response = await request(httpApp.getHttpServer())
         .post('/auth/refresh')
         .send({
           refreshToken:
@@ -41,7 +45,7 @@ describe('Refresh Throttle E2E', () => {
     const statuses: number[] = [];
 
     for (let i = 0; i < 11; i++) {
-      const response = await request(ctx.app.getHttpServer())
+      const response = await request(httpApp.getHttpServer())
         .post('/auth-cliente/refresh')
         .send({
           refreshToken:

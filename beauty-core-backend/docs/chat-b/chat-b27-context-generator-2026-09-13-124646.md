@@ -1,0 +1,1131 @@
+# Beauty Core - Chat B - B27 - Contexto do gerador de testes
+
+- Inicio: 2026-09-13T12:46:46.1648688-03:00
+- Fim: 2026-09-13T12:46:49.4466728-03:00
+- Script: B27-v1
+- Modo: somente leitura; o relatorio e o unico artefato criado.
+- Pasta unica de relatorios do Chat B: `beauty-core-backend\docs\chat-b\`
+
+## Objetivo
+
+- Inspecionar a fonte que gera os testes de cobertura abaixo de 70%.
+- Identificar pontos que geram `require`, `any`, `async` sem `await` ou blocos vazios.
+- Nao executar o gerador e nao alterar os artefatos nesta etapa.
+
+- Gerador: `test\unit\generated-targets\generate-under-70-targets.cjs`
+- Manifesto: `test\unit\generated-targets\coverage-targets-under-70.json`
+- Arquivos gerados encontrados: 0
+
+## Conteudo do gerador
+
+- 1: const fs = require('fs');
+- 2: const path = require('path');
+- 3: 
+- 4: const projectRoot = process.cwd();
+- 5: const coverageFile = path.join(projectRoot, 'coverage', 'all', 'coverage-final.json');
+- 6: const outDir = path.join(projectRoot, 'test', 'unit', 'generated-targets');
+- 7: const outJson = path.join(outDir, 'coverage-targets-under-70.json');
+- 8: 
+- 9: const MIN = 70;
+- 10: 
+- 11: function pct(covered, total) {
+- 12:   if (!total) return 100;
+- 13:   return Math.round((covered / total) * 10000) / 100;
+- 14: }
+- 15: 
+- 16: function computeMetrics(fileCoverage) {
+- 17:   const statements = Object.values(fileCoverage.s || {});
+- 18:   const functions = Object.values(fileCoverage.f || {});
+- 19:   const branches = Object.values(fileCoverage.b || {}).flat();
+- 20: 
+- 21:   const statementPct = pct(statements.filter(function (v) { return v > 0; }).length, statements.length);
+- 22:   const functionPct = pct(functions.filter(function (v) { return v > 0; }).length, functions.length);
+- 23:   const branchPct = pct(branches.filter(function (v) { return v > 0; }).length, branches.length);
+- 24: 
+- 25:   const lineMap = new Map();
+- 26: 
+- 27:   for (const entry of Object.entries(fileCoverage.statementMap || {})) {
+- 28:     const statementId = entry[0];
+- 29:     const meta = entry[1];
+- 30:     const line = meta && meta.start && meta.start.line;
+- 31: 
+- 32:     if (!line) continue;
+- 33: 
+- 34:     const count = (fileCoverage.s && fileCoverage.s[statementId]) || 0;
+- 35:     lineMap.set(line, (lineMap.get(line) || 0) + count);
+- 36:   }
+- 37: 
+- 38:   const lineValues = Array.from(lineMap.values());
+- 39:   const linePct = pct(lineValues.filter(function (v) { return v > 0; }).length, lineValues.length);
+- 40: 
+- 41:   return {
+- 42:     statements: statementPct,
+- 43:     branches: branchPct,
+- 44:     functions: functionPct,
+- 45:     lines: linePct
+- 46:   };
+- 47: }
+- 48: 
+- 49: function toProjectRelative(filePath) {
+- 50:   return path.relative(projectRoot, filePath).replace(/\\/g, '/');
+- 51: }
+- 52: 
+- 53: function toSpecRequirePath(filePath) {
+- 54:   const specDir = path.join(projectRoot, 'test', 'unit');
+- 55:   let relative = path.relative(specDir, filePath).replace(/\\/g, '/');
+- 56: 
+- 57:   if (!relative.startsWith('.')) {
+- 58:     relative = './' + relative;
+- 59:   }
+- 60: 
+- 61:   return relative.replace(/\.ts$/, '');
+- 62: }
+- 63: 
+- 64: function shouldConsider(filePath) {
+- 65:   const normalized = filePath.replace(/\\/g, '/');
+- 66: 
+- 67:   if (!normalized.includes('/src/')) return false;
+- 68:   if (normalized.includes('/node_modules/')) return false;
+- 69:   if (normalized.endsWith('.module.ts')) return false;
+- 70:   if (normalized.includes('/constants/')) return false;
+- 71:   if (normalized.includes('/interfaces/')) return false;
+- 72:   if (normalized.includes('/dto/')) return false;
+- 73:   if (normalized.includes('/entities/')) return false;
+- 74: 
+- 75:   return true;
+- 76: }
+- 77: 
+- 78: const raw = JSON.parse(fs.readFileSync(coverageFile, 'utf8'));
+- 79: 
+- 80: const targets = Object.entries(raw)
+- 81:   .filter(function (entry) {
+- 82:     return shouldConsider(entry[0]);
+- 83:   })
+- 84:   .map(function (entry) {
+- 85:     const filePath = entry[0];
+- 86:     const fileCoverage = entry[1];
+- 87:     const metrics = computeMetrics(fileCoverage);
+- 88: 
+- 89:     const below = Object.entries(metrics)
+- 90:       .filter(function (metric) {
+- 91:         return metric[1] < MIN;
+- 92:       })
+- 93:       .map(function (metric) {
+- 94:         return { key: metric[0], value: metric[1] };
+- 95:       });
+- 96: 
+- 97:     return {
+- 98:       filePath: filePath,
+- 99:       relativePath: toProjectRelative(filePath),
+- 100:       requirePath: toSpecRequirePath(filePath),
+- 101:       metrics: metrics,
+- 102:       below: below
+- 103:     };
+- 104:   })
+- 105:   .filter(function (item) {
+- 106:     return item.below.length > 0;
+- 107:   })
+- 108:   .sort(function (a, b) {
+- 109:     const aMin = Math.min.apply(null, Object.values(a.metrics));
+- 110:     const bMin = Math.min.apply(null, Object.values(b.metrics));
+- 111:     return aMin - bMin;
+- 112:   });
+- 113: 
+- 114: fs.mkdirSync(outDir, { recursive: true });
+- 115: fs.writeFileSync(outJson, JSON.stringify({ min: MIN, generatedAt: new Date().toISOString(), targets: targets }, null, 2));
+- 116: 
+- 117: console.log('Arquivo de coverage usado: ' + path.relative(projectRoot, coverageFile));
+- 118: console.log('Alvos com alguma métrica abaixo de ' + MIN + '%: ' + targets.length);
+- 119: console.log('Gerado: ' + path.relative(projectRoot, outJson));
+- 120: 
+- 121: targets.slice(0, 60).forEach(function (target) {
+- 122:   console.log('- ' + target.relativePath + ' :: ' + JSON.stringify(target.metrics));
+- 123: });
+- 124: 
+- 125: if (targets.length > 60) {
+- 126:   console.log('... +' + (targets.length - 60) + ' alvos adicionais');
+- 127: }
+
+## Indicadores de lint na fonte do gerador
+
+- Linha 1, indicador `require\(`: const fs = require('fs');
+- Linha 2, indicador `require\(`: const path = require('path');
+- Linha 115, indicador `writeFile`: fs.writeFileSync(outJson, JSON.stringify({ min: MIN, generatedAt: new Date().toISOString(), targets: targets }, null, 2));
+
+## Conteudo resumido do manifesto de alvos
+
+- {
+-   "min": 70,
+-   "generatedAt": "2026-06-19T21:26:16.842Z",
+-   "targets": [
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\area-cliente\\area-cliente.service.ts",
+-       "relativePath": "src/modules/area-cliente/area-cliente.service.ts",
+-       "requirePath": "../../src/modules/area-cliente/area-cliente.service",
+-       "metrics": {
+-         "statements": 27.93,
+-         "branches": 12.5,
+-         "functions": 57.58,
+-         "lines": 26.85
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 27.93
+-         },
+-         {
+-           "key": "branches",
+-           "value": 12.5
+-         },
+-         {
+-           "key": "functions",
+-           "value": 57.58
+-         },
+-         {
+-           "key": "lines",
+-           "value": 26.85
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\common\\filters\\http-exception.filter.ts",
+-       "relativePath": "src/common/filters/http-exception.filter.ts",
+-       "requirePath": "../../src/common/filters/http-exception.filter",
+-       "metrics": {
+-         "statements": 45.71,
+-         "branches": 20,
+-         "functions": 100,
+-         "lines": 42.42
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 45.71
+-         },
+-         {
+-           "key": "branches",
+-           "value": 20
+-         },
+-         {
+-           "key": "lines",
+-           "value": 42.42
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\queues\\workers\\notificacoes.worker.ts",
+-       "relativePath": "src/queues/workers/notificacoes.worker.ts",
+-       "requirePath": "../../src/queues/workers/notificacoes.worker",
+-       "metrics": {
+-         "statements": 45.31,
+-         "branches": 28,
+-         "functions": 66.67,
+-         "lines": 44.26
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 45.31
+-         },
+-         {
+-           "key": "branches",
+-           "value": 28
+-         },
+-         {
+-           "key": "functions",
+-           "value": 66.67
+-         },
+-         {
+-           "key": "lines",
+-           "value": 44.26
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\arquivos\\storage\\multer.config.ts",
+-       "relativePath": "src/modules/arquivos/storage/multer.config.ts",
+-       "requirePath": "../../src/modules/arquivos/storage/multer.config",
+-       "metrics": {
+-         "statements": 58.33,
+-         "branches": 28.21,
+-         "functions": 55.56,
+-         "lines": 58.33
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 58.33
+-         },
+-         {
+-           "key": "branches",
+-           "value": 28.21
+-         },
+-         {
+-           "key": "functions",
+-           "value": 55.56
+-         },
+-         {
+-           "key": "lines",
+-           "value": 58.33
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\queues\\workers\\whatsapp.worker.ts",
+-       "relativePath": "src/queues/workers/whatsapp.worker.ts",
+-       "requirePath": "../../src/queues/workers/whatsapp.worker",
+-       "metrics": {
+-         "statements": 49.15,
+-         "branches": 33.33,
+-         "functions": 66.67,
+-         "lines": 48.21
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 49.15
+-         },
+-         {
+-           "key": "branches",
+-           "value": 33.33
+-         },
+-         {
+-           "key": "functions",
+-           "value": 66.67
+-         },
+-         {
+-           "key": "lines",
+-           "value": 48.21
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\cupons\\cupons.service.ts",
+-       "relativePath": "src/modules/cupons/cupons.service.ts",
+-       "requirePath": "../../src/modules/cupons/cupons.service",
+-       "metrics": {
+-         "statements": 62.12,
+-         "branches": 35.19,
+-         "functions": 100,
+-         "lines": 60.94
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 62.12
+-         },
+-         {
+-           "key": "branches",
+-           "value": 35.19
+-         },
+-         {
+-           "key": "lines",
+-           "value": 60.94
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\arquivos\\arquivos-download.controller.ts",
+-       "relativePath": "src/modules/arquivos/arquivos-download.controller.ts",
+-       "requirePath": "../../src/modules/arquivos/arquivos-download.controller",
+-       "metrics": {
+-         "statements": 87.5,
+-         "branches": 37.5,
+-         "functions": 100,
+-         "lines": 85.71
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 37.5
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\arquivos\\arquivos-cleanup.service.ts",
+-       "relativePath": "src/modules/arquivos/arquivos-cleanup.service.ts",
+-       "requirePath": "../../src/modules/arquivos/arquivos-cleanup.service",
+-       "metrics": {
+-         "statements": 53.97,
+-         "branches": 40.74,
+-         "functions": 62.5,
+-         "lines": 52.46
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 53.97
+-         },
+-         {
+-           "key": "branches",
+-           "value": 40.74
+-         },
+-         {
+-           "key": "functions",
+-           "value": 62.5
+-         },
+-         {
+-           "key": "lines",
+-           "value": 52.46
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\configuracao-whatsapp\\configuracao-whatsapp.service.ts",
+-       "relativePath": "src/modules/configuracao-whatsapp/configuracao-whatsapp.service.ts",
+-       "requirePath": "../../src/modules/configuracao-whatsapp/configuracao-whatsapp.service",
+-       "metrics": {
+-         "statements": 86.49,
+-         "branches": 41.67,
+-         "functions": 100,
+-         "lines": 85.71
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 41.67
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\usuarios\\usuarios.service.ts",
+-       "relativePath": "src/modules/usuarios/usuarios.service.ts",
+-       "requirePath": "../../src/modules/usuarios/usuarios.service",
+-       "metrics": {
+-         "statements": 49.59,
+-         "branches": 41.75,
+-         "functions": 100,
+-         "lines": 48.74
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 49.59
+-         },
+-         {
+-           "key": "branches",
+-           "value": 41.75
+-         },
+-         {
+-           "key": "lines",
+-           "value": 48.74
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\queues\\workers\\relatorios.worker.ts",
+-       "relativePath": "src/queues/workers/relatorios.worker.ts",
+-       "requirePath": "../../src/queues/workers/relatorios.worker",
+-       "metrics": {
+-         "statements": 62.5,
+-         "branches": 44.83,
+-         "functions": 50,
+-         "lines": 62.07
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 62.5
+-         },
+-         {
+-           "key": "branches",
+-           "value": 44.83
+-         },
+-         {
+-           "key": "functions",
+-           "value": 50
+-         },
+-         {
+-           "key": "lines",
+-           "value": 62.07
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\notificacoes\\notificacoes.service.ts",
+-       "relativePath": "src/modules/notificacoes/notificacoes.service.ts",
+-       "requirePath": "../../src/modules/notificacoes/notificacoes.service",
+-       "metrics": {
+-         "statements": 80.88,
+-         "branches": 47.83,
+-         "functions": 100,
+-         "lines": 80.3
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 47.83
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\queues\\services\\dead-letter-queue.service.ts",
+-       "relativePath": "src/queues/services/dead-letter-queue.service.ts",
+-       "requirePath": "../../src/queues/services/dead-letter-queue.service",
+-       "metrics": {
+-         "statements": 52.11,
+-         "branches": 49.21,
+-         "functions": 100,
+-         "lines": 50
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 52.11
+-         },
+-         {
+-           "key": "branches",
+-           "value": 49.21
+-         },
+-         {
+-           "key": "lines",
+-           "value": 50
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\fidelidade\\fidelidade.service.ts",
+-       "relativePath": "src/modules/fidelidade/fidelidade.service.ts",
+-       "requirePath": "../../src/modules/fidelidade/fidelidade.service",
+-       "metrics": {
+-         "statements": 61.06,
+-         "branches": 50,
+-         "functions": 100,
+-         "lines": 60.36
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 61.06
+-         },
+-         {
+-           "key": "branches",
+-           "value": 50
+-         },
+-         {
+-           "key": "lines",
+-           "value": 60.36
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\queues\\workers\\aniversarios.worker.ts",
+-       "relativePath": "src/queues/workers/aniversarios.worker.ts",
+-       "requirePath": "../../src/queues/workers/aniversarios.worker",
+-       "metrics": {
+-         "statements": 64.52,
+-         "branches": 50,
+-         "functions": 50,
+-         "lines": 64.29
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 64.52
+-         },
+-         {
+-           "key": "branches",
+-           "value": 50
+-         },
+-         {
+-           "key": "functions",
+-           "value": 50
+-         },
+-         {
+-           "key": "lines",
+-           "value": 64.29
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\queues\\workers\\campanhas.worker.ts",
+-       "relativePath": "src/queues/workers/campanhas.worker.ts",
+-       "requirePath": "../../src/queues/workers/campanhas.worker",
+-       "metrics": {
+-         "statements": 62.5,
+-         "branches": 50,
+-         "functions": 50,
+-         "lines": 62.07
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 62.5
+-         },
+-         {
+-           "key": "branches",
+-           "value": 50
+-         },
+-         {
+-           "key": "functions",
+-           "value": 50
+-         },
+-         {
+-           "key": "lines",
+-           "value": 62.07
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\arquivos\\storage\\storage.factory.ts",
+-       "relativePath": "src/modules/arquivos/storage/storage.factory.ts",
+-       "requirePath": "../../src/modules/arquivos/storage/storage.factory",
+-       "metrics": {
+-         "statements": 78.95,
+-         "branches": 52.63,
+-         "functions": 100,
+-         "lines": 76.47
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 52.63
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\comissoes\\comissoes.service.ts",
+-       "relativePath": "src/modules/comissoes/comissoes.service.ts",
+-       "requirePath": "../../src/modules/comissoes/comissoes.service",
+-       "metrics": {
+-         "statements": 54.9,
+-         "branches": 54.17,
+-         "functions": 100,
+-         "lines": 53.06
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 54.9
+-         },
+-         {
+-           "key": "branches",
+-           "value": 54.17
+-         },
+-         {
+-           "key": "lines",
+-           "value": 53.06
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\niveis-fidelidade\\niveis-fidelidade.service.ts",
+-       "relativePath": "src/modules/niveis-fidelidade/niveis-fidelidade.service.ts",
+-       "requirePath": "../../src/modules/niveis-fidelidade/niveis-fidelidade.service",
+-       "metrics": {
+-         "statements": 82.93,
+-         "branches": 53.13,
+-         "functions": 100,
+-         "lines": 82.05
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 53.13
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\arquivos\\arquivo-access-policy.service.ts",
+-       "relativePath": "src/modules/arquivos/arquivo-access-policy.service.ts",
+-       "requirePath": "../../src/modules/arquivos/arquivo-access-policy.service",
+-       "metrics": {
+-         "statements": 72,
+-         "branches": 53.33,
+-         "functions": 100,
+-         "lines": 69.57
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 53.33
+-         },
+-         {
+-           "key": "lines",
+-           "value": 69.57
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\beneficios\\beneficios.service.ts",
+-       "relativePath": "src/modules/beneficios/beneficios.service.ts",
+-       "requirePath": "../../src/modules/beneficios/beneficios.service",
+-       "metrics": {
+-         "statements": 80.49,
+-         "branches": 54.17,
+-         "functions": 100,
+-         "lines": 79.49
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 54.17
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\templates-whatsapp\\templates-whatsapp.service.ts",
+-       "relativePath": "src/modules/templates-whatsapp/templates-whatsapp.service.ts",
+-       "requirePath": "../../src/modules/templates-whatsapp/templates-whatsapp.service",
+-       "metrics": {
+-         "statements": 80.49,
+-         "branches": 54.17,
+-         "functions": 100,
+-         "lines": 79.49
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 54.17
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\cliente-area\\cliente-area.service.ts",
+-       "relativePath": "src/modules/cliente-area/cliente-area.service.ts",
+-       "requirePath": "../../src/modules/cliente-area/cliente-area.service",
+-       "metrics": {
+-         "statements": 55.36,
+-         "branches": 65.22,
+-         "functions": 72.22,
+-         "lines": 54.55
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 55.36
+-         },
+-         {
+-           "key": "branches",
+-           "value": 65.22
+-         },
+-         {
+-           "key": "lines",
+-           "value": 54.55
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\arquivos\\arquivos.controller.ts",
+-       "relativePath": "src/modules/arquivos/arquivos.controller.ts",
+-       "requirePath": "../../src/modules/arquivos/arquivos.controller",
+-       "metrics": {
+-         "statements": 100,
+-         "branches": 54.84,
+-         "functions": 100,
+-         "lines": 100
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 54.84
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\shared\\utils\\duration.util.ts",
+-       "relativePath": "src/shared/utils/duration.util.ts",
+-       "requirePath": "../../src/shared/utils/duration.util",
+-       "metrics": {
+-         "statements": 80,
+-         "branches": 57.14,
+-         "functions": 100,
+-         "lines": 80
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 57.14
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\clientes-pacotes\\clientes-pacotes.service.ts",
+-       "relativePath": "src/modules/clientes-pacotes/clientes-pacotes.service.ts",
+-       "requirePath": "../../src/modules/clientes-pacotes/clientes-pacotes.service",
+-       "metrics": {
+-         "statements": 78.31,
+-         "branches": 57.5,
+-         "functions": 100,
+-         "lines": 77.78
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 57.5
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\arquivos\\storage\\local-storage.service.ts",
+-       "relativePath": "src/modules/arquivos/storage/local-storage.service.ts",
+-       "requirePath": "../../src/modules/arquivos/storage/local-storage.service",
+-       "metrics": {
+-         "statements": 73.4,
+-         "branches": 58.73,
+-         "functions": 100,
+-         "lines": 72.83
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 58.73
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\cliente-area\\cliente-area.controller.ts",
+-       "relativePath": "src/modules/cliente-area/cliente-area.controller.ts",
+-       "requirePath": "../../src/modules/cliente-area/cliente-area.controller",
+-       "metrics": {
+-         "statements": 100,
+-         "branches": 58.89,
+-         "functions": 100,
+-         "lines": 100
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 58.89
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\auth-cliente\\strategies\\cliente-jwt.strategy.ts",
+-       "relativePath": "src/modules/auth-cliente/strategies/cliente-jwt.strategy.ts",
+-       "requirePath": "../../src/modules/auth-cliente/strategies/cliente-jwt.strategy",
+-       "metrics": {
+-         "statements": 72.97,
+-         "branches": 59.38,
+-         "functions": 100,
+-         "lines": 71.43
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 59.38
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\pacotes\\pacotes.service.ts",
+-       "relativePath": "src/modules/pacotes/pacotes.service.ts",
+-       "requirePath": "../../src/modules/pacotes/pacotes.service",
+-       "metrics": {
+-         "statements": 80,
+-         "branches": 59.38,
+-         "functions": 100,
+-         "lines": 79.37
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 59.38
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\empresas\\empresas.service.ts",
+-       "relativePath": "src/modules/empresas/empresas.service.ts",
+-       "requirePath": "../../src/modules/empresas/empresas.service",
+-       "metrics": {
+-         "statements": 79.31,
+-         "branches": 60,
+-         "functions": 100,
+-         "lines": 77.78
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 60
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\clientes\\clientes.service.ts",
+-       "relativePath": "src/modules/clientes/clientes.service.ts",
+-       "requirePath": "../../src/modules/clientes/clientes.service",
+-       "metrics": {
+-         "statements": 72.88,
+-         "branches": 60.53,
+-         "functions": 100,
+-         "lines": 71.93
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 60.53
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\arquivos\\arquivos-download.service.ts",
+-       "relativePath": "src/modules/arquivos/arquivos-download.service.ts",
+-       "requirePath": "../../src/modules/arquivos/arquivos-download.service",
+-       "metrics": {
+-         "statements": 66.04,
+-         "branches": 60.87,
+-         "functions": 100,
+-         "lines": 64.71
+-       },
+-       "below": [
+-         {
+-           "key": "statements",
+-           "value": 66.04
+-         },
+-         {
+-           "key": "branches",
+-           "value": 60.87
+-         },
+-         {
+-           "key": "lines",
+-           "value": 64.71
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\auth\\strategies\\jwt.strategy.ts",
+-       "relativePath": "src/modules/auth/strategies/jwt.strategy.ts",
+-       "requirePath": "../../src/modules/auth/strategies/jwt.strategy",
+-       "metrics": {
+-         "statements": 73.81,
+-         "branches": 61.11,
+-         "functions": 100,
+-         "lines": 72.5
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 61.11
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\servicos\\servicos.service.ts",
+-       "relativePath": "src/modules/servicos/servicos.service.ts",
+-       "requirePath": "../../src/modules/servicos/servicos.service",
+-       "metrics": {
+-         "statements": 88.24,
+-         "branches": 62.5,
+-         "functions": 100,
+-         "lines": 87.5
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 62.5
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\unidades\\unidades.service.ts",
+-       "relativePath": "src/modules/unidades/unidades.service.ts",
+-       "requirePath": "../../src/modules/unidades/unidades.service",
+-       "metrics": {
+-         "statements": 88.24,
+-         "branches": 62.5,
+-         "functions": 100,
+-         "lines": 87.5
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 62.5
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\scheduler\\scheduler.service.ts",
+-       "relativePath": "src/modules/scheduler/scheduler.service.ts",
+-       "requirePath": "../../src/modules/scheduler/scheduler.service",
+-       "metrics": {
+-         "statements": 80.85,
+-         "branches": 63.04,
+-         "functions": 82.86,
+-         "lines": 80.43
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 63.04
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\shared\\tenant\\tenant-validator.service.ts",
+-       "relativePath": "src/shared/tenant/tenant-validator.service.ts",
+-       "requirePath": "../../src/shared/tenant/tenant-validator.service",
+-       "metrics": {
+-         "statements": 86.49,
+-         "branches": 63.33,
+-         "functions": 100,
+-         "lines": 86.11
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 63.33
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\automacoes\\automacoes.service.ts",
+-       "relativePath": "src/modules/automacoes/automacoes.service.ts",
+-       "requirePath": "../../src/modules/automacoes/automacoes.service",
+-       "metrics": {
+-         "statements": 79.76,
+-         "branches": 64.06,
+-         "functions": 100,
+-         "lines": 79.27
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 64.06
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\shared\\utils\\device.util.ts",
+-       "relativePath": "src/shared/utils/device.util.ts",
+-       "requirePath": "../../src/shared/utils/device.util",
+-       "metrics": {
+-         "statements": 84.62,
+-         "branches": 65,
+-         "functions": 100,
+-         "lines": 84.62
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 65
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\auth\\guards\\roles.guard.ts",
+-       "relativePath": "src/modules/auth/guards/roles.guard.ts",
+-       "requirePath": "../../src/modules/auth/guards/roles.guard",
+-       "metrics": {
+-         "statements": 92.31,
+-         "branches": 66.67,
+-         "functions": 100,
+-         "lines": 90.91
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 66.67
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\categorias-financeiras\\categorias-financeiras.service.ts",
+-       "relativePath": "src/modules/categorias-financeiras/categorias-financeiras.service.ts",
+-       "requirePath": "../../src/modules/categorias-financeiras/categorias-financeiras.service",
+-       "metrics": {
+-         "statements": 93.75,
+-         "branches": 66.67,
+-         "functions": 100,
+-         "lines": 92.86
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 66.67
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\health\\health.service.ts",
+-       "relativePath": "src/modules/health/health.service.ts",
+-       "requirePath": "../../src/modules/health/health.service",
+-       "metrics": {
+-         "statements": 95.12,
+-         "branches": 66.67,
+-         "functions": 100,
+-         "lines": 94.87
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 66.67
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\queues\\services\\distributed-lock.service.ts",
+-       "relativePath": "src/queues/services/distributed-lock.service.ts",
+-       "requirePath": "../../src/queues/services/distributed-lock.service",
+-       "metrics": {
+-         "statements": 84.85,
+-         "branches": 68.75,
+-         "functions": 100,
+-         "lines": 83.87
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 68.75
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\configuracoes-notificacao\\configuracoes-notificacao.service.ts",
+-       "relativePath": "src/modules/configuracoes-notificacao/configuracoes-notificacao.service.ts",
+-       "requirePath": "../../src/modules/configuracoes-notificacao/configuracoes-notificacao.service",
+-       "metrics": {
+-         "statements": 89.66,
+-         "branches": 69.23,
+-         "functions": 100,
+-         "lines": 88.89
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 69.23
+-         }
+-       ]
+-     },
+-     {
+-       "filePath": "C:\\Users\\cmted\\Desktop\\Plataformas Saas\\Beauty-Core\\beauty-core-backend\\src\\modules\\financeiro\\financeiro.service.ts",
+-       "relativePath": "src/modules/financeiro/financeiro.service.ts",
+-       "requirePath": "../../src/modules/financeiro/financeiro.service",
+-       "metrics": {
+-         "statements": 86.86,
+-         "branches": 69.77,
+-         "functions": 100,
+-         "lines": 86.67
+-       },
+-       "below": [
+-         {
+-           "key": "branches",
+-           "value": 69.77
+-         }
+-       ]
+-     }
+-   ]
+- }
+
+## Referencias ao gerador
+
+- `test\unit\coverage-under-70-branch-matrix.generated.spec.ts` linha 31: 'coverage-targets-under-70.json',
+- `test\unit\coverage-under-70-targeted.generated.spec.ts` linha 21: 'coverage-targets-under-70.json',
+- `test\unit\generated-targets\generate-under-70-targets.cjs` linha 7: const outJson = path.join(outDir, 'coverage-targets-under-70.json');
+
+## Operacoes nao executadas
+
+- O gerador nao foi executado.
+- Nenhum arquivo foi alterado.
+- Nenhum teste, build, E2E, migration ou workflow foi executado.
+- Nenhum stage, commit, push, merge, tag, release ou deploy foi executado.
+- Nenhum segredo ou valor de ambiente foi lido ou impresso.
+
+## Classificacao final do B27
+
+- `PASS_WITH_ATTENTION` - contexto do gerador coletado para orientar correcao na fonte.
+
+## Integridade
+
+- Este relatorio foi gerado automaticamente pelo script B27.
+- O script nao altera o projeto.

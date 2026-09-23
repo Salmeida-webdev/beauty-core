@@ -2,14 +2,32 @@ import { execFileSync } from 'child_process';
 
 import { BackupController } from '../../src/backup/backup.controller';
 import { BackupService } from '../../src/backup/backup.service';
+import type { PrismaService } from '../../src/database/prisma/prisma.service';
+type PrismaTestDouble = {
+  sessao: { deleteMany: jest.Mock };
+  auditoriaSistema: { create: jest.Mock };
+};
 
-jest.mock('child_process', () => ({
-  ...jest.requireActual('child_process'),
-  execFileSync: jest.fn(),
-}));
+type BackupResultWithScripts = {
+  results: Array<{ script: string }>;
+};
+
+type BackupServiceTestDouble = {
+  getStatus: jest.Mock;
+  executarBackupPostgres: jest.Mock;
+  executarBackupUploads: jest.Mock;
+  executarBackupCompleto: jest.Mock;
+  executarLimpezaOperacional: jest.Mock;
+};
+
+jest.mock('child_process', () => {
+  const actual =
+    jest.requireActual<typeof import('child_process')>('child_process');
+  return { ...actual, execFileSync: jest.fn() };
+});
 
 describe('Chat 36 Backup Coverage', () => {
-  let prisma: any;
+  let prisma: PrismaTestDouble;
   let service: BackupService;
   let originalBackupExecutionEnabled: string | undefined;
 
@@ -28,7 +46,7 @@ describe('Chat 36 Backup Coverage', () => {
       },
     };
 
-    service = new BackupService(prisma);
+    service = new BackupService(prisma as unknown as PrismaService);
   });
 
   afterEach(() => {
@@ -71,9 +89,15 @@ describe('Chat 36 Backup Coverage', () => {
 
     expect(result.status).toBe('SUCESSO');
     expect(result.executionEnabled).toBe(true);
-    expect(result.results).toHaveLength(1);
-    expect(result.results[0].script).toBe('scripts/backup/postgres-backup.ps1');
-    expect(execFileSync).toHaveBeenCalledTimes(1);
+    if (!('results' in result)) {
+      throw new Error('Backup PostgreSQL não retornou resultados de scripts.');
+    }
+    expect(result.results).toHaveLength(2);
+    const typedResult = result as unknown as BackupResultWithScripts;
+    expect(typedResult.results[0].script).toBe(
+      'scripts/backup/postgres-backup.sh',
+    );
+    expect(execFileSync).toHaveBeenCalledTimes(2);
   });
 
   it('deve executar scripts reais de backup completo quando habilitado', () => {
@@ -83,15 +107,18 @@ describe('Chat 36 Backup Coverage', () => {
     const result = service.executarBackupCompleto();
 
     expect(result.status).toBe('SUCESSO');
-    expect(result.results).toHaveLength(3);
+    if (!('results' in result)) {
+      throw new Error('Backup completo não retornou resultados de scripts.');
+    }
+    expect(result.results).toHaveLength(4);
     expect(JSON.stringify(result)).toContain(
-      'scripts/backup/postgres-backup.ps1',
+      'scripts/backup/postgres-backup.sh',
     );
     expect(JSON.stringify(result)).toContain(
-      'scripts/uploads/uploads-backup.ps1',
+      'scripts/uploads/uploads-backup.sh',
     );
-    expect(JSON.stringify(result)).toContain('scripts/backup/redis-backup.ps1');
-    expect(execFileSync).toHaveBeenCalledTimes(3);
+    expect(JSON.stringify(result)).toContain('scripts/backup/redis-backup.sh');
+    expect(execFileSync).toHaveBeenCalledTimes(4);
   });
 
   it('deve propagar falha de script real quando backup habilitado falhar', () => {
@@ -125,7 +152,7 @@ describe('Chat 36 Backup Coverage', () => {
     expect(JSON.stringify(result)).toContain('jobs');
   });
 
-  it('deve ignorar falha de auditoria sem quebrar operacao', async () => {
+  it('deve ignorar falha de auditoria sem quebrar operacao', () => {
     prisma.auditoriaSistema.create.mockRejectedValueOnce(
       new Error('audit down'),
     );
@@ -137,7 +164,7 @@ describe('Chat 36 Backup Coverage', () => {
   });
 
   it('controller deve delegar endpoints para o service', async () => {
-    const mockService: any = {
+    const mockService: BackupServiceTestDouble = {
       getStatus: jest.fn().mockReturnValue({ ok: true }),
       executarBackupPostgres: jest.fn().mockReturnValue({ job: 'postgres' }),
       executarBackupUploads: jest.fn().mockReturnValue({ job: 'uploads' }),
@@ -145,7 +172,9 @@ describe('Chat 36 Backup Coverage', () => {
       executarLimpezaOperacional: jest.fn().mockResolvedValue({ ok: true }),
     };
 
-    const controller = new BackupController(mockService);
+    const controller = new BackupController(
+      mockService as unknown as BackupService,
+    );
 
     expect(controller.status()).toEqual({ ok: true });
     expect(controller.executarPostgres()).toEqual({ job: 'postgres' });

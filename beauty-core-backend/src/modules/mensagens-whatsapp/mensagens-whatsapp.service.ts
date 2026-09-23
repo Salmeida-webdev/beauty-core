@@ -122,6 +122,7 @@ export class MensagensWhatsappService {
       const resultado = await this.metaWhatsappProvider.enviarTexto(
         destinatario,
         mensagem,
+        { phoneNumberId: configuracao.metaPhoneNumberId ?? undefined },
       );
 
       return this.prisma.mensagemWhatsApp.update({

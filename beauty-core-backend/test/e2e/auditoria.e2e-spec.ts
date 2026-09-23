@@ -1,4 +1,6 @@
-﻿import request = require('supertest');
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import type { Server } from 'node:net';
 
 import {
   bootstrapE2eTestApp,
@@ -9,9 +11,11 @@ import { bearer, loginAdmin, loginSuperAdmin } from '../helpers/auth.helper';
 
 describe('Auditoria E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
+    httpApp = ctx.app as INestApplication<Server>;
   });
 
   afterAll(async () => {
@@ -19,25 +23,32 @@ describe('Auditoria E2E', () => {
   });
 
   it('login deve gerar auditoria quando model existir', async () => {
-    const login = await loginAdmin(ctx.app);
+    await loginAdmin(httpApp);
 
-    expect(login.access_token).toBeDefined();
-
-    if (!(ctx.prisma as any).auditoriaSistema) {
-      return;
-    }
-
-    const auditorias = await (ctx.prisma as any).auditoriaSistema.findMany({
-      take: 5,
+    const auditoria = await ctx.prisma.auditoriaSistema.findFirst({
+      where: {
+        acao: 'LOGIN_ADMIN',
+        modulo: 'AUTH',
+        status: 'SUCESSO',
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
-    expect(auditorias.length).toBeGreaterThanOrEqual(0);
+    if (!auditoria) {
+      throw new Error('O login administrativo não gerou auditoria de sucesso.');
+    }
+
+    expect(auditoria.acao).toBe('LOGIN_ADMIN');
+    expect(auditoria.modulo).toBe('AUTH');
+    expect(auditoria.status).toBe('SUCESSO');
   });
 
   it('scheduler deve gerar auditoria operacional quando disponível', async () => {
-    const superAdmin = await loginSuperAdmin(ctx.app);
+    const superAdmin = await loginSuperAdmin(httpApp);
 
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .post('/scheduler/teste/relatorios')
       .set('Authorization', bearer(superAdmin.access_token))
       .expect((res) => {

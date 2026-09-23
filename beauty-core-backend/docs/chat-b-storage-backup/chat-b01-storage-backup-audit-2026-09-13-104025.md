@@ -1,0 +1,375 @@
+# Beauty Core - Chat B - B01 - Auditoria de storage e backup
+
+- Inicio: 2026-09-13T10:40:25.5193994-03:00
+- Fim: 2026-09-13T10:40:25.5809623-03:00
+- Script: B01-v1
+- Modo: somente leitura; o relatorio e o unico artefato criado.
+
+## Escopo
+
+- Webhook de alerta de backup: verificar suporte e referencias, sem configurar endpoint.
+- Secret manager: verificar referencias de injecao, sem ler valores de ambiente.
+- POSIX: executar somente verificacao de sintaxe com `bash -n`, sem executar backup ou restore.
+- Uploader JavaScript: executar somente `node --check`, sem upload, R2, S3 ou restore.
+- Nenhuma migration, operacao Git mutavel, deploy ou envio Meta/WhatsApp.
+
+## Baseline de seguranca da execucao
+
+- Branch: `main`
+- HEAD curto: `7da9794`
+- Git status exit code: 0
+- Entradas locais antes da auditoria: 32
+- Conteudo de status nao foi reproduzido neste relatorio; o B00 ja registrou os caminhos.
+
+### Scripts de backup
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`
+- `beauty-core-backend\scripts\backup\backup-external-upload.sh`
+- `beauty-core-backend\scripts\backup\postgres-backup.ps1`
+- `beauty-core-backend\scripts\backup\postgres-backup.sh`
+- `beauty-core-backend\scripts\backup\postgres-restore.ps1`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`
+- `beauty-core-backend\scripts\backup\redis-backup.ps1`
+- `beauty-core-backend\scripts\backup\redis-backup.sh`
+- `beauty-core-backend\scripts\backup\redis-restore.ps1`
+- `beauty-core-backend\scripts\backup\redis-restore.sh`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`
+- `beauty-core-backend\scripts\backup\validate-restore.sh`
+
+### Scripts de uploads e restore de uploads
+- `beauty-core-backend\scripts\uploads\uploads-backup.ps1`
+- `beauty-core-backend\scripts\uploads\uploads-backup.sh`
+- `beauty-core-backend\scripts\uploads\uploads-restore.ps1`
+- `beauty-core-backend\scripts\uploads\uploads-restore.sh`
+
+### Implementacao de storage
+- `beauty-core-backend\src\modules\arquivos\storage\local-storage.service.ts`
+- `beauty-core-backend\src\modules\arquivos\storage\multer.config.ts`
+- `beauty-core-backend\src\modules\arquivos\storage\providers\s3-storage.service.ts`
+- `beauty-core-backend\src\modules\arquivos\storage\storage.factory.ts`
+- `beauty-core-backend\src\modules\arquivos\storage\storage.interface.ts`
+
+### Suporte ou referencias de alerta/webhook
+- `beauty-core-backend\.backup-chat39\docs\operations.md`; linha 43; marcador `backup.*alert`
+- `beauty-core-backend\docs\adrs\0005-backup-dr-strategy.md`; linha 48; marcador `backup.*alert`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 134; marcador `alert.*backup`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 32; marcador `webhook`
+- `beauty-core-backend\docs\chat03-block04ao-raw-body-fix.md`; linha 1; marcador `webhook`
+- `beauty-core-backend\docs\chat03-block04at-final-closeout.md`; linha 9; marcador `webhook`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 88; marcador `webhook`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 89; marcador `webhook`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 90; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`; linha 318; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`; linha 319; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`; linha 603; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`; linha 604; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`; linha 691; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`; linha 692; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`; linha 693; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`; linha 788; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`; linha 789; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`; linha 790; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO02_RECONCILIACAO_261_CAMINHOS_20260909-135948.md`; linha 56; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO02_RECONCILIACAO_261_CAMINHOS_20260909-135948.md`; linha 57; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO02_RECONCILIACAO_261_CAMINHOS_20260909-135948.md`; linha 144; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO02_RECONCILIACAO_261_CAMINHOS_20260909-135948.md`; linha 145; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO02_RECONCILIACAO_261_CAMINHOS_20260909-135948.md`; linha 335; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO02_RECONCILIACAO_261_CAMINHOS_20260909-135948.md`; linha 337; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 121; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 122; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 168; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 172; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 264; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 268; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 308; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 312; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 358; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 362; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 404; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 408; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 901; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 914; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 959; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3854; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3864; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3865; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3866; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3867; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3868; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3869; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3874; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3878; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3890; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3891; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3892; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3893; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3894; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3896; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3897; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3898; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3899; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3900; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3901; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3902; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3903; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 3904; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 36; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 128; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 129; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 141; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 144; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 156; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 159; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 171; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 174; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 186; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 189; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 201; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 204; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 216; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 221; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 233; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 257; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 398; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 411; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 444; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 461; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 473; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 532; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 655; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 737; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 754; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 770; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 787; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 801; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 813; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 830; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 846; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 863; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 877; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 889; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 902; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 914; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 931; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 947; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 964; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 1019; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 1031; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 1355; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 1361; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 1363; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 1368; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 1372; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 1378; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 1380; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 1393; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 1394; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`; linha 36; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`; linha 128; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`; linha 129; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`; linha 141; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`; linha 144; marcador `webhook`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`; linha 156; marcador `webhook`
+- Evidencias limitadas a 120 ocorrencias.
+
+### Referencias de chave e injecao segura
+- `beauty-core-backend\CHANGELOG.md`; linha 21; marcador `secrets\.`
+- `beauty-core-backend\CHANGELOG.md`; linha 35; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 30; marcador `secret manager`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 10; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 11; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 12; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 13; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 14; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 15; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 17; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 18; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 19; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 20; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 21; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 22; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 23; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 24; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 26; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 27; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03f-workflow-env-mapping-report.md`; linha 10; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03f-workflow-env-mapping-report.md`; linha 11; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03f-workflow-env-mapping-report.md`; linha 12; marcador `secrets\.`
+- `beauty-core-backend\docs\chat03-block03f-workflow-env-mapping-report.md`; linha 13; marcador `secrets\.`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 172; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 268; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 312; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 362; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`; linha 408; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 144; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 159; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 174; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 189; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`; linha 204; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`; linha 144; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`; linha 159; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`; linha 174; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`; linha 189; marcador `secret manager`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`; linha 204; marcador `secret manager`
+- `beauty-core-backend\docs\chat40-premium-governance-report.md`; linha 193; marcador `secrets\.`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03f-preflight-backup-externo-20260912-124517.md`; linha 23; marcador `BACKUP_ENCRYPTION_KEY`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03g-chave-backup-20260912-124755.md`; linha 11; marcador `BACKUP_ENCRYPTION_KEY`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03g-chave-backup-20260912-124755.md`; linha 16; marcador `BACKUP_ENCRYPTION_KEY`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03g-chave-backup-20260912-124755.md`; linha 30; marcador `secret manager`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03h-uploader-r2-20260912-125610.md`; linha 40; marcador `secret manager`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03k-restore-r2-20260912-132936.md`; linha 94; marcador `BACKUP_ENCRYPTION_KEY`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03k-restore-r2-20260912-132936.md`; linha 94; marcador `secret manager`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco04-final-gate-chat-a-20260912-133403.md`; linha 29; marcador `BACKUP_ENCRYPTION_KEY`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco04-final-gate-chat-a-20260912-133403.md`; linha 110; marcador `secret manager`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco04-final-gate-chat-a-20260912-133644.md`; linha 29; marcador `BACKUP_ENCRYPTION_KEY`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco04-final-gate-chat-a-20260912-133644.md`; linha 110; marcador `secret manager`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco04-final-gate-chat-a-20260912-133644.md`; linha 115; marcador `BACKUP_ENCRYPTION_KEY`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco04-final-gate-chat-a-20260912-133644.md`; linha 115; marcador `secret manager`
+- `beauty-core-backend\docs\chat-b-baseline\chat-b00-baseline-reconciliation-2026-09-13-103534.md`; linha 775; marcador `BACKUP_ENCRYPTION_KEY`
+- `beauty-core-backend\docs\chat-b-baseline\chat-b00-baseline-reconciliation-2026-09-13-103534.md`; linha 775; marcador `secret manager`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 33; marcador `BACKUP_ENCRYPTION_KEY`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 34; marcador `BACKUP_ENCRYPTION_KEY`
+
+### Storage S3/R2, checksum, manifesto e restore
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 10; marcador `S3`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 46; marcador `AES-256-GCM`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 66; marcador `AES-256-GCM`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 92; marcador `S3`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 151; marcador `R2`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 154; marcador `retention`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 156; marcador `retention`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 174; marcador `AES-256-GCM`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 174; marcador `checksum`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 176; marcador `manifest`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 177; marcador `AES-256-GCM`
+- `beauty-core-backend\scripts\backup\backup-external-upload.js`; linha 185; marcador `retention`
+- `beauty-core-backend\scripts\backup\postgres-backup.sh`; linha 38; marcador `checksum`
+- `beauty-core-backend\scripts\backup\postgres-restore.ps1`; linha 55; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore.ps1`; linha 69; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore.ps1`; linha 74; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore.ps1`; linha 76; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore.ps1`; linha 79; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore.ps1`; linha 82; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore.ps1`; linha 84; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 4; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 6; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 7; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 10; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 11; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 12; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 16; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 17; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 19; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 20; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 21; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 24; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 25; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 30; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 31; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 32; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 34; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 35; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 39; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 42; marcador `restore`
+- `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; linha 43; marcador `restore`
+- `beauty-core-backend\scripts\backup\redis-restore.ps1`; linha 17; marcador `restore`
+- `beauty-core-backend\scripts\backup\redis-restore.ps1`; linha 28; marcador `restore`
+- `beauty-core-backend\scripts\backup\redis-restore.ps1`; linha 34; marcador `restore`
+- `beauty-core-backend\scripts\backup\redis-restore.ps1`; linha 40; marcador `restore`
+- `beauty-core-backend\scripts\backup\redis-restore.ps1`; linha 42; marcador `restore`
+- `beauty-core-backend\scripts\backup\redis-restore.sh`; linha 4; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 26; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 103; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 104; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 111; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 113; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 122; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 124; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 127; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 134; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 137; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 138; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 146; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.ps1`; linha 148; marcador `restore`
+- `beauty-core-backend\scripts\backup\validate-restore.sh`; linha 8; marcador `restore`
+- `beauty-core-backend\scripts\uploads\uploads-restore.ps1`; linha 14; marcador `restore`
+- `beauty-core-backend\scripts\uploads\uploads-restore.ps1`; linha 22; marcador `restore`
+- `beauty-core-backend\scripts\uploads\uploads-restore.ps1`; linha 27; marcador `restore`
+- `beauty-core-backend\scripts\uploads\uploads-restore.ps1`; linha 31; marcador `restore`
+- `beauty-core-backend\scripts\uploads\uploads-restore.ps1`; linha 33; marcador `restore`
+- `beauty-core-backend\scripts\uploads\uploads-restore.sh`; linha 4; marcador `restore`
+- `beauty-core-backend\src\modules\arquivos\storage\local-storage.service.ts`; linha 46; marcador `checksum`
+- `beauty-core-backend\src\modules\arquivos\storage\local-storage.service.ts`; linha 80; marcador `checksum`
+- `beauty-core-backend\src\modules\arquivos\storage\local-storage.service.ts`; linha 207; marcador `checksum`
+- `beauty-core-backend\src\modules\arquivos\storage\providers\s3-storage.service.ts`; linha 8; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\providers\s3-storage.service.ts`; linha 9; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\providers\s3-storage.service.ts`; linha 26; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\providers\s3-storage.service.ts`; linha 27; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\providers\s3-storage.service.ts`; linha 35; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\providers\s3-storage.service.ts`; linha 58; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\providers\s3-storage.service.ts`; linha 71; marcador `checksum`
+- `beauty-core-backend\src\modules\arquivos\storage\providers\s3-storage.service.ts`; linha 80; marcador `checksum`
+- `beauty-core-backend\src\modules\arquivos\storage\providers\s3-storage.service.ts`; linha 87; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\providers\s3-storage.service.ts`; linha 89; marcador `checksum`
+- `beauty-core-backend\src\modules\arquivos\storage\providers\s3-storage.service.ts`; linha 103; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\storage.factory.ts`; linha 5; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\storage.factory.ts`; linha 13; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\storage.factory.ts`; linha 23; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\storage.factory.ts`; linha 24; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\storage.factory.ts`; linha 42; marcador `S3`
+- `beauty-core-backend\src\modules\arquivos\storage\storage.interface.ts`; linha 17; marcador `checksum`
+
+## Validacao de ferramentas locais
+
+- Bash: `C:\WINDOWS\system32\bash.exe`
+- ATENCAO sintaxe: `beauty-core-backend\scripts\backup\backup-external-upload.sh`; exit code 127
+  - `/bin/bash: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\backup\backup-external-upload.sh: No such file or directory`
+- ATENCAO sintaxe: `beauty-core-backend\scripts\backup\postgres-backup.sh`; exit code 127
+  - `/bin/bash: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\backup\postgres-backup.sh: No such file or directory`
+- ATENCAO sintaxe: `beauty-core-backend\scripts\backup\postgres-restore-verify.sh`; exit code 127
+  - `/bin/bash: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\backup\postgres-restore-verify.sh: No such file or directory`
+- ATENCAO sintaxe: `beauty-core-backend\scripts\backup\redis-backup.sh`; exit code 127
+  - `/bin/bash: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\backup\redis-backup.sh: No such file or directory`
+- ATENCAO sintaxe: `beauty-core-backend\scripts\backup\redis-restore.sh`; exit code 127
+  - `/bin/bash: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\backup\redis-restore.sh: No such file or directory`
+- ATENCAO sintaxe: `beauty-core-backend\scripts\backup\validate-restore.sh`; exit code 127
+  - `/bin/bash: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\backup\validate-restore.sh: No such file or directory`
+- ATENCAO sintaxe: `beauty-core-backend\scripts\release\create-release-package.sh`; exit code 127
+  - `/bin/bash: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\release\create-release-package.sh: No such file or directory`
+- ATENCAO sintaxe: `beauty-core-backend\scripts\smoke\smoke-test.sh`; exit code 127
+  - `/bin/bash: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\smoke\smoke-test.sh: No such file or directory`
+- ATENCAO sintaxe: `beauty-core-backend\scripts\uploads\uploads-backup.sh`; exit code 127
+  - `/bin/bash: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\uploads\uploads-backup.sh: No such file or directory`
+- ATENCAO sintaxe: `beauty-core-backend\scripts\uploads\uploads-restore.sh`; exit code 127
+  - `/bin/bash: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\uploads\uploads-restore.sh: No such file or directory`
+- PASS sintaxe JavaScript: uploader de backup.
+- WSL detectado; status exit code 0. Nenhuma distro foi iniciada.
+- Docker detectado; consulta somente leitura exit code 0. Nenhum container foi iniciado.
+- A presenca da ferramenta nao comprova execucao POSIX definitiva; isso depende de teste controlado posterior.
+
+## Gates do B01
+
+- Webhook: suporte/referencias auditados; configuracao real ainda depende de endpoint autorizado.
+- Secret manager: referencias auditadas sem leitura de valores; injecao real e rotacao continuam pendentes.
+- POSIX: `bash -n` valida sintaxe, mas nao substitui backup/restore real em Linux, container ou sidecar.
+- Uploader: `node --check` valida somente sintaxe, nao comprova credenciais, R2/S3 ou round-trip.
+- Resultado operacional: nenhuma pendencia de infraestrutura foi inventada ou marcada como concluida sem evidencia.
+
+## Operacoes nao executadas
+
+- Backup real: nao executado.
+- Restore real: nao executado.
+- Upload para R2/S3: nao executado.
+- Migrations: nao executadas.
+- Stage/commit/push/merge/tag/release: nao executados.
+- Deploy: nao executado.
+- Meta/WhatsApp comercial: nao ativado.
+- Segredos e valores de ambiente: nao lidos nem impressos.
+
+## Classificacao final do B01
+
+- `PASS_WITH_ATTENTION` - auditoria e validacoes seguras executadas; configuracao de alerta, secret manager e prova POSIX real permanecem condicionadas a infraestrutura autorizada.
+
+## Integridade
+
+- Este arquivo foi gerado automaticamente pelo script B01.
+- O script nao altera codigo e cria apenas o relatorio desta auditoria.

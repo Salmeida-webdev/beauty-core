@@ -1,4 +1,6 @@
-﻿import request = require('supertest');
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import type { Server } from 'node:net';
 
 import {
   bootstrapE2eTestApp,
@@ -9,13 +11,17 @@ import { bearer, loginClientePublico } from '../helpers/auth.helper';
 
 describe('Cliente Area E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
   let token: string;
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
-    token = (
-      await loginClientePublico(ctx.app, ctx.seed.empresaA.slug, ctx.prisma)
-    ).access_token;
+    httpApp = ctx.app as INestApplication<Server>;
+    const slug = ctx.seed.empresaA.slug;
+    if (typeof slug !== 'string') {
+      throw new Error('Empresa de teste sem slug válido.');
+    }
+    token = (await loginClientePublico(httpApp, slug, ctx.prisma)).access_token;
   });
 
   afterAll(async () => {
@@ -30,13 +36,13 @@ describe('Cliente Area E2E', () => {
     '/cliente-area/me/pacotes',
     '/cliente-area/me/notificacoes',
   ])('GET %s', async (route) => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .get(route)
       .set('Authorization', bearer(token))
       .expect(200);
   });
 
   it('sem token deve retornar 401', async () => {
-    await request(ctx.app.getHttpServer()).get('/cliente-area/me').expect(401);
+    await request(httpApp.getHttpServer()).get('/cliente-area/me').expect(401);
   });
 });

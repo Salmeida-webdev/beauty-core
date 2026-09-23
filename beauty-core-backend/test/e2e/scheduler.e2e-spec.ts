@@ -1,4 +1,6 @@
-﻿import request = require('supertest');
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import type { Server } from 'node:net';
 
 import {
   bootstrapE2eTestApp,
@@ -9,11 +11,13 @@ import { bearer, loginSuperAdmin } from '../helpers/auth.helper';
 
 describe('Scheduler E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
   let token: string;
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
-    token = (await loginSuperAdmin(ctx.app)).access_token;
+    httpApp = ctx.app as INestApplication<Server>;
+    token = (await loginSuperAdmin(httpApp)).access_token;
   });
 
   afterAll(async () => {
@@ -21,7 +25,7 @@ describe('Scheduler E2E', () => {
   });
 
   it('GET /scheduler/status', async () => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .get('/scheduler/status')
       .set('Authorization', bearer(token))
       .expect(200);
@@ -32,7 +36,7 @@ describe('Scheduler E2E', () => {
     '/scheduler/teste/campanhas',
     '/scheduler/teste/relatorios',
   ])('POST %s', async (route) => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .post(route)
       .set('Authorization', bearer(token))
       .expect((res) => {

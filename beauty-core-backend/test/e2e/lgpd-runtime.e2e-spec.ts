@@ -1,6 +1,12 @@
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import type { Server } from 'node:net';
 
-import { bootstrapE2eTestApp, E2eContext, teardownE2eTestApp } from '../setup-e2e';
+import {
+  bootstrapE2eTestApp,
+  E2eContext,
+  teardownE2eTestApp,
+} from '../setup-e2e';
 import { bearer, loginAdmin } from '../helpers/auth.helper';
 
 type JsonRecord = Record<string, unknown>;
@@ -27,9 +33,19 @@ function requiredString(value: unknown, key: string): string {
 function expectNoTechnicalSecrets(value: unknown): void {
   const record = asRecord(value, 'perfil');
   for (const key of [
-    'senha', 'password', 'refreshToken', 'refreshTokenHash', 'token',
-    'accessToken', 'codigo', 'codigoHash', 'otp', 'secret',
-    'clientSecret', 'apiKey', 'authorization',
+    'senha',
+    'password',
+    'refreshToken',
+    'refreshTokenHash',
+    'token',
+    'accessToken',
+    'codigo',
+    'codigoHash',
+    'otp',
+    'secret',
+    'clientSecret',
+    'apiKey',
+    'authorization',
   ]) {
     expect(record[key]).toBeUndefined();
   }
@@ -37,6 +53,7 @@ function expectNoTechnicalSecrets(value: unknown): void {
 
 describe('LGPD runtime HTTP E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
   let adminToken: string;
   let clienteId: string;
   let originalName: string;
@@ -45,8 +62,9 @@ describe('LGPD runtime HTTP E2E', () => {
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
-    adminToken = (await loginAdmin(ctx.app)).access_token;
-    const cliente = property(ctx.seed as unknown, 'cliente');
+    httpApp = ctx.app as INestApplication<Server>;
+    adminToken = (await loginAdmin(httpApp)).access_token;
+    const cliente = property(ctx.seed, 'cliente');
     clienteId = requiredString(cliente, 'id');
     originalName = requiredString(cliente, 'nome');
     originalEmail = requiredString(cliente, 'email');
@@ -58,7 +76,7 @@ describe('LGPD runtime HTTP E2E', () => {
   });
 
   it('exporta dados sem segredos tecnicos', async () => {
-    const response = await request(ctx.app.getHttpServer())
+    const response = await request(httpApp.getHttpServer())
       .get('/lgpd/exportar-cliente/' + clienteId)
       .set('Authorization', bearer(adminToken));
 
@@ -74,14 +92,18 @@ describe('LGPD runtime HTTP E2E', () => {
 
   it('anonimiza dados pessoais e preserva auditoria', async () => {
     const auditBefore = await ctx.prisma.auditoriaSistema.count();
-    const response = await request(ctx.app.getHttpServer())
+    const response = await request(httpApp.getHttpServer())
       .post('/lgpd/anonimizar-cliente/' + clienteId)
       .set('Authorization', bearer(adminToken));
 
     expect([200, 201]).toContain(response.status);
-    expect(property(asRecord(response.body as unknown, 'anonimizacao'), 'success')).toBe(true);
+    expect(
+      property(asRecord(response.body as unknown, 'anonimizacao'), 'success'),
+    ).toBe(true);
 
-    const clienteDepois = await ctx.prisma.cliente.findUnique({ where: { id: clienteId } });
+    const clienteDepois = await ctx.prisma.cliente.findUnique({
+      where: { id: clienteId },
+    });
     expect(clienteDepois).not.toBeNull();
     const after = clienteDepois as unknown as JsonRecord;
     expect(requiredString(after, 'nome')).not.toBe(originalName);
@@ -91,12 +113,15 @@ describe('LGPD runtime HTTP E2E', () => {
     const auditAfter = await ctx.prisma.auditoriaSistema.count();
     expect(auditAfter).toBeGreaterThanOrEqual(auditBefore + 1);
 
-    const exportAfter = await request(ctx.app.getHttpServer())
+    const exportAfter = await request(httpApp.getHttpServer())
       .get('/lgpd/exportar-cliente/' + clienteId)
       .set('Authorization', bearer(adminToken));
     expect(exportAfter.status).toBe(200);
     expectNoTechnicalSecrets(
-      property(asRecord(exportAfter.body as unknown, 'exportacao apos anonimizacao'), 'perfil'),
+      property(
+        asRecord(exportAfter.body as unknown, 'exportacao apos anonimizacao'),
+        'perfil',
+      ),
     );
   });
 });

@@ -1,88 +1,70 @@
-﻿describe('Queue Utils Unit', () => {
-  describe('queue-job-id.util', () => {
-    const mod = require('../../src/queues/utils/queue-job-id.util');
+import { ConfigService } from '@nestjs/config';
+import { createQueueJobId } from '../../src/queues/utils/queue-job-id.util';
+import { getEnterpriseJobOptions } from '../../src/queues/utils/queue-options.util';
 
-    it('deve exportar funções de job id', () => {
-      expect(mod).toBeDefined();
-      expect(Object.keys(mod).length).toBeGreaterThan(0);
+describe('Queue utilities', () => {
+  describe('createQueueJobId', () => {
+    it('creates a deterministic tenant-scoped identifier', () => {
+      const params = {
+        empresaId: ' empresa-á ',
+        tipo: 'Relatório Diário',
+        referenciaId: 'registro/42',
+        dataReferencia: '2026-09-22',
+        extra: 'turno manhã',
+      };
+
+      const firstId = createQueueJobId(params);
+      const secondId = createQueueJobId({ ...params });
+
+      expect(firstId).toBe(secondId);
+      expect(firstId).toMatch(/^bc-empresa-a-relatorio-diario-registro-42-/);
+      expect(firstId).toMatch(/[0-9a-f]{24}$/);
+      expect(firstId.length).toBeLessThanOrEqual(180);
     });
 
-    it('deve exercitar funções exportadas', () => {
-      for (const [name, fn] of Object.entries(mod)) {
-        if (typeof fn !== 'function') continue;
+    it('uses global scope for an absent tenant and separates references', () => {
+      const globalId = createQueueJobId({ tipo: 'NOTIFICACAO' });
+      const firstReference = createQueueJobId({
+        empresaId: 'empresa-a',
+        tipo: 'NOTIFICACAO',
+        referenciaId: 'cliente-1',
+      });
+      const secondReference = createQueueJobId({
+        empresaId: 'empresa-a',
+        tipo: 'NOTIFICACAO',
+        referenciaId: 'cliente-2',
+      });
 
-        expect(() => {
-          try {
-            const result = (fn as any)('fila-test', {
-              empresaId: 'empresa-a',
-              clienteId: 'cliente-a',
-              usuarioId: 'usuario-a',
-              tipo: 'TESTE',
-              id: 'registro-a',
-            });
-
-            if (result !== undefined) {
-              expect(result).toBeDefined();
-            }
-          } catch {
-            try {
-              const result = (fn as any)({
-                queueName: 'fila-test',
-                empresaId: 'empresa-a',
-                clienteId: 'cliente-a',
-                usuarioId: 'usuario-a',
-                tipo: 'TESTE',
-                id: 'registro-a',
-              });
-
-              if (result !== undefined) {
-                expect(result).toBeDefined();
-              }
-            } catch {
-              // Assinatura específica.
-            }
-          }
-        }).not.toThrow();
-      }
+      expect(globalId).toContain('bc-global-notificacao');
+      expect(firstReference).not.toBe(secondReference);
+      expect(firstReference).toContain('empresa-a-notificacao-cliente-1');
+      expect(secondReference).toContain('empresa-a-notificacao-cliente-2');
     });
   });
 
-  describe('queue-options.util', () => {
-    const mod = require('../../src/queues/utils/queue-options.util');
+  describe('getEnterpriseJobOptions', () => {
+    it('returns configured BullMQ options with retention policies', () => {
+      const configService = new ConfigService({
+        QUEUE_ATTEMPTS: '4',
+        QUEUE_BACKOFF_MS: '2500',
+      });
 
-    it('deve exportar funções de opções BullMQ', () => {
-      expect(mod).toBeDefined();
-      expect(Object.keys(mod).length).toBeGreaterThan(0);
+      expect(getEnterpriseJobOptions(configService, 'job-42')).toEqual({
+        jobId: 'job-42',
+        attempts: 4,
+        backoff: { type: 'exponential', delay: 2500 },
+        removeOnComplete: { age: 604800, count: 1000 },
+        removeOnFail: { age: 2592000, count: 5000 },
+      });
     });
 
-    it('deve exercitar funções exportadas', () => {
-      for (const [name, fn] of Object.entries(mod)) {
-        if (typeof fn !== 'function') continue;
+    it('uses production defaults when queue settings are absent', () => {
+      const configService = new ConfigService();
+      const options = getEnterpriseJobOptions(configService, 'job-default');
 
-        expect(() => {
-          try {
-            const result = (fn as any)();
-            if (result !== undefined) {
-              expect(result).toBeDefined();
-            }
-          } catch {
-            try {
-              const result = (fn as any)({
-                attempts: 3,
-                backoffMs: 1000,
-                removeOnComplete: true,
-                removeOnFail: false,
-              });
-
-              if (result !== undefined) {
-                expect(result).toBeDefined();
-              }
-            } catch {
-              // Assinatura específica.
-            }
-          }
-        }).not.toThrow();
-      }
+      expect(options.jobId).toBe('job-default');
+      expect(options.attempts).toBe(5);
+      expect(options.backoff).toEqual({ type: 'exponential', delay: 10000 });
     });
   });
 });

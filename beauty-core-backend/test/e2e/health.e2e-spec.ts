@@ -1,4 +1,6 @@
-﻿import request = require('supertest');
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import type { Server } from 'node:net';
 
 import {
   bootstrapE2eTestApp,
@@ -7,13 +9,19 @@ import {
 } from '../setup-e2e';
 import { bearer, loginAdmin } from '../helpers/auth.helper';
 
+function asHttpApp(app: E2eContext['app']): INestApplication<Server> {
+  return app as INestApplication<Server>;
+}
+
 describe('Health E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
   let adminToken: string;
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
-    adminToken = (await loginAdmin(ctx.app)).access_token;
+    httpApp = asHttpApp(ctx.app);
+    adminToken = (await loginAdmin(httpApp)).access_token;
   });
 
   afterAll(async () => {
@@ -21,11 +29,11 @@ describe('Health E2E', () => {
   });
 
   it('deve manter /health/live publico', async () => {
-    await request(ctx.app.getHttpServer()).get('/health/live').expect(200);
+    await request(httpApp.getHttpServer()).get('/health/live').expect(200);
   });
 
   it('deve manter /health/ready publico', async () => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .get('/health/ready')
       .expect((res) => {
         expect([200, 503]).toContain(res.status);
@@ -33,7 +41,7 @@ describe('Health E2E', () => {
   });
 
   it('deve manter /health publico', async () => {
-    await request(ctx.app.getHttpServer()).get('/health').expect(200);
+    await request(httpApp.getHttpServer()).get('/health').expect(200);
   });
 
   it('deve bloquear health detalhado sem autenticação', async () => {
@@ -46,7 +54,7 @@ describe('Health E2E', () => {
     ];
 
     for (const endpoint of endpoints) {
-      await request(ctx.app.getHttpServer()).get(endpoint).expect(401);
+      await request(httpApp.getHttpServer()).get(endpoint).expect(401);
     }
   });
 
@@ -60,7 +68,7 @@ describe('Health E2E', () => {
     ];
 
     for (const endpoint of endpoints) {
-      await request(ctx.app.getHttpServer())
+      await request(httpApp.getHttpServer())
         .get(endpoint)
         .set('Authorization', bearer(adminToken))
         .expect((res) => {

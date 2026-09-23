@@ -1,0 +1,460 @@
+# Beauty Core - Chat B - B03 - Auditoria CI/CD e release safety
+
+- Inicio: 2026-09-13T10:58:58.1383286-03:00
+- Fim: 2026-09-13T10:58:59.8078025-03:00
+- Script: B03-v2
+- Modo: somente leitura; o relatorio e o unico artefato criado.
+- Pasta unica de relatorios do Chat B: `beauty-core-backend\docs\chat-b\`
+
+## Escopo
+
+- Workflows de CI, seguranca, Docker, staging e producao.
+- Build, instalacao, migrations, health checks e smoke tests.
+- Rollback, concorrencia, protecao de ambiente e referencias a secrets.
+- Scripts de release/smoke e arquivos Docker Compose.
+- Nenhum workflow sera disparado e nenhum deploy sera realizado.
+
+## Baseline da execucao
+
+- Branch: `main`
+- HEAD curto: `7da9794`
+- Git status exit code: 0
+- Entradas locais antes da auditoria: 35
+- Arquivos de pipeline/release analisados: 24
+
+### Workflows CI/CD
+- `.github\workflows\ci.yml`
+- `.github\workflows\codeql.yml`
+- `.github\workflows\docker.yml`
+- `.github\workflows\production.yml`
+- `.github\workflows\security-audit.yml`
+- `.github\workflows\staging.yml`
+
+### Scripts de release e smoke
+- `beauty-core-backend\scripts\release\create-release-package.ps1`
+- `beauty-core-backend\scripts\release\create-release-package.sh`
+- `beauty-core-backend\scripts\release\verify-release-package.ps1`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`
+- `beauty-core-backend\scripts\smoke\smoke-test.ps1`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`
+
+### Docker Compose
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`
+- `beauty-core-backend\.chat35-backup-alerting-prometheus-20260620212615\docker-compose.observability.yml`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`
+- `beauty-core-backend\.chat35-backup-observability-auto-port-20260620211914\docker-compose.observability.yml`
+- `beauty-core-backend\.chat35-backup-observability-port-fix-20260620211635\docker-compose.observability.yml`
+- `beauty-core-backend\docker-compose.chat03-candidate.override.yml`
+- `beauty-core-backend\docker-compose.dev.yml`
+- `beauty-core-backend\docker-compose.observability.yml`
+- `beauty-core-backend\docker-compose.prod.yml`
+- `beauty-core-backend\docker-compose.staging.yml`
+- `beauty-core-backend\docker-compose.yml`
+
+### Build, instalacao e qualidade
+- `.github\workflows\ci.yml`; linha 17; marcador `test`
+- `.github\workflows\ci.yml`; linha 27; marcador `test`
+- `.github\workflows\ci.yml`; linha 28; marcador `test`
+- `.github\workflows\ci.yml`; linha 31; marcador `test`
+- `.github\workflows\ci.yml`; linha 40; marcador `test`
+- `.github\workflows\ci.yml`; linha 41; marcador `test`
+- `.github\workflows\ci.yml`; linha 43; marcador `test`
+- `.github\workflows\ci.yml`; linha 44; marcador `test`
+- `.github\workflows\ci.yml`; linha 47; marcador `test`
+- `.github\workflows\ci.yml`; linha 48; marcador `test`
+- `.github\workflows\ci.yml`; linha 49; marcador `test`
+- `.github\workflows\ci.yml`; linha 72; marcador `npm ci`
+- `.github\workflows\ci.yml`; linha 73; marcador `test`
+- `.github\workflows\ci.yml`; linha 75; marcador `test`
+- `.github\workflows\ci.yml`; linha 76; marcador `test`
+- `.github\workflows\ci.yml`; linha 84; marcador `npm run build`
+- `.github\workflows\ci.yml`; linha 85; marcador `test`
+- `.github\workflows\ci.yml`; linha 86; marcador `test`
+- `.github\workflows\ci.yml`; linha 87; marcador `test`
+- `.github\workflows\ci.yml`; linha 88; marcador `test`
+- `.github\workflows\ci.yml`; linha 94; marcador `test`
+- `.github\workflows\ci.yml`; linha 107; marcador `npm ci`
+- `.github\workflows\ci.yml`; linha 108; marcador `test`
+- `.github\workflows\ci.yml`; linha 109; marcador `test`
+- `.github\workflows\ci.yml`; linha 112; marcador `lint`
+- `.github\workflows\ci.yml`; linha 113; marcador `lint`
+- `.github\workflows\ci.yml`; linha 115; marcador `npm run build`
+- `.github\workflows\codeql.yml`; linha 20; marcador `test`
+- `.github\workflows\docker.yml`; linha 17; marcador `test`
+- `.github\workflows\docker.yml`; linha 22; marcador `test`
+- `.github\workflows\docker.yml`; linha 24; marcador `test`
+- `.github\workflows\production.yml`; linha 14; marcador `test`
+- `.github\workflows\production.yml`; linha 34; marcador `test`
+- `.github\workflows\production.yml`; linha 35; marcador `npm ci`
+- `.github\workflows\production.yml`; linha 38; marcador `npm run build`
+- `.github\workflows\security-audit.yml`; linha 18; marcador `test`
+- `.github\workflows\security-audit.yml`; linha 30; marcador `npm ci`
+- `.github\workflows\security-audit.yml`; linha 33; marcador `npm ci`
+- `.github\workflows\staging.yml`; linha 13; marcador `test`
+- `.github\workflows\staging.yml`; linha 33; marcador `test`
+- `.github\workflows\staging.yml`; linha 34; marcador `npm ci`
+- `.github\workflows\staging.yml`; linha 37; marcador `npm run build`
+- `.github\workflows\staging.yml`; linha 38; marcador `test`
+- `.github\workflows\staging.yml`; linha 39; marcador `test`
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`; linha 17; marcador `test`
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`; linha 38; marcador `test`
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`; linha 47; marcador `test`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 14; marcador `test`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 31; marcador `test`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 65; marcador `test`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 14; marcador `test`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 31; marcador `test`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 65; marcador `test`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 16; marcador `test`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 35; marcador `test`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 68; marcador `test`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 14; marcador `test`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 31; marcador `test`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 65; marcador `test`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 14; marcador `test`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 31; marcador `test`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 65; marcador `test`
+- `beauty-core-backend\docker-compose.yml`; linha 16; marcador `test`
+- `beauty-core-backend\docker-compose.yml`; linha 35; marcador `test`
+- `beauty-core-backend\docker-compose.yml`; linha 68; marcador `test`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 10; marcador `test`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 25; marcador `test`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 26; marcador `test`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 33; marcador `test`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 37; marcador `test`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 53; marcador `test`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 91; marcador `coverage`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 101; marcador `test`
+- `beauty-core-backend\scripts\release\create-release-package.sh`; linha 27; marcador `test`
+- `beauty-core-backend\scripts\release\create-release-package.sh`; linha 62; marcador `coverage`
+- `beauty-core-backend\scripts\release\verify-release-package.ps1`; linha 10; marcador `test`
+- `beauty-core-backend\scripts\release\verify-release-package.ps1`; linha 25; marcador `coverage`
+- `beauty-core-backend\scripts\release\verify-release-package.ps1`; linha 86; marcador `test`
+- `beauty-core-backend\scripts\release\verify-release-package.ps1`; linha 92; marcador `test`
+- `beauty-core-backend\scripts\smoke\smoke-test.ps1`; linha 10; marcador `test`
+- `beauty-core-backend\scripts\smoke\smoke-test.ps1`; linha 58; marcador `test`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`; linha 9; marcador `test`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`; linha 52; marcador `test`
+
+### Migrations e banco
+- `.github\workflows\ci.yml`; linha 43; marcador `DATABASE_URL`
+- `.github\workflows\ci.yml`; linha 44; marcador `DATABASE_URL`
+- `.github\workflows\ci.yml`; linha 79; marcador `generate`
+- `.github\workflows\ci.yml`; linha 80; marcador `generate`
+- `.github\workflows\ci.yml`; linha 81; marcador `migrate deploy`
+- `.github\workflows\ci.yml`; linha 81; marcador `prisma migrate`
+- `.github\workflows\production.yml`; linha 28; marcador `DATABASE_URL`
+- `.github\workflows\production.yml`; linha 34; marcador `DATABASE_URL`
+- `.github\workflows\production.yml`; linha 37; marcador `generate`
+- `.github\workflows\staging.yml`; linha 27; marcador `DATABASE_URL`
+- `.github\workflows\staging.yml`; linha 33; marcador `DATABASE_URL`
+- `.github\workflows\staging.yml`; linha 36; marcador `generate`
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`; linha 56; marcador `DATABASE_URL`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 50; marcador `DATABASE_URL`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 84; marcador `DATABASE_URL`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 50; marcador `DATABASE_URL`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 84; marcador `DATABASE_URL`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 103; marcador `DATABASE_URL`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 53; marcador `DATABASE_URL`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 50; marcador `DATABASE_URL`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 84; marcador `DATABASE_URL`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 50; marcador `DATABASE_URL`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 84; marcador `DATABASE_URL`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 103; marcador `DATABASE_URL`
+- `beauty-core-backend\docker-compose.yml`; linha 53; marcador `DATABASE_URL`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 10; marcador `schema.prisma`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 116; marcador `migration`
+- `beauty-core-backend\scripts\release\create-release-package.sh`; linha 12; marcador `schema.prisma`
+- `beauty-core-backend\scripts\release\verify-release-package.ps1`; linha 36; marcador `migration`
+- `beauty-core-backend\scripts\release\verify-release-package.ps1`; linha 87; marcador `migration`
+- `beauty-core-backend\scripts\release\verify-release-package.ps1`; linha 93; marcador `migration`
+- `beauty-core-backend\scripts\release\verify-release-package.ps1`; linha 98; marcador `migration`
+
+### Health, smoke e pos-deploy
+- `.github\workflows\ci.yml`; linha 31; marcador `health`
+- `.github\workflows\ci.yml`; linha 32; marcador `health`
+- `.github\workflows\ci.yml`; linha 37; marcador `health`
+- `.github\workflows\ci.yml`; linha 38; marcador `health`
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`; linha 16; marcador `health`
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`; linha 37; marcador `health`
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`; linha 76; marcador `health`
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`; linha 78; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 13; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 30; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 61; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 63; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 64; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 65; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 65; marcador `wget`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 88; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 13; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 30; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 61; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 63; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 64; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 65; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 65; marcador `wget`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 88; marcador `health`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 107; marcador `health`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 15; marcador `health`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 34; marcador `health`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 64; marcador `health`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 66; marcador `health`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 67; marcador `health`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 68; marcador `health`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 68; marcador `wget`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 13; marcador `health`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 30; marcador `health`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 61; marcador `health`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 63; marcador `health`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 64; marcador `health`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 65; marcador `health`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 65; marcador `wget`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 88; marcador `health`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 13; marcador `health`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 30; marcador `health`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 61; marcador `health`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 63; marcador `health`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 64; marcador `health`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 65; marcador `health`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 65; marcador `wget`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 88; marcador `health`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 107; marcador `health`
+- `beauty-core-backend\docker-compose.yml`; linha 15; marcador `health`
+- `beauty-core-backend\docker-compose.yml`; linha 34; marcador `health`
+- `beauty-core-backend\docker-compose.yml`; linha 64; marcador `health`
+- `beauty-core-backend\docker-compose.yml`; linha 66; marcador `health`
+- `beauty-core-backend\docker-compose.yml`; linha 67; marcador `health`
+- `beauty-core-backend\docker-compose.yml`; linha 68; marcador `health`
+- `beauty-core-backend\docker-compose.yml`; linha 68; marcador `wget`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 78; marcador `smoke`
+- `beauty-core-backend\scripts\release\create-release-package.sh`; linha 46; marcador `smoke`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`; linha 44; marcador `smoke`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`; linha 48; marcador `health`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`; linha 49; marcador `health`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`; linha 50; marcador `health`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`; linha 51; marcador `health`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`; linha 54; marcador `health`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`; linha 55; marcador `health`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`; linha 56; marcador `health`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`; linha 57; marcador `health`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`; linha 58; marcador `health`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`; linha 76; marcador `health`
+- `beauty-core-backend\scripts\smoke\chat43-release-smoke.ps1`; linha 83; marcador `smoke`
+- `beauty-core-backend\scripts\smoke\smoke-test.ps1`; linha 10; marcador `smoke`
+- `beauty-core-backend\scripts\smoke\smoke-test.ps1`; linha 14; marcador `health`
+- `beauty-core-backend\scripts\smoke\smoke-test.ps1`; linha 15; marcador `health`
+- `beauty-core-backend\scripts\smoke\smoke-test.ps1`; linha 16; marcador `health`
+- `beauty-core-backend\scripts\smoke\smoke-test.ps1`; linha 58; marcador `smoke`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`; linha 9; marcador `smoke`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`; linha 13; marcador `health`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`; linha 14; marcador `health`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`; linha 15; marcador `health`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`; linha 30; marcador `curl`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`; linha 30; marcador `smoke`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`; linha 33; marcador `curl`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`; linha 36; marcador `curl`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`; linha 40; marcador `smoke`
+- `beauty-core-backend\scripts\smoke\smoke-test.sh`; linha 52; marcador `smoke`
+
+### Rollback, concorrencia e protecao de ambiente
+- `.github\workflows\ci.yml`; linha 8; marcador `workflow_dispatch`
+- `.github\workflows\ci.yml`; linha 10; marcador `concurrency`
+- `.github\workflows\ci.yml`; linha 18; marcador `timeout-minutes`
+- `.github\workflows\ci.yml`; linha 95; marcador `timeout-minutes`
+- `.github\workflows\codeql.yml`; linha 10; marcador `workflow_dispatch`
+- `.github\workflows\docker.yml`; linha 8; marcador `workflow_dispatch`
+- `.github\workflows\docker.yml`; linha 10; marcador `concurrency`
+- `.github\workflows\docker.yml`; linha 18; marcador `timeout-minutes`
+- `.github\workflows\production.yml`; linha 1; marcador `production`
+- `.github\workflows\production.yml`; linha 4; marcador `workflow_dispatch`
+- `.github\workflows\production.yml`; linha 6; marcador `concurrency`
+- `.github\workflows\production.yml`; linha 7; marcador `production`
+- `.github\workflows\production.yml`; linha 12; marcador `production`
+- `.github\workflows\production.yml`; linha 13; marcador `if:`
+- `.github\workflows\production.yml`; linha 15; marcador `environment`
+- `.github\workflows\production.yml`; linha 15; marcador `production`
+- `.github\workflows\production.yml`; linha 26; marcador `production`
+- `.github\workflows\production.yml`; linha 28; marcador `production`
+- `.github\workflows\production.yml`; linha 29; marcador `production`
+- `.github\workflows\production.yml`; linha 34; marcador `production`
+- `.github\workflows\production.yml`; linha 40; marcador `production`
+- `.github\workflows\security-audit.yml`; linha 10; marcador `workflow_dispatch`
+- `.github\workflows\security-audit.yml`; linha 28; marcador `production`
+- `.github\workflows\security-audit.yml`; linha 31; marcador `production`
+- `.github\workflows\staging.yml`; linha 1; marcador `staging`
+- `.github\workflows\staging.yml`; linha 4; marcador `workflow_dispatch`
+- `.github\workflows\staging.yml`; linha 6; marcador `concurrency`
+- `.github\workflows\staging.yml`; linha 7; marcador `staging`
+- `.github\workflows\staging.yml`; linha 12; marcador `staging`
+- `.github\workflows\staging.yml`; linha 14; marcador `environment`
+- `.github\workflows\staging.yml`; linha 14; marcador `staging`
+- `.github\workflows\staging.yml`; linha 25; marcador `staging`
+- `.github\workflows\staging.yml`; linha 27; marcador `staging`
+- `.github\workflows\staging.yml`; linha 28; marcador `staging`
+- `.github\workflows\staging.yml`; linha 33; marcador `staging`
+- `.github\workflows\staging.yml`; linha 40; marcador `staging`
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`; linha 6; marcador `environment`
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`; linha 52; marcador `environment`
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`; linha 53; marcador `production`
+- `beauty-core-backend\.chat35-backup-alerting-prometheus-20260620212615\docker-compose.observability.yml`; linha 30; marcador `environment`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 7; marcador `environment`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 26; marcador `environment`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 47; marcador `environment`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 48; marcador `production`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`; linha 83; marcador `environment`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 1; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 5; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 7; marcador `environment`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 12; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 19; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 23; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 26; marcador `environment`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 29; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 36; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 43; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 46; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 47; marcador `environment`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 48; marcador `production`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 49; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 58; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 71; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 80; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 82; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 83; marcador `environment`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 90; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 99; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 101; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 102; marcador `environment`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 109; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 112; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 113; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 114; marcador `staging`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`; linha 117; marcador `staging`
+- `beauty-core-backend\.chat35-backup-observability-auto-port-20260620211914\docker-compose.observability.yml`; linha 30; marcador `environment`
+- `beauty-core-backend\.chat35-backup-observability-port-fix-20260620211635\docker-compose.observability.yml`; linha 30; marcador `environment`
+- `beauty-core-backend\docker-compose.chat03-candidate.override.yml`; linha 3; marcador `production`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 7; marcador `environment`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 28; marcador `environment`
+- `beauty-core-backend\docker-compose.dev.yml`; linha 51; marcador `environment`
+- `beauty-core-backend\docker-compose.observability.yml`; linha 31; marcador `environment`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 7; marcador `environment`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 26; marcador `environment`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 47; marcador `environment`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 48; marcador `production`
+- `beauty-core-backend\docker-compose.prod.yml`; linha 83; marcador `environment`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 1; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 5; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 7; marcador `environment`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 12; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 19; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 23; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 26; marcador `environment`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 29; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 36; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 43; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 46; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 47; marcador `environment`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 48; marcador `production`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 49; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 58; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 71; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 80; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 82; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 83; marcador `environment`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 90; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 99; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 101; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 102; marcador `environment`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 109; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 112; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 113; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 114; marcador `staging`
+- `beauty-core-backend\docker-compose.staging.yml`; linha 117; marcador `staging`
+- `beauty-core-backend\docker-compose.yml`; linha 7; marcador `environment`
+- `beauty-core-backend\docker-compose.yml`; linha 28; marcador `environment`
+- `beauty-core-backend\docker-compose.yml`; linha 51; marcador `environment`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 60; marcador `staging`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 62; marcador `production`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 70; marcador `staging`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 125; marcador `staging`
+- `beauty-core-backend\scripts\release\create-release-package.ps1`; linha 127; marcador `production`
+- `beauty-core-backend\scripts\release\create-release-package.sh`; linha 34; marcador `staging`
+- `beauty-core-backend\scripts\release\create-release-package.sh`; linha 36; marcador `production`
+- `beauty-core-backend\scripts\release\create-release-package.sh`; linha 41; marcador `staging`
+- `beauty-core-backend\scripts\release\create-release-package.sh`; linha 76; marcador `staging`
+- `beauty-core-backend\scripts\release\create-release-package.sh`; linha 78; marcador `production`
+- `beauty-core-backend\scripts\release\verify-release-package.ps1`; linha 21; marcador `production`
+- `beauty-core-backend\scripts\release\verify-release-package.ps1`; linha 21; marcador `staging`
+
+### Referencias de secrets sem valores
+- `.github\workflows\ci.yml`; linha 50; marcador `secret`
+- `.github\workflows\ci.yml`; linha 51; marcador `secret`
+- `.github\workflows\ci.yml`; linha 52; marcador `secret`
+- `.github\workflows\ci.yml`; linha 53; marcador `secret`
+- `.github\workflows\ci.yml`; linha 54; marcador `secret`
+- `.github\workflows\production.yml`; linha 26; marcador `secret`
+- `.github\workflows\production.yml`; linha 28; marcador `secret`
+- `.github\workflows\production.yml`; linha 28; marcador `secrets\.`
+- `.github\workflows\production.yml`; linha 29; marcador `secret`
+- `.github\workflows\production.yml`; linha 29; marcador `secrets\.`
+- `.github\workflows\production.yml`; linha 30; marcador `secret`
+- `.github\workflows\production.yml`; linha 30; marcador `secrets\.`
+- `.github\workflows\production.yml`; linha 31; marcador `secret`
+- `.github\workflows\production.yml`; linha 31; marcador `secrets\.`
+- `.github\workflows\production.yml`; linha 32; marcador `secret`
+- `.github\workflows\production.yml`; linha 32; marcador `secrets\.`
+- `.github\workflows\production.yml`; linha 33; marcador `secret`
+- `.github\workflows\production.yml`; linha 33; marcador `secrets\.`
+- `.github\workflows\production.yml`; linha 34; marcador `secret`
+- `.github\workflows\staging.yml`; linha 25; marcador `secret`
+- `.github\workflows\staging.yml`; linha 27; marcador `secret`
+- `.github\workflows\staging.yml`; linha 27; marcador `secrets\.`
+- `.github\workflows\staging.yml`; linha 28; marcador `secret`
+- `.github\workflows\staging.yml`; linha 28; marcador `secrets\.`
+- `.github\workflows\staging.yml`; linha 29; marcador `secret`
+- `.github\workflows\staging.yml`; linha 29; marcador `secrets\.`
+- `.github\workflows\staging.yml`; linha 30; marcador `secret`
+- `.github\workflows\staging.yml`; linha 30; marcador `secrets\.`
+- `.github\workflows\staging.yml`; linha 31; marcador `secret`
+- `.github\workflows\staging.yml`; linha 31; marcador `secrets\.`
+- `.github\workflows\staging.yml`; linha 32; marcador `secret`
+- `.github\workflows\staging.yml`; linha 32; marcador `secrets\.`
+- `.github\workflows\staging.yml`; linha 33; marcador `secret`
+
+## Validacoes locais seguras
+
+- git diff --check exit code: 0
+  - `warning: in the working copy of 'beauty-core-backend/[sensitive data omitted]`
+  - `warning: in the working copy of 'beauty-core-backend/src/modules/mensagens-whatsapp/providers/meta-whatsapp-cloud.provider.ts', LF will be replaced by CRLF the next time Git touches it`
+- Node detectado: `C:\Program Files\nodejs\node.exe`; nenhum build/teste executado.
+- npm detectado: `C:\Program Files\nodejs\npm.ps1`; nenhum comando npm executado.
+- Docker detectado: `C:\Program Files\Docker\Docker\resources\bin\docker.exe`; nenhum workflow/container executado.
+
+## Leitura dos gates
+
+- Workflows localizados; a presenca dos arquivos nao comprova execucao remota bem-sucedida.
+- Marcadores de build/qualidade localizados; falta validar execucao e artefatos.
+- Marcadores de migration/banco localizados; falta validar ordem, ambiente e rollback.
+- Marcadores de health/smoke localizados; falta comprovar pos-deploy.
+- Marcadores de rollback/protecao localizados; a politica precisa de validacao operacional.
+- Referencias de secrets encontradas: 33; valores nao foram lidos.
+
+## Operacoes nao executadas
+
+- Workflows GitHub Actions: nao disparados.
+- Build, testes e lint: nao executados.
+- Migrations: nao executadas.
+- Containers e deploy: nao executados.
+- Stage/commit/push/merge/tag/release: nao executados.
+- Segredos e valores de ambiente: nao lidos nem impressos.
+
+## Classificacao final do B03
+
+- `PASS_WITH_ATTENTION` - auditoria estatica de CI/CD concluida; a prontidao de release depende de execucao controlada, validacao de migrations, health, smoke e rollback.
+
+## Integridade
+
+- Este relatorio foi gerado automaticamente pelo script B03.
+- O script nao altera codigo e grava o relatorio na pasta unica do Chat B.

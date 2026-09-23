@@ -1,0 +1,607 @@
+# Beauty Core - Chat B - B112 - Diagnostico chat36-lgpd
+
+- Inicio: 2026-09-14T09:56:13.4240760-03:00
+- Fim: 2026-09-14T09:56:49.8579824-03:00
+- Script: B112-v1
+- Modo: somente leitura; o relatorio e o unico artefato adicional criado.
+- Pasta unica de relatorios do Chat B: `beauty-core-backend\docs\chat-b\`
+
+## Objetivo
+
+- Inventariar os diagnosticos do maior arquivo restante no lint backend.
+- Registrar regras, linhas e contexto curto para a proxima correcao seletiva.
+- Nao alterar o arquivo alvo nem executar Prettier, Jest, build, E2E ou workflow.
+
+## Resultado do ESLint
+
+- ESLint exit code: 1
+- Diagnosticos analisados: 62
+- Erros: 49
+- Avisos: 13
+
+## Regras predominantes
+
+- `@typescript-eslint/no-unsafe-member-access`; ocorrencias 24
+- `@typescript-eslint/no-unsafe-call`; ocorrencias 15
+- `@typescript-eslint/no-unsafe-argument`; ocorrencias 13
+- `@typescript-eslint/no-unsafe-assignment`; ocorrencias 10
+
+## Diagnosticos e contextos
+
+- Linha 77, coluna 31; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `PrismaService`.
+  - Contexto linhas 74-80:
+    - 74:       },
+    - 75:     };
+    - 76: 
+    - 77:     service = new LgpdService(prisma);
+    - 78:   });
+    - 79: 
+    - 80:   afterEach(() => {
+- Linha 106, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 103-109:
+    - 103:   }
+    - 104: 
+    - 105:   it('deve exportar dados LGPD removendo segredos tecnicos e registrando auditoria', async () => {
+    - 106:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 107: 
+    - 108:     const result = await service.exportarCliente(clienteId, request);
+    - 109: 
+- Linha 106, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 103-109:
+    - 103:   }
+    - 104: 
+    - 105:   it('deve exportar dados LGPD removendo segredos tecnicos e registrando auditoria', async () => {
+    - 106:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 107: 
+    - 108:     const result = await service.exportarCliente(clienteId, request);
+    - 109: 
+- Linha 108, coluna 61; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `LgpdRequestContext`.
+  - Contexto linhas 105-111:
+    - 105:   it('deve exportar dados LGPD removendo segredos tecnicos e registrando auditoria', async () => {
+    - 106:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 107: 
+    - 108:     const result = await service.exportarCliente(clienteId, request);
+    - 109: 
+    - 110:     expect(result.clienteId).toBe(clienteId);
+    - 111:     expect(result.empresaId).toBe(empresaId);
+- Linha 128, coluna 19; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .auditoriaSistema on an `any` value.
+  - Contexto linhas 125-131:
+    - 125:     expect(result.arquivos[0].refreshTokenHash).toBeUndefined();
+    - 126:     expect(result.sessoes[0].refreshTokenHash).toBeUndefined();
+    - 127: 
+    - 128:     expect(prisma.auditoriaSistema.create).toHaveBeenCalledWith(
+    - 129:       expect.objectContaining({
+    - 130:         data: expect.objectContaining({
+    - 131:           empresaId,
+- Linha 130, coluna 9; regra `@typescript-eslint/no-unsafe-assignment`; severidade error; mensagem: Unsafe assignment of an `any` value.
+  - Contexto linhas 127-133:
+    - 127: 
+    - 128:     expect(prisma.auditoriaSistema.create).toHaveBeenCalledWith(
+    - 129:       expect.objectContaining({
+    - 130:         data: expect.objectContaining({
+    - 131:           empresaId,
+    - 132:           usuarioId: 'usuario-1',
+    - 133:           clienteId,
+- Linha 144, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 141-147:
+    - 141:   });
+    - 142: 
+    - 143:   it('deve exportar como SUPER_ADMIN buscando cliente apenas por id', async () => {
+    - 144:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 145: 
+    - 146:     await service.exportarCliente(clienteId, {
+    - 147:       ...request,
+- Linha 144, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 141-147:
+    - 141:   });
+    - 142: 
+    - 143:   it('deve exportar como SUPER_ADMIN buscando cliente apenas por id', async () => {
+    - 144:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 145: 
+    - 146:     await service.exportarCliente(clienteId, {
+    - 147:       ...request,
+- Linha 146, coluna 46; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `LgpdRequestContext`.
+  - Contexto linhas 143-149:
+    - 143:   it('deve exportar como SUPER_ADMIN buscando cliente apenas por id', async () => {
+    - 144:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 145: 
+    - 146:     await service.exportarCliente(clienteId, {
+    - 147:       ...request,
+    - 148:       user: { id: 'super-1', role: 'SUPER_ADMIN', empresaId: null },
+    - 149:       headers: { 'user-agent': 'jest-super' },
+- Linha 154, coluna 19; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 151-157:
+    - 151:       originalUrl: undefined,
+    - 152:     });
+    - 153: 
+    - 154:     expect(prisma.cliente.findFirst).toHaveBeenCalledWith({
+    - 155:       where: { id: clienteId },
+    - 156:     });
+    - 157:   });
+- Linha 160, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 157-163:
+    - 157:   });
+    - 158: 
+    - 159:   it('deve usar fallback de findMany sem orderBy quando delegate falhar', async () => {
+    - 160:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 161:     prisma.agendamento.findMany
+    - 162:       .mockRejectedValueOnce(new Error('orderBy invalido'))
+    - 163:       .mockResolvedValueOnce([{ id: 'agendamento-fallback' }]);
+- Linha 160, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 157-163:
+    - 157:   });
+    - 158: 
+    - 159:   it('deve usar fallback de findMany sem orderBy quando delegate falhar', async () => {
+    - 160:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 161:     prisma.agendamento.findMany
+    - 162:       .mockRejectedValueOnce(new Error('orderBy invalido'))
+    - 163:       .mockResolvedValueOnce([{ id: 'agendamento-fallback' }]);
+- Linha 161, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 158-164:
+    - 158: 
+    - 159:   it('deve usar fallback de findMany sem orderBy quando delegate falhar', async () => {
+    - 160:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 161:     prisma.agendamento.findMany
+    - 162:       .mockRejectedValueOnce(new Error('orderBy invalido'))
+    - 163:       .mockResolvedValueOnce([{ id: 'agendamento-fallback' }]);
+    - 164: 
+- Linha 161, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 158-164:
+    - 158: 
+    - 159:   it('deve usar fallback de findMany sem orderBy quando delegate falhar', async () => {
+    - 160:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 161:     prisma.agendamento.findMany
+    - 162:       .mockRejectedValueOnce(new Error('orderBy invalido'))
+    - 163:       .mockResolvedValueOnce([{ id: 'agendamento-fallback' }]);
+    - 164: 
+- Linha 161, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .agendamento on an `any` value.
+  - Contexto linhas 158-164:
+    - 158: 
+    - 159:   it('deve usar fallback de findMany sem orderBy quando delegate falhar', async () => {
+    - 160:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 161:     prisma.agendamento.findMany
+    - 162:       .mockRejectedValueOnce(new Error('orderBy invalido'))
+    - 163:       .mockResolvedValueOnce([{ id: 'agendamento-fallback' }]);
+    - 164: 
+- Linha 163, coluna 8; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .mockResolvedValueOnce on an `any` value.
+  - Contexto linhas 160-166:
+    - 160:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 161:     prisma.agendamento.findMany
+    - 162:       .mockRejectedValueOnce(new Error('orderBy invalido'))
+    - 163:       .mockResolvedValueOnce([{ id: 'agendamento-fallback' }]);
+    - 164: 
+    - 165:     const result = await service.exportarCliente(clienteId, request);
+    - 166: 
+- Linha 165, coluna 61; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `LgpdRequestContext`.
+  - Contexto linhas 162-168:
+    - 162:       .mockRejectedValueOnce(new Error('orderBy invalido'))
+    - 163:       .mockResolvedValueOnce([{ id: 'agendamento-fallback' }]);
+    - 164: 
+    - 165:     const result = await service.exportarCliente(clienteId, request);
+    - 166: 
+    - 167:     expect(result.agendamentos).toEqual([{ id: 'agendamento-fallback' }]);
+    - 168:     expect(prisma.agendamento.findMany).toHaveBeenCalledTimes(2);
+- Linha 168, coluna 19; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .agendamento on an `any` value.
+  - Contexto linhas 165-171:
+    - 165:     const result = await service.exportarCliente(clienteId, request);
+    - 166: 
+    - 167:     expect(result.agendamentos).toEqual([{ id: 'agendamento-fallback' }]);
+    - 168:     expect(prisma.agendamento.findMany).toHaveBeenCalledTimes(2);
+    - 169:   });
+    - 170: 
+    - 171:   it('deve retornar arrays vazios quando delegates opcionais nao existirem ou falharem', async () => {
+- Linha 172, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 169-175:
+    - 169:   });
+    - 170: 
+    - 171:   it('deve retornar arrays vazios quando delegates opcionais nao existirem ou falharem', async () => {
+    - 172:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 173:     delete prisma.notificacao;
+    - 174:     prisma.mensagemWhatsApp.findMany.mockRejectedValue(
+    - 175:       new Error('indisponivel'),
+- Linha 172, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 169-175:
+    - 169:   });
+    - 170: 
+    - 171:   it('deve retornar arrays vazios quando delegates opcionais nao existirem ou falharem', async () => {
+    - 172:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 173:     delete prisma.notificacao;
+    - 174:     prisma.mensagemWhatsApp.findMany.mockRejectedValue(
+    - 175:       new Error('indisponivel'),
+- Linha 173, coluna 19; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .notificacao on an `any` value.
+  - Contexto linhas 170-176:
+    - 170: 
+    - 171:   it('deve retornar arrays vazios quando delegates opcionais nao existirem ou falharem', async () => {
+    - 172:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 173:     delete prisma.notificacao;
+    - 174:     prisma.mensagemWhatsApp.findMany.mockRejectedValue(
+    - 175:       new Error('indisponivel'),
+    - 176:     );
+- Linha 174, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 171-177:
+    - 171:   it('deve retornar arrays vazios quando delegates opcionais nao existirem ou falharem', async () => {
+    - 172:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 173:     delete prisma.notificacao;
+    - 174:     prisma.mensagemWhatsApp.findMany.mockRejectedValue(
+    - 175:       new Error('indisponivel'),
+    - 176:     );
+    - 177: 
+- Linha 174, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .mensagemWhatsApp on an `any` value.
+  - Contexto linhas 171-177:
+    - 171:   it('deve retornar arrays vazios quando delegates opcionais nao existirem ou falharem', async () => {
+    - 172:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 173:     delete prisma.notificacao;
+    - 174:     prisma.mensagemWhatsApp.findMany.mockRejectedValue(
+    - 175:       new Error('indisponivel'),
+    - 176:     );
+    - 177: 
+- Linha 178, coluna 61; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `LgpdRequestContext`.
+  - Contexto linhas 175-181:
+    - 175:       new Error('indisponivel'),
+    - 176:     );
+    - 177: 
+    - 178:     const result = await service.exportarCliente(clienteId, request);
+    - 179: 
+    - 180:     expect(result.notificacoes).toEqual([]);
+    - 181:     expect(result.mensagensWhatsApp).toEqual([]);
+- Linha 185, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 182-188:
+    - 182:   });
+    - 183: 
+    - 184:   it('deve anonimizar dados pessoais diretos preservando integridade operacional', async () => {
+    - 185:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 186:     prisma.cliente.update.mockResolvedValue({
+    - 187:       id: clienteId,
+    - 188:       empresaId,
+- Linha 185, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 182-188:
+    - 182:   });
+    - 183: 
+    - 184:   it('deve anonimizar dados pessoais diretos preservando integridade operacional', async () => {
+    - 185:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 186:     prisma.cliente.update.mockResolvedValue({
+    - 187:       id: clienteId,
+    - 188:       empresaId,
+- Linha 186, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 183-189:
+    - 183: 
+    - 184:   it('deve anonimizar dados pessoais diretos preservando integridade operacional', async () => {
+    - 185:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 186:     prisma.cliente.update.mockResolvedValue({
+    - 187:       id: clienteId,
+    - 188:       empresaId,
+    - 189:       nome: 'Cliente anonimizado cliente100123',
+- Linha 186, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 183-189:
+    - 183: 
+    - 184:   it('deve anonimizar dados pessoais diretos preservando integridade operacional', async () => {
+    - 185:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 186:     prisma.cliente.update.mockResolvedValue({
+    - 187:       id: clienteId,
+    - 188:       empresaId,
+    - 189:       nome: 'Cliente anonimizado cliente100123',
+- Linha 198, coluna 63; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `LgpdRequestContext`.
+  - Contexto linhas 195-201:
+    - 195:       observacoes: 'ANONIMIZADO',
+    - 196:     });
+    - 197: 
+    - 198:     const result = await service.anonimizarCliente(clienteId, request);
+    - 199: 
+    - 200:     expect(result.success).toBe(true);
+    - 201:     expect(result.camposAnonimizados).toEqual(
+- Linha 212, coluna 19; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 209-215:
+    - 209:         'observacoes',
+    - 210:       ]),
+    - 211:     );
+    - 212:     expect(prisma.cliente.update).toHaveBeenCalledWith({
+    - 213:       where: { id: clienteId },
+    - 214:       data: expect.objectContaining({
+    - 215:         nome: expect.stringContaining('Cliente anonimizado'),
+- Linha 214, coluna 7; regra `@typescript-eslint/no-unsafe-assignment`; severidade error; mensagem: Unsafe assignment of an `any` value.
+  - Contexto linhas 211-217:
+    - 211:     );
+    - 212:     expect(prisma.cliente.update).toHaveBeenCalledWith({
+    - 213:       where: { id: clienteId },
+    - 214:       data: expect.objectContaining({
+    - 215:         nome: expect.stringContaining('Cliente anonimizado'),
+    - 216:         telefone: expect.stringContaining('anon-'),
+    - 217:         email: expect.stringContaining('@anonimizado.local'),
+- Linha 215, coluna 9; regra `@typescript-eslint/no-unsafe-assignment`; severidade error; mensagem: Unsafe assignment of an `any` value.
+  - Contexto linhas 212-218:
+    - 212:     expect(prisma.cliente.update).toHaveBeenCalledWith({
+    - 213:       where: { id: clienteId },
+    - 214:       data: expect.objectContaining({
+    - 215:         nome: expect.stringContaining('Cliente anonimizado'),
+    - 216:         telefone: expect.stringContaining('anon-'),
+    - 217:         email: expect.stringContaining('@anonimizado.local'),
+    - 218:         cpf: expect.stringMatching(/^[0-9]{11}$/),
+- Linha 216, coluna 9; regra `@typescript-eslint/no-unsafe-assignment`; severidade error; mensagem: Unsafe assignment of an `any` value.
+  - Contexto linhas 213-219:
+    - 213:       where: { id: clienteId },
+    - 214:       data: expect.objectContaining({
+    - 215:         nome: expect.stringContaining('Cliente anonimizado'),
+    - 216:         telefone: expect.stringContaining('anon-'),
+    - 217:         email: expect.stringContaining('@anonimizado.local'),
+    - 218:         cpf: expect.stringMatching(/^[0-9]{11}$/),
+    - 219:         dataNascimento: new Date('1900-01-01T00:00:00.000Z'),
+- Linha 217, coluna 9; regra `@typescript-eslint/no-unsafe-assignment`; severidade error; mensagem: Unsafe assignment of an `any` value.
+  - Contexto linhas 214-220:
+    - 214:       data: expect.objectContaining({
+    - 215:         nome: expect.stringContaining('Cliente anonimizado'),
+    - 216:         telefone: expect.stringContaining('anon-'),
+    - 217:         email: expect.stringContaining('@anonimizado.local'),
+    - 218:         cpf: expect.stringMatching(/^[0-9]{11}$/),
+    - 219:         dataNascimento: new Date('1900-01-01T00:00:00.000Z'),
+    - 220:         endereco: 'ANONIMIZADO',
+- Linha 218, coluna 9; regra `@typescript-eslint/no-unsafe-assignment`; severidade error; mensagem: Unsafe assignment of an `any` value.
+  - Contexto linhas 215-221:
+    - 215:         nome: expect.stringContaining('Cliente anonimizado'),
+    - 216:         telefone: expect.stringContaining('anon-'),
+    - 217:         email: expect.stringContaining('@anonimizado.local'),
+    - 218:         cpf: expect.stringMatching(/^[0-9]{11}$/),
+    - 219:         dataNascimento: new Date('1900-01-01T00:00:00.000Z'),
+    - 220:         endereco: 'ANONIMIZADO',
+    - 221:         observacoes: 'ANONIMIZADO',
+- Linha 224, coluna 19; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .codigoAcessoCliente on an `any` value.
+  - Contexto linhas 221-227:
+    - 221:         observacoes: 'ANONIMIZADO',
+    - 222:       }),
+    - 223:     });
+    - 224:     expect(prisma.codigoAcessoCliente.updateMany).toHaveBeenCalledWith({
+    - 225:       where: { clienteId, empresaId },
+    - 226:       data: expect.objectContaining({
+    - 227:         codigo: 'HASHED',
+- Linha 226, coluna 7; regra `@typescript-eslint/no-unsafe-assignment`; severidade error; mensagem: Unsafe assignment of an `any` value.
+  - Contexto linhas 223-229:
+    - 223:     });
+    - 224:     expect(prisma.codigoAcessoCliente.updateMany).toHaveBeenCalledWith({
+    - 225:       where: { clienteId, empresaId },
+    - 226:       data: expect.objectContaining({
+    - 227:         codigo: 'HASHED',
+    - 228:         codigoHash: null,
+    - 229:         usado: true,
+- Linha 232, coluna 19; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .auditoriaSistema on an `any` value.
+  - Contexto linhas 229-235:
+    - 229:         usado: true,
+    - 230:       }),
+    - 231:     });
+    - 232:     expect(prisma.auditoriaSistema.create).toHaveBeenCalledWith(
+    - 233:       expect.objectContaining({
+    - 234:         data: expect.objectContaining({
+    - 235:           acao: 'LGPD_ANONIMIZACAO',
+- Linha 234, coluna 9; regra `@typescript-eslint/no-unsafe-assignment`; severidade error; mensagem: Unsafe assignment of an `any` value.
+  - Contexto linhas 231-237:
+    - 231:     });
+    - 232:     expect(prisma.auditoriaSistema.create).toHaveBeenCalledWith(
+    - 233:       expect.objectContaining({
+    - 234:         data: expect.objectContaining({
+    - 235:           acao: 'LGPD_ANONIMIZACAO',
+    - 236:           dadosAntes: expect.objectContaining({
+    - 237:             nome: '[REDACTED]',
+- Linha 236, coluna 11; regra `@typescript-eslint/no-unsafe-assignment`; severidade error; mensagem: Unsafe assignment of an `any` value.
+  - Contexto linhas 233-239:
+    - 233:       expect.objectContaining({
+    - 234:         data: expect.objectContaining({
+    - 235:           acao: 'LGPD_ANONIMIZACAO',
+    - 236:           dadosAntes: expect.objectContaining({
+    - 237:             nome: '[REDACTED]',
+    - 238:             cpf: '[REDACTED]',
+    - 239:             dataNascimento: '[REDACTED]',
+- Linha 241, coluna 11; regra `@typescript-eslint/no-unsafe-assignment`; severidade error; mensagem: Unsafe assignment of an `any` value.
+  - Contexto linhas 238-244:
+    - 238:             cpf: '[REDACTED]',
+    - 239:             dataNascimento: '[REDACTED]',
+    - 240:           }),
+    - 241:           dadosDepois: expect.objectContaining({
+    - 242:             email: '[REDACTED]',
+    - 243:             endereco: '[REDACTED]',
+    - 244:           }),
+- Linha 251, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 248-254:
+    - 248:   });
+    - 249: 
+    - 250:   it('deve manter operacao LGPD mesmo se auditoria falhar', async () => {
+    - 251:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 252:     prisma.cliente.update.mockResolvedValue(
+    - 253:       mockCliente({ nome: 'Cliente anonimizado' }),
+    - 254:     );
+- Linha 251, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 248-254:
+    - 248:   });
+    - 249: 
+    - 250:   it('deve manter operacao LGPD mesmo se auditoria falhar', async () => {
+    - 251:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 252:     prisma.cliente.update.mockResolvedValue(
+    - 253:       mockCliente({ nome: 'Cliente anonimizado' }),
+    - 254:     );
+- Linha 252, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 249-255:
+    - 249: 
+    - 250:   it('deve manter operacao LGPD mesmo se auditoria falhar', async () => {
+    - 251:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 252:     prisma.cliente.update.mockResolvedValue(
+    - 253:       mockCliente({ nome: 'Cliente anonimizado' }),
+    - 254:     );
+    - 255:     prisma.auditoriaSistema.create.mockRejectedValue(
+- Linha 252, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 249-255:
+    - 249: 
+    - 250:   it('deve manter operacao LGPD mesmo se auditoria falhar', async () => {
+    - 251:     prisma.cliente.findFirst.mockResolvedValue(mockCliente());
+    - 252:     prisma.cliente.update.mockResolvedValue(
+    - 253:       mockCliente({ nome: 'Cliente anonimizado' }),
+    - 254:     );
+    - 255:     prisma.auditoriaSistema.create.mockRejectedValue(
+- Linha 255, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 252-258:
+    - 252:     prisma.cliente.update.mockResolvedValue(
+    - 253:       mockCliente({ nome: 'Cliente anonimizado' }),
+    - 254:     );
+    - 255:     prisma.auditoriaSistema.create.mockRejectedValue(
+    - 256:       new Error('auditoria indisponivel'),
+    - 257:     );
+    - 258: 
+- Linha 255, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .auditoriaSistema on an `any` value.
+  - Contexto linhas 252-258:
+    - 252:     prisma.cliente.update.mockResolvedValue(
+    - 253:       mockCliente({ nome: 'Cliente anonimizado' }),
+    - 254:     );
+    - 255:     prisma.auditoriaSistema.create.mockRejectedValue(
+    - 256:       new Error('auditoria indisponivel'),
+    - 257:     );
+    - 258: 
+- Linha 260, coluna 44; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `LgpdRequestContext`.
+  - Contexto linhas 257-263:
+    - 257:     );
+    - 258: 
+    - 259:     await expect(
+    - 260:       service.anonimizarCliente(clienteId, request),
+    - 261:     ).resolves.toEqual(expect.objectContaining({ success: true, clienteId }));
+    - 262:   });
+    - 263: 
+- Linha 265, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 262-268:
+    - 262:   });
+    - 263: 
+    - 264:   it('deve lancar NotFoundException quando cliente nao existir', async () => {
+    - 265:     prisma.cliente.findFirst.mockResolvedValue(null);
+    - 266: 
+    - 267:     await expect(
+    - 268:       service.exportarCliente(clienteId, request),
+- Linha 265, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 262-268:
+    - 262:   });
+    - 263: 
+    - 264:   it('deve lancar NotFoundException quando cliente nao existir', async () => {
+    - 265:     prisma.cliente.findFirst.mockResolvedValue(null);
+    - 266: 
+    - 267:     await expect(
+    - 268:       service.exportarCliente(clienteId, request),
+- Linha 268, coluna 42; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `LgpdRequestContext`.
+  - Contexto linhas 265-271:
+    - 265:     prisma.cliente.findFirst.mockResolvedValue(null);
+    - 266: 
+    - 267:     await expect(
+    - 268:       service.exportarCliente(clienteId, request),
+    - 269:     ).rejects.toBeInstanceOf(NotFoundException);
+    - 270:   });
+    - 271: 
+- Linha 273, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 270-276:
+    - 270:   });
+    - 271: 
+    - 272:   it('deve lancar ForbiddenException quando cliente nao pertencer a empresa do usuario', async () => {
+    - 273:     prisma.cliente.findFirst.mockResolvedValue(
+    - 274:       mockCliente({ empresaId: 'empresa-errada' }),
+    - 275:     );
+    - 276: 
+- Linha 273, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 270-276:
+    - 270:   });
+    - 271: 
+    - 272:   it('deve lancar ForbiddenException quando cliente nao pertencer a empresa do usuario', async () => {
+    - 273:     prisma.cliente.findFirst.mockResolvedValue(
+    - 274:       mockCliente({ empresaId: 'empresa-errada' }),
+    - 275:     );
+    - 276: 
+- Linha 278, coluna 42; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `LgpdRequestContext`.
+  - Contexto linhas 275-281:
+    - 275:     );
+    - 276: 
+    - 277:     await expect(
+    - 278:       service.exportarCliente(clienteId, request),
+    - 279:     ).rejects.toBeInstanceOf(ForbiddenException);
+    - 280:   });
+    - 281: 
+- Linha 283, coluna 5; regra `@typescript-eslint/no-unsafe-call`; severidade error; mensagem: Unsafe call of an `any` typed value.
+  - Contexto linhas 280-286:
+    - 280:   });
+    - 281: 
+    - 282:   it('deve lancar ForbiddenException quando nao houver campo anonimizavel', async () => {
+    - 283:     prisma.cliente.findFirst.mockResolvedValue({ id: clienteId, empresaId });
+    - 284: 
+    - 285:     await expect(
+    - 286:       service.anonimizarCliente(clienteId, request),
+- Linha 283, coluna 12; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .cliente on an `any` value.
+  - Contexto linhas 280-286:
+    - 280:   });
+    - 281: 
+    - 282:   it('deve lancar ForbiddenException quando nao houver campo anonimizavel', async () => {
+    - 283:     prisma.cliente.findFirst.mockResolvedValue({ id: clienteId, empresaId });
+    - 284: 
+    - 285:     await expect(
+    - 286:       service.anonimizarCliente(clienteId, request),
+- Linha 286, coluna 44; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `LgpdRequestContext`.
+  - Contexto linhas 283-289:
+    - 283:     prisma.cliente.findFirst.mockResolvedValue({ id: clienteId, empresaId });
+    - 284: 
+    - 285:     await expect(
+    - 286:       service.anonimizarCliente(clienteId, request),
+    - 287:     ).rejects.toBeInstanceOf(ForbiddenException);
+    - 288:   });
+    - 289: 
+- Linha 296, coluna 43; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `LgpdService`.
+  - Contexto linhas 293-299:
+    - 293:       anonimizarCliente: jest.fn().mockResolvedValue({ success: true }),
+    - 294:     };
+    - 295: 
+    - 296:     const controller = new LgpdController(mockService);
+    - 297: 
+    - 298:     await expect(
+    - 299:       controller.exportarCliente(clienteId, request),
+- Linha 299, coluna 45; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `Group15AuthenticatedRequest`.
+  - Contexto linhas 296-302:
+    - 296:     const controller = new LgpdController(mockService);
+    - 297: 
+    - 298:     await expect(
+    - 299:       controller.exportarCliente(clienteId, request),
+    - 300:     ).resolves.toEqual({ clienteId });
+    - 301:     await expect(
+    - 302:       controller.anonimizarCliente(clienteId, request),
+- Linha 302, coluna 47; regra `@typescript-eslint/no-unsafe-argument`; severidade warning; mensagem: Unsafe argument of type `any` assigned to a parameter of type `Group15AuthenticatedRequest`.
+  - Contexto linhas 299-305:
+    - 299:       controller.exportarCliente(clienteId, request),
+    - 300:     ).resolves.toEqual({ clienteId });
+    - 301:     await expect(
+    - 302:       controller.anonimizarCliente(clienteId, request),
+    - 303:     ).resolves.toEqual({ success: true });
+    - 304:     expect(mockService.exportarCliente).toHaveBeenCalledWith(
+    - 305:       clienteId,
+- Linha 304, coluna 24; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .exportarCliente on an `any` value.
+  - Contexto linhas 301-307:
+    - 301:     await expect(
+    - 302:       controller.anonimizarCliente(clienteId, request),
+    - 303:     ).resolves.toEqual({ success: true });
+    - 304:     expect(mockService.exportarCliente).toHaveBeenCalledWith(
+    - 305:       clienteId,
+    - 306:       request,
+    - 307:     );
+- Linha 308, coluna 24; regra `@typescript-eslint/no-unsafe-member-access`; severidade error; mensagem: Unsafe member access .anonimizarCliente on an `any` value.
+  - Contexto linhas 305-311:
+    - 305:       clienteId,
+    - 306:       request,
+    - 307:     );
+    - 308:     expect(mockService.anonimizarCliente).toHaveBeenCalledWith(
+    - 309:       clienteId,
+    - 310:       request,
+    - 311:     );
+
+## Operacoes nao executadas
+
+- Nenhum arquivo foi alterado.
+- Prettier, Jest, build, E2E, migration e workflow nao foram executados.
+- Nenhum stage, commit, push, merge, tag, reset, checkout ou stash foi executado.
+- Nenhum segredo ou valor de ambiente foi lido ou impresso.
+
+## Classificacao final do B112
+
+- `PASS_WITH_ATTENTION` - inventario do arquivo alvo concluido para correcao seletiva.
+
+## Integridade
+
+- Este relatorio foi gerado automaticamente pelo script B112.
+- O script nao altera o projeto.
+
+Status: PASS_WITH_ATTENTION
+Relatorio salvo em: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\docs\chat-b\chat-b112-context-chat36-lgpd-lint-20260914-095613.md

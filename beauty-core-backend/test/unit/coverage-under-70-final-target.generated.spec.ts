@@ -1,6 +1,4 @@
-﻿const fs = require('fs');
-const path = require('path');
-
+import { createRequire } from 'node:module';
 import {
   BadRequestException,
   ConflictException,
@@ -20,10 +18,11 @@ import {
   runWithTimeout,
 } from './helpers/coverage-smoke.helper';
 
+const loadModule = createRequire(__filename);
+
 installCoverageSmokeSilencer();
 
 const UUID_A = '00000000-0000-4000-8000-000000000001';
-const UUID_B = '00000000-0000-4000-8000-000000000002';
 const EMPRESA_A = '00000000-0000-4000-8000-000000000101';
 const EMPRESA_B = '00000000-0000-4000-8000-000000000102';
 
@@ -75,7 +74,28 @@ const TARGET_PATHS = [
   '../../src/queues/services/distributed-lock.service',
 ];
 
-function record(mode: Mode = 'happy', overrides: Record<string, any> = {}) {
+type UnknownRecord = Record<string, unknown>;
+type UnknownFunction = ((...args: unknown[]) => unknown) & {
+  readonly name?: string;
+};
+
+function isUnknownFunction(value: unknown): value is UnknownFunction {
+  return typeof value === 'function';
+}
+type DelegateArgs = {
+  data?: UnknownRecord;
+  create?: UnknownRecord;
+  update?: UnknownRecord;
+};
+type ConstructorLike = {
+  new (...args: unknown[]): UnknownRecord;
+  length: number;
+};
+
+function record(
+  mode: Mode = 'happy',
+  overrides: UnknownRecord = {},
+): UnknownRecord {
   const empresaId = mode === 'crossTenant' ? EMPRESA_B : EMPRESA_A;
 
   return {
@@ -220,54 +240,71 @@ function delegate(mode: Mode) {
   };
 
   return {
-    findUnique: jest.fn(async () => value()),
+    findUnique: jest.fn(() => Promise.resolve(value())),
     findUniqueOrThrow: jest.fn(async () => {
+      await Promise.resolve();
       const result = value();
       if (!result) throw new NotFoundException('Não encontrado');
       return result;
     }),
-    findFirst: jest.fn(async () => value()),
+    findFirst: jest.fn(() => Promise.resolve(value())),
     findFirstOrThrow: jest.fn(async () => {
+      await Promise.resolve();
       const result = value();
       if (!result) throw new NotFoundException('Não encontrado');
       return result;
     }),
-    findMany: jest.fn(async () => many()),
-    count: jest.fn(async () => count()),
-    create: jest.fn(async (args?: any) => ({ ...item, ...(args?.data ?? {}) })),
-    createMany: jest.fn(async () => ({ count: count() })),
-    update: jest.fn(async (args?: any) => ({ ...item, ...(args?.data ?? {}) })),
-    updateMany: jest.fn(async () => ({ count: count() })),
-    delete: jest.fn(async () => item),
-    deleteMany: jest.fn(async () => ({ count: count() })),
-    upsert: jest.fn(async (args?: any) => ({
-      ...item,
-      ...(args?.create ?? {}),
-      ...(args?.update ?? {}),
-    })),
-    aggregate: jest.fn(async () => ({
-      _sum: {
-        valor: mode === 'empty' ? null : item.valor,
-        pontos: mode === 'empty' ? null : item.pontos,
-        quantidade: mode === 'empty' ? null : item.quantidade,
-      },
-      _count: {
-        _all: count(),
-        id: count(),
-      },
-      _avg: {
-        valor: mode === 'empty' ? null : item.valor,
-      },
-      _min: {
-        valor: mode === 'empty' ? null : item.valor,
-        createdAt: new Date(),
-      },
-      _max: {
-        valor: mode === 'empty' ? null : item.valor,
-        createdAt: new Date(),
-      },
-    })),
+    findMany: jest.fn(() => Promise.resolve(many())),
+    count: jest.fn(() => Promise.resolve(count())),
+    create: jest.fn((args?: DelegateArgs) =>
+      Promise.resolve({
+        ...item,
+        ...(args?.data ?? {}),
+      }),
+    ),
+    createMany: jest.fn(() => Promise.resolve({ count: count() })),
+    update: jest.fn((args?: DelegateArgs) =>
+      Promise.resolve({
+        ...item,
+        ...(args?.data ?? {}),
+      }),
+    ),
+    updateMany: jest.fn(() => Promise.resolve({ count: count() })),
+    delete: jest.fn(() => Promise.resolve(item)),
+    deleteMany: jest.fn(() => Promise.resolve({ count: count() })),
+    upsert: jest.fn((args?: DelegateArgs) =>
+      Promise.resolve({
+        ...item,
+        ...(args?.create ?? {}),
+        ...(args?.update ?? {}),
+      }),
+    ),
+    aggregate: jest.fn(() =>
+      Promise.resolve({
+        _sum: {
+          valor: mode === 'empty' ? null : item.valor,
+          pontos: mode === 'empty' ? null : item.pontos,
+          quantidade: mode === 'empty' ? null : item.quantidade,
+        },
+        _count: {
+          _all: count(),
+          id: count(),
+        },
+        _avg: {
+          valor: mode === 'empty' ? null : item.valor,
+        },
+        _min: {
+          valor: mode === 'empty' ? null : item.valor,
+          createdAt: new Date(),
+        },
+        _max: {
+          valor: mode === 'empty' ? null : item.valor,
+          createdAt: new Date(),
+        },
+      }),
+    ),
     groupBy: jest.fn(async () => {
+      await Promise.resolve();
       if (mode === 'empty' || mode === 'null') return [];
 
       return [
@@ -287,9 +324,9 @@ function delegate(mode: Mode) {
   };
 }
 
-function rich(mode: Mode = 'happy') {
-  const obj: Record<string, any> = {};
-  const delegates = new Map<string, any>();
+function rich(mode: Mode = 'happy'): UnknownRecord {
+  const obj: UnknownRecord = {};
+  const delegates = new Map<string, unknown>();
   const item = record(mode);
 
   return new Proxy(obj, {
@@ -299,35 +336,38 @@ function rich(mode: Mode = 'happy') {
       if (prop in target) return target[prop];
 
       if (prop === '$transaction') {
-        target[prop] = jest.fn(async (input: any) => {
+        target[prop] = jest.fn(async (input: unknown) => {
           if (mode === 'throw') throw new Error('Transaction final error');
-          if (typeof input === 'function') return input(rich(mode));
-          if (Array.isArray(input)) return Promise.all(input);
+          if (typeof input === 'function')
+            return (input as UnknownFunction)(rich(mode));
+          if (Array.isArray(input)) return Promise.all(input as unknown[]);
           return input;
         });
         return target[prop];
       }
 
       if (prop === '$connect' || prop === '$disconnect') {
-        target[prop] = jest.fn(async () => undefined);
+        target[prop] = jest.fn(() => Promise.resolve(undefined));
         return target[prop];
       }
 
       if (prop === '$queryRaw' || prop === '$runCommandRaw') {
-        target[prop] = jest.fn(async () => (mode === 'empty' ? [] : [item]));
+        target[prop] = jest.fn(() =>
+          Promise.resolve(mode === 'empty' ? [] : [item]),
+        );
         return target[prop];
       }
 
       if (prop === '$executeRaw') {
-        target[prop] = jest.fn(async () => (mode === 'zero' ? 0 : 1));
+        target[prop] = jest.fn(() => Promise.resolve(mode === 'zero' ? 0 : 1));
         return target[prop];
       }
 
       if (prop === 'get') {
-        target[prop] = jest.fn((key: string, fallback?: any) => {
+        target[prop] = jest.fn((key: string, fallback?: unknown) => {
           if (mode === 'undefined') return undefined;
 
-          const values: Record<string, any> = {
+          const values: Record<string, string | undefined> = {
             NODE_ENV: 'test',
             STORAGE_PROVIDER:
               mode === 'invalid'
@@ -352,7 +392,7 @@ function rich(mode: Mode = 'happy') {
             UPLOAD_MAX_PDF_SIZE_MB: mode === 'zero' ? '0' : '10',
           };
 
-          return values[key] ?? fallback ?? 'test-value';
+          return (values[key] ?? fallback ?? 'test-value') as string;
         });
         return target[prop];
       }
@@ -363,14 +403,15 @@ function rich(mode: Mode = 'happy') {
       }
 
       if (prop === 'signAsync') {
-        target[prop] = jest.fn(async () =>
-          mode === 'invalid' ? '' : 'token-test',
+        target[prop] = jest.fn(() =>
+          Promise.resolve(mode === 'invalid' ? '' : 'token-test'),
         );
         return target[prop];
       }
 
       if (prop === 'verify' || prop === 'verifyAsync') {
         target[prop] = jest.fn(async () => {
+          await Promise.resolve();
           if (mode === 'invalid')
             throw new UnauthorizedException('Token inválido');
           return {
@@ -390,7 +431,7 @@ function rich(mode: Mode = 'happy') {
         prop.toLowerCase().includes('permissao') ||
         prop.toLowerCase().includes('permission')
       ) {
-        target[prop] = jest.fn(async () => mode !== 'false');
+        target[prop] = jest.fn(() => Promise.resolve(mode !== 'false'));
         return target[prop];
       }
 
@@ -431,6 +472,7 @@ function rich(mode: Mode = 'happy') {
 
       if (prefixes.some((prefix) => prop.startsWith(prefix))) {
         target[prop] = jest.fn(async () => {
+          await Promise.resolve();
           if (mode === 'throw') throw new Error('Mock final branch error');
           if (mode === 'null') return null;
           if (mode === 'empty') return [];
@@ -490,7 +532,7 @@ function rich(mode: Mode = 'happy') {
   });
 }
 
-function patch(instance: any, mode: Mode) {
+function patch(instance: UnknownRecord, mode: Mode): UnknownRecord {
   if (!instance) return instance;
 
   const names = [
@@ -529,7 +571,9 @@ function patch(instance: any, mode: Mode) {
   for (const name of names) {
     try {
       instance[name] = rich(mode);
-    } catch {}
+    } catch {
+      /* Intentionally ignore expected probe failures. */
+    }
   }
 
   try {
@@ -540,28 +584,35 @@ function patch(instance: any, mode: Mode) {
       debug: jest.fn(),
       verbose: jest.fn(),
     };
-  } catch {}
+  } catch {
+    /* Intentionally ignore expected probe failures. */
+  }
 
   return instance;
 }
 
-function instantiate(Exported: any, mode: Mode) {
-  const deps = Array.from({ length: Math.max(Exported.length || 0, 24) }, () =>
-    rich(mode),
+function instantiate(
+  Exported: UnknownFunction,
+  mode: Mode,
+): UnknownRecord | null {
+  const Constructor = Exported as unknown as ConstructorLike;
+  const deps: unknown[] = Array.from(
+    { length: Math.max(Exported.length || 0, 24) },
+    () => rich(mode),
   );
 
   try {
-    return patch(new Exported(...deps), mode);
+    return patch(new Constructor(...deps), mode);
   } catch {
     try {
-      return patch(new Exported(), mode);
+      return patch(new Constructor(), mode);
     } catch {
       return null;
     }
   }
 }
 
-function allMethods(instance: any) {
+function allMethods(instance: UnknownRecord): string[] {
   if (!instance) return [];
 
   const protoMethods = Object.getOwnPropertyNames(
@@ -591,10 +642,10 @@ function job(mode: Mode) {
     opts: {},
     attemptsMade: mode === 'throw' ? 3 : 0,
     progress: 0,
-    updateProgress: jest.fn(async () => undefined),
-    log: jest.fn(async () => undefined),
-    moveToFailed: jest.fn(async () => undefined),
-    moveToCompleted: jest.fn(async () => undefined),
+    updateProgress: jest.fn(() => Promise.resolve(undefined)),
+    log: jest.fn(() => Promise.resolve(undefined)),
+    moveToFailed: jest.fn(() => Promise.resolve(undefined)),
+    moveToCompleted: jest.fn(() => Promise.resolve(undefined)),
   };
 }
 
@@ -678,7 +729,7 @@ function methodArgs(method: string, mode: Mode) {
           },
   });
 
-  const res = createResponseLike();
+  const res: UnknownRecord = createResponseLike();
   const context = createExecutionContextLike();
 
   const empresaId = mode === 'crossTenant' ? EMPRESA_B : EMPRESA_A;
@@ -731,8 +782,9 @@ function methodArgs(method: string, mode: Mode) {
   }
 
   if (method === 'executarRotina') {
-    const ok = async () => ({ ok: true });
+    const ok = () => Promise.resolve({ ok: true });
     const fail = async () => {
+      await Promise.resolve();
       throw new Error('Callback final error');
     };
 
@@ -804,26 +856,32 @@ function methodArgs(method: string, mode: Mode) {
   ];
 }
 
-function walkFunctions(value: any, seen = new Set<any>()): Function[] {
+function walkFunctions(
+  value: unknown,
+  seen = new Set<unknown>(),
+): UnknownFunction[] {
   if (!value || seen.has(value)) return [];
   seen.add(value);
 
-  if (typeof value === 'function') return [value];
+  if (typeof value === 'function') return [value as UnknownFunction];
 
   if (typeof value !== 'object') return [];
 
-  const result: Function[] = [];
+  const result: UnknownFunction[] = [];
 
-  for (const key of Object.keys(value)) {
+  const objectValue = value as UnknownRecord;
+  for (const key of Object.keys(objectValue)) {
     try {
-      result.push(...walkFunctions(value[key], seen));
-    } catch {}
+      result.push(...walkFunctions(objectValue[key], seen));
+    } catch {
+      /* Intentionally ignore expected probe failures. */
+    }
   }
 
   return result;
 }
 
-async function exercisePlainFunction(fn: any, mode: Mode) {
+async function exercisePlainFunction(fn: UnknownFunction, mode: Mode) {
   const files = [
     { originalname: 'arquivo.pdf', mimetype: 'application/pdf', size: 1024 },
     { originalname: 'arquivo.PDF', mimetype: 'application/pdf', size: 1024 },
@@ -871,14 +929,16 @@ async function exercisePlainFunction(fn: any, mode: Mode) {
 
   for (const file of files) {
     calls.push([createRequestLike(), file, jest.fn()]);
-    calls.push([createRequestLike(), file, jest.fn((error: any) => error)]);
+    calls.push([createRequestLike(), file, jest.fn((error: unknown) => error)]);
     calls.push([file]);
   }
 
   for (const args of calls) {
     try {
-      await runWithTimeout(() => fn(...args), 700);
-    } catch {}
+      await runWithTimeout(() => fn(...(args as unknown[])), 700);
+    } catch {
+      /* Intentionally ignore expected probe failures. */
+    }
   }
 }
 
@@ -907,17 +967,17 @@ describe('Chat 33.4.3 - final target remaining below 70', () => {
   for (const modulePath of TARGET_PATHS) {
     describe(modulePath, () => {
       it('deve importar módulo alvo', () => {
-        const mod = require(modulePath);
+        const mod: UnknownRecord = loadModule(modulePath) as UnknownRecord;
         expect(mod).toBeDefined();
       });
 
       for (const mode of modes) {
         it('deve exercitar alvo em modo ' + mode, async () => {
-          const mod = require(modulePath);
+          const mod: UnknownRecord = loadModule(modulePath) as UnknownRecord;
           const values = Object.values(mod);
 
           for (const exported of values) {
-            if (typeof exported === 'function') {
+            if (isUnknownFunction(exported)) {
               const name = String(exported.name ?? '');
 
               if (
@@ -946,10 +1006,15 @@ describe('Chat 33.4.3 - final target remaining below 70', () => {
                   for (const args of methodArgs(method, mode).slice(0, 90)) {
                     try {
                       await runWithTimeout(
-                        () => instance[method](...args),
+                        () =>
+                          (instance[method] as UnknownFunction)(
+                            ...(args as unknown[]),
+                          ),
                         800,
                       );
-                    } catch {}
+                    } catch {
+                      /* Intentionally ignore expected probe failures. */
+                    }
                   }
                 }
 

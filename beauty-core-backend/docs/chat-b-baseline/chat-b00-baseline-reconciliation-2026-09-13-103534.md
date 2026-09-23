@@ -1,0 +1,798 @@
+# Beauty Core - Chat B - B00 - Baseline e reconciliacao
+
+- Inicio: 2026-09-13T10:35:34.0892349-03:00
+- Fim: 2026-09-13T10:35:34.1410586-03:00
+- Script: B00-v2
+- Modo: somente leitura; o relatorio e o unico artefato criado.
+
+## Resultado executivo
+
+- Classificacao preliminar: `PASS_WITH_ATTENTION`
+- O baseline foi coletado; pendencias e alteracoes locais permanecem para os blocos seguintes.
+
+## Ambiente
+
+- PowerShell: 5.1.26100.9444
+- Git: C:\Program Files\Git\cmd\git.exe
+- ProjectRoot resolvido: `C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core`
+
+## Git e estado da arvore de trabalho
+
+- Branch atual: `main`
+- HEAD curto: `7da9794`
+- Git status exit code: 0
+- Entradas no status: 31
+- Status por caminho, sem conteudo:
+  - ` M beauty-core-backend/[sensitive data omitted]`
+  - ` M beauty-core-backend/package-lock.json`
+  - ` M beauty-core-backend/package.json`
+  - ` M beauty-core-backend/prisma/schema.prisma`
+  - ` M beauty-core-backend/src/backup/backup.service.ts`
+  - ` M beauty-core-backend/src/modules/arquivos/arquivos.module.ts`
+  - ` M beauty-core-backend/src/modules/arquivos/storage/storage.factory.ts`
+  - ` M beauty-core-backend/src/modules/configuracao-whatsapp/configuracao-whatsapp.service.ts`
+  - ` M beauty-core-backend/src/modules/configuracao-whatsapp/dto/create-configuracao-whatsapp.dto.ts`
+  - ` M beauty-core-backend/src/modules/mensagens-whatsapp/mensagens-whatsapp.service.ts`
+  - ` M beauty-core-backend/src/modules/mensagens-whatsapp/providers/meta-whatsapp-cloud.provider.ts`
+  - ` M beauty-core-backend/test/unit/chat36-backup.coverage.spec.ts`
+  - `?? beauty-core-backend/docs/chat-a-bloco00-baseline-20260911-190953.md`
+  - `?? beauty-core-backend/docs/chat-a-bloco01-reconciliacao-meta-20260911-191539.md`
+  - `?? beauty-core-backend/docs/chat-a-bloco01-reconciliacao-meta-20260911-192225.md`
+  - `?? beauty-core-backend/docs/chat-a-meta/`
+  - `?? beauty-core-backend/docs/chat-a-storage/`
+  - `?? beauty-core-backend/docs/meta-whatsapp/`
+  - `?? beauty-core-backend/prisma/migrations/20260911150000_meta_whatsapp_tenant_connection/`
+  - `?? beauty-core-backend/scripts/backup/backup-external-upload.js`
+  - `?? beauty-core-backend/scripts/backup/backup-external-upload.sh`
+  - `?? beauty-core-backend/scripts/backup/redis-backup.sh`
+  - `?? beauty-core-backend/scripts/backup/redis-restore.sh`
+  - `?? beauty-core-backend/scripts/backup/validate-restore.sh`
+  - `?? beauty-core-backend/scripts/uploads/uploads-backup.sh`
+  - `?? beauty-core-backend/scripts/uploads/uploads-restore.sh`
+  - `?? beauty-core-backend/src/modules/arquivos/storage/providers/s3-storage.service.ts`
+  - `?? beauty-core-backend/test/integration/`
+  - `?? beauty-core-backend/test/unit/backup-external-upload.spec.ts`
+  - `?? beauty-core-backend/test/unit/s3-storage.service.spec.ts`
+  - `?? beauty-core-ui/public/images/portal/states/source/portal-offline.webp`
+
+### Diff stat
+
+- `warning: in the working copy of 'beauty-core-backend/[sensitive data omitted]`
+- `warning: in the working copy of 'beauty-core-backend/src/modules/mensagens-whatsapp/providers/meta-whatsapp-cloud.provider.ts', LF will be replaced by CRLF the next time Git touches it`
+- ` beauty-core-backend/[sensitive data omitted]`
+- ` beauty-core-backend/package-lock.json              | 396 +++++++++++++++++++++`
+- ` beauty-core-backend/package.json                   |   1 +`
+- ` beauty-core-backend/prisma/schema.prisma           |   7 +-`
+- ` beauty-core-backend/src/backup/backup.service.ts   |  34 +-`
+- ` .../src/modules/arquivos/arquivos.module.ts        |   4 +-`
+- ` .../modules/arquivos/storage/storage.factory.ts    |   8 +-`
+- ` .../configuracao-whatsapp.service.ts               |   4 +`
+- ` .../dto/create-configuracao-whatsapp.dto.ts        |  16 +`
+- ` .../mensagens-whatsapp.service.ts                  |   3 +-`
+- ` .../providers/meta-whatsapp-cloud.provider.ts      |   7 +-`
+- ` .../test/unit/chat36-backup.coverage.spec.ts       |   8 +-`
+- ` 12 files changed, 472 insertions(+), 29 deletions(-)`
+
+## Remotes e historico
+
+- Remotes registrados por nome:
+  - `origin`
+
+- Commits recentes (hash, data, assunto):
+  - `7da9794`t2026-09-11T12:30:01-03:00`tchore: publish Beauty Core corrections and validation`
+  - `219dd06`t2026-09-09T16:57:00-03:00`tfix(ci): preserve Meta webhook raw body and update Vitest`
+  - `cce9e47`t2026-09-09T16:14:15-03:00`tfix(ci): remove package json bom and pin frontend js-yaml`
+  - `f76d658`t2026-09-09T15:58:50-03:00`tfix(security): update multer to 2.3.0`
+  - `1e5e575`t2026-09-09T15:47:52-03:00`tfix(chat04): align whatsapp webhook schema`
+  - `9374f86`t2026-09-09T12:45:52-03:00`tchore(chat03): close technical gates and local evidence`
+  - `ba6baa2`t2026-09-06T23:58:36-03:00`tMerge pull request #2 from Salmeida-webdev/chat33-staging-schema-alignment`
+  - `c1ad687`t2026-09-06T19:44:45-07:00`tfix(db): align audit action enum migration`
+
+- Branches locais:
+  - `chat31-storage-privado`
+  - `chat32-bullmq-enterprise`
+  - `chat33-staging-schema-alignment`
+  - `main`
+
+### Arquivos de primeiro nivel
+- `.gitignore`
+- `README.md`
+
+### Workflows CI/CD
+- `.github\workflows\ci.yml`
+- `.github\workflows\codeql.yml`
+- `.github\workflows\docker.yml`
+- `.github\workflows\production.yml`
+- `.github\workflows\security-audit.yml`
+- `.github\workflows\staging.yml`
+
+### Documentacao do backend
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`
+- `beauty-core-backend\docs\adrs\0002-multi-tenant-strategy.md`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`
+- `beauty-core-backend\docs\adrs\0005-backup-dr-strategy.md`
+- `beauty-core-backend\docs\api-admin.md`
+- `beauty-core-backend\docs\api-client.md`
+- `beauty-core-backend\docs\architecture.md`
+- `beauty-core-backend\docs\backend-guide.md`
+- `beauty-core-backend\docs\backup.md`
+- `beauty-core-backend\docs\backup-recovery.md`
+- `beauty-core-backend\docs\backups\main.backup.chat26.txt`
+- `beauty-core-backend\docs\bullmq.md`
+- `beauty-core-backend\docs\business-continuity.md`
+- `beauty-core-backend\docs\capacity-planning.md`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`
+- [sensitive filename omitted]
+- `beauty-core-backend\docs\chat03-block03c-workflow-contract-report.md`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`
+- `beauty-core-backend\docs\chat03-block03f-workflow-env-mapping-report.md`
+- `beauty-core-backend\docs\chat03-block03g-backup-linux.md`
+- `beauty-core-backend\docs\chat03-block03h-backup-linux-validation.md`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`
+- `beauty-core-backend\docs\chat03-block03j-browser-e2e-preflight.md`
+- `beauty-core-backend\docs\chat03-block03k-browser-e2e-report.md`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`
+- `beauty-core-backend\docs\chat03-block04a-backend-lint-diagnosis.md`
+- `beauty-core-backend\docs\chat03-block04ab-services-critical-typed-boundaries-fix.md`
+- `beauty-core-backend\docs\chat03-block04ac-services-critical-residual-lint.md`
+- `beauty-core-backend\docs\chat03-block04ad-services-critical-residual-context.md`
+- `beauty-core-backend\docs\chat03-block04ae-services-critical-dynamic-types-fix.md`
+- `beauty-core-backend\docs\chat03-block04af-services-critical-final-lint.md`
+- `beauty-core-backend\docs\chat03-block04ag-services-critical-final-context.md`
+- `beauty-core-backend\docs\chat03-block04ahd-harness-lint-fix.md`
+- `beauty-core-backend\docs\chat03-block04aj-chat03-state-consolidation.md`
+- `beauty-core-backend\docs\chat03-block04aj-chat03-state-consolidation-v2.md`
+- `beauty-core-backend\docs\chat03-block04ak-chat03-scope-reconciliation.md`
+- `beauty-core-backend\docs\chat03-block04al-linux-backup-runtime-e2e.md`
+- `beauty-core-backend\docs\chat03-block04am-security-lgpd-final-matrix.md`
+- `beauty-core-backend\docs\chat03-block04anb-lgpd-runtime-diagnosis.md`
+- `beauty-core-backend\docs\chat03-block04an-lgpd-runtime-e2e.md`
+- `beauty-core-backend\docs\chat03-block04ao-raw-body-fix.md`
+- `beauty-core-backend\docs\chat03-block04ap-meta-provider-worker-hardening.md`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`
+- `beauty-core-backend\docs\chat03-block04ar-meta-worker-flow-test.md`
+- `beauty-core-backend\docs\chat03-block04as-retention-runtime-proof.md`
+- `beauty-core-backend\docs\chat03-block04at-final-closeout.md`
+- `beauty-core-backend\docs\chat03-block04au-bullmq-retention.md`
+- `beauty-core-backend\docs\chat03-block04av-staging-health-smoke-rollback.md`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`
+- `beauty-core-backend\docs\chat03-block04c-lint-changed-lines-report.md`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`
+- `beauty-core-backend\docs\chat03-block04-final-gate-report.md`
+- `beauty-core-backend\docs\chat03-block04g-lint-changed-lines-report.md`
+- `beauty-core-backend\docs\chat03-block04h-final-gate-report.md`
+- `beauty-core-backend\docs\chat03-block04i-global-lint-diagnosis.md`
+- `beauty-core-backend\docs\chat03-block04j-final-technical-report.md`
+- `beauty-core-backend\docs\chat03-block04k-commit-preflight.md`
+- `beauty-core-backend\docs\chat03-block04l-out-of-scope-audit.md`
+- `beauty-core-backend\docs\chat03-block04m-global-lint-breakdown.md`
+- `beauty-core-backend\docs\chat03-block04n-global-lint-fixability.md`
+- `beauty-core-backend\docs\chat03-block04o-top-lint-context.md`
+- `beauty-core-backend\docs\chat03-block04q-prisma-accessor-inspection.md`
+- `beauty-core-backend\docs\chat03-block04s-analytics-build-errors.md`
+- `beauty-core-backend\docs\chat03-block04t-analytics-build-types-fix.md`
+- `beauty-core-backend\docs\chat03-block04u-analytics-remaining-lint.md`
+- `beauty-core-backend\docs\chat03-block04v-analytics-remaining-lint-fix.md`
+- `beauty-core-backend\docs\chat03-block04w-financeiro-lint-context.md`
+- `beauty-core-backend\docs\chat03-block04x-financeiro-lint-types-fix.md`
+- `beauty-core-backend\docs\chat03-block04y-services-critical-lint-context.md`
+- `beauty-core-backend\docs\chat03-block04z-services-critical-require-await-fix.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO02_RECONCILIACAO_261_CAMINHOS_20260909-135948.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO05_PREFLIGHT_SINCRONIZACAO_20260909-143339.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO05_PREFLIGHT_SINCRONIZACAO_20260909-143527.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO06_TRIAGEM_SEGREDOS_COMMIT_20260909-144044.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO07_REVISAO_ESCOPO_CI_20260909-144442.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO09_DIAGNOSTICO_CI_PRISMA_20260909-153326.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO10_VALIDACAO_CANDIDATOS_PRISMA_20260909-153700.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO100_CONTEXTO_LINT_PRODUCAO_GRUPO16_20260910-195716.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO101_CORRECAO_LINT_PRODUCAO_GRUPO16_20260910-200217.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO104_CORRECAO_LINT_PRODUCAO_GRUPO16_20260910-201739.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO105_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO16_20260911-111302.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO106_CORRECAO_LINT_PRODUCAO_GRUPO17_20260911-112112.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO107_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO17_20260911-112935.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO108_VALIDACAO_FINAL_INTEGRADA_20260911-115913.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO108_VALIDACAO_FINAL_INTEGRADA_20260911-120814.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO109_AUDIT_FINAL_ISOLADO_20260911-121416.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO109_AUDIT_FINAL_ISOLADO_20260911-121639.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO11_CORRECAO_PRISMA_PUSH_20260909-154755.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO111_DIAGNOSTICO_WHITESPACE_STAGED_20260911-122655.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO112_CORRECAO_WHITESPACE_STAGED_20260911-122853.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO12_DIAGNOSTICO_MULTER_20260909-155402.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO13_CORRECAO_MULTER_PUSH_20260909-155854.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO14_DIAGNOSTICO_LINT_GLOBAL_LEGADO_20260909-160903.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO15_CORRECAO_BOM_JSYAML_PUSH_20260909-161419.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO16_DIAGNOSTICO_CI_POS_CORRECOES_20260909-162801.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-163319.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-163601.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-163757.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-164834.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-165000.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO18_DIAGNOSTICO_LINT_GRUPO01_20260909-171254.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO19_CORRECAO_LINT_GRUPO01_20260909-171621.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO20_VALIDACAO_TIPOS_LINT_GRUPO01_20260909-173042.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO21_FORMATACAO_LINT_GRUPO01_20260909-173456.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO22_CORRECAO_RESIDUAL_LINT_GRUPO01_20260909-175101.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO23_VALIDACAO_LINT_GRUPO01_20260909-175337.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO24_CORRECAO_JWTSIGNOPTIONS_GRUPO01_20260909-175705.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO25_DIAGNOSTICO_LINT_GRUPO02_20260909-180327.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO25_DIAGNOSTICO_LINT_GRUPO02_20260909-180607.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO25_DIAGNOSTICO_LINT_GRUPO02_20260909-180823.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO25_DIAGNOSTICO_LINT_GRUPO02_20260909-181014.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO26_DIAGNOSTICO_LINT_GERADOS_GRUPO03_20260909-181759.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO27_DIAGNOSTICO_LINT_TESTES_GRUPO04_20260909-182011.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO28_DIAGNOSTICO_LINT_GLOBAL_RESIDUAL_20260909-182401.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO28_DIAGNOSTICO_LINT_GLOBAL_RESIDUAL_20260909-182810.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO29_RECONCILIACAO_LINT_PRODUCAO_20260909-183221.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO30_CONTEXTO_LINT_PRODUCAO_20260909-183737.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO32_CORRECAO_BUILD_TIPADA_20260909-192226.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO32_CORRECAO_BUILD_TIPADA_20260909-192733.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO32_VALIDACAO_TIPADA_PRODUCAO_20260909-191642.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_LOTES_20260909-200347.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-193014.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-193309.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-193502.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-193638.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-194202.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-194521.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-195409.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO34_DIAGNOSTICO_LINT_PRODUCAO_20260909-203159.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO34_DIAGNOSTICO_LINT_PRODUCAO_20260909-203931.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO34_DIAGNOSTICO_LINT_PRODUCAO_20260909-204645.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO34_DIAGNOSTICO_LINT_PRODUCAO_20260909-205430.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO36_CORRECAO_LINT_PRODUCAO_GRUPO03_20260909-210519.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO37_CORRECAO_RESIDUAL_LINT_GRUPO03_20260909-211137.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO38_DIAGNOSTICO_RESIDUAL_GRUPO03_20260909-211636.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO43_CORRECAO_RESIDUAL_LINT_GRUPO03_20260909-220747.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO44_CORRECAO_CONTRATOS_LINT_GRUPO03_20260909-221517.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO45_CORRECAO_CONTRATO_AUDITORIA_20260909-222544.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO46_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO03_20260910-095812.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO47_CONTEXTO_LINT_PRODUCAO_GRUPO04_20260910-100942.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO48_CORRECAO_FINAL_GRUPO04_20260910-102704.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO48_CORRECAO_LINT_PRODUCAO_GRUPO04_20260910-101923.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO48_CORRECAO_POS_GRUPO04_20260910-102333.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO49_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO04_20260910-103444.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO50_CONTEXTO_LINT_PRODUCAO_GRUPO05_20260910-103743.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO51_CORRECAO_LINT_PRODUCAO_GRUPO05_20260910-104257.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO52_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO05_20260910-105413.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO53_CONTEXTO_LINT_PRODUCAO_GRUPO06_20260910-110359.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO54_CORRECAO_LINT_PRODUCAO_GRUPO06_20260910-112135.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO54_CORRECAO_LINT_PRODUCAO_GRUPO06_20260910-112905.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO55_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO06_20260910-114349.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO56_CONTEXTO_LINT_PRODUCAO_GRUPO07_20260910-114656.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO57_CORRECAO_LINT_PRODUCAO_GRUPO07_20260910-115400.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO58_CORRECAO_AUDITREQUEST_GRUPO07_20260910-115734.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO59_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO07_20260910-120525.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO60_CONTEXTO_LINT_PRODUCAO_GRUPO08_20260910-122901.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO61_CORRECAO_LINT_PRODUCAO_GRUPO08_20260910-130253.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO61_CORRECAO_LINT_PRODUCAO_GRUPO08_20260910-130902.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO62_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO08_20260910-131814.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO63_CONTEXTO_LINT_PRODUCAO_GRUPO09_20260910-145245.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO65_CORRECAO_CONTRATO_VALIDAR_CLIENTE_GRUPO09_20260910-151730.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO65_CORRECAO_CONTRATO_VALIDAR_CLIENTE_GRUPO09_20260910-151952.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO65_CORRECAO_CONTRATO_VALIDAR_CLIENTE_GRUPO09_20260910-152229.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO66_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO09_20260910-153531.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO66_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO09_20260910-154151.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO66_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO09_20260910-154905.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO67_CONTEXTO_LINT_PRODUCAO_GRUPO10_20260910-155458.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO68_CORRECAO_LINT_PRODUCAO_GRUPO10_20260910-160323.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO69_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO10_20260910-161106.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO70_CONTEXTO_LINT_PRODUCAO_GRUPO11_20260910-162343.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO71_CORRECAO_LINT_PRODUCAO_GRUPO11_V2_20260910-163531.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO71_CORRECAO_LINT_PRODUCAO_GRUPO11_V3_20260910-163905.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO71_CORRECAO_LINT_PRODUCAO_GRUPO11_V3_20260910-164224.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO72_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO11_20260910-165230.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO72_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO11_20260910-165901.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO73_CONTEXTO_LINT_PRODUCAO_GRUPO12_20260910-173147.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO74_CORRECAO_LINT_PRODUCAO_GRUPO12_20260910-173819.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO76_CORRECAO_LINT_PRODUCAO_GRUPO12_V3_20260910-174521.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO77_CORRECAO_LINT_PRODUCAO_GRUPO12_V4_20260910-175018.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO79_CORRECAO_LINT_PRODUCAO_GRUPO12_V6_20260910-180644.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO80_CORRECAO_LINT_PRODUCAO_GRUPO12_V7_20260910-180956.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO81_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO12_20260910-182027.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO82_CONTEXTO_LINT_PRODUCAO_GRUPO13_20260910-182540.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO83_CORRECAO_LINT_PRODUCAO_GRUPO13_20260910-183257.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO84_CORRECAO_LINT_PRODUCAO_GRUPO13_20260910-183859.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO85_CORRECAO_LINT_PRODUCAO_GRUPO13_20260910-184338.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO86_CORRECAO_LINT_PRODUCAO_GRUPO13_20260910-185138.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO87_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO13_20260910-190150.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO88_CONTEXTO_LINT_PRODUCAO_GRUPO14_20260910-190511.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO90_CORRECAO_LINT_PRODUCAO_GRUPO14_20260910-191509.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO92_CORRECAO_LINT_PRODUCAO_GRUPO14_20260910-192656.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO93_CORRECAO_LINT_PRODUCAO_GRUPO14_20260910-193007.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO94_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO14_20260910-193624.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO95_CONTEXTO_LINT_PRODUCAO_GRUPO15_20260910-193849.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO96_CORRECAO_LINT_PRODUCAO_GRUPO15_20260910-194219.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO97_CORRECAO_LINT_PRODUCAO_GRUPO15_20260910-194502.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO98_CORRECAO_LINT_PRODUCAO_GRUPO15_20260910-194716.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO99_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO15_20260910-195312.md`
+- `beauty-core-backend\docs\chat36-backup-lgpd-dr-report.md`
+- `beauty-core-backend\docs\chat37-ci-cd-report.md`
+- `beauty-core-backend\docs\chat38-documentation-report.md`
+- `beauty-core-backend\docs\chat39-final-audit-homologation-report.md`
+- `beauty-core-backend\docs\chat40-premium-governance-report.md`
+- `beauty-core-backend\docs\chat41-architecture-audit.md`
+- `beauty-core-backend\docs\chat41-backup-lgpd-dr-audit.md`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`
+- `beauty-core-backend\docs\chat41-docker-cicd-deploy-audit.md`
+- `beauty-core-backend\docs\chat41-final-consolidation.md`
+- `beauty-core-backend\docs\chat41-inventory-report.md`
+- `beauty-core-backend\docs\chat41-multiempresa-audit.md`
+- `beauty-core-backend\docs\chat41-observability-audit.md`
+- `beauty-core-backend\docs\chat41-premium-certification-final-report.md`
+- `beauty-core-backend\docs\chat41-scheduler-audit.md`
+- `beauty-core-backend\docs\chat41-security-audit.md`
+- `beauty-core-backend\docs\chat41-tests-quality-audit.md`
+- `beauty-core-backend\docs\chat43-operational-closure-report.md`
+- `beauty-core-backend\docs\chat-a-bloco00-baseline-20260911-190953.md`
+- `beauty-core-backend\docs\chat-a-bloco01-reconciliacao-meta-20260911-191539.md`
+- `beauty-core-backend\docs\chat-a-bloco01-reconciliacao-meta-20260911-192225.md`
+- `beauty-core-backend\docs\chat-a-meta\chat-a-bloco01b-auditoria-semantica-20260911-192820.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02a-auditoria-storage-20260911-193423.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02b-preflight-s3-20260911-193838.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02c-freeze-storage-contract-20260911-194353.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02d-correcao-build-20260912-104719.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02d-implementacao-s3-20260912-104315.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02e-testes-s3-20260912-105147.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02f-auditoria-integracao-s3-20260912-105720.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02g-configuracao-r2-integracao-20260912-112141.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02g-correcao-jest-r2-20260912-113548.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02g-correcao-jest-r2-20260912-113828.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02g-correcao-jest-r2-20260912-114057.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02g-correcao-jest-r2-20260912-114257.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02h1-preflight-db-test-20260912-115343.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02h2-configurar-db-test-20260912-115726.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02h2-configurar-db-test-20260912-115918.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02h-http-r2-20260912-115016.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02h-http-r2-20260912-120054.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02i-storage-final-gate-20260912-120629.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03a-backup-preflight-20260912-121250.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03b-backup-service-diagnostico-20260912-121728.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03c-backup-wiring-contexto-20260912-122031.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03d-correcao-wiring-posix-20260912-122902.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03e-scripts-posix-20260912-124118.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03f-preflight-backup-externo-20260912-124517.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03g-chave-backup-20260912-124755.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03h-uploader-r2-20260912-125610.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03i-testes-uploader-local-20260912-130733.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03j-diagnostico-r2-20260912-131602.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03j-diagnostico-r2-20260912-132127.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03j-diagnostico-r2-20260912-132348.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03j-diagnostico-r2-20260912-132546.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03j-integracao-real-uploader-r2-20260912-131206.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03k-restore-r2-20260912-132936.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco04-final-gate-chat-a-20260912-133403.md`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco04-final-gate-chat-a-20260912-133644.md`
+- `beauty-core-backend\docs\ci-cd.md`
+- `beauty-core-backend\docs\commercial-guide.md`
+- `beauty-core-backend\docs\coverage.md`
+- `beauty-core-backend\docs\data-criticality-matrix.md`
+- `beauty-core-backend\docs\deploy.md`
+- `beauty-core-backend\docs\deployment.md`
+- `beauty-core-backend\docs\deploy-pipeline.md`
+- `beauty-core-backend\docs\disaster-recovery.md`
+- `beauty-core-backend\docs\docker.md`
+- `beauty-core-backend\docs\documentation-consistency.md`
+- `beauty-core-backend\docs\documentation-inventory.md`
+- `beauty-core-backend\docs\health-endpoints-strategy.md`
+- `beauty-core-backend\docs\incident-response.md`
+- `beauty-core-backend\docs\index.md`
+- `beauty-core-backend\docs\lgpd.md`
+- `beauty-core-backend\docs\lgpd-retention-policy.md`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO00_BASELINE_20260911_135451.md`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01A_CONTRATO_20260911_140002.md`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01B_LEITURA_CONTRATOS_20260911_140251.md`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01C_IMPLEMENTACAO_20260911_140702.md`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01D_VALIDACAO_20260911_140940.md`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01E_REPARO_SCHEMA_20260911_141714.md`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01F_SERVICE_20260911_142003.md`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01G_PRISMA_BUILD_20260911_142215.md`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02A_PROVIDER_20260911_143026.md`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02B_PROVIDER_TENANT_20260911_143414.md`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02C_REPARO_20260911_143618.md`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02E_VALIDACAO_20260911_144127.md`
+- `beauty-core-backend\docs\meta-whatsapp\backups\configuracao-whatsapp.service.ts.20260911_142003.bak`
+- `beauty-core-backend\docs\meta-whatsapp\backups\create-configuracao-whatsapp.dto.ts.20260911_140702.bak`
+- `beauty-core-backend\docs\meta-whatsapp\backups\mensagens-service.20260911_143414.bak`
+- `beauty-core-backend\docs\meta-whatsapp\backups\mensagens-service-reparo.20260911_143618.bak`
+- `beauty-core-backend\docs\meta-whatsapp\backups\meta-provider.20260911_143414.bak`
+- `beauty-core-backend\docs\meta-whatsapp\backups\schema.prisma.20260911_140702.bak`
+- `beauty-core-backend\docs\meta-whatsapp\backups\schema.prisma.reparo.20260911_141136.bak`
+- Inventario limitado a 300 itens.
+
+## Arquivos estruturais identificados
+
+- `beauty-core-backend\.backup-chat39\docker-compose.backup.chat26.yml`
+- `beauty-core-backend\.backup-chat39\docker-compose.dev.yml`
+- `beauty-core-backend\.backup-chat39\docker-compose.observability.yml`
+- `beauty-core-backend\.backup-chat39\docker-compose.prod.yml`
+- `beauty-core-backend\.backup-chat39\docker-compose.staging.yml`
+- `beauty-core-backend\.backup-chat39\docker-compose.yml`
+- `beauty-core-backend\.backup-chat39\Dockerfile`
+- `beauty-core-backend\.backup-chat39\package.json`
+- `beauty-core-backend\.backup-chat39\package-lock.json`
+- `beauty-core-backend\.chat34-backup-20260620-115659\docker-compose.yml`
+- `beauty-core-backend\.chat34-backup-20260620-115659\Dockerfile`
+- `beauty-core-backend\.chat34-backup-20260620-115659\package.json`
+- `beauty-core-backend\.chat35-backup-alerting-prometheus-20260620212615\docker-compose.observability.yml`
+- `beauty-core-backend\.chat35-backup-alerting-prometheus-20260620212615\prometheus\prometheus.yml`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.prod.yml`
+- `beauty-core-backend\.chat35-backup-compose-20260620190732\docker-compose.staging.yml`
+- `beauty-core-backend\.chat35-backup-npm-20260620192023\package.json`
+- `beauty-core-backend\.chat35-backup-npm-20260620192023\package-lock.json`
+- `beauty-core-backend\.chat35-backup-observability-auto-port-20260620211914\docker-compose.observability.yml`
+- `beauty-core-backend\.chat35-backup-observability-port-fix-20260620211635\docker-compose.observability.yml`
+- `beauty-core-backend\docker-compose.backup.chat26.yml`
+- `beauty-core-backend\docker-compose.chat03-candidate.override.yml`
+- `beauty-core-backend\docker-compose.dev.yml`
+- `beauty-core-backend\docker-compose.observability.yml`
+- `beauty-core-backend\docker-compose.prod.yml`
+- `beauty-core-backend\docker-compose.staging.yml`
+- `beauty-core-backend\docker-compose.yml`
+- `beauty-core-backend\Dockerfile`
+- `beauty-core-backend\nest-cli.json`
+- `beauty-core-backend\observability\grafana\dashboards\beauty-core-observability.json`
+- `beauty-core-backend\observability\grafana\provisioning\dashboards\dashboards.yml`
+- `beauty-core-backend\observability\grafana\provisioning\datasources\prometheus.yml`
+- `beauty-core-backend\observability\prometheus\prometheus.yml`
+- `beauty-core-backend\observability\prometheus\rules\beauty-core-alerts.yml`
+- `beauty-core-backend\package.backup.chat26.json`
+- `beauty-core-backend\package.json`
+- `beauty-core-backend\package-lock.json`
+- `beauty-core-backend\test\jest-e2e.json`
+- `beauty-core-backend\teste-observacoes.json`
+- `beauty-core-backend\teste-perfil-valido.json`
+- `beauty-core-backend\teste-telefone.json`
+- `beauty-core-backend\tsconfig.json`
+- `beauty-core-ui\.next\app-path-routes-manifest.json`
+- `beauty-core-ui\.next\dev\cache\next-devtools-config.json`
+- `beauty-core-ui\.next\dev\package.json`
+- `beauty-core-ui\.next\dev\prerender-manifest.json`
+- `beauty-core-ui\.next\dev\routes-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(auth)\login\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(auth)\login\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(auth)\login\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(auth)\login\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\acesso-negado\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\acesso-negado\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\acesso-negado\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\acesso-negado\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\agenda\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\agenda\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\agenda\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\agenda\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\arquivos\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\arquivos\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\arquivos\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\arquivos\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\automacoes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\automacoes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\automacoes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\automacoes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\clientes\[id]\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\clientes\[id]\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\clientes\[id]\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\clientes\[id]\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\clientes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\clientes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\clientes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\clientes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\configuracoes\branding\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\configuracoes\branding\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\configuracoes\branding\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\configuracoes\branding\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\configuracoes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\configuracoes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\configuracoes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\configuracoes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\dashboard\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\dashboard\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\dashboard\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\dashboard\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\design-system\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\design-system\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\design-system\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\design-system\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\fidelidade\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\fidelidade\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\fidelidade\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\fidelidade\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\financeiro\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\financeiro\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\financeiro\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\financeiro\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\notificacoes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\notificacoes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\notificacoes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\notificacoes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\pacotes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\pacotes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\pacotes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\pacotes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\profissionais\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\profissionais\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\profissionais\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\profissionais\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\servicos\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\servicos\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\servicos\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\servicos\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\sessoes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\sessoes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\sessoes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\sessoes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\unidades\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\unidades\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\unidades\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\unidades\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\usuarios\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\usuarios\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\usuarios\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\usuarios\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\whatsapp\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\whatsapp\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\whatsapp\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\(dashboard)\whatsapp\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\_not-found\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\_not-found\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\_not-found\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\_not-found\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\manifest.webmanifest\route\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\manifest.webmanifest\route\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\portal\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\portal\page\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\portal\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\dev\server\app\portal\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\dev\server\app-paths-manifest.json`
+- `beauty-core-ui\.next\dev\server\middleware-manifest.json`
+- `beauty-core-ui\.next\dev\server\next-font-manifest.json`
+- `beauty-core-ui\.next\dev\server\pages-manifest.json`
+- `beauty-core-ui\.next\dev\server\server-reference-manifest.json`
+- `beauty-core-ui\.next\diagnostics\framework.json`
+- `beauty-core-ui\.next\diagnostics\route-bundle-stats.json`
+- `beauty-core-ui\.next\export-marker.json`
+- `beauty-core-ui\.next\images-manifest.json`
+- `beauty-core-ui\.next\next-minimal-server.js.nft.json`
+- `beauty-core-ui\.next\next-server.js.nft.json`
+- `beauty-core-ui\.next\package.json`
+- `beauty-core-ui\.next\prerender-manifest.json`
+- `beauty-core-ui\.next\required-server-files.json`
+- `beauty-core-ui\.next\routes-manifest.json`
+- `beauty-core-ui\.next\server\app\(auth)\login\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(auth)\login\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(auth)\login\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(auth)\login\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(auth)\login\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\acesso-negado\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\acesso-negado\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\acesso-negado\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\acesso-negado\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\acesso-negado\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\agenda\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\agenda\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\agenda\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\agenda\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\agenda\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\arquivos\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\arquivos\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\arquivos\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\arquivos\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\arquivos\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\automacoes\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\automacoes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\automacoes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\automacoes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\automacoes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\clientes\[id]\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\clientes\[id]\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\clientes\[id]\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\clientes\[id]\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\clientes\[id]\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\clientes\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\clientes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\clientes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\clientes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\clientes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\configuracoes\branding\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\configuracoes\branding\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\configuracoes\branding\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\configuracoes\branding\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\configuracoes\branding\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\configuracoes\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\configuracoes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\configuracoes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\configuracoes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\configuracoes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\dashboard\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\dashboard\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\dashboard\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\dashboard\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\dashboard\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\design-system\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\design-system\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\design-system\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\design-system\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\design-system\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\fidelidade\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\fidelidade\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\fidelidade\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\fidelidade\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\fidelidade\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\financeiro\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\financeiro\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\financeiro\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\financeiro\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\financeiro\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\notificacoes\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\notificacoes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\notificacoes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\notificacoes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\notificacoes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\pacotes\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\pacotes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\pacotes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\pacotes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\pacotes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\profissionais\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\profissionais\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\profissionais\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\profissionais\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\profissionais\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\servicos\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\servicos\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\servicos\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\servicos\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\servicos\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\sessoes\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\sessoes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\sessoes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\sessoes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\sessoes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\unidades\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\unidades\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\unidades\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\unidades\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\unidades\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\usuarios\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\usuarios\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\usuarios\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\usuarios\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\usuarios\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\whatsapp\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\whatsapp\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\whatsapp\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\whatsapp\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\(dashboard)\whatsapp\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\_global-error\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\_global-error\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\_global-error\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\_global-error\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\_global-error\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\_not-found\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\_not-found\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\_not-found\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\_not-found\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\_not-found\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\favicon.ico\route.js.nft.json`
+- `beauty-core-ui\.next\server\app\favicon.ico\route\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\manifest.webmanifest\route.js.nft.json`
+- `beauty-core-ui\.next\server\app\manifest.webmanifest\route\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\manifest.webmanifest\route\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\agendamentos\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\portal\agendamentos\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\agendamentos\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\agendamentos\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\agendamentos\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\beneficios\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\portal\beneficios\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\beneficios\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\beneficios\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\beneficios\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\documentos\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\portal\documentos\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\documentos\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\documentos\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\documentos\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\fidelidade\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\portal\fidelidade\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\fidelidade\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\fidelidade\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\fidelidade\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\historico\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\portal\historico\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\historico\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\historico\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\historico\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\mensagens\enviar\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\portal\mensagens\enviar\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\mensagens\enviar\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\mensagens\enviar\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\mensagens\enviar\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\mensagens\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\portal\mensagens\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\mensagens\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\mensagens\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\mensagens\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\notificacoes\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\portal\notificacoes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\notificacoes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\notificacoes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\notificacoes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\pacotes\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\portal\pacotes\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\pacotes\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\pacotes\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\pacotes\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\portal\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\perfil\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\portal\perfil\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\perfil\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\perfil\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\perfil\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\primeiro-acesso\page.js.nft.json`
+- `beauty-core-ui\.next\server\app\portal\primeiro-acesso\page\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\primeiro-acesso\page\next-font-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\primeiro-acesso\page\react-loadable-manifest.json`
+- `beauty-core-ui\.next\server\app\portal\primeiro-acesso\page\server-reference-manifest.json`
+- `beauty-core-ui\.next\server\app-paths-manifest.json`
+- `beauty-core-ui\.next\server\functions-config-manifest.json`
+- `beauty-core-ui\.next\server\middleware-manifest.json`
+- `beauty-core-ui\.next\server\next-font-manifest.json`
+- `beauty-core-ui\.next\server\pages-manifest.json`
+- `beauty-core-ui\.next\server\prefetch-hints.json`
+- `beauty-core-ui\.next\server\server-reference-manifest.json`
+- `beauty-core-ui\components.json`
+- `beauty-core-ui\package.json`
+- `beauty-core-ui\package-lock.json`
+- `beauty-core-ui\test-results\.last-run.json`
+- `beauty-core-ui\tsconfig.json`
+
+## Pontos de continuidade carregados
+
+- Chat A encerrado como `PASS_WITH_ATTENTION`.
+- Pendencias carregadas: alerta de backup, secret manager para `BACKUP_ENCRYPTION_KEY` e validacao POSIX definitiva.
+- Pendencias do Chat B: WhatsApp/BullMQ, CI/CD, staging, E2E, seguranca/LGPD, multiempresa, Portal Cliente 1.0 e artefatos finais.
+- Nenhuma dessas pendencias foi corrigida neste bloco.
+
+## Operacoes proibidas confirmadas
+
+- Migrations: nao executadas.
+- Stage/commit/push/merge/tag/release: nao executados.
+- Deploy: nao executado.
+- Meta/WhatsApp comercial: nao ativado.
+- Segredos e valores de ambiente: nao lidos nem impressos.
+
+## Atencoes para o proximo bloco
+
+- Arvore de trabalho possui 31 entrada(s) local(is); nenhuma foi alterada.
+
+## Classificacao final do B00
+
+- `PASS_WITH_ATTENTION` - baseline coletado; a existencia de pendencias ou alteracoes locais nao foi tratada como falha deste bloco.
+
+## Integridade do relatorio
+
+- Este relatorio foi gerado automaticamente pelo script B00.
+- O conteudo foi limitado a inventario, metadados e saidas Git sem conteudo de arquivos sensiveis.

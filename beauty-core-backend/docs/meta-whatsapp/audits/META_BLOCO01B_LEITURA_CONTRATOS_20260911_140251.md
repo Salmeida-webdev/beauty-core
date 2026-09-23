@@ -1,0 +1,705 @@
+# Beauty Core - Meta WhatsApp - Bloco 01B - Leitura dos contratos reais
+
+- Data: `2026-09-11 14:02:51 -03:00`
+- Projeto: `C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core`
+- Objetivo: capturar os contratos reais antes da migration tenant-aware.
+- Alteracoes de produto: NAO EXECUTADAS.
+- Migrations, stage, commit, push, deploy e envio Meta real: NAO EXECUTADOS.
+- Segredos: arquivos `.env` reais nao foram lidos; valores encontrados em codigo sao mascarados.
+
+## 1. Preflight Git
+
+- Branch: main
+- HEAD: 7da979412362ba5abc7ff2d03f26a2fd2cdd9dcd
+- Status:
+```text
+?? beauty-core-backend/docs/meta-whatsapp/
+```
+- [WARN] Existem arquivos nao rastreados ou alterados. Nenhum sera removido ou sobrescrito.
+
+## 2. Modelo ConfiguracaoWhatsApp completo
+
+```prisma
+model ConfiguracaoWhatsApp {
+  id                   String        @id @default(uuid())
+  empresaId            String        @unique
+  ativo                Boolean       @default(true)
+  canal                CanalWhatsApp @default(MODO_DEMONSTRACAO)
+  numeroWhatsApp       String?
+  mensagemSaudacao     String?
+  mensagemAusencia     String?
+  usarModoDemonstracao Boolean       @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id])
+
+  @@index([empresaId])
+}
+```
+
+## 3. RelaÃ§Ãµes e enums relevantes do schema
+
+### beauty-core-backend/prisma/schema.prisma
+- Linha 126: enum StatusMensagemWhatsApp {
+- Linha 134: enum CanalWhatsApp {
+- Linha 138: MODO_DEMONSTRACAO
+- Linha 324: configuracaoWhatsApp ConfiguracaoWhatsApp?
+- Linha 339: @@index([ativo])
+- Linha 340: @@index([plano])
+- Linha 341: @@index([createdAt])
+- Linha 342: @@index([updatedAt])
+- Linha 348: empresaId String
+- Linha 361: empresa      Empresa       @relation(fields: [empresaId], references: [id])
+- Linha 365: @@index([empresaId])
+- Linha 366: @@index([empresaId, ativa])
+- Linha 367: @@index([empresaId, nome])
+- Linha 368: @@index([empresaId, createdAt])
+- Linha 369: @@index([empresaId, updatedAt])
+- Linha 375: empresaId String?
+- Linha 392: empresa      Empresa?      @relation(fields: [empresaId], references: [id])
+- Linha 405: @@index([empresaId])
+- Linha 406: @@index([role])
+- Linha 407: @@index([ativo])
+- Linha 408: @@index([createdAt])
+- Linha 409: @@index([updatedAt])
+- Linha 410: @@index([empresaId, ativo])
+- Linha 411: @@index([empresaId, role])
+- Linha 412: @@index([empresaId, email])
+- Linha 413: @@index([empresaId, ultimoLogin])
+- Linha 414: @@index([empresaId, createdAt])
+- Linha 415: @@index([empresaId, updatedAt])
+- Linha 421: empresaId String
+- Linha 443: empresa             Empresa              @relation(fields: [empresaId], references: [id])
+- Linha 461: @@unique([empresaId, telefone])
+- Linha 462: @@index([empresaId])
+- Linha 463: @@index([telefone])
+- Linha 464: @@index([email])
+- Linha 465: @@index([ativoPortal])
+- Linha 466: @@index([ultimoAcessoPortal])
+- Linha 467: @@index([empresaId, ativo])
+- Linha 468: @@index([empresaId, ativoPortal])
+- Linha 469: @@index([empresaId, nome])
+- Linha 470: @@index([empresaId, email])
+- Linha 471: @@index([empresaId, dataNascimento])
+- Linha 472: @@index([empresaId, createdAt])
+- Linha 473: @@index([empresaId, updatedAt])
+- Linha 479: empresaId String
+- Linha 492: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 495: @@index([empresaId])
+- Linha 496: @@index([clienteId])
+- Linha 497: @@index([telefone])
+- Linha 498: @@index([empresaId, clienteId])
+- Linha 499: @@index([empresaId, telefone])
+- Linha 500: @@index([empresaId, codigoHash])
+- Linha 501: @@index([empresaId, telefone, codigoHash, usado])
+- Linha 502: @@index([empresaId, usado])
+- Linha 503: @@index([empresaId, expiraEm])
+- Linha 509: empresaId      String
+- Linha 525: empresa      Empresa @relation(fields: [empresaId], references: [id])
+- Linha 534: @@index([empresaId])
+- Linha 535: @@index([unidadeId])
+- Linha 536: @@index([clienteId])
+- Linha 537: @@index([profissionalId])
+- Linha 538: @@index([servicoId])
+- Linha 539: @@index([status])
+- Linha 540: @@index([dataHoraInicio])
+- Linha 541: @@index([empresaId, status])
+- Linha 542: @@index([empresaId, dataHoraInicio])
+- Linha 543: @@index([empresaId, dataHoraFim])
+- Linha 544: @@index([empresaId, clienteId])
+- Linha 545: @@index([empresaId, profissionalId])
+- Linha 546: @@index([empresaId, unidadeId])
+- Linha 547: @@index([empresaId, servicoId])
+- Linha 548: @@index([empresaId, status, dataHoraInicio])
+- Linha 549: @@index([empresaId, clienteId, dataHoraInicio])
+- Linha 550: @@index([empresaId, profissionalId, dataHoraInicio])
+- Linha 551: @@index([empresaId, updatedAt])
+- Linha 557: empresaId String
+- Linha 574: empresa      Empresa       @relation(fields: [empresaId], references: [id])
+- Linha 578: @@index([empresaId])
+- Linha 579: @@index([empresaId, ativo])
+- Linha 580: @@index([empresaId, nome])
+- Linha 581: @@index([empresaId, preco])
+- Linha 582: @@index([empresaId, createdAt])
+- Linha 583: @@index([empresaId, updatedAt])
+- Linha 589: empresaId String
+- Linha 611: empresa          Empresa             @relation(fields: [empresaId], references: [id])
+- Linha 624: @@index([empresaId])
+- Linha 625: @@index([clienteId])
+- Linha 626: @@index([usuarioId])
+- Linha 627: @@index([servicoId])
+- Linha 628: @@index([unidadeId])
+- Linha 629: @@index([tipo])
+- Linha 630: @@index([status])
+- Linha 631: @@index([createdAt])
+- Linha 632: @@index([empresaId, status])
+- Linha 633: @@index([empresaId, tipo])
+- Linha 634: @@index([empresaId, clienteId])
+- Linha 635: @@index([empresaId, usuarioId])
+- Linha 636: @@index([empresaId, servicoId])
+- Linha 637: @@index([empresaId, unidadeId])
+- Linha 638: @@index([empresaId, tipo, status])
+- Linha 639: @@index([empresaId, createdAt])
+- Linha 640: @@index([empresaId, updatedAt])
+- Linha 641: @@index([empresaId, visibilidade])
+- Linha 642: @@index([empresaId, armazenamento])
+- Linha 643: @@index([empresaId, privado])
+- Linha 644: @@index([empresaId, checksum])
+- Linha 645: @@index([empresaId, expiraEm])
+- Linha 652: empresaId String
+- Linha 660: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 662: @@unique([clienteId, empresaId])
+- Linha 663: @@index([empresaId])
+- Linha 664: @@index([clienteId])
+- Linha 665: @@index([empresaId, clienteId])
+- Linha 666: @@index([empresaId, saldoPontos])
+- Linha 667: @@index([empresaId, updatedAt])
+- Linha 674: empresaId String
+- Linha 685: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 687: @@index([empresaId])
+- Linha 688: @@index([clienteId])
+- Linha 689: @@index([tipo])
+- Linha 690: @@index([createdAt])
+- Linha 691: @@index([empresaId, clienteId])
+- Linha 692: @@index([empresaId, tipo])
+- Linha 693: @@index([empresaId, createdAt])
+- Linha 694: @@index([empresaId, clienteId, createdAt])
+- Linha 700: empresaId String
+- Linha 720: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 722: @@unique([empresaId, codigo])
+- Linha 723: @@index([empresaId])
+- Linha 724: @@index([empresaId, ativo])
+- Linha 725: @@index([empresaId, tipo])
+- Linha 726: @@index([empresaId, dataInicio])
+- Linha 727: @@index([empresaId, dataFim])
+- Linha 728: @@index([empresaId, ativo, dataInicio, dataFim])
+- Linha 729: @@index([empresaId, createdAt])
+- Linha 730: @@index([empresaId, updatedAt])
+- Linha 736: empresaId String
+- Linha 751: empresa         Empresa         @relation(fields: [empresaId], references: [id])
+- Linha 754: @@index([empresaId])
+- Linha 755: @@index([empresaId, ativo])
+- Linha 756: @@index([empresaId, nome])
+- Linha 757: @@index([empresaId, valor])
+- Linha 758: @@index([empresaId, createdAt])
+- Linha 759: @@index([empresaId, updatedAt])
+- Linha 765: empresaId String
+- Linha 781: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 785: @@index([empresaId])
+- Linha 786: @@index([clienteId])
+- Linha 787: @@index([pacoteId])
+- Linha 788: @@index([status])
+- Linha 789: @@index([dataValidade])
+- Linha 790: @@index([empresaId, clienteId])
+- Linha 791: @@index([empresaId, pacoteId])
+- Linha 792: @@index([empresaId, status])
+- Linha 793: @@index([empresaId, dataCompra])
+- Linha 794: @@index([empresaId, dataValidade])
+- Linha 795: @@index([empresaId, clienteId, status])
+- Linha 796: @@index([empresaId, status, dataValidade])
+- Linha 797: @@index([empresaId, createdAt])
+- Linha 798: @@index([empresaId, updatedAt])
+- Linha 804: empresaId String
+- Linha 817: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 819: @@index([empresaId])
+- Linha 820: @@index([ativo])
+- Linha 821: @@index([pontosNecessarios])
+- Linha 822: @@index([empresaId, ativo])
+- Linha 823: @@index([empresaId, pontosNecessarios])
+- Linha 824: @@index([empresaId, createdAt])
+- Linha 825: @@index([empresaId, updatedAt])
+- Linha 831: empresaId String
+- Linha 842: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 844: @@unique([empresaId, nome])
+- Linha 845: @@index([empresaId])
+- Linha 846: @@index([pontosMinimos])
+- Linha 847: @@index([empresaId, pontosMinimos])
+- Linha 848: @@index([empresaId, createdAt])
+- Linha 849: @@index([empresaId, updatedAt])
+- Linha 855: empresaId String @unique
+- Linha 886: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 888: @@index([empresaId])
+- Linha 889: @@index([empresaId, updatedAt])
+- Linha 895: empresaId String
+- Linha 905: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 909: @@index([empresaId])
+- Linha 910: @@index([tipo])
+- Linha 911: @@index([empresaId, tipo])
+- Linha 912: @@index([empresaId, ativo])
+- Linha 913: @@index([empresaId, createdAt])
+- Linha 914: @@index([empresaId, updatedAt])
+- Linha 920: empresaId String
+- Linha 942: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 950: @@index([empresaId])
+- Linha 951: @@index([categoriaId])
+- Linha 952: @@index([clienteId])
+- Linha 953: @@index([agendamentoId])
+- Linha 954: @@index([tipo])
+- Linha 955: @@index([status])
+- Linha 956: @@index([dataMovimentacao])
+- Linha 957: @@index([empresaId, categoriaId])
+- Linha 958: @@index([empresaId, clienteId])
+- Linha 959: @@index([empresaId, agendamentoId])
+- Linha 960: @@index([empresaId, tipo])
+- Linha 961: @@index([empresaId, status])
+- Linha 962: @@index([empresaId, dataMovimentacao])
+- Linha 963: @@index([empresaId, tipo, status])
+- Linha 964: @@index([empresaId, tipo, status, dataMovimentacao])
+- Linha 965: @@index([empresaId, status, dataMovimentacao])
+- Linha 966: @@index([empresaId, createdAt])
+- Linha 967: @@index([empresaId, updatedAt])
+- Linha 973: empresaId String
+- Linha 988: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 994: @@index([empresaId])
+- Linha 995: @@index([profissionalId])
+- Linha 996: @@index([agendamentoId])
+- Linha 997: @@index([status])
+- Linha 998: @@index([empresaId, profissionalId])
+- Linha 999: @@index([empresaId, agendamentoId])
+- Linha 1000: @@index([empresaId, status])
+- Linha 1001: @@index([empresaId, profissionalId, status])
+- Linha 1002: @@index([empresaId, createdAt])
+- Linha 1003: @@index([empresaId, updatedAt])
+- Linha 1009: empresaId String
+- Linha 1025: empresa Empresa  @relation(fields: [empresaId], references: [id])
+- Linha 1029: @@index([empresaId])
+- Linha 1030: @@index([usuarioId])
+- Linha 1031: @@index([clienteId])
+- Linha 1032: @@index([tipo])
+- Linha 1033: @@index([status])
+- Linha 1034: @@index([createdAt])
+- Linha 1035: @@index([empresaId, usuarioId])
+- Linha 1036: @@index([empresaId, clienteId])
+- Linha 1037: @@index([empresaId, tipo])
+- Linha 1038: @@index([empresaId, status])
+- Linha 1039: @@index([empresaId, createdAt])
+- Linha 1040: @@index([empresaId, clienteId, status])
+- Linha 1041: @@index([empresaId, usuarioId, status])
+- Linha 1042: @@index([empresaId, status, createdAt])
+- Linha 1043: @@index([empresaId, updatedAt])
+- Linha 1049: empresaId String @unique
+- Linha 1061: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 1063: @@index([empresaId])
+- Linha 1066: model ConfiguracaoWhatsApp {
+- Linha 1068: empresaId            String        @unique
+- Linha 1070: canal                CanalWhatsApp @default(MODO_DEMONSTRACAO)
+- Linha 1079: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 1081: @@index([empresaId])
+- Linha 1086: empresaId String
+- Linha 1096: empresa   Empresa            @relation(fields: [empresaId], references: [id])
+- Linha 1099: @@index([empresaId])
+- Linha 1100: @@index([tipo])
+- Linha 1101: @@index([ativo])
+- Linha 1102: @@index([empresaId, tipo])
+- Linha 1103: @@index([empresaId, ativo])
+- Linha 1104: @@index([empresaId, tipo, ativo])
+- Linha 1105: @@index([empresaId, createdAt])
+- Linha 1106: @@index([empresaId, updatedAt])
+- Linha 1111: empresaId    String
+- Linha 1128: empresa  Empresa           @relation(fields: [empresaId], references: [id])
+- Linha 1133: @@index([empresaId])
+- Linha 1134: @@index([clienteId])
+- Linha 1135: @@index([usuarioId])
+- Linha 1136: @@index([templateId])
+- Linha 1137: @@index([tipo])
+- Linha 1138: @@index([status])
+- Linha 1139: @@index([createdAt])
+- Linha 1140: @@index([empresaId, clienteId])
+- Linha 1141: @@index([empresaId, usuarioId])
+- Linha 1142: @@index([empresaId, templateId])
+- Linha 1143: @@index([empresaId, tipo])
+- Linha 1144: @@index([empresaId, status])
+- Linha 1145: @@index([empresaId, createdAt])
+- Linha 1146: @@index([empresaId, clienteId, createdAt])
+- Linha 1147: @@index([empresaId, status, createdAt])
+- Linha 1148: @@index([empresaId, tipo, status])
+- Linha 1149: @@index([empresaId, updatedAt])
+- Linha 1163: @@index([messageId])
+- Linha 1164: @@index([createdAt])
+- Linha 1169: empresaId          String
+- Linha 1182: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 1184: @@index([empresaId])
+- Linha 1185: @@index([tipo])
+- Linha 1186: @@index([status])
+- Linha 1187: @@index([empresaId, tipo])
+- Linha 1188: @@index([empresaId, status])
+- Linha 1189: @@index([empresaId, tipo, status])
+- Linha 1190: @@index([empresaId, createdAt])
+- Linha 1191: @@index([empresaId, updatedAt])
+- Linha 1197: empresaId String
+- Linha 1212: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 1214: @@index([empresaId])
+- Linha 1215: @@index([tipo])
+- Linha 1216: @@index([modulo])
+- Linha 1217: @@index([createdAt])
+- Linha 1218: @@index([empresaId, tipo])
+- Linha 1219: @@index([empresaId, modulo])
+- Linha 1220: @@index([empresaId, createdAt])
+- Linha 1221: @@index([empresaId, tipo, createdAt])
+- Linha 1222: @@index([empresaId, modulo, createdAt])
+- Linha 1228: empresaId String
+- Linha 1249: empresa Empresa @relation(fields: [empresaId], references: [id])
+- Linha 1251: @@index([empresaId])
+- Linha 1252: @@index([gatilho])
+- Linha 1253: @@index([status])
+- Linha 1254: @@index([ativa])
+- Linha 1255: @@index([empresaId, gatilho])
+- Linha 1256: @@index([empresaId, status])
+- Linha 1257: @@index([empresaId, ativa])
+- Linha 1258: @@index([empresaId, status, ativa])
+- Linha 1259: @@index([empresaId, ultimaExecucao])
+- Linha 1260: @@index([empresaId, createdAt])
+- Linha 1261: @@index([empresaId, updatedAt])
+- Linha 1267: empresaId String?
+- Linha 1292: empresa Empresa? @relation(fields: [empresaId], references: [id])
+- Linha 1296: @@index([empresaId])
+- Linha 1297: @@index([usuarioId])
+- Linha 1298: @@index([clienteId])
+- Linha 1299: @@index([acao])
+- Linha 1300: @@index([modulo])
+- Linha 1301: @@index([status])
+- Linha 1302: @@index([createdAt])
+- Linha 1303: @@index([empresaId, createdAt])
+- Linha 1304: @@index([empresaId, acao])
+- Linha 1305: @@index([empresaId, modulo])
+- Linha 1306: @@index([empresaId, status])
+- Linha 1307: @@index([recurso, recursoId])
+- Linha 1313: empresaId String?
+- Linha 1335: empresa Empresa? @relation(fields: [empresaId], references: [id], onDelete: SetNull)
+- Linha 1339: @@index([empresaId])
+- Linha 1340: @@index([usuarioId])
+- Linha 1341: @@index([clienteId])
+- Linha 1342: @@index([revogada])
+- Linha 1343: @@index([expiraEm])
+- Linha 1344: @@index([ultimaAtividade])
+
+
+## 4. Service e controller de configuracao
+
+### beauty-core-backend/src/modules/configuracao-whatsapp/configuracao-whatsapp.service.ts
+- Linha 2: import { CanalWhatsApp } from '@prisma/client';
+- Linha 4: import { PrismaService } from '../../database/prisma/prisma.service';
+- Linha 7: import { CreateConfiguracaoWhatsAppDto } from './dto/create-configuracao-whatsapp.dto';
+- Linha 8: import { UpdateConfiguracaoWhatsAppDto } from './dto/update-configuracao-whatsapp.dto';
+- Linha 12: constructor(
+- Linha 13: private readonly prisma: PrismaService,
+- Linha 17: async createOrUpdate(empresaId: string, dto: CreateConfiguracaoWhatsAppDto) {
+- Linha 18: await this.tenantValidator.validarEmpresaAtiva(empresaId);
+- Linha 22: const existente = await this.prisma.configuracaoWhatsApp.findUnique({
+- Linha 24: empresaId,
+- Linha 29: return this.prisma.configuracaoWhatsApp.update({
+- Linha 31: empresaId,
+- Linha 39: return this.prisma.configuracaoWhatsApp.create({
+- Linha 41: empresaId,
+- Linha 42: ativo: dto.ativo ?? true,
+- Linha 44: numeroWhatsApp: dto.numeroWhatsApp,
+- Linha 47: usarModoDemonstracao: dto.usarModoDemonstracao ?? true,
+- Linha 52: async findOne(empresaId: string) {
+- Linha 53: await this.tenantValidator.validarEmpresaAtiva(empresaId);
+- Linha 55: const configuracao = await this.prisma.configuracaoWhatsApp.findUnique({
+- Linha 57: empresaId,
+- Linha 68: async update(empresaId: string, dto: UpdateConfiguracaoWhatsAppDto) {
+- Linha 69: await this.tenantValidator.validarEmpresaAtiva(empresaId);
+- Linha 71: await this.findOne(empresaId);
+- Linha 75: return this.prisma.configuracaoWhatsApp.update({
+- Linha 77: empresaId,
+- Linha 85: async gerarLink(empresaId: string, mensagem?: string) {
+- Linha 86: await this.tenantValidator.validarEmpresaAtiva(empresaId);
+- Linha 88: const configuracao = await this.findOne(empresaId);
+- Linha 90: if (!configuracao.numeroWhatsApp) {
+- Linha 94: const numeroLimpo = configuracao.numeroWhatsApp.replace(/\D/g, '');
+- Linha 103: numero: configuracao.numeroWhatsApp,
+- Linha 113: delete dados.id;
+- Linha 114: delete dados.empresaId;
+- Linha 115: delete dados.createdAt;
+- Linha 116: delete dados.updatedAt;
+
+### beauty-core-backend/src/modules/configuracao-whatsapp/configuracao-whatsapp.controller.ts
+- Linha 25: import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+- Linha 26: import { RolesGuard } from '../auth/guards/roles.guard';
+- Linha 37: empresaId: string;
+- Linha 49: @UseGuards(JwtAuthGuard, RolesGuard)
+- Linha 55: @Post()
+- Linha 72: empresaId: '550e8400-e29b-41d4-a716-446655440000',
+- Linha 97: return this.configuracaoWhatsappService.createOrUpdate(
+- Linha 98: req.user.empresaId,
+- Linha 103: @Get()
+- Linha 115: empresaId: '550e8400-e29b-41d4-a716-446655440000',
+- Linha 134: return this.configuracaoWhatsappService.findOne(req.user.empresaId);
+- Linha 137: @Patch()
+- Linha 154: empresaId: '550e8400-e29b-41d4-a716-446655440000',
+- Linha 179: return this.configuracaoWhatsappService.update(req.user.empresaId, dto);
+- Linha 182: @Get('link')
+- Linha 221: return this.configuracaoWhatsappService.gerarLink(
+- Linha 222: req.user.empresaId,
+
+### beauty-core-backend/src/modules/configuracao-whatsapp/dto/create-configuracao-whatsapp.dto.ts
+- Linha 5: import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
+- Linha 7: export class CreateConfiguracaoWhatsAppDto {
+- Linha 13: @IsOptional()
+- Linha 14: @IsBoolean({
+- Linha 25: @IsOptional()
+- Linha 36: @IsOptional()
+- Linha 37: @IsString({
+- Linha 40: numeroWhatsApp?: string;
+- Linha 47: @IsOptional()
+- Linha 48: @IsString({
+- Linha 59: @IsOptional()
+- Linha 60: @IsString({
+- Linha 70: @IsOptional()
+- Linha 71: @IsBoolean({
+- Linha 72: message: 'O campo usarModoDemonstracao deve ser verdadeiro ou falso.',
+- Linha 74: usarModoDemonstracao?: boolean;
+
+### beauty-core-backend/src/modules/configuracao-whatsapp/dto/update-configuracao-whatsapp.dto.ts
+- Linha 5: export class UpdateConfiguracaoWhatsAppDto extends PartialType(
+
+
+## 5. Provider Meta e pontos de injecao
+
+### beauty-core-backend/src/modules/mensagens-whatsapp/providers/meta-whatsapp-cloud.provider.ts
+- Linha 36: type MetaWhatsappPayload = {
+- Linha 37: messages?: Array<{ id?: unknown }>;
+- Linha 41: export class MetaWhatsappProviderError extends Error {
+- Linha 42: constructor(
+- Linha 48: this.name = 'MetaWhatsappProviderError';
+- Linha 52: export type MetaWhatsappSendResult = {
+- Linha 57: export class MetaWhatsappCloudProvider {
+- Linha 58: constructor(private readonly configService: ConfigService) {}
+- Linha 63: ): Promise<MetaWhatsappSendResult> {
+- Linha 65: .get<string>('META_WHATSAPP_ACCESS_TOKEN')
+- Linha 67: const phoneNumberId = this.configService
+- Linha 68: .get<string>('META_WHATSAPP_PHONE_NUMBER_ID')
+- Linha 71: .get<string>('META_WHATSAPP_API_VERSION')
+- Linha 74: if (!token || !phoneNumberId || !apiVersion) {
+- Linha 75: throw new MetaWhatsappProviderError(
+- Linha 76: 'Meta WhatsApp Cloud API nao configurada: informe as credenciais no ambiente seguro.',
+- Linha 83: throw new MetaWhatsappProviderError(
+- Linha 89: throw new MetaWhatsappProviderError(
+- Linha 96: this.configService.get<string>('META_WHATSAPP_GRAPH_BASE_URL')?.trim() ||
+- Linha 98: const endpoint = `${graphBaseUrl}/${apiVersion}/${encodeURIComponent(phoneNumberId)}/messages`;
+- Linha 99: const configuredTimeout = Number(
+- Linha 100: this.configService.get<string>('META_WHATSAPP_TIMEOUT_MS') || 10000,
+- Linha 102: const timeoutMs = Number.isFinite(configuredTimeout)
+- Linha 103: ? Math.min(Math.max(configuredTimeout, 1000), 60000)
+- Linha 106: const timer = setTimeout(() => controller.abort(), timeoutMs);
+- Linha 111: response = await fetch(endpoint, {
+- Linha 114: Authorization: `Bearer ${token}`,
+- Linha 115: 'Content-Type': 'application/json',
+- Linha 128: throw new MetaWhatsappProviderError(
+- Linha 129: `Falha transitoria ao chamar a Meta WhatsApp: ${detail}`,
+- Linha 140: throw new MetaWhatsappProviderError(
+- Linha 141: `Meta WhatsApp rejeitou o envio (HTTP ${response.status}): ${this.resumirErro(payload)}`,
+- Linha 149: throw new MetaWhatsappProviderError(
+- Linha 150: 'Meta WhatsApp respondeu sem identificador da mensagem; envio nao confirmado.',
+- Linha 156: clearTimeout(timer);
+- Linha 160: private async lerPayload(response: Response): Promise<MetaWhatsappPayload> {
+- Linha 171: private extrairMessageId(payload: MetaWhatsappPayload): string | null {
+- Linha 172: const value = payload.messages?.[0]?.id;
+- Linha 176: private resumirErro(payload: MetaWhatsappPayload): string {
+
+### beauty-core-backend/src/modules/mensagens-whatsapp/mensagens-whatsapp.service.ts
+- Linha 10: StatusMensagemWhatsApp,
+- Linha 25: import { CreateMensagemWhatsAppDto } from './dto/create-mensagem-whatsapp.dto';
+- Linha 26: import { EnviarMensagemWhatsAppDto } from './dto/enviar-mensagem-whatsapp.dto';
+- Linha 28: MetaWhatsappCloudProvider,
+- Linha 29: MetaWhatsappProviderError,
+- Linha 30: } from './providers/meta-whatsapp-cloud.provider';
+- Linha 40: empresaId: string;
+- Linha 49: status: StatusMensagemWhatsApp;
+- Linha 52: createdAt: Date;
+- Linha 63: private readonly metaWhatsappProvider: MetaWhatsappCloudProvider,
+- Linha 67: empresaId: string,
+- Linha 72: const registro = await this.prisma.mensagemWhatsApp.findFirst({
+- Linha 73: where: { id: mensagemId, empresaId },
+- Linha 82: if (registro.status === StatusMensagemWhatsApp.SIMULADA) {
+- Linha 86: if (registro.status === StatusMensagemWhatsApp.CANCELADA) {
+- Linha 90: const configuracao = await this.prisma.configuracaoWhatsApp.findUnique({
+- Linha 91: where: { empresaId },
+- Linha 96: empresaId,
+- Linha 106: status: StatusMensagemWhatsApp.SIMULADA,
+- Linha 115: empresaId,
+- Linha 122: const resultado = await this.metaWhatsappProvider.enviarTexto(
+- Linha 130: status: StatusMensagemWhatsApp.ENVIADA,
+- Linha 134: metaStatus: 'sent',
+- Linha 135: metaStatusUpdatedAt: new Date(),
+- Linha 140: await this.marcarFalhaDeEnvio(empresaId, mensagemId, detalhe);
+- Linha 142: error instanceof MetaWhatsappProviderError ? error.retryable : true;
+- Linha 144: return this.buscarMensagemOuFalhar(empresaId, mensagemId);
+- Linha 148: async create(empresaId: string, dto: CreateMensagemWhatsAppDto) {
+- Linha 151: await this.tenantValidator.validarEmpresaAtiva(empresaId);
+- Linha 152: await this.validarRelacionamentos(empresaId, dto);
+- Linha 154: const mensagem = await this.prisma.mensagemWhatsApp.create({
+- Linha 156: empresaId,
+- Linha 163: status: StatusMensagemWhatsApp.PENDENTE,
+- Linha 171: `[WHATSAPP] mensagem criada empresaId=${empresaId} mensagemId=${mensagem.id} status=SUCESSO tempoMs=${tempoMs}`,
+- Linha 175: empresaId,
+- Linha 192: async enviar(empresaId: string, dto: EnviarMensagemWhatsAppDto) {
+- Linha 195: await this.tenantValidator.validarEmpresaAtiva(empresaId);
+- Linha 197: const configuracao = await this.prisma.configuracaoWhatsApp.findUnique({
+- Linha 198: where: { empresaId },
+- Linha 203: 'Configure o WhatsApp antes de enviar mensagens.',
+- Linha 213: await this.validarRelacionamentos(empresaId, dto);
+- Linha 215: const status = configuracao.usarModoDemonstracao
+- Linha 216: ? StatusMensagemWhatsApp.SIMULADA
+- Linha 217: : StatusMensagemWhatsApp.PENDENTE;
+- Linha 219: const mensagem = await this.prisma.mensagemWhatsApp.create({
+- Linha 221: empresaId,
+- Linha 228: status,
+- Linha 230: status === StatusMensagemWhatsApp.SIMULADA ? new Date() : null,
+- Linha 238: `[WHATSAPP] mensagem enviada empresaId=${empresaId} mensagemId=${mensagem.id} status=${mensagem.status} tempoMs=${tempoMs}`,
+- Linha 242: empresaId,
+- Linha 253: acaoOperacional: 'ENVIAR_WHATSAPP',
+- Linha 256: status === StatusMensagemWhatsApp.SIMULADA
+- Linha 264: async findAll(empresaId: string, query: PaginationDto) {
+- Linha 265: await this.tenantValidator.validarEmpresaAtiva(empresaId);
+- Linha 268: await this.validarFiltrosRelacionados(empresaId, {
+- Linha 292: case 'status':
+- Linha 293: return { status: orderDirection };
+- Linha 298: case 'createdAt':
+- Linha 300: return { createdAt: orderDirection };
+- Linha 304: const where = this.montarWhereMensagem(empresaId, query);
+- Linha 322: async findOne(empresaId: string, id: string) {
+- Linha 323: await this.tenantValidator.validarEmpresaAtiva(empresaId);
+- Linha 325: return this.buscarMensagemOuFalhar(empresaId, id);
+- Linha 328: async cancelar(empresaId: string, id: string) {
+- Linha 331: await this.tenantValidator.validarEmpresaAtiva(empresaId);
+- Linha 333: const mensagemAntes = await this.buscarMensagemOuFalhar(empresaId, id);
+- Linha 338: empresaId,
+- Linha 341: status: StatusMensagemWhatsApp.CANCELADA,
+- Linha 349: const mensagemCancelada = await this.buscarMensagemOuFalhar(empresaId, id);
+- Linha 354: `[WHATSAPP] mensagem cancelada empresaId=${empresaId} mensagemId=${mensagemCancelada.id} status=SUCESSO tempoMs=${tempoMs}`,
+- Linha 358: empresaId,
+- Linha 369: statusAnterior: mensagemAntes.status,
+- Linha 370: statusAtual: mensagemCancelada.status,
+- Linha 379: empresaId: string,
+- Linha 384: empresaId,
+- Linha 392: empresaId: string,
+- Linha 397: empresaId,
+- Linha 405: empresaId: string,
+- Linha 410: empresaId,
+- Linha 418: empresaId: string,
+- Linha 423: empresaId,
+- Linha 431: empresaId: string,
+- Linha 436: empresaId,
+- Linha 444: empresaId: string,
+- Linha 449: empresaId,
+- Linha 457: empresaId: string,
+- Linha 464: await this.tenantValidator.validarEmpresaAtiva(empresaId);
+- Linha 466: const configuracao = await this.prisma.configuracaoWhatsApp.findUnique({
+- Linha 467: where: { empresaId },
+- Linha 470: const status =
+- Linha 472: ? StatusMensagemWhatsApp.CANCELADA
+- Linha 474: ? StatusMensagemWhatsApp.SIMULADA
+- Linha 475: : StatusMensagemWhatsApp.PENDENTE;
+- Linha 477: const mensagemCriada = await this.prisma.mensagemWhatsApp.create({
+- Linha 479: empresaId,
+- Linha 483: status,
+- Linha 496: `[WHATSAPP] mensagem automÃ¡tica criada empresaId=${empresaId} mensagemId=${mensagemCriada.id} tipo=${tipo} status=${mensagemCriada.status} tempoMs=${tempoMs}`,
+- Linha 500: empresaId,
+- Linha 520: empresaId: string,
+- Linha 521: dto: CreateMensagemWhatsAppDto | EnviarMensagemWhatsAppDto,
+- Linha 523: await this.validarFiltrosRelacionados(empresaId, {
+- Linha 531: empresaId: string,
+- Linha 536: where: { id: mensagemId, empresaId },
+- Linha 538: status: StatusMensagemWhatsApp.FALHOU,
+- Linha 549: return this.buscarMensagemOuFalhar(empresaId, mensagemId);
+- Linha 558: empresaId: string,
+- Linha 565: this.tenantValidator.validarCliente(empresaId, filtros.clienteId),
+- Linha 571: this.tenantValidator.validarUsuario(empresaId, filtros.usuarioId),
+- Linha 577: this.validarTemplateWhatsApp(empresaId, filtros.templateId),
+- Linha 584: private async validarTemplateWhatsApp(empresaId: string, templateId: string) {
+- Linha 585: const template = await this.prisma.templateWhatsApp.findFirst({
+- Linha 588: empresaId,
+- Linha 592: empresaId: true,
+- Linha 609: private async buscarMensagemOuFalhar(empresaId: string, id: string) {
+- Linha 610: const mensagem = await this.prisma.mensagemWhatsApp.findFirst({
+- Linha 613: empresaId,
+- Linha 626: empresaId: string,
+- Linha 642: const status = queryFilters['status'] as StatusMensagemWhatsApp | undefined;
+- Linha 647: empresaId,
+- Linha 648: ...(status ? { status } : {}),
+- Linha 663: createdAt: {
+- Linha 701: empresaId: mensagem.empresaId,
+- Linha 710: status: mensagem.status,
+- Linha 713: createdAt: mensagem.createdAt,
+
+### beauty-core-backend/src/queues/jobs/whatsapp.job.ts
+- Linha 1: export interface WhatsappJob {
+- Linha 2: empresaId: string;
+- Linha 4: telefone?: string;
+- Linha 7: mensagem: string;
+- Linha 11: templateId?: string;
+
+### beauty-core-backend/src/queues/workers/whatsapp.worker.ts
+- Linha 7: Logger,
+- Linha 24: private readonly logger = new Logger(WhatsappWorker.name);
+- Linha 67: this.logger.log(
+- Linha 68: `[BULLMQ] job concluido queue=${WHATSAPP_QUEUE} jobId=${job.id} ${formatQueueTrace(job)} empresaId=${job.data.empresaId}`,
+- Linha 72: empresaId: job.data.empresaId,
+- Linha 85: status: 'completed',
+- Linha 86: attemptsMade: job.attemptsMade,
+- Linha 96: this.logger.error(
+- Linha 99: } empresaId=${job?.data?.empresaId ?? '-'} erro=${error.message}`,
+- Linha 104: empresaId: job?.data?.empresaId,
+- Linha 109: status: 'FALHA',
+- Linha 118: status: 'failed',
+- Linha 119: attemptsMade: job?.attemptsMade,
+- Linha 137: this.logger.log(
+- Linha 138: `[BULLMQ] job iniciado queue=${WHATSAPP_QUEUE} jobId=${job.id} ${formatQueueTrace(job)} empresaId=${job.data.empresaId}`,
+- Linha 142: empresaId,
+- Linha 143: telefone,
+- Linha 152: const numero = telefone ?? destinatario;
+- Linha 156: empresaId,
+- Linha 169: status: 'started',
+- Linha 170: attemptsMade: job.attemptsMade,
+- Linha 172: empresaId,
+- Linha 173: telefone: numero,
+- Linha 187: 'Telefone/destinatario nÃƒÂ£o informado no job de WhatsApp.',
+- Linha 197: empresaId,
+- Linha 203: .prepararMensagemCampanha(empresaId, numero, mensagem)
+- Linha 206: empresaId,
+- Linha 214: status:
+- Linha 215: registro.status === 'ENVIADA' ? 'ok' : registro.status.toLowerCase(),
+- Linha 218: empresaId,
+- Linha 219: telefone: numero,
+- Linha 230: const { empresaId, tipo, metadata } = job.data;
+- Linha 233: this.logger.log(
+- Linha 238: empresaId,
+- Linha 249: status: 'scheduler_global_processed',
+- Linha 250: attemptsMade: job.attemptsMade,
+- Linha 259: status: 'ok',
+- Linha 265: empresaId,
+- Linha 273: const { empresaId, tipo, metadata } = job.data;
+- Linha 288: empresaId === 'SCHEDULER_GLOBAL' ||
+- Linha 319: attemptsMade: job.attemptsMade,
+- Linha 321: empresaId: job.data.empresaId,
+- Linha 324: telefone: job.data.telefone,
+
+
+## 6. Testes e migrations Meta existentes
+
+- `beauty-core-backend\test\chat12-whatsapp.http`
+- `beauty-core-backend\test\e2e\meta-whatsapp-webhook.e2e-spec.ts`
+- `beauty-core-backend\test\e2e\whatsapp-queue-demo.e2e-spec.ts`
+- `beauty-core-backend\test\unit\meta-whatsapp-cloud.provider.spec.ts`
+- `beauty-core-backend\test\unit\meta-whatsapp-cloud-provider-retry.spec.ts`
+- `beauty-core-backend\test\unit\meta-whatsapp-worker-flow.spec.ts`
+- Migrations Meta/WhatsApp encontradas: `1`
+- `20260909150000_meta_whatsapp_webhook`
+
+## 7. Decisao para o Bloco 01 de implementacao
+
+- Este script nao cria migration nem altera arquivos de produto.
+- A implementacao deve escolher a menor extensao compativel com ConfiguracaoWhatsApp, preservar MODO_DEMONSTRACAO e manter empresaId derivado do JWT.
+- O provider devera receber a conexao Meta resolvida pelo tenant, sem retornar ou registrar segredos.
+- Se o modelo atual nao comportar a conexao Meta com seguranca, o proximo bloco devera criar migration versionada e testes correspondentes.
+
+## 8. Conclusao
+
+- Status do Bloco 01B: `PARTIAL`
+- Warnings: `1`
+- Falhas: `0`
+- Nenhum codigo, migration, configuracao ou dependencia foi alterado.

@@ -1,0 +1,864 @@
+﻿# Beauty Core - Chat B - B142 - Lint dos arquivos ativos
+
+- Inicio: 2026-09-15T18:20:24.1354497-03:00
+- Fim: 2026-09-15T19:17:43.1571942-03:00
+- Script: B142-terminal-v1
+- Modo: somente leitura; nenhum arquivo foi alterado.
+- Backups e pastas historicas foram excluidos.
+
+## Resultado
+
+- Arquivos encontrados: 415
+- Arquivos processados: 415
+- Diagnosticos: 810
+- Erros: 381
+- Avisos: 117
+- Falhas de processo: 0
+
+## Regras
+
+- (parsing/configuracao): 374
+- @typescript-eslint/no-unsafe-argument: 116
+- @typescript-eslint/no-unsafe-member-access: 99
+- @typescript-eslint/no-unsafe-assignment: 81
+- @typescript-eslint/no-unsafe-call: 61
+- @typescript-eslint/no-require-imports: 39
+- no-empty: 10
+- prettier/prettier: 8
+- @typescript-eslint/no-unsafe-function-type: 7
+- @typescript-eslint/unbound-method: 4
+- @typescript-eslint/await-thenable: 3
+- @typescript-eslint/no-unused-vars: 3
+- @typescript-eslint/no-unsafe-return: 3
+- @typescript-eslint/restrict-plus-operands: 2
+
+## Arquivos
+
+- test\unit\tenant-validator.spec.ts: 43 diagnostico(s)
+- test\helpers\auth.helper.ts: 29 diagnostico(s)
+- test\unit\utils.coverage.spec.ts: 26 diagnostico(s)
+- test\unit\usuario-role-policy.spec.ts: 26 diagnostico(s)
+- test\unit\micro-boost.coverage.spec.ts: 24 diagnostico(s)
+- test\unit\usuario-role-policy.coverage.spec.ts: 23 diagnostico(s)
+- test\e2e\auth-cliente.e2e-spec.ts: 20 diagnostico(s)
+- test\e2e\uploads.e2e-spec.ts: 19 diagnostico(s)
+- test\unit\queue-utils.spec.ts: 18 diagnostico(s)
+- test\unit\auth-guards.coverage.spec.ts: 18 diagnostico(s)
+- test\unit\queues-utils.coverage.spec.ts: 16 diagnostico(s)
+- test\unit\infrastructure-expanded.coverage.spec.ts: 15 diagnostico(s)
+- test\e2e\multiempresa.e2e-spec.ts: 14 diagnostico(s)
+- test\unit\area-cliente-privacy.spec.ts: 13 diagnostico(s)
+- test\e2e\auth-admin.e2e-spec.ts: 10 diagnostico(s)
+- test\unit\clientes-pacotes-concurrency.spec.ts: 9 diagnostico(s)
+- test\unit\tenant-services.coverage.spec.ts: 9 diagnostico(s)
+- test\helpers\tenant.helper.ts: 8 diagnostico(s)
+- test\e2e\meta-whatsapp-webhook.e2e-spec.ts: 8 diagnostico(s)
+- test\e2e\auditoria.e2e-spec.ts: 7 diagnostico(s)
+- test\unit\s3-storage.service.spec.ts: 7 diagnostico(s)
+- prisma.config.ts: 7 diagnostico(s)
+- test\e2e\tenant.e2e-spec.ts: 6 diagnostico(s)
+- test\unit\agendamentos-concurrency.spec.ts: 6 diagnostico(s)
+- test\e2e\health.e2e-spec.ts: 6 diagnostico(s)
+- test\e2e\super-admin.e2e-spec.ts: 5 diagnostico(s)
+- test\e2e\sessoes.e2e-spec.ts: 5 diagnostico(s)
+- test\e2e\metrics.e2e-spec.ts: 5 diagnostico(s)
+- test\unit\analytics-performance-limits.spec.ts: 5 diagnostico(s)
+- test\e2e\queues.e2e-spec.ts: 4 diagnostico(s)
+- test\e2e\cliente-area.e2e-spec.ts: 3 diagnostico(s)
+- test\e2e\scheduler.e2e-spec.ts: 3 diagnostico(s)
+- test\e2e\swagger-validation.e2e-spec.ts: 3 diagnostico(s)
+- test\e2e\roles.e2e-spec.ts: 3 diagnostico(s)
+- test\e2e\refresh-throttle.e2e-spec.ts: 3 diagnostico(s)
+- test\e2e\lgpd-runtime.e2e-spec.ts: 3 diagnostico(s)
+- test\unit\cliente-area-compatibility.spec.ts: 3 diagnostico(s)
+- src\modules\notificacoes\notificacoes.module.ts: 1 diagnostico(s)
+- src\modules\mensagens-whatsapp\providers\meta-whatsapp-cloud.provider.ts: 1 diagnostico(s)
+- src\modules\notificacoes\dto\update-notificacao.dto.ts: 1 diagnostico(s)
+- src\modules\notificacoes\notificacoes.controller.ts: 1 diagnostico(s)
+- src\modules\pacotes\dto\update-pacote.dto.ts: 1 diagnostico(s)
+- src\modules\pacotes\pacotes.controller.spec.ts: 1 diagnostico(s)
+- src\modules\notificacoes\notificacoes.service.ts: 1 diagnostico(s)
+- src\modules\pacotes\dto\create-pacote.dto.ts: 1 diagnostico(s)
+- src\modules\niveis-fidelidade\niveis-fidelidade.service.spec.ts: 1 diagnostico(s)
+- src\modules\niveis-fidelidade\niveis-fidelidade.module.ts: 1 diagnostico(s)
+- src\modules\niveis-fidelidade\niveis-fidelidade.service.ts: 1 diagnostico(s)
+- src\modules\notificacoes\dto\create-notificacao.dto.ts: 1 diagnostico(s)
+- src\modules\niveis-fidelidade\dto\update-nivel-fidelidade.dto.ts: 1 diagnostico(s)
+- src\modules\niveis-fidelidade\dto\create-nivel-fidelidade.dto.ts: 1 diagnostico(s)
+- src\modules\niveis-fidelidade\niveis-fidelidade.controller.ts: 1 diagnostico(s)
+- src\modules\niveis-fidelidade\niveis-fidelidade.controller.spec.ts: 1 diagnostico(s)
+- src\modules\pacotes\pacotes.controller.ts: 1 diagnostico(s)
+- src\modules\templates-whatsapp\templates-whatsapp.controller.ts: 1 diagnostico(s)
+- src\modules\templates-whatsapp\templates-whatsapp.module.ts: 1 diagnostico(s)
+- src\modules\templates-whatsapp\templates-whatsapp.service.ts: 1 diagnostico(s)
+- src\modules\sessoes\sessoes.service.ts: 1 diagnostico(s)
+- src\modules\templates-whatsapp\dto\create-template-whatsapp.dto.ts: 1 diagnostico(s)
+- src\modules\templates-whatsapp\dto\update-template-whatsapp.dto.ts: 1 diagnostico(s)
+- src\modules\unidades\dto\create-unidade.dto.ts: 1 diagnostico(s)
+- src\modules\unidades\dto\update-unidade.dto.ts: 1 diagnostico(s)
+- src\modules\unidades\unidades.controller.ts: 1 diagnostico(s)
+- src\modules\tenant-publico\public-tenant.controller.ts: 1 diagnostico(s)
+- src\modules\tenant-publico\tenant-publico.controller.ts: 1 diagnostico(s)
+- src\modules\tenant-publico\tenant-publico.module.ts: 1 diagnostico(s)
+- src\modules\sessoes\sessoes.module.ts: 1 diagnostico(s)
+- src\modules\scheduler\constants\scheduler-times.ts: 1 diagnostico(s)
+- src\modules\scheduler\scheduler.controller.ts: 1 diagnostico(s)
+- src\modules\scheduler\scheduler.module.ts: 1 diagnostico(s)
+- src\modules\pacotes\pacotes.module.ts: 1 diagnostico(s)
+- src\modules\pacotes\pacotes.service.spec.ts: 1 diagnostico(s)
+- src\modules\pacotes\pacotes.service.ts: 1 diagnostico(s)
+- src\modules\servicos\servicos.controller.ts: 1 diagnostico(s)
+- src\modules\servicos\servicos.module.ts: 1 diagnostico(s)
+- src\modules\servicos\servicos.service.ts: 1 diagnostico(s)
+- src\modules\scheduler\scheduler.service.ts: 1 diagnostico(s)
+- src\modules\servicos\dto\create-servico.dto.ts: 1 diagnostico(s)
+- src\modules\servicos\dto\update-servico.dto.ts: 1 diagnostico(s)
+- src\modules\mensagens-whatsapp\meta-whatsapp-webhook.types.ts: 1 diagnostico(s)
+- src\modules\empresas\dto\create-empresa.dto.ts: 1 diagnostico(s)
+- src\modules\financeiro\dto\update-movimentacao.dto.ts: 1 diagnostico(s)
+- src\modules\financeiro\dto\registrar-pagamento.dto.ts: 1 diagnostico(s)
+- src\modules\empresas\dto\update-empresa.dto.ts: 1 diagnostico(s)
+- src\modules\financeiro\dto\list-movimentacoes-query.dto.ts: 1 diagnostico(s)
+- src\modules\health\enterprise-health.controller.ts: 1 diagnostico(s)
+- src\modules\health\enterprise-health.service.ts: 1 diagnostico(s)
+- src\modules\financeiro\financeiro.service.ts: 1 diagnostico(s)
+- src\modules\financeiro\financeiro.controller.ts: 1 diagnostico(s)
+- src\modules\financeiro\financeiro.module.ts: 1 diagnostico(s)
+- src\modules\empresas\empresas.controller.ts: 1 diagnostico(s)
+- src\modules\fidelidade\dto\resgatar-pontos.dto.ts: 1 diagnostico(s)
+- src\modules\empresas\empresas.module.ts: 1 diagnostico(s)
+- src\modules\fidelidade\dto\pontuar-por-valor.dto.ts: 1 diagnostico(s)
+- src\modules\fidelidade\dto\adicionar-pontos.dto.ts: 1 diagnostico(s)
+- src\modules\fidelidade\dto\create-fidelidade.dto.ts: 1 diagnostico(s)
+- src\modules\fidelidade\fidelidade.service.ts: 1 diagnostico(s)
+- src\modules\financeiro\dto\create-movimentacao.dto.ts: 1 diagnostico(s)
+- src\modules\fidelidade\fidelidade.module.ts: 1 diagnostico(s)
+- src\modules\fidelidade\fidelidade.controller.spec.ts: 1 diagnostico(s)
+- src\modules\fidelidade\fidelidade.controller.ts: 1 diagnostico(s)
+- src\modules\cupons\cupons.controller.ts: 1 diagnostico(s)
+- src\modules\empresas\empresas.service.ts: 1 diagnostico(s)
+- src\modules\cupons\cupons.module.ts: 1 diagnostico(s)
+- src\modules\cupons\cupons.service.ts: 1 diagnostico(s)
+- src\modules\cupons\cupons.service.spec.ts: 1 diagnostico(s)
+- src\modules\mensagens-whatsapp\meta-whatsapp-webhook.controller.ts: 1 diagnostico(s)
+- src\modules\mensagens-whatsapp\meta-whatsapp-webhook.service.ts: 1 diagnostico(s)
+- src\modules\configuracoes-notificacao\dto\create-configuracao-notificacao.dto.ts: 1 diagnostico(s)
+- src\modules\cupons\cupons.controller.spec.ts: 1 diagnostico(s)
+- src\modules\configuracoes-notificacao\dto\update-configuracao-notificacao.dto.ts: 1 diagnostico(s)
+- src\modules\cupons\dto\create-cupom.dto.ts: 1 diagnostico(s)
+- src\modules\cupons\dto\validar-cupom.dto.ts: 1 diagnostico(s)
+- src\modules\mensagens-whatsapp\dto\create-mensagem-whatsapp.dto.ts: 1 diagnostico(s)
+- src\modules\health\health.service.ts: 1 diagnostico(s)
+- src\modules\health\health.controller.ts: 1 diagnostico(s)
+- src\modules\health\health.module.ts: 1 diagnostico(s)
+- src\modules\mensagens-whatsapp\mensagens-whatsapp.module.ts: 1 diagnostico(s)
+- src\modules\mensagens-whatsapp\mensagens-whatsapp.service.ts: 1 diagnostico(s)
+- src\modules\mensagens-whatsapp\mensagens-whatsapp.controller.ts: 1 diagnostico(s)
+- src\modules\mensagens-whatsapp\dto\enviar-mensagem-whatsapp.dto.ts: 1 diagnostico(s)
+- src\modules\cupons\dto\update-cupom.dto.ts: 1 diagnostico(s)
+- src\modules\unidades\unidades.module.ts: 1 diagnostico(s)
+- test\seeds\test-seed.ts: 1 diagnostico(s)
+- test\setup-e2e.ts: 1 diagnostico(s)
+- test\jest-e2e.setup.ts: 1 diagnostico(s)
+- test\jest-e2e.coverage.js: 1 diagnostico(s)
+- test\jest-e2e.js: 1 diagnostico(s)
+- test\unit\chat03-bullmq-retention.spec.ts: 1 diagnostico(s)
+- test\unit\chat03-retention-runtime.spec.ts: 1 diagnostico(s)
+- test\unit\backup-external-upload.spec.ts: 1 diagnostico(s)
+- test\unit\agendamentos-options.spec.ts: 1 diagnostico(s)
+- test\unit\agendamentos-query.dto.spec.ts: 1 diagnostico(s)
+- test\jest-all-json.coverage.js: 1 diagnostico(s)
+- test\e2e\whatsapp-queue-demo.e2e-spec.ts: 1 diagnostico(s)
+- test\env-test.guard.ts: 1 diagnostico(s)
+- test\e2e\uploads-strict-roundtrip.e2e-spec.ts: 1 diagnostico(s)
+- src\shared\utils\pagination.util.ts: 1 diagnostico(s)
+- test\app.e2e-spec.ts: 1 diagnostico(s)
+- test\integration\r2-storage.live.spec.ts: 1 diagnostico(s)
+- test\jest-all.coverage.js: 1 diagnostico(s)
+- test\helpers\upload.helper.ts: 1 diagnostico(s)
+- test\helpers\prisma.helper.ts: 1 diagnostico(s)
+- test\helpers\queue.helper.ts: 1 diagnostico(s)
+- test\unit\meta-whatsapp-worker-flow.spec.ts: 1 diagnostico(s)
+- test\unit\modules\usuarios\usuarios-role-filter.spec.ts: 1 diagnostico(s)
+- test\unit\meta-whatsapp-cloud-provider-retry.spec.ts: 1 diagnostico(s)
+- test\unit\helpers\coverage-smoke.helper.ts: 1 diagnostico(s)
+- test\unit\meta-whatsapp-cloud.provider.spec.ts: 1 diagnostico(s)
+- test\unit\storage-roundtrip.spec.ts: 1 diagnostico(s)
+- .chat35-queue-propagation-test.js: 1 diagnostico(s)
+- test\unit\services-critical.coverage.spec.ts: 1 diagnostico(s)
+- test\unit\modules-services-expanded.coverage.spec.ts: 1 diagnostico(s)
+- test\unit\sanity.spec.ts: 1 diagnostico(s)
+- test\unit\generated-targets\report-under-70-after.cjs: 1 diagnostico(s)
+- test\unit\coverage-under-70-branch-matrix.generated.spec.ts: 1 diagnostico(s)
+- test\unit\coverage-under-70-final-target.generated.spec.ts: 1 diagnostico(s)
+- test\unit\controllers-expanded.coverage.spec.ts: 1 diagnostico(s)
+- test\unit\chat36-backup.coverage.spec.ts: 1 diagnostico(s)
+- test\unit\chat36-lgpd.coverage.spec.ts: 1 diagnostico(s)
+- test\unit\financeiro-list-movimentacoes-query.dto.spec.ts: 1 diagnostico(s)
+- test\unit\generated-targets\generate-under-70-targets.cjs: 1 diagnostico(s)
+- test\unit\env-validation-required.spec.ts: 1 diagnostico(s)
+- test\unit\coverage-under-70-targeted.generated.spec.ts: 1 diagnostico(s)
+- test\unit\env-validation-cors.spec.ts: 1 diagnostico(s)
+- src\shared\utils\get-empresa-id.ts: 1 diagnostico(s)
+- src\queues\queues.controller.ts: 1 diagnostico(s)
+- src\queues\queues.module.ts: 1 diagnostico(s)
+- src\queues\jobs\whatsapp.job.ts: 1 diagnostico(s)
+- src\queues\jobs\notificacoes.job.ts: 1 diagnostico(s)
+- src\queues\jobs\relatorios.job.ts: 1 diagnostico(s)
+- src\queues\services\queue-monitor.service.ts: 1 diagnostico(s)
+- src\queues\services\queues.service.ts: 1 diagnostico(s)
+- src\queues\services\queue-metrics.service.ts: 1 diagnostico(s)
+- src\queues\services\dead-letter-queue.service.ts: 1 diagnostico(s)
+- src\queues\services\distributed-lock.service.ts: 1 diagnostico(s)
+- src\queues\jobs\campanhas.job.ts: 1 diagnostico(s)
+- src\modules\usuarios\dto\update-usuario.dto.ts: 1 diagnostico(s)
+- src\modules\usuarios\policies\usuario-role.policy.ts: 1 diagnostico(s)
+- src\modules\usuarios\dto\list-usuarios-query.dto.ts: 1 diagnostico(s)
+- src\modules\unidades\unidades.service.ts: 1 diagnostico(s)
+- src\modules\usuarios\dto\create-usuario.dto.ts: 1 diagnostico(s)
+- src\queues\constants\queue-names.ts: 1 diagnostico(s)
+- src\queues\jobs\aniversarios.job.ts: 1 diagnostico(s)
+- src\modules\usuarios\usuarios.service.ts: 1 diagnostico(s)
+- src\modules\usuarios\usuarios.controller.ts: 1 diagnostico(s)
+- src\modules\usuarios\usuarios.module.ts: 1 diagnostico(s)
+- src\shared\enums\status-agendamento.enum.ts: 1 diagnostico(s)
+- src\shared\tenant\index.ts: 1 diagnostico(s)
+- src\shared\enums\role-mapper.ts: 1 diagnostico(s)
+- src\shared\enums\plano-empresa.enum.ts: 1 diagnostico(s)
+- src\shared\enums\role.enum.ts: 1 diagnostico(s)
+- src\shared\utils\device.util.ts: 1 diagnostico(s)
+- src\shared\utils\duration.util.ts: 1 diagnostico(s)
+- src\shared\tenant\tenant-validator.service.ts: 1 diagnostico(s)
+- src\shared\tenant\tenant.module.ts: 1 diagnostico(s)
+- src\shared\tenant\tenant-public.service.ts: 1 diagnostico(s)
+- src\shared\dto\pagination.dto.ts: 1 diagnostico(s)
+- src\queues\utils\queue-trace.util.ts: 1 diagnostico(s)
+- src\queues\workers\aniversarios.worker.ts: 1 diagnostico(s)
+- src\queues\utils\queue-options.util.ts: 1 diagnostico(s)
+- src\queues\services\queue-shutdown.service.ts: 1 diagnostico(s)
+- src\queues\utils\queue-job-id.util.ts: 1 diagnostico(s)
+- src\queues\workers\whatsapp.worker.ts: 1 diagnostico(s)
+- src\shared\decorators\roles.decorator.ts: 1 diagnostico(s)
+- src\queues\workers\relatorios.worker.ts: 1 diagnostico(s)
+- src\queues\workers\campanhas.worker.ts: 1 diagnostico(s)
+- src\queues\workers\notificacoes.worker.ts: 1 diagnostico(s)
+- src\modules\configuracoes-notificacao\configuracoes-notificacao.service.ts: 1 diagnostico(s)
+- src\common\metrics\interceptors\http-metrics.interceptor.ts: 1 diagnostico(s)
+- src\common\metrics\metrics.controller.ts: 1 diagnostico(s)
+- src\common\metrics\metrics.module.ts: 1 diagnostico(s)
+- src\common\logger\structured-logger.module.ts: 1 diagnostico(s)
+- src\common\logger\structured-logger.service.ts: 1 diagnostico(s)
+- src\common\metrics\guards\metrics-auth.guard.ts: 1 diagnostico(s)
+- src\common\utils\audit-request.util.ts: 1 diagnostico(s)
+- src\config\env.validation.ts: 1 diagnostico(s)
+- src\config\swagger.config.ts: 1 diagnostico(s)
+- src\common\metrics\metrics.service.ts: 1 diagnostico(s)
+- src\common\metrics\middleware\metrics.middleware.ts: 1 diagnostico(s)
+- src\common\middleware\request-id.middleware.ts: 1 diagnostico(s)
+- src\common\interceptors\audit-log.interceptor.ts: 1 diagnostico(s)
+- scripts\ci\check-coverage.js: 1 diagnostico(s)
+- src\app.module.ts: 1 diagnostico(s)
+- src\backup\backup.controller.ts: 1 diagnostico(s)
+- scripts\chat32-scheduler-locks.cjs: 1 diagnostico(s)
+- scripts\chat32-test-bullmq-behavior.cjs: 1 diagnostico(s)
+- scripts\chat32-workers-dlq-concurrency-safe.cjs: 1 diagnostico(s)
+- src\common\context\request-context.service.ts: 1 diagnostico(s)
+- src\common\context\request-context.types.ts: 1 diagnostico(s)
+- src\common\filters\http-exception.filter.ts: 1 diagnostico(s)
+- src\backup\backup.module.ts: 1 diagnostico(s)
+- src\backup\backup.service.ts: 1 diagnostico(s)
+- src\common\context\request-context.module.ts: 1 diagnostico(s)
+- src\database\prisma\prisma.module.ts: 1 diagnostico(s)
+- src\modules\analytics\dto\clientes-analytics.dto.ts: 1 diagnostico(s)
+- src\modules\analytics\dto\dashboard.dto.ts: 1 diagnostico(s)
+- src\modules\analytics\dto\eventos-analytics.dto.ts: 1 diagnostico(s)
+- src\modules\analytics\analytics.module.ts: 1 diagnostico(s)
+- src\modules\analytics\analytics.service.ts: 1 diagnostico(s)
+- src\modules\analytics\dto\agendamentos-analytics.dto.ts: 1 diagnostico(s)
+- src\modules\analytics\dto\pacotes-analytics.dto.ts: 1 diagnostico(s)
+- src\modules\analytics\dto\profissionais-analytics.dto.ts: 1 diagnostico(s)
+- src\modules\analytics\dto\servicos-analytics.dto.ts: 1 diagnostico(s)
+- src\modules\analytics\dto\fidelidade-analytics.dto.ts: 1 diagnostico(s)
+- src\modules\analytics\dto\financeiro-analytics.dto.ts: 1 diagnostico(s)
+- src\modules\analytics\dto\notificacoes-analytics.dto.ts: 1 diagnostico(s)
+- src\modules\analytics\analytics.controller.ts: 1 diagnostico(s)
+- src\lgpd\lgpd.module.ts: 1 diagnostico(s)
+- src\lgpd\lgpd.service.ts: 1 diagnostico(s)
+- src\main.ts: 1 diagnostico(s)
+- src\database\prisma\prisma.service.ts: 1 diagnostico(s)
+- src\lgpd\dto\lgpd-cliente-export-response.dto.ts: 1 diagnostico(s)
+- src\lgpd\lgpd.controller.ts: 1 diagnostico(s)
+- src\modules\agendamentos\dto\create-agendamento.dto.ts: 1 diagnostico(s)
+- src\modules\agendamentos\dto\list-agendamentos-query.dto.ts: 1 diagnostico(s)
+- src\modules\agendamentos\dto\update-agendamento.dto.ts: 1 diagnostico(s)
+- src\modules\agendamentos\agendamentos.controller.ts: 1 diagnostico(s)
+- src\modules\agendamentos\agendamentos.module.ts: 1 diagnostico(s)
+- src\modules\agendamentos\agendamentos.service.ts: 1 diagnostico(s)
+- scripts\chat32-restore-workers.cjs: 1 diagnostico(s)
+- scripts\chat31-patch-arquivos-controller-upload-privado.js: 1 diagnostico(s)
+- scripts\chat31-patch-arquivos-module.js: 1 diagnostico(s)
+- scripts\chat31-patch-arquivos-module-cleanup.js: 1 diagnostico(s)
+- scripts\chat31-fix-service-double-comma.js: 1 diagnostico(s)
+- scripts\chat31-fix-service-prisma-imports.js: 1 diagnostico(s)
+- scripts\chat31-fix-upload-audit-scope.js: 1 diagnostico(s)
+- scripts\chat31-patch-download-audit.js: 1 diagnostico(s)
+- scripts\chat31-patch-main-uploads.js: 1 diagnostico(s)
+- scripts\chat31-patch-multer-enterprise.js: 1 diagnostico(s)
+- scripts\chat31-patch-arquivos-module-etapa5.js: 1 diagnostico(s)
+- scripts\chat31-patch-arquivos-service-upload-privado.js: 1 diagnostico(s)
+- scripts\chat31-patch-arquivo-url-nullable.js: 1 diagnostico(s)
+- scripts\chat31-fix-multer-bad-request.js: 1 diagnostico(s)
+- prisma\seed.ts: 1 diagnostico(s)
+- scripts\backup\backup-external-upload.js: 1 diagnostico(s)
+- scripts\chat31-add-auditoria-actions.js: 1 diagnostico(s)
+- .chat35-worker-trace-test.js: 1 diagnostico(s)
+- eslint.config.mjs: 1 diagnostico(s)
+- jest.config.js: 1 diagnostico(s)
+- scripts\chat31-fix-controller-imports.js: 1 diagnostico(s)
+- scripts\chat31-fix-controller-imports-final.js: 1 diagnostico(s)
+- scripts\chat31-fix-gerar-url.js: 1 diagnostico(s)
+- scripts\chat31-check-arquivo.js: 1 diagnostico(s)
+- scripts\chat31-fix-cleanup-never.js: 1 diagnostico(s)
+- scripts\chat31-fix-controller-import-block.js: 1 diagnostico(s)
+- scripts\chat31-patch-private-upload-roles.js: 1 diagnostico(s)
+- scripts\chat32-fix-scheduler-imports-principais.cjs: 1 diagnostico(s)
+- scripts\chat32-force-fix-schedule-import.cjs: 1 diagnostico(s)
+- scripts\chat32-force-super-admin-scheduler-controller.cjs: 1 diagnostico(s)
+- scripts\chat32-fix-queues-service-return.cjs: 1 diagnostico(s)
+- scripts\chat32-fix-scheduler-constants-import.cjs: 1 diagnostico(s)
+- scripts\chat32-fix-scheduler-imports-definitivo.cjs: 1 diagnostico(s)
+- scripts\chat32-patch-workers-dlq-concurrency.cjs: 1 diagnostico(s)
+- scripts\chat32-prisma-auditoria-dlq.cjs: 1 diagnostico(s)
+- scripts\chat32-restore-scheduler-clean.cjs: 1 diagnostico(s)
+- scripts\chat32-health-scheduler-status.cjs: 1 diagnostico(s)
+- scripts\chat32-patch-queues-module.cjs: 1 diagnostico(s)
+- scripts\chat32-patch-queues-service.cjs: 1 diagnostico(s)
+- scripts\chat32-fix-queues-module.cjs: 1 diagnostico(s)
+- scripts\chat31-patch-upload-audit.js: 1 diagnostico(s)
+- scripts\chat31-test-cleanup.js: 1 diagnostico(s)
+- scripts\chat31-update-prisma-storage.js: 1 diagnostico(s)
+- scripts\chat31-patch-scheduler-module-cleanup.js: 1 diagnostico(s)
+- scripts\chat31-patch-scheduler-service-cleanup.js: 1 diagnostico(s)
+- scripts\chat31-patch-storage-multer-config.js: 1 diagnostico(s)
+- scripts\chat32-env-cleanup-jobs.cjs: 1 diagnostico(s)
+- scripts\chat32-fix-duplicate-cron.cjs: 1 diagnostico(s)
+- scripts\chat32-fix-health-service.cjs: 1 diagnostico(s)
+- scripts\chat32-allow-super-admin-scheduler.cjs: 1 diagnostico(s)
+- scripts\chat32-cleanup-controlled-dlq.cjs: 1 diagnostico(s)
+- scripts\chat32-create-base.cjs: 1 diagnostico(s)
+- src\modules\categorias-financeiras\categorias-financeiras.service.ts: 1 diagnostico(s)
+- src\modules\categorias-financeiras\dto\create-categoria-financeira.dto.ts: 1 diagnostico(s)
+- src\modules\categorias-financeiras\dto\update-categoria-financeira.dto.ts: 1 diagnostico(s)
+- src\modules\campanhas-whatsapp\dto\update-campanha-whatsapp.dto.ts: 1 diagnostico(s)
+- src\modules\categorias-financeiras\categorias-financeiras.controller.ts: 1 diagnostico(s)
+- src\modules\categorias-financeiras\categorias-financeiras.module.ts: 1 diagnostico(s)
+- src\modules\cliente-area\dto\cliente-area-query.dto.ts: 1 diagnostico(s)
+- src\modules\clientes\clientes.controller.ts: 1 diagnostico(s)
+- src\modules\clientes\clientes.module.ts: 1 diagnostico(s)
+- src\modules\cliente-area\cliente-area.controller.ts: 1 diagnostico(s)
+- src\modules\cliente-area\cliente-area.module.ts: 1 diagnostico(s)
+- src\modules\cliente-area\cliente-area.service.ts: 1 diagnostico(s)
+- src\modules\campanhas-whatsapp\dto\create-campanha-whatsapp.dto.ts: 1 diagnostico(s)
+- src\modules\beneficios\beneficios.controller.ts: 1 diagnostico(s)
+- src\modules\beneficios\beneficios.module.ts: 1 diagnostico(s)
+- src\modules\beneficios\beneficios.service.spec.ts: 1 diagnostico(s)
+- src\modules\automacoes\dto\processar-evento.dto.ts: 1 diagnostico(s)
+- src\modules\automacoes\eventos\tipo-evento-sistema.enum.ts: 1 diagnostico(s)
+- src\modules\beneficios\beneficios.controller.spec.ts: 1 diagnostico(s)
+- src\modules\campanhas-whatsapp\campanhas-whatsapp.controller.ts: 1 diagnostico(s)
+- src\modules\campanhas-whatsapp\campanhas-whatsapp.module.ts: 1 diagnostico(s)
+- src\modules\campanhas-whatsapp\campanhas-whatsapp.service.ts: 1 diagnostico(s)
+- src\modules\beneficios\beneficios.service.ts: 1 diagnostico(s)
+- src\modules\beneficios\dto\create-beneficio.dto.ts: 1 diagnostico(s)
+- src\modules\beneficios\dto\update-beneficio.dto.ts: 1 diagnostico(s)
+- src\modules\clientes\clientes.service.ts: 1 diagnostico(s)
+- src\modules\configuracao-fidelidade\dto\create-configuracao-fidelidade.dto.ts: 1 diagnostico(s)
+- src\modules\configuracao-fidelidade\dto\update-configuracao-fidelidade.dto.ts: 1 diagnostico(s)
+- src\modules\configuracao-whatsapp\configuracao-whatsapp.controller.ts: 1 diagnostico(s)
+- src\modules\configuracao-fidelidade\configuracao-fidelidade.controller.ts: 1 diagnostico(s)
+- src\modules\configuracao-fidelidade\configuracao-fidelidade.module.ts: 1 diagnostico(s)
+- src\modules\configuracao-fidelidade\configuracao-fidelidade.service.ts: 1 diagnostico(s)
+- src\modules\configuracao-whatsapp\dto\update-configuracao-whatsapp.dto.ts: 1 diagnostico(s)
+- src\modules\configuracoes-notificacao\configuracoes-notificacao.controller.ts: 1 diagnostico(s)
+- src\modules\configuracoes-notificacao\configuracoes-notificacao.module.ts: 1 diagnostico(s)
+- src\modules\configuracao-whatsapp\configuracao-whatsapp.module.ts: 1 diagnostico(s)
+- src\modules\configuracao-whatsapp\configuracao-whatsapp.service.ts: 1 diagnostico(s)
+- src\modules\configuracao-whatsapp\dto\create-configuracao-whatsapp.dto.ts: 1 diagnostico(s)
+- src\modules\comissoes\dto\create-comissao.dto.ts: 1 diagnostico(s)
+- src\modules\clientes-pacotes\clientes-pacotes.controller.ts: 1 diagnostico(s)
+- src\modules\clientes-pacotes\clientes-pacotes.module.ts: 1 diagnostico(s)
+- src\modules\clientes-pacotes\clientes-pacotes.service.spec.ts: 1 diagnostico(s)
+- src\modules\clientes\dto\create-cliente.dto.ts: 1 diagnostico(s)
+- src\modules\clientes\dto\update-cliente.dto.ts: 1 diagnostico(s)
+- src\modules\clientes-pacotes\clientes-pacotes.controller.spec.ts: 1 diagnostico(s)
+- src\modules\comissoes\comissoes.controller.ts: 1 diagnostico(s)
+- src\modules\comissoes\comissoes.module.ts: 1 diagnostico(s)
+- src\modules\comissoes\comissoes.service.ts: 1 diagnostico(s)
+- src\modules\clientes-pacotes\clientes-pacotes.service.ts: 1 diagnostico(s)
+- src\modules\clientes-pacotes\dto\create-cliente-pacote.dto.ts: 1 diagnostico(s)
+- src\modules\clientes-pacotes\dto\usar-sessao.dto.ts: 1 diagnostico(s)
+- src\modules\automacoes\automacoes.service.ts: 1 diagnostico(s)
+- src\modules\arquivos\arquivos-download.service.ts: 1 diagnostico(s)
+- src\modules\arquivos\dto\upload-documento-privado.dto.ts: 1 diagnostico(s)
+- src\modules\arquivos\guards\jwt-or-cliente-auth.guard.ts: 1 diagnostico(s)
+- src\modules\arquivos\arquivos.service.ts: 1 diagnostico(s)
+- src\modules\arquivos\arquivos-cleanup.service.ts: 1 diagnostico(s)
+- src\modules\arquivos\arquivos-download.controller.ts: 1 diagnostico(s)
+- src\modules\arquivos\storage\storage.factory.ts: 1 diagnostico(s)
+- src\modules\arquivos\storage\storage.interface.ts: 1 diagnostico(s)
+- src\modules\auditoria\auditoria.controller.ts: 1 diagnostico(s)
+- src\modules\arquivos\storage\local-storage.service.ts: 1 diagnostico(s)
+- src\modules\arquivos\storage\multer.config.ts: 1 diagnostico(s)
+- src\modules\arquivos\storage\providers\s3-storage.service.ts: 1 diagnostico(s)
+- src\modules\arquivos\arquivos.module.ts: 1 diagnostico(s)
+- src\modules\area-cliente\area-cliente.module.ts: 1 diagnostico(s)
+- src\modules\area-cliente\area-cliente.service.ts: 1 diagnostico(s)
+- src\modules\area-cliente\dto\create-portal-agendamento.dto.ts: 1 diagnostico(s)
+- src\modules\analytics\dto\unidades-analytics.dto.ts: 1 diagnostico(s)
+- src\modules\analytics\dto\whatsapp-analytics.dto.ts: 1 diagnostico(s)
+- src\modules\area-cliente\area-cliente.controller.ts: 1 diagnostico(s)
+- src\modules\area-cliente\types\cliente-auth-user.type.ts: 1 diagnostico(s)
+- src\modules\arquivos\arquivo-access-policy.service.ts: 1 diagnostico(s)
+- src\modules\arquivos\arquivos.controller.ts: 1 diagnostico(s)
+- src\modules\area-cliente\dto\enviar-portal-mensagem-whatsapp.dto.ts: 1 diagnostico(s)
+- src\modules\area-cliente\dto\reschedule-portal-agendamento.dto.ts: 1 diagnostico(s)
+- src\modules\area-cliente\dto\update-perfil-cliente.dto.ts: 1 diagnostico(s)
+- src\modules\auditoria\auditoria.module.ts: 1 diagnostico(s)
+- src\modules\auth-cliente\dto\aceitar-termos.dto.ts: 1 diagnostico(s)
+- src\modules\auth-cliente\dto\logout-cliente.dto.ts: 1 diagnostico(s)
+- src\modules\auth-cliente\dto\refresh-cliente-token.dto.ts: 1 diagnostico(s)
+- src\modules\auth-cliente\auth-cliente.module.ts: 1 diagnostico(s)
+- src\modules\auth-cliente\auth-cliente.service.ts: 1 diagnostico(s)
+- src\modules\auth-cliente\auth-cliente-publico.controller.ts: 1 diagnostico(s)
+- src\modules\auth-cliente\strategies\cliente-jwt.strategy.ts: 1 diagnostico(s)
+- src\modules\automacoes\automacoes.controller.ts: 1 diagnostico(s)
+- src\modules\automacoes\automacoes.module.ts: 1 diagnostico(s)
+- src\modules\auth-cliente\dto\solicitar-codigo.dto.ts: 1 diagnostico(s)
+- src\modules\auth-cliente\dto\verificar-codigo.dto.ts: 1 diagnostico(s)
+- src\modules\auth-cliente\guards\cliente-auth.guard.ts: 1 diagnostico(s)
+- src\modules\auth-cliente\auth-cliente.controller.ts: 1 diagnostico(s)
+- src\modules\auth\auth.controller.ts: 1 diagnostico(s)
+- src\modules\auth\auth.module.ts: 1 diagnostico(s)
+- src\modules\auth\auth.service.ts: 1 diagnostico(s)
+- src\modules\auditoria\auditoria.service.ts: 1 diagnostico(s)
+- src\modules\auditoria\dto\create-auditoria.dto.ts: 1 diagnostico(s)
+- src\modules\auditoria\dto\filtros-auditoria.dto.ts: 1 diagnostico(s)
+- src\modules\auth\guards\jwt-auth.guard.ts: 1 diagnostico(s)
+- src\modules\auth\guards\roles.guard.ts: 1 diagnostico(s)
+- src\modules\auth\strategies\jwt.strategy.ts: 1 diagnostico(s)
+- src\modules\auth\dto\login.dto.ts: 1 diagnostico(s)
+- src\modules\auth\dto\logout.dto.ts: 1 diagnostico(s)
+- src\modules\auth\dto\refresh-token.dto.ts: 1 diagnostico(s)
+
+## Diagnosticos detalhados
+
+- .chat35-queue-propagation-test.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\.chat35-queue-propagation-test.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- .chat35-worker-trace-test.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\.chat35-worker-trace-test.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- eslint.config.mjs:: | (parsing/configuracao) | File ignored because of a matching ignore pattern. Use "--no-ignore" to disable file ignore settings or use "--no-warn-ignored" to suppress this warning.
+- jest.config.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\jest.config.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- prisma.config.ts:1:8 | prettier/prettier | Replace `"dotenv/config"` with `'dotenv/config'`
+- prisma.config.ts:2:35 | prettier/prettier | Replace `"prisma/config"` with `'prisma/config'`
+- prisma.config.ts:5:11 | prettier/prettier | Replace `"prisma/schema.prisma"` with `'prisma/schema.prisma'`
+- prisma.config.ts:7:11 | prettier/prettier | Replace `"prisma/migrations"` with `'prisma/migrations'`
+- prisma.config.ts:8:11 | prettier/prettier | Replace `"tsx┬Àprisma/seed.ts"` with `'tsx┬Àprisma/seed.ts'`
+- prisma.config.ts:11:14 | prettier/prettier | Replace `"DATABASE_URL"` with `'DATABASE_URL'`
+- prisma.config.ts:13:4 | prettier/prettier | Insert `ÔÉìÔÅÄ`
+- prisma\seed.ts:281:6 | prettier/prettier | Insert `ÔÉìÔÅÄ`
+- scripts\backup\backup-external-upload.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\backup\backup-external-upload.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-add-auditoria-actions.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-add-auditoria-actions.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-check-arquivo.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-check-arquivo.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-fix-cleanup-never.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-fix-cleanup-never.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-fix-controller-import-block.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-fix-controller-import-block.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-fix-controller-imports.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-fix-controller-imports.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-fix-controller-imports-final.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-fix-controller-imports-final.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-fix-gerar-url.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-fix-gerar-url.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-fix-multer-bad-request.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-fix-multer-bad-request.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-fix-service-double-comma.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-fix-service-double-comma.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-fix-service-prisma-imports.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-fix-service-prisma-imports.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-fix-upload-audit-scope.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-fix-upload-audit-scope.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-arquivos-controller-upload-privado.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-arquivos-controller-upload-privado.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-arquivos-module.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-arquivos-module.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-arquivos-module-cleanup.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-arquivos-module-cleanup.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-arquivos-module-etapa5.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-arquivos-module-etapa5.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-arquivos-service-upload-privado.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-arquivos-service-upload-privado.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-arquivo-url-nullable.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-arquivo-url-nullable.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-download-audit.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-download-audit.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-main-uploads.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-main-uploads.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-multer-enterprise.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-multer-enterprise.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-private-upload-roles.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-private-upload-roles.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-scheduler-module-cleanup.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-scheduler-module-cleanup.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-scheduler-service-cleanup.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-scheduler-service-cleanup.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-storage-multer-config.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-storage-multer-config.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-patch-upload-audit.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-patch-upload-audit.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-test-cleanup.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-test-cleanup.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat31-update-prisma-storage.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat31-update-prisma-storage.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-allow-super-admin-scheduler.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-allow-super-admin-scheduler.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-cleanup-controlled-dlq.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-cleanup-controlled-dlq.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-create-base.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-create-base.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-env-cleanup-jobs.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-env-cleanup-jobs.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-fix-duplicate-cron.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-fix-duplicate-cron.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-fix-health-service.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-fix-health-service.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-fix-queues-module.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-fix-queues-module.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-fix-queues-service-return.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-fix-queues-service-return.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-fix-scheduler-constants-import.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-fix-scheduler-constants-import.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-fix-scheduler-imports-definitivo.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-fix-scheduler-imports-definitivo.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-fix-scheduler-imports-principais.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-fix-scheduler-imports-principais.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-force-fix-schedule-import.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-force-fix-schedule-import.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-force-super-admin-scheduler-controller.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-force-super-admin-scheduler-controller.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-health-scheduler-status.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-health-scheduler-status.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-patch-queues-module.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-patch-queues-module.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-patch-queues-service.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-patch-queues-service.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-patch-workers-dlq-concurrency.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-patch-workers-dlq-concurrency.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-prisma-auditoria-dlq.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-prisma-auditoria-dlq.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-restore-scheduler-clean.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-restore-scheduler-clean.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-restore-workers.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-restore-workers.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-scheduler-locks.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-scheduler-locks.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-test-bullmq-behavior.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-test-bullmq-behavior.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\chat32-workers-dlq-concurrency-safe.cjs:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\chat32-workers-dlq-concurrency-safe.cjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- scripts\ci\check-coverage.js:: | (parsing/configuracao) | Parsing error: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\scripts\ci\check-coverage.js was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject.
+- src\app.module.ts:: | (parsing/configuracao) | 
+- src\backup\backup.controller.ts:: | (parsing/configuracao) | 
+- src\backup\backup.module.ts:: | (parsing/configuracao) | 
+- src\backup\backup.service.ts:: | (parsing/configuracao) | 
+- src\common\context\request-context.module.ts:: | (parsing/configuracao) | 
+- src\common\context\request-context.service.ts:: | (parsing/configuracao) | 
+- src\common\context\request-context.types.ts:: | (parsing/configuracao) | 
+- src\common\filters\http-exception.filter.ts:: | (parsing/configuracao) | 
+- src\common\interceptors\audit-log.interceptor.ts:: | (parsing/configuracao) | 
+- src\common\logger\structured-logger.module.ts:: | (parsing/configuracao) | 
+- src\common\logger\structured-logger.service.ts:: | (parsing/configuracao) | 
+- src\common\metrics\guards\metrics-auth.guard.ts:: | (parsing/configuracao) | 
+- src\common\metrics\interceptors\http-metrics.interceptor.ts:: | (parsing/configuracao) | 
+- src\common\metrics\metrics.controller.ts:: | (parsing/configuracao) | 
+- src\common\metrics\metrics.module.ts:: | (parsing/configuracao) | 
+- src\common\metrics\metrics.service.ts:: | (parsing/configuracao) | 
+- src\common\metrics\middleware\metrics.middleware.ts:: | (parsing/configuracao) | 
+- src\common\middleware\request-id.middleware.ts:: | (parsing/configuracao) | 
+- src\common\utils\audit-request.util.ts:: | (parsing/configuracao) | 
+- src\config\env.validation.ts:: | (parsing/configuracao) | 
+- src\config\swagger.config.ts:: | (parsing/configuracao) | 
+- src\database\prisma\prisma.module.ts:: | (parsing/configuracao) | 
+- src\database\prisma\prisma.service.ts:: | (parsing/configuracao) | 
+- src\lgpd\dto\lgpd-cliente-export-response.dto.ts:: | (parsing/configuracao) | 
+- src\lgpd\lgpd.controller.ts:: | (parsing/configuracao) | 
+- src\lgpd\lgpd.module.ts:: | (parsing/configuracao) | 
+- src\lgpd\lgpd.service.ts:: | (parsing/configuracao) | 
+- src\main.ts:: | (parsing/configuracao) | 
+- src\modules\agendamentos\agendamentos.controller.ts:: | (parsing/configuracao) | 
+- src\modules\agendamentos\agendamentos.module.ts:: | (parsing/configuracao) | 
+- src\modules\agendamentos\agendamentos.service.ts:: | (parsing/configuracao) | 
+- src\modules\agendamentos\dto\create-agendamento.dto.ts:: | (parsing/configuracao) | 
+- src\modules\agendamentos\dto\list-agendamentos-query.dto.ts:: | (parsing/configuracao) | 
+- src\modules\agendamentos\dto\update-agendamento.dto.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\analytics.controller.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\analytics.module.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\analytics.service.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\dto\agendamentos-analytics.dto.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\dto\clientes-analytics.dto.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\dto\dashboard.dto.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\dto\eventos-analytics.dto.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\dto\fidelidade-analytics.dto.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\dto\financeiro-analytics.dto.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\dto\notificacoes-analytics.dto.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\dto\pacotes-analytics.dto.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\dto\profissionais-analytics.dto.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\dto\servicos-analytics.dto.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\dto\unidades-analytics.dto.ts:: | (parsing/configuracao) | 
+- src\modules\analytics\dto\whatsapp-analytics.dto.ts:: | (parsing/configuracao) | 
+- src\modules\area-cliente\area-cliente.controller.ts:: | (parsing/configuracao) | 
+- src\modules\area-cliente\area-cliente.module.ts:: | (parsing/configuracao) | 
+- src\modules\area-cliente\area-cliente.service.ts:: | (parsing/configuracao) | 
+- src\modules\area-cliente\dto\create-portal-agendamento.dto.ts:: | (parsing/configuracao) | 
+- src\modules\area-cliente\dto\enviar-portal-mensagem-whatsapp.dto.ts:: | (parsing/configuracao) | 
+- src\modules\area-cliente\dto\reschedule-portal-agendamento.dto.ts:: | (parsing/configuracao) | 
+- src\modules\area-cliente\dto\update-perfil-cliente.dto.ts:: | (parsing/configuracao) | 
+- src\modules\area-cliente\types\cliente-auth-user.type.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\arquivo-access-policy.service.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\arquivos.controller.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\arquivos.module.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\arquivos.service.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\arquivos-cleanup.service.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\arquivos-download.controller.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\arquivos-download.service.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\dto\upload-documento-privado.dto.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\guards\jwt-or-cliente-auth.guard.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\storage\local-storage.service.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\storage\multer.config.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\storage\providers\s3-storage.service.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\storage\storage.factory.ts:: | (parsing/configuracao) | 
+- src\modules\arquivos\storage\storage.interface.ts:: | (parsing/configuracao) | 
+- src\modules\auditoria\auditoria.controller.ts:: | (parsing/configuracao) | 
+- src\modules\auditoria\auditoria.module.ts:: | (parsing/configuracao) | 
+- src\modules\auditoria\auditoria.service.ts:: | (parsing/configuracao) | 
+- src\modules\auditoria\dto\create-auditoria.dto.ts:: | (parsing/configuracao) | 
+- src\modules\auditoria\dto\filtros-auditoria.dto.ts:: | (parsing/configuracao) | 
+- src\modules\auth\auth.controller.ts:: | (parsing/configuracao) | 
+- src\modules\auth\auth.module.ts:: | (parsing/configuracao) | 
+- src\modules\auth\auth.service.ts:: | (parsing/configuracao) | 
+- src\modules\auth\dto\login.dto.ts:: | (parsing/configuracao) | 
+- src\modules\auth\dto\logout.dto.ts:: | (parsing/configuracao) | 
+- src\modules\auth\dto\refresh-token.dto.ts:: | (parsing/configuracao) | 
+- src\modules\auth\guards\jwt-auth.guard.ts:: | (parsing/configuracao) | 
+- src\modules\auth\guards\roles.guard.ts:: | (parsing/configuracao) | 
+- src\modules\auth\strategies\jwt.strategy.ts:: | (parsing/configuracao) | 
+- src\modules\auth-cliente\auth-cliente.controller.ts:: | (parsing/configuracao) | 
+- src\modules\auth-cliente\auth-cliente.module.ts:: | (parsing/configuracao) | 
+- src\modules\auth-cliente\auth-cliente.service.ts:: | (parsing/configuracao) | 
+- src\modules\auth-cliente\auth-cliente-publico.controller.ts:: | (parsing/configuracao) | 
+- src\modules\auth-cliente\dto\aceitar-termos.dto.ts:: | (parsing/configuracao) | 
+- src\modules\auth-cliente\dto\logout-cliente.dto.ts:: | (parsing/configuracao) | 
+- src\modules\auth-cliente\dto\refresh-cliente-token.dto.ts:: | (parsing/configuracao) | 
+- src\modules\auth-cliente\dto\solicitar-codigo.dto.ts:: | (parsing/configuracao) | 
+- src\modules\auth-cliente\dto\verificar-codigo.dto.ts:: | (parsing/configuracao) | 
+- src\modules\auth-cliente\guards\cliente-auth.guard.ts:: | (parsing/configuracao) | 
+- src\modules\auth-cliente\strategies\cliente-jwt.strategy.ts:: | (parsing/configuracao) | 
+- src\modules\automacoes\automacoes.controller.ts:: | (parsing/configuracao) | 
+- src\modules\automacoes\automacoes.module.ts:: | (parsing/configuracao) | 
+- src\modules\automacoes\automacoes.service.ts:: | (parsing/configuracao) | 
+- src\modules\automacoes\dto\processar-evento.dto.ts:: | (parsing/configuracao) | 
+- src\modules\automacoes\eventos\tipo-evento-sistema.enum.ts:: | (parsing/configuracao) | 
+- src\modules\beneficios\beneficios.controller.spec.ts:: | (parsing/configuracao) | 
+- src\modules\beneficios\beneficios.controller.ts:: | (parsing/configuracao) | 
+- src\modules\beneficios\beneficios.module.ts:: | (parsing/configuracao) | 
+- src\modules\beneficios\beneficios.service.spec.ts:: | (parsing/configuracao) | 
+- src\modules\beneficios\beneficios.service.ts:: | (parsing/configuracao) | 
+- src\modules\beneficios\dto\create-beneficio.dto.ts:: | (parsing/configuracao) | 
+- src\modules\beneficios\dto\update-beneficio.dto.ts:: | (parsing/configuracao) | 
+- src\modules\campanhas-whatsapp\campanhas-whatsapp.controller.ts:: | (parsing/configuracao) | 
+- src\modules\campanhas-whatsapp\campanhas-whatsapp.module.ts:: | (parsing/configuracao) | 
+- src\modules\campanhas-whatsapp\campanhas-whatsapp.service.ts:: | (parsing/configuracao) | 
+- src\modules\campanhas-whatsapp\dto\create-campanha-whatsapp.dto.ts:: | (parsing/configuracao) | 
+- src\modules\campanhas-whatsapp\dto\update-campanha-whatsapp.dto.ts:: | (parsing/configuracao) | 
+- src\modules\categorias-financeiras\categorias-financeiras.controller.ts:: | (parsing/configuracao) | 
+- src\modules\categorias-financeiras\categorias-financeiras.module.ts:: | (parsing/configuracao) | 
+- src\modules\categorias-financeiras\categorias-financeiras.service.ts:: | (parsing/configuracao) | 
+- src\modules\categorias-financeiras\dto\create-categoria-financeira.dto.ts:: | (parsing/configuracao) | 
+- src\modules\categorias-financeiras\dto\update-categoria-financeira.dto.ts:: | (parsing/configuracao) | 
+- src\modules\cliente-area\cliente-area.controller.ts:: | (parsing/configuracao) | 
+- src\modules\cliente-area\cliente-area.module.ts:: | (parsing/configuracao) | 
+- src\modules\cliente-area\cliente-area.service.ts:: | (parsing/configuracao) | 
+- src\modules\cliente-area\dto\cliente-area-query.dto.ts:: | (parsing/configuracao) | 
+- src\modules\clientes\clientes.controller.ts:: | (parsing/configuracao) | 
+- src\modules\clientes\clientes.module.ts:: | (parsing/configuracao) | 
+- src\modules\clientes\clientes.service.ts:: | (parsing/configuracao) | 
+- src\modules\clientes\dto\create-cliente.dto.ts:: | (parsing/configuracao) | 
+- src\modules\clientes\dto\update-cliente.dto.ts:: | (parsing/configuracao) | 
+- src\modules\clientes-pacotes\clientes-pacotes.controller.spec.ts:: | (parsing/configuracao) | 
+- src\modules\clientes-pacotes\clientes-pacotes.controller.ts:: | (parsing/configuracao) | 
+- src\modules\clientes-pacotes\clientes-pacotes.module.ts:: | (parsing/configuracao) | 
+- src\modules\clientes-pacotes\clientes-pacotes.service.spec.ts:: | (parsing/configuracao) | 
+- src\modules\clientes-pacotes\clientes-pacotes.service.ts:: | (parsing/configuracao) | 
+- src\modules\clientes-pacotes\dto\create-cliente-pacote.dto.ts:: | (parsing/configuracao) | 
+- src\modules\clientes-pacotes\dto\usar-sessao.dto.ts:: | (parsing/configuracao) | 
+- src\modules\comissoes\comissoes.controller.ts:: | (parsing/configuracao) | 
+- src\modules\comissoes\comissoes.module.ts:: | (parsing/configuracao) | 
+- src\modules\comissoes\comissoes.service.ts:: | (parsing/configuracao) | 
+- src\modules\comissoes\dto\create-comissao.dto.ts:: | (parsing/configuracao) | 
+- src\modules\configuracao-fidelidade\configuracao-fidelidade.controller.ts:: | (parsing/configuracao) | 
+- src\modules\configuracao-fidelidade\configuracao-fidelidade.module.ts:: | (parsing/configuracao) | 
+- src\modules\configuracao-fidelidade\configuracao-fidelidade.service.ts:: | (parsing/configuracao) | 
+- src\modules\configuracao-fidelidade\dto\create-configuracao-fidelidade.dto.ts:: | (parsing/configuracao) | 
+- src\modules\configuracao-fidelidade\dto\update-configuracao-fidelidade.dto.ts:: | (parsing/configuracao) | 
+- src\modules\configuracao-whatsapp\configuracao-whatsapp.controller.ts:: | (parsing/configuracao) | 
+- src\modules\configuracao-whatsapp\configuracao-whatsapp.module.ts:: | (parsing/configuracao) | 
+- src\modules\configuracao-whatsapp\configuracao-whatsapp.service.ts:: | (parsing/configuracao) | 
+- src\modules\configuracao-whatsapp\dto\create-configuracao-whatsapp.dto.ts:: | (parsing/configuracao) | 
+- src\modules\configuracao-whatsapp\dto\update-configuracao-whatsapp.dto.ts:: | (parsing/configuracao) | 
+- src\modules\configuracoes-notificacao\configuracoes-notificacao.controller.ts:: | (parsing/configuracao) | 
+- src\modules\configuracoes-notificacao\configuracoes-notificacao.module.ts:: | (parsing/configuracao) | 
+- src\modules\configuracoes-notificacao\configuracoes-notificacao.service.ts:: | (parsing/configuracao) | 
+- src\modules\configuracoes-notificacao\dto\create-configuracao-notificacao.dto.ts:: | (parsing/configuracao) | 
+- src\modules\configuracoes-notificacao\dto\update-configuracao-notificacao.dto.ts:: | (parsing/configuracao) | 
+- src\modules\cupons\cupons.controller.spec.ts:: | (parsing/configuracao) | 
+- src\modules\cupons\cupons.controller.ts:: | (parsing/configuracao) | 
+- src\modules\cupons\cupons.module.ts:: | (parsing/configuracao) | 
+- src\modules\cupons\cupons.service.spec.ts:: | (parsing/configuracao) | 
+- src\modules\cupons\cupons.service.ts:: | (parsing/configuracao) | 
+- src\modules\cupons\dto\create-cupom.dto.ts:: | (parsing/configuracao) | 
+- src\modules\cupons\dto\update-cupom.dto.ts:: | (parsing/configuracao) | 
+- src\modules\cupons\dto\validar-cupom.dto.ts:: | (parsing/configuracao) | 
+- src\modules\empresas\dto\create-empresa.dto.ts:: | (parsing/configuracao) | 
+- src\modules\empresas\dto\update-empresa.dto.ts:: | (parsing/configuracao) | 
+- src\modules\empresas\empresas.controller.ts:: | (parsing/configuracao) | 
+- src\modules\empresas\empresas.module.ts:: | (parsing/configuracao) | 
+- src\modules\empresas\empresas.service.ts:: | (parsing/configuracao) | 
+- src\modules\fidelidade\dto\adicionar-pontos.dto.ts:: | (parsing/configuracao) | 
+- src\modules\fidelidade\dto\create-fidelidade.dto.ts:: | (parsing/configuracao) | 
+- src\modules\fidelidade\dto\pontuar-por-valor.dto.ts:: | (parsing/configuracao) | 
+- src\modules\fidelidade\dto\resgatar-pontos.dto.ts:: | (parsing/configuracao) | 
+- src\modules\fidelidade\fidelidade.controller.spec.ts:: | (parsing/configuracao) | 
+- src\modules\fidelidade\fidelidade.controller.ts:: | (parsing/configuracao) | 
+- src\modules\fidelidade\fidelidade.module.ts:: | (parsing/configuracao) | 
+- src\modules\fidelidade\fidelidade.service.ts:: | (parsing/configuracao) | 
+- src\modules\financeiro\dto\create-movimentacao.dto.ts:: | (parsing/configuracao) | 
+- src\modules\financeiro\dto\list-movimentacoes-query.dto.ts:: | (parsing/configuracao) | 
+- src\modules\financeiro\dto\registrar-pagamento.dto.ts:: | (parsing/configuracao) | 
+- src\modules\financeiro\dto\update-movimentacao.dto.ts:: | (parsing/configuracao) | 
+- src\modules\financeiro\financeiro.controller.ts:: | (parsing/configuracao) | 
+- src\modules\financeiro\financeiro.module.ts:: | (parsing/configuracao) | 
+- src\modules\financeiro\financeiro.service.ts:: | (parsing/configuracao) | 
+- src\modules\health\enterprise-health.controller.ts:: | (parsing/configuracao) | 
+- src\modules\health\enterprise-health.service.ts:: | (parsing/configuracao) | 
+- src\modules\health\health.controller.ts:: | (parsing/configuracao) | 
+- src\modules\health\health.module.ts:: | (parsing/configuracao) | 
+- src\modules\health\health.service.ts:: | (parsing/configuracao) | 
+- src\modules\mensagens-whatsapp\dto\create-mensagem-whatsapp.dto.ts:: | (parsing/configuracao) | 
+- src\modules\mensagens-whatsapp\dto\enviar-mensagem-whatsapp.dto.ts:: | (parsing/configuracao) | 
+- src\modules\mensagens-whatsapp\mensagens-whatsapp.controller.ts:: | (parsing/configuracao) | 
+- src\modules\mensagens-whatsapp\mensagens-whatsapp.module.ts:: | (parsing/configuracao) | 
+- src\modules\mensagens-whatsapp\mensagens-whatsapp.service.ts:: | (parsing/configuracao) | 
+- src\modules\mensagens-whatsapp\meta-whatsapp-webhook.controller.ts:: | (parsing/configuracao) | 
+- src\modules\mensagens-whatsapp\meta-whatsapp-webhook.service.ts:: | (parsing/configuracao) | 
+- src\modules\mensagens-whatsapp\meta-whatsapp-webhook.types.ts:: | (parsing/configuracao) | 
+- src\modules\mensagens-whatsapp\providers\meta-whatsapp-cloud.provider.ts:: | (parsing/configuracao) | 
+- src\modules\niveis-fidelidade\dto\create-nivel-fidelidade.dto.ts:: | (parsing/configuracao) | 
+- src\modules\niveis-fidelidade\dto\update-nivel-fidelidade.dto.ts:: | (parsing/configuracao) | 
+- src\modules\niveis-fidelidade\niveis-fidelidade.controller.spec.ts:: | (parsing/configuracao) | 
+- src\modules\niveis-fidelidade\niveis-fidelidade.controller.ts:: | (parsing/configuracao) | 
+- src\modules\niveis-fidelidade\niveis-fidelidade.module.ts:: | (parsing/configuracao) | 
+- src\modules\niveis-fidelidade\niveis-fidelidade.service.spec.ts:: | (parsing/configuracao) | 
+- src\modules\niveis-fidelidade\niveis-fidelidade.service.ts:: | (parsing/configuracao) | 
+- src\modules\notificacoes\dto\create-notificacao.dto.ts:: | (parsing/configuracao) | 
+- src\modules\notificacoes\dto\update-notificacao.dto.ts:: | (parsing/configuracao) | 
+- src\modules\notificacoes\notificacoes.controller.ts:: | (parsing/configuracao) | 
+- src\modules\notificacoes\notificacoes.module.ts:: | (parsing/configuracao) | 
+- src\modules\notificacoes\notificacoes.service.ts:: | (parsing/configuracao) | 
+- src\modules\pacotes\dto\create-pacote.dto.ts:: | (parsing/configuracao) | 
+- src\modules\pacotes\dto\update-pacote.dto.ts:: | (parsing/configuracao) | 
+- src\modules\pacotes\pacotes.controller.spec.ts:: | (parsing/configuracao) | 
+- src\modules\pacotes\pacotes.controller.ts:: | (parsing/configuracao) | 
+- src\modules\pacotes\pacotes.module.ts:: | (parsing/configuracao) | 
+- src\modules\pacotes\pacotes.service.spec.ts:: | (parsing/configuracao) | 
+- src\modules\pacotes\pacotes.service.ts:: | (parsing/configuracao) | 
+- src\modules\scheduler\constants\scheduler-times.ts:: | (parsing/configuracao) | 
+- src\modules\scheduler\scheduler.controller.ts:: | (parsing/configuracao) | 
+- src\modules\scheduler\scheduler.module.ts:: | (parsing/configuracao) | 
+- src\modules\scheduler\scheduler.service.ts:: | (parsing/configuracao) | 
+- src\modules\servicos\dto\create-servico.dto.ts:: | (parsing/configuracao) | 
+- src\modules\servicos\dto\update-servico.dto.ts:: | (parsing/configuracao) | 
+- src\modules\servicos\servicos.controller.ts:: | (parsing/configuracao) | 
+- src\modules\servicos\servicos.module.ts:: | (parsing/configuracao) | 
+- src\modules\servicos\servicos.service.ts:: | (parsing/configuracao) | 
+- src\modules\sessoes\sessoes.module.ts:: | (parsing/configuracao) | 
+- src\modules\sessoes\sessoes.service.ts:: | (parsing/configuracao) | 
+- src\modules\templates-whatsapp\dto\create-template-whatsapp.dto.ts:: | (parsing/configuracao) | 
+- src\modules\templates-whatsapp\dto\update-template-whatsapp.dto.ts:: | (parsing/configuracao) | 
+- src\modules\templates-whatsapp\templates-whatsapp.controller.ts:: | (parsing/configuracao) | 
+- src\modules\templates-whatsapp\templates-whatsapp.module.ts:: | (parsing/configuracao) | 
+- src\modules\templates-whatsapp\templates-whatsapp.service.ts:: | (parsing/configuracao) | 
+- src\modules\tenant-publico\public-tenant.controller.ts:: | (parsing/configuracao) | 
+- src\modules\tenant-publico\tenant-publico.controller.ts:: | (parsing/configuracao) | 
+- src\modules\tenant-publico\tenant-publico.module.ts:: | (parsing/configuracao) | 
+- src\modules\unidades\dto\create-unidade.dto.ts:: | (parsing/configuracao) | 
+- src\modules\unidades\dto\update-unidade.dto.ts:: | (parsing/configuracao) | 
+- src\modules\unidades\unidades.controller.ts:: | (parsing/configuracao) | 
+- src\modules\unidades\unidades.module.ts:: | (parsing/configuracao) | 
+- src\modules\unidades\unidades.service.ts:: | (parsing/configuracao) | 
+- src\modules\usuarios\dto\create-usuario.dto.ts:: | (parsing/configuracao) | 
+- src\modules\usuarios\dto\list-usuarios-query.dto.ts:: | (parsing/configuracao) | 
+- src\modules\usuarios\dto\update-usuario.dto.ts:: | (parsing/configuracao) | 
+- src\modules\usuarios\policies\usuario-role.policy.ts:: | (parsing/configuracao) | 
+- src\modules\usuarios\usuarios.controller.ts:: | (parsing/configuracao) | 
+- src\modules\usuarios\usuarios.module.ts:: | (parsing/configuracao) | 
+- src\modules\usuarios\usuarios.service.ts:: | (parsing/configuracao) | 
+- src\queues\constants\queue-names.ts:: | (parsing/configuracao) | 
+- src\queues\jobs\aniversarios.job.ts:: | (parsing/configuracao) | 
+- src\queues\jobs\campanhas.job.ts:: | (parsing/configuracao) | 
+- src\queues\jobs\notificacoes.job.ts:: | (parsing/configuracao) | 
+- src\queues\jobs\relatorios.job.ts:: | (parsing/configuracao) | 
+- src\queues\jobs\whatsapp.job.ts:: | (parsing/configuracao) | 
+- src\queues\queues.controller.ts:: | (parsing/configuracao) | 
+- src\queues\queues.module.ts:: | (parsing/configuracao) | 
+- src\queues\services\dead-letter-queue.service.ts:: | (parsing/configuracao) | 
+- src\queues\services\distributed-lock.service.ts:: | (parsing/configuracao) | 
+- src\queues\services\queue-metrics.service.ts:: | (parsing/configuracao) | 
+- src\queues\services\queue-monitor.service.ts:: | (parsing/configuracao) | 
+- src\queues\services\queues.service.ts:: | (parsing/configuracao) | 
+- src\queues\services\queue-shutdown.service.ts:: | (parsing/configuracao) | 
+- src\queues\utils\queue-job-id.util.ts:: | (parsing/configuracao) | 
+- src\queues\utils\queue-options.util.ts:: | (parsing/configuracao) | 
+- src\queues\utils\queue-trace.util.ts:: | (parsing/configuracao) | 
+- src\queues\workers\aniversarios.worker.ts:: | (parsing/configuracao) | 
+- src\queues\workers\campanhas.worker.ts:: | (parsing/configuracao) | 
+- src\queues\workers\notificacoes.worker.ts:: | (parsing/configuracao) | 
+- src\queues\workers\relatorios.worker.ts:: | (parsing/configuracao) | 
+- src\queues\workers\whatsapp.worker.ts:: | (parsing/configuracao) | 
+- src\shared\decorators\roles.decorator.ts:: | (parsing/configuracao) | 
+- src\shared\dto\pagination.dto.ts:: | (parsing/configuracao) | 
+- src\shared\enums\plano-empresa.enum.ts:: | (parsing/configuracao) | 
+- src\shared\enums\role.enum.ts:: | (parsing/configuracao) | 
+- src\shared\enums\role-mapper.ts:: | (parsing/configuracao) | 
+- src\shared\enums\status-agendamento.enum.ts:: | (parsing/configuracao) | 
+- src\shared\tenant\index.ts:: | (parsing/configuracao) | 
+- src\shared\tenant\tenant.module.ts:: | (parsing/configuracao) | 
+- src\shared\tenant\tenant-public.service.ts:: | (parsing/configuracao) | 
+- src\shared\tenant\tenant-validator.service.ts:: | (parsing/configuracao) | 
+- src\shared\utils\device.util.ts:: | (parsing/configuracao) | 
+- src\shared\utils\duration.util.ts:: | (parsing/configuracao) | 
+- src\shared\utils\get-empresa-id.ts:: | (parsing/configuracao) | 
+- src\shared\utils\pagination.util.ts:: | (parsing/configuracao) | 
+- test\app.e2e-spec.ts:: | (parsing/configuracao) | 
+- test\e2e\auditoria.e2e-spec.ts:1:18 | @typescript-eslint/no-require-imports | A `require()` style import is forbidden.
+- test\e2e\auditoria.e2e-spec.ts:26:30 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .auditoriaSistema on an `any` value.
+- test\e2e\auditoria.e2e-spec.ts:30:11 | @typescript-eslint/no-unsafe-assignment | Unsafe assignment of an `any` value.
+- test\e2e\auditoria.e2e-spec.ts:30:30 | @typescript-eslint/no-unsafe-call | Unsafe call of an `any` typed value.
+- test\e2e\auditoria.e2e-spec.ts:30:50 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .auditoriaSistema on an `any` value.
+- test\e2e\auditoria.e2e-spec.ts:34:23 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .length on an `any` value.
+- test\e2e\auditoria.e2e-spec.ts:40:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\auth-admin.e2e-spec.ts:1:18 | @typescript-eslint/no-require-imports | A `require()` style import is forbidden.
+- test\e2e\auth-admin.e2e-spec.ts:23:36 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\auth-admin.e2e-spec.ts:34:21 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .access_token on an `any` value.
+- test\e2e\auth-admin.e2e-spec.ts:35:23 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .accessToken on an `any` value.
+- test\e2e\auth-admin.e2e-spec.ts:36:23 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .token on an `any` value.
+- test\e2e\auth-admin.e2e-spec.ts:41:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\auth-admin.e2e-spec.ts:59:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\auth-admin.e2e-spec.ts:72:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\auth-admin.e2e-spec.ts:83:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\auth-admin.e2e-spec.ts:97:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\auth-cliente.e2e-spec.ts:1:18 | @typescript-eslint/no-require-imports | A `require()` style import is forbidden.
+- test\e2e\auth-cliente.e2e-spec.ts:23:36 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\auth-cliente.e2e-spec.ts:25:22 | @typescript-eslint/restrict-plus-operands | Invalid operand for a '+' operation. Operands must each be a number or string, allowing a string + any of: `any`, `boolean`, `null`, `RegExp`, `undefined`. Got `unknown`.
+- test\e2e\auth-cliente.e2e-spec.ts:34:11 | @typescript-eslint/no-unsafe-assignment | Unsafe assignment of an `any` value.
+- test\e2e\auth-cliente.e2e-spec.ts:35:21 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .codigoDesenvolvimento on an `any` value.
+- test\e2e\auth-cliente.e2e-spec.ts:36:21 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .codigo on an `any` value.
+- test\e2e\auth-cliente.e2e-spec.ts:37:21 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .devCode on an `any` value.
+- test\e2e\auth-cliente.e2e-spec.ts:38:21 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .code on an `any` value.
+- test\e2e\auth-cliente.e2e-spec.ts:40:11 | @typescript-eslint/no-unsafe-assignment | Unsafe assignment of an `any` value.
+- test\e2e\auth-cliente.e2e-spec.ts:40:28 | @typescript-eslint/no-unsafe-call | Unsafe call of an `any` typed value.
+- test\e2e\auth-cliente.e2e-spec.ts:40:48 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .codigoAcessoCliente on an `any` value.
+- test\e2e\auth-cliente.e2e-spec.ts:51:21 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .codigo on an `any` value.
+- test\e2e\auth-cliente.e2e-spec.ts:52:21 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .codigoHash on an `any` value.
+- test\e2e\auth-cliente.e2e-spec.ts:53:21 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .codigoHash on an `any` value.
+- test\e2e\auth-cliente.e2e-spec.ts:56:23 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .codigo on an `any` value.
+- test\e2e\auth-cliente.e2e-spec.ts:57:23 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .codigoHash on an `any` value.
+- test\e2e\auth-cliente.e2e-spec.ts:82:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\auth-cliente.e2e-spec.ts:99:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\auth-cliente.e2e-spec.ts:112:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\auth-cliente.e2e-spec.ts:130:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\cliente-area.e2e-spec.ts:1:18 | @typescript-eslint/no-require-imports | A `require()` style import is forbidden.
+- test\e2e\cliente-area.e2e-spec.ts:33:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\cliente-area.e2e-spec.ts:40:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\health.e2e-spec.ts:1:18 | @typescript-eslint/no-require-imports | A `require()` style import is forbidden.
+- test\e2e\health.e2e-spec.ts:24:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\health.e2e-spec.ts:28:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\health.e2e-spec.ts:36:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\health.e2e-spec.ts:49:21 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\health.e2e-spec.ts:63:21 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\lgpd-runtime.e2e-spec.ts:75:36 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\lgpd-runtime.e2e-spec.ts:91:36 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\lgpd-runtime.e2e-spec.ts:112:39 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\meta-whatsapp-webhook.e2e-spec.ts:25:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\meta-whatsapp-webhook.e2e-spec.ts:34:19 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\meta-whatsapp-webhook.e2e-spec.ts:83:33 | @typescript-eslint/no-unsafe-argument | Unsafe argument of type `any` assigned to a parameter of type `App`.
+- test\e2e\meta-whatsapp-webhook.e2e-spec.ts:89:23 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .received on an `any` value.
+- test\e2e\meta-whatsapp-webhook.e2e-spec.ts:90:23 | @typescript-eslint/no-unsafe-member-access | Unsafe member access .duplicates on an `any` value.
+
+## Falhas de processo
+
+
+## Operacoes nao executadas
+
+- Nenhum arquivo foi alterado.
+- Nenhum --fix, Jest, build, E2E, migration, workflow ou operacao Git foi executado.
+
+Status: PASS_WITH_ATTENTION

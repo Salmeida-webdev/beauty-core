@@ -17,19 +17,19 @@ export const TEST_CLIENTE = {
 };
 
 export type TestSeedResult = {
-  empresaA: any;
-  empresaB: any;
+  empresaA: SeedModelRecord;
+  empresaB: SeedModelRecord;
   usuarios: {
-    superAdmin: any;
-    admin: any;
-    gerente: any;
-    recepcao: any;
-    profissional: any;
+    superAdmin: SeedModelRecord;
+    admin: SeedModelRecord;
+    gerente: SeedModelRecord;
+    recepcao: SeedModelRecord;
+    profissional: SeedModelRecord;
   };
-  cliente: any;
-  unidade?: any;
-  servico?: any;
-  pacote?: any;
+  cliente: SeedModelRecord;
+  unidade?: SeedModelRecord | null;
+  servico?: SeedModelRecord | null;
+  pacote?: SeedModelRecord | null;
 };
 
 function getModel(modelName: string) {
@@ -48,14 +48,14 @@ function modelDelegate(modelName: string) {
   return modelName.charAt(0).toLowerCase() + modelName.slice(1);
 }
 
-function sanitizeData(modelName: string, defaults: Record<string, any>) {
+function sanitizeData(modelName: string, defaults: Record<string, unknown>) {
   const model = getModel(modelName);
 
   if (!model) {
     throw new Error('Model não encontrado no Prisma: ' + modelName);
   }
 
-  const data: Record<string, any> = {};
+  const data: Record<string, unknown> = {};
 
   for (const field of model.fields) {
     if (field.kind !== 'scalar' && field.kind !== 'enum') {
@@ -69,9 +69,11 @@ function sanitizeData(modelName: string, defaults: Record<string, any>) {
     if (Object.prototype.hasOwnProperty.call(defaults, field.name)) {
       if (field.kind === 'enum') {
         const values = getEnumValues(field.type);
-        data[field.name] = values.includes(defaults[field.name])
-          ? defaults[field.name]
-          : values[0];
+        const defaultValue = defaults[field.name];
+        data[field.name] =
+          typeof defaultValue === 'string' && values.includes(defaultValue)
+            ? defaultValue
+            : values[0];
       } else {
         data[field.name] = defaults[field.name];
       }
@@ -114,21 +116,26 @@ function sanitizeData(modelName: string, defaults: Record<string, any>) {
   return data;
 }
 
-async function createModel(
+type SeedModelRecord = Record<string, unknown>;
+type SeedModelDelegate = {
+  create(args: { data: Record<string, any> }): Promise<SeedModelRecord>;
+};
+type SeedModelClient = Record<string, SeedModelDelegate>;
+function createModel(
   prisma: PrismaClient,
   modelName: string,
-  defaults: Record<string, any>,
+  defaults: Record<string, unknown>,
 ) {
   const delegate = modelDelegate(modelName);
   const data = sanitizeData(modelName, defaults);
 
-  return (prisma as any)[delegate].create({ data });
+  return (prisma as unknown as SeedModelClient)[delegate].create({ data });
 }
 
 async function createIfModelExists(
   prisma: PrismaClient,
   modelName: string,
-  defaults: Record<string, any>,
+  defaults: Record<string, unknown>,
 ) {
   if (!getModel(modelName)) {
     return null;

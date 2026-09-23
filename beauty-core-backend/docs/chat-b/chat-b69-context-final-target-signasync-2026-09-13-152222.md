@@ -1,0 +1,92 @@
+# Beauty Core - Chat B - B69 - Contexto estrutural signAsync final-target
+
+- Inicio: 2026-09-13T15:22:21.9633092-03:00
+- Fim: 2026-09-13T15:22:31.1549830-03:00
+- Script: B69-v1
+- Modo: somente leitura; o relatorio e o unico artefato criado.
+- Pasta unica de relatorios do Chat B: `beauty-core-backend\docs\chat-b\`
+
+## Objetivo
+
+- Localizar estruturalmente o mock `signAsync` depois da divergencia do B68.
+- Registrar seu formato real sem expor o valor assinado.
+- Reexecutar somente o ESLint diagnostico do final-target.
+
+## Estrutura localizada
+
+- Arquivo analisado: `test\unit\coverage-under-70-final-target.generated.spec.ts`
+- Ocorrencias de signAsync: 1
+- Atribuicoes async para target[prop]: 6
+- Atribuicoes com Promise.resolve para target[prop]: 2
+- Ramos mode invalid encontrados: 18
+
+- Contexto das linhas 380-396:
+  - 380: 
+  - 381:       if (prop === 'sign') {
+  - 382:         target[prop] = jest.fn(() => (mode === 'invalid' ? '' : '[sensitive data omitted]
+  - 383:         return target[prop];
+  - 384:       }
+  - 385: 
+  - 386:       if (prop === 'signAsync') {
+  - 387:         target[prop] = jest.fn(async () =>
+  - 388:           mode === 'invalid' ? '' : '[sensitive data omitted]
+  - 389:         );
+  - 390:         return target[prop];
+  - 391:       }
+  - 392: 
+  - 393:       if (prop === 'verify' || prop === 'verifyAsync') {
+  - 394:         target[prop] = jest.fn(async () => {
+  - 395:           await Promise.resolve();
+  - 396:           if (mode === 'invalid')
+
+## Diagnosticos do ESLint
+
+- ESLint exit code: 1
+  - C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\test\unit\coverage-under-70-final-target.generated.spec.ts
+  -   250:49  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+  -   255:49  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+  -   262:49  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+  -   267:33  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+  -   338:41  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+  -   343:41  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+  -   376:11  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+  -   387:41  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+  -   666:26  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+  -   712:9   error    Unsafe assignment of an `any` value                                                                                      @typescript-eslint/no-unsafe-assignment
+  -   839:60  error    The `Function` type accepts any function-like value.
+  - Prefer explicitly defining any function parameters and return type  @typescript-eslint/no-unsafe-function-type
+  -   843:36  error    Unsafe return of a value of type `any[]`                                                                                 @typescript-eslint/no-unsafe-return
+  -   847:17  error    The `Function` type accepts any function-like value.
+  - Prefer explicitly defining any function parameters and return type  @typescript-eslint/no-unsafe-function-type
+  -   849:33  warning  Unsafe argument of type `any` assigned to a parameter of type `{}`                                                       @typescript-eslint/no-unsafe-argument
+  -   851:42  error    Unsafe member access [key] on an `any` value                                                                             @typescript-eslint/no-unsafe-member-access
+  -   908:68  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+  -   914:34  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+  -   914:34  error    Unsafe call of an `any` typed value                                                                                      @typescript-eslint/no-unsafe-call
+  -   946:15  error    Unsafe assignment of an `any` value                                                                                      @typescript-eslint/no-unsafe-assignment
+  -   946:21  error    A `require()` style import is forbidden                                                                                  @typescript-eslint/no-require-imports
+  -   952:17  error    Unsafe assignment of an `any` value                                                                                      @typescript-eslint/no-unsafe-assignment
+  -   952:23  error    A `require()` style import is forbidden                                                                                  @typescript-eslint/no-require-imports
+  -   953:40  warning  Unsafe argument of type `any` assigned to a parameter of type `ArrayLike<unknown> | { [s: string]: unknown; }`           @typescript-eslint/no-unsafe-argument
+  -   985:31  error    Unsafe return of a value of type error                                                                                   @typescript-eslint/no-unsafe-return
+  -   985:48  warning  Unsafe spread of an `any[]` array type                                                                                   @typescript-eslint/no-unsafe-argument
+  - Ô£û 25 problems (22 errors, 3 warnings)
+
+## Operacoes nao executadas
+
+- Nenhum arquivo foi alterado.
+- Nenhum teste, build, E2E, migration ou workflow foi executado.
+- Nenhum stage, commit, push, merge, tag, release ou deploy foi executado.
+- Nenhum segredo ou valor de ambiente foi lido ou impresso.
+
+## Classificacao final do B69
+
+- `PASS_WITH_ATTENTION` - estrutura real do signAsync e diagnosticos registrados para correcao seletiva.
+
+## Integridade
+
+- Este relatorio foi gerado automaticamente pelo script B69.
+- O script nao altera o projeto.
+
+Status: PASS_WITH_ATTENTION
+Relatorio salvo em: C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\docs\chat-b\chat-b69-context-final-target-signasync-2026-09-13-152222.md

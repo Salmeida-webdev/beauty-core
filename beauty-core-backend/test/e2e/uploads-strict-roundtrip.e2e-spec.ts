@@ -1,8 +1,10 @@
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { createHash } from 'crypto';
 import { promises as fs } from 'fs';
 import { resolve } from 'path';
 import type { Response } from 'superagent';
+import type { Server } from 'node:net';
 
 import {
   bootstrapE2eTestApp,
@@ -60,11 +62,8 @@ function parseDownloadedBody(value: unknown): Buffer {
   return value;
 }
 
-function requestApp(app: unknown) {
-  const application = app as {
-    getHttpServer: () => Parameters<typeof request>[0];
-  };
-  return request(application.getHttpServer());
+function requestApp(app: INestApplication<Server>) {
+  return request(app.getHttpServer());
 }
 
 function binaryParser(
@@ -79,11 +78,13 @@ function binaryParser(
 
 describe('Uploads strict HTTP round-trip E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
   let adminToken: string;
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
-    adminToken = (await loginAdmin(ctx.app)).access_token;
+    httpApp = ctx.app as INestApplication<Server>;
+    adminToken = (await loginAdmin(httpApp)).access_token;
   });
 
   afterAll(async () => {
@@ -105,7 +106,7 @@ describe('Uploads strict HTTP round-trip E2E', () => {
     let caminho: string | undefined;
 
     try {
-      const upload = await requestApp(ctx.app)
+      const upload = await requestApp(httpApp)
         .post('/arquivos/private/documentos')
         .set('Authorization', bearer(adminToken))
         .attach('file', file.filePath)
@@ -121,7 +122,7 @@ describe('Uploads strict HTTP round-trip E2E', () => {
       expect(uploadBody.tamanhoBytes).toBe(content.length);
       expect(uploadBody.visibilidade).toBe('PRIVADO');
 
-      const download = await requestApp(ctx.app)
+      const download = await requestApp(httpApp)
         .get('/arquivos/' + arquivoId + '/download')
         .set('Authorization', bearer(adminToken))
         .buffer(true)
@@ -135,7 +136,7 @@ describe('Uploads strict HTTP round-trip E2E', () => {
       );
     } finally {
       if (arquivoId) {
-        await requestApp(ctx.app)
+        await requestApp(httpApp)
           .delete('/arquivos/' + arquivoId)
           .set('Authorization', bearer(adminToken))
           .expect(200);

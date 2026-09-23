@@ -1,0 +1,1050 @@
+# Beauty Core - Chat B - B02 - Auditoria WhatsApp e BullMQ
+
+- Inicio: 2026-09-13T10:44:51.9105651-03:00
+- Fim: 2026-09-13T10:44:52.0463886-03:00
+- Script: B02-v1
+- Modo: somente leitura; o relatorio e o unico artefato criado.
+
+## Escopo
+
+- Producer, fila BullMQ, worker e eventos.
+- Idempotencia, deduplicacao, retry, backoff e status.
+- Persistencia, falhas, observabilidade e testes.
+- Contratos WhatsApp/Meta existentes, sem inventar endpoints.
+- Nenhuma mensagem real sera enviada.
+
+## Baseline da execucao
+
+- Branch: `main`
+- HEAD curto: `7da9794`
+- Git status exit code: 0
+- Entradas locais antes da auditoria: 33
+- Arquivos relevantes analisados por metadados e marcadores: 426
+
+### Arquivos relevantes do WhatsApp, filas, workers e testes
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`
+- `beauty-core-backend\docs\adrs\0002-multi-tenant-strategy.md`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`
+- `beauty-core-backend\docs\adrs\0005-backup-dr-strategy.md`
+- `beauty-core-backend\docs\api-admin.md`
+- `beauty-core-backend\docs\api-client.md`
+- `beauty-core-backend\docs\architecture.md`
+- `beauty-core-backend\docs\backend-guide.md`
+- `beauty-core-backend\docs\backup.md`
+- `beauty-core-backend\docs\backup-recovery.md`
+- `beauty-core-backend\docs\bullmq.md`
+- `beauty-core-backend\docs\business-continuity.md`
+- `beauty-core-backend\docs\capacity-planning.md`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`
+- `beauty-core-backend\docs\chat03-block03c-workflow-contract-report.md`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`
+- `beauty-core-backend\docs\chat03-block03f-workflow-env-mapping-report.md`
+- `beauty-core-backend\docs\chat03-block03g-backup-linux.md`
+- `beauty-core-backend\docs\chat03-block03h-backup-linux-validation.md`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`
+- `beauty-core-backend\docs\chat03-block03j-browser-e2e-preflight.md`
+- `beauty-core-backend\docs\chat03-block03k-browser-e2e-report.md`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`
+- `beauty-core-backend\docs\chat03-block04a-backend-lint-diagnosis.md`
+- `beauty-core-backend\docs\chat03-block04ab-services-critical-typed-boundaries-fix.md`
+- `beauty-core-backend\docs\chat03-block04ac-services-critical-residual-lint.md`
+- `beauty-core-backend\docs\chat03-block04ad-services-critical-residual-context.md`
+- `beauty-core-backend\docs\chat03-block04ae-services-critical-dynamic-types-fix.md`
+- `beauty-core-backend\docs\chat03-block04af-services-critical-final-lint.md`
+- `beauty-core-backend\docs\chat03-block04ag-services-critical-final-context.md`
+- `beauty-core-backend\docs\chat03-block04ahd-harness-lint-fix.md`
+- `beauty-core-backend\docs\chat03-block04aj-chat03-state-consolidation.md`
+- `beauty-core-backend\docs\chat03-block04aj-chat03-state-consolidation-v2.md`
+- `beauty-core-backend\docs\chat03-block04ak-chat03-scope-reconciliation.md`
+- `beauty-core-backend\docs\chat03-block04al-linux-backup-runtime-e2e.md`
+- `beauty-core-backend\docs\chat03-block04am-security-lgpd-final-matrix.md`
+- `beauty-core-backend\docs\chat03-block04anb-lgpd-runtime-diagnosis.md`
+- `beauty-core-backend\docs\chat03-block04an-lgpd-runtime-e2e.md`
+- `beauty-core-backend\docs\chat03-block04ao-raw-body-fix.md`
+- `beauty-core-backend\docs\chat03-block04ap-meta-provider-worker-hardening.md`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`
+- `beauty-core-backend\docs\chat03-block04ar-meta-worker-flow-test.md`
+- `beauty-core-backend\docs\chat03-block04as-retention-runtime-proof.md`
+- `beauty-core-backend\docs\chat03-block04at-final-closeout.md`
+- `beauty-core-backend\docs\chat03-block04au-bullmq-retention.md`
+- `beauty-core-backend\docs\chat03-block04av-staging-health-smoke-rollback.md`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`
+- `beauty-core-backend\docs\chat03-block04c-lint-changed-lines-report.md`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`
+- `beauty-core-backend\docs\chat03-block04-final-gate-report.md`
+- `beauty-core-backend\docs\chat03-block04g-lint-changed-lines-report.md`
+- `beauty-core-backend\docs\chat03-block04h-final-gate-report.md`
+- `beauty-core-backend\docs\chat03-block04i-global-lint-diagnosis.md`
+- `beauty-core-backend\docs\chat03-block04j-final-technical-report.md`
+- `beauty-core-backend\docs\chat03-block04k-commit-preflight.md`
+- `beauty-core-backend\docs\chat03-block04l-out-of-scope-audit.md`
+- `beauty-core-backend\docs\chat03-block04m-global-lint-breakdown.md`
+- `beauty-core-backend\docs\chat03-block04n-global-lint-fixability.md`
+- `beauty-core-backend\docs\chat03-block04o-top-lint-context.md`
+- `beauty-core-backend\docs\chat03-block04q-prisma-accessor-inspection.md`
+- `beauty-core-backend\docs\chat03-block04u-analytics-remaining-lint.md`
+- `beauty-core-backend\docs\chat03-block04v-analytics-remaining-lint-fix.md`
+- `beauty-core-backend\docs\chat03-block04w-financeiro-lint-context.md`
+- `beauty-core-backend\docs\chat03-block04x-financeiro-lint-types-fix.md`
+- `beauty-core-backend\docs\chat03-block04y-services-critical-lint-context.md`
+- `beauty-core-backend\docs\chat03-block04z-services-critical-require-await-fix.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO02_RECONCILIACAO_261_CAMINHOS_20260909-135948.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO03_AUDITORIA_SEMANTICA_HIGH_20260909-142130.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-142636.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO04_REVISAO_ESCOPO_SEGREDOS_20260909-143016.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO05_PREFLIGHT_SINCRONIZACAO_20260909-143339.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO05_PREFLIGHT_SINCRONIZACAO_20260909-143527.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO06_TRIAGEM_SEGREDOS_COMMIT_20260909-144044.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO07_REVISAO_ESCOPO_CI_20260909-144442.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO09_DIAGNOSTICO_CI_PRISMA_20260909-153326.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO10_VALIDACAO_CANDIDATOS_PRISMA_20260909-153700.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO100_CONTEXTO_LINT_PRODUCAO_GRUPO16_20260910-195716.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO101_CORRECAO_LINT_PRODUCAO_GRUPO16_20260910-200217.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO104_CORRECAO_LINT_PRODUCAO_GRUPO16_20260910-201739.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO105_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO16_20260911-111302.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO106_CORRECAO_LINT_PRODUCAO_GRUPO17_20260911-112112.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO107_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO17_20260911-112935.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO108_VALIDACAO_FINAL_INTEGRADA_20260911-115913.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO108_VALIDACAO_FINAL_INTEGRADA_20260911-120814.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO109_AUDIT_FINAL_ISOLADO_20260911-121416.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO109_AUDIT_FINAL_ISOLADO_20260911-121639.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO11_CORRECAO_PRISMA_PUSH_20260909-154755.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO111_DIAGNOSTICO_WHITESPACE_STAGED_20260911-122655.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO112_CORRECAO_WHITESPACE_STAGED_20260911-122853.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO12_DIAGNOSTICO_MULTER_20260909-155402.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO13_CORRECAO_MULTER_PUSH_20260909-155854.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO14_DIAGNOSTICO_LINT_GLOBAL_LEGADO_20260909-160903.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO15_CORRECAO_BOM_JSYAML_PUSH_20260909-161419.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO16_DIAGNOSTICO_CI_POS_CORRECOES_20260909-162801.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-163319.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-163601.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-163757.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-164834.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-165000.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO18_DIAGNOSTICO_LINT_GRUPO01_20260909-171254.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO19_CORRECAO_LINT_GRUPO01_20260909-171621.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO20_VALIDACAO_TIPOS_LINT_GRUPO01_20260909-173042.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO21_FORMATACAO_LINT_GRUPO01_20260909-173456.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO22_CORRECAO_RESIDUAL_LINT_GRUPO01_20260909-175101.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO23_VALIDACAO_LINT_GRUPO01_20260909-175337.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO24_CORRECAO_JWTSIGNOPTIONS_GRUPO01_20260909-175705.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO25_DIAGNOSTICO_LINT_GRUPO02_20260909-180327.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO25_DIAGNOSTICO_LINT_GRUPO02_20260909-180607.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO25_DIAGNOSTICO_LINT_GRUPO02_20260909-180823.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO25_DIAGNOSTICO_LINT_GRUPO02_20260909-181014.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO26_DIAGNOSTICO_LINT_GERADOS_GRUPO03_20260909-181759.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO27_DIAGNOSTICO_LINT_TESTES_GRUPO04_20260909-182011.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO28_DIAGNOSTICO_LINT_GLOBAL_RESIDUAL_20260909-182401.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO28_DIAGNOSTICO_LINT_GLOBAL_RESIDUAL_20260909-182810.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO29_RECONCILIACAO_LINT_PRODUCAO_20260909-183221.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO30_CONTEXTO_LINT_PRODUCAO_20260909-183737.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO32_VALIDACAO_TIPADA_PRODUCAO_20260909-191642.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_LOTES_20260909-200347.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-193014.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-193309.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-193502.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-193638.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-194202.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-194521.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO33_DIAGNOSTICO_LINT_GLOBAL_POS_GRUPO02_20260909-195409.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO34_DIAGNOSTICO_LINT_PRODUCAO_20260909-203159.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO34_DIAGNOSTICO_LINT_PRODUCAO_20260909-203931.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO34_DIAGNOSTICO_LINT_PRODUCAO_20260909-204645.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO34_DIAGNOSTICO_LINT_PRODUCAO_20260909-205430.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO36_CORRECAO_LINT_PRODUCAO_GRUPO03_20260909-210519.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO37_CORRECAO_RESIDUAL_LINT_GRUPO03_20260909-211137.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO38_DIAGNOSTICO_RESIDUAL_GRUPO03_20260909-211636.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO43_CORRECAO_RESIDUAL_LINT_GRUPO03_20260909-220747.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO44_CORRECAO_CONTRATOS_LINT_GRUPO03_20260909-221517.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO45_CORRECAO_CONTRATO_AUDITORIA_20260909-222544.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO46_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO03_20260910-095812.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO47_CONTEXTO_LINT_PRODUCAO_GRUPO04_20260910-100942.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO48_CORRECAO_FINAL_GRUPO04_20260910-102704.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO48_CORRECAO_LINT_PRODUCAO_GRUPO04_20260910-101923.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO48_CORRECAO_POS_GRUPO04_20260910-102333.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO49_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO04_20260910-103444.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO50_CONTEXTO_LINT_PRODUCAO_GRUPO05_20260910-103743.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO51_CORRECAO_LINT_PRODUCAO_GRUPO05_20260910-104257.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO52_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO05_20260910-105413.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO53_CONTEXTO_LINT_PRODUCAO_GRUPO06_20260910-110359.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO54_CORRECAO_LINT_PRODUCAO_GRUPO06_20260910-112135.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO54_CORRECAO_LINT_PRODUCAO_GRUPO06_20260910-112905.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO55_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO06_20260910-114349.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO56_CONTEXTO_LINT_PRODUCAO_GRUPO07_20260910-114656.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO57_CORRECAO_LINT_PRODUCAO_GRUPO07_20260910-115400.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO58_CORRECAO_AUDITREQUEST_GRUPO07_20260910-115734.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO59_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO07_20260910-120525.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO60_CONTEXTO_LINT_PRODUCAO_GRUPO08_20260910-122901.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO61_CORRECAO_LINT_PRODUCAO_GRUPO08_20260910-130253.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO61_CORRECAO_LINT_PRODUCAO_GRUPO08_20260910-130902.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO62_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO08_20260910-131814.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO63_CONTEXTO_LINT_PRODUCAO_GRUPO09_20260910-145245.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO65_CORRECAO_CONTRATO_VALIDAR_CLIENTE_GRUPO09_20260910-151730.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO65_CORRECAO_CONTRATO_VALIDAR_CLIENTE_GRUPO09_20260910-151952.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO65_CORRECAO_CONTRATO_VALIDAR_CLIENTE_GRUPO09_20260910-152229.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO66_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO09_20260910-153531.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO66_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO09_20260910-154151.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO66_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO09_20260910-154905.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO67_CONTEXTO_LINT_PRODUCAO_GRUPO10_20260910-155458.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO68_CORRECAO_LINT_PRODUCAO_GRUPO10_20260910-160323.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO69_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO10_20260910-161106.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO70_CONTEXTO_LINT_PRODUCAO_GRUPO11_20260910-162343.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO71_CORRECAO_LINT_PRODUCAO_GRUPO11_V2_20260910-163531.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO71_CORRECAO_LINT_PRODUCAO_GRUPO11_V3_20260910-163905.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO71_CORRECAO_LINT_PRODUCAO_GRUPO11_V3_20260910-164224.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO72_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO11_20260910-165230.md`
+- `beauty-core-backend\docs\CHAT04_BLOCO72_DIAGNOSTICO_LINT_PRODUCAO_POS_GRUPO11_20260910-165901.md`
+- Lista limitada a 180 itens.
+
+### BullMQ, producer, worker e eventos
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`; linha 16; marcador `bullmq`
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`; linha 16; marcador `job`
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`; linha 30; marcador `bullmq`
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`; linha 30; marcador `worker`
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`; linha 45; marcador `bullmq`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 1; marcador `bullmq`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 17; marcador `bullmq`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 19; marcador `worker`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 22; marcador `job`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 35; marcador `worker`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 41; marcador `worker`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 42; marcador `job`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 49; marcador `job`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 57; marcador `job`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 58; marcador `worker`
+- `beauty-core-backend\docs\api-admin.md`; linha 273; marcador `job`
+- `beauty-core-backend\docs\architecture.md`; linha 17; marcador `bullmq`
+- `beauty-core-backend\docs\architecture.md`; linha 19; marcador `bullmq`
+- `beauty-core-backend\docs\architecture.md`; linha 19; marcador `job`
+- `beauty-core-backend\docs\architecture.md`; linha 19; marcador `worker`
+- `beauty-core-backend\docs\architecture.md`; linha 158; marcador `bullmq`
+- `beauty-core-backend\docs\architecture.md`; linha 168; marcador `bullmq`
+- `beauty-core-backend\docs\architecture.md`; linha 170; marcador `bullmq`
+- `beauty-core-backend\docs\architecture.md`; linha 181; marcador `job`
+- `beauty-core-backend\docs\architecture.md`; linha 181; marcador `worker`
+- `beauty-core-backend\docs\backend-guide.md`; linha 18; marcador `bullmq`
+- `beauty-core-backend\docs\backend-guide.md`; linha 48; marcador `bullmq`
+- `beauty-core-backend\docs\backend-guide.md`; linha 103; marcador `job`
+- `beauty-core-backend\docs\backend-guide.md`; linha 112; marcador `job`
+- `beauty-core-backend\docs\backend-guide.md`; linha 263; marcador `job`
+- `beauty-core-backend\docs\backend-guide.md`; linha 265; marcador `\bWorker\b`
+- `beauty-core-backend\docs\backend-guide.md`; linha 265; marcador `bullmq`
+- `beauty-core-backend\docs\backend-guide.md`; linha 265; marcador `job`
+- `beauty-core-backend\docs\backend-guide.md`; linha 265; marcador `worker`
+- `beauty-core-backend\docs\backend-guide.md`; linha 289; marcador `job`
+- `beauty-core-backend\docs\backup-recovery.md`; linha 24; marcador `job`
+- `beauty-core-backend\docs\bullmq.md`; linha 1; marcador `bullmq`
+- `beauty-core-backend\docs\bullmq.md`; linha 4; marcador `bullmq`
+- `beauty-core-backend\docs\bullmq.md`; linha 4; marcador `worker`
+- `beauty-core-backend\docs\bullmq.md`; linha 6; marcador `bullmq`
+- `beauty-core-backend\docs\bullmq.md`; linha 7; marcador `bullmq`
+- `beauty-core-backend\docs\bullmq.md`; linha 9; marcador `\bQueue\b`
+- `beauty-core-backend\docs\bullmq.md`; linha 9; marcador `\bWorker\b`
+- `beauty-core-backend\docs\bullmq.md`; linha 9; marcador `worker`
+- `beauty-core-backend\docs\bullmq.md`; linha 12; marcador `bullmq`
+- `beauty-core-backend\docs\bullmq.md`; linha 12; marcador `job`
+- `beauty-core-backend\docs\bullmq.md`; linha 24; marcador `worker`
+- `beauty-core-backend\docs\bullmq.md`; linha 25; marcador `job`
+- `beauty-core-backend\docs\bullmq.md`; linha 25; marcador `worker`
+- `beauty-core-backend\docs\bullmq.md`; linha 28; marcador `\bQueue\b`
+- `beauty-core-backend\docs\bullmq.md`; linha 28; marcador `job`
+- `beauty-core-backend\docs\bullmq.md`; linha 40; marcador `job`
+- `beauty-core-backend\docs\bullmq.md`; linha 48; marcador `job`
+- `beauty-core-backend\docs\bullmq.md`; linha 55; marcador `\bWorker\b`
+- `beauty-core-backend\docs\bullmq.md`; linha 55; marcador `worker`
+- `beauty-core-backend\docs\bullmq.md`; linha 56; marcador `job`
+- `beauty-core-backend\docs\bullmq.md`; linha 58; marcador `job`
+- `beauty-core-backend\docs\bullmq.md`; linha 63; marcador `bullmq`
+- `beauty-core-backend\docs\bullmq.md`; linha 66; marcador `worker`
+- `beauty-core-backend\docs\bullmq.md`; linha 70; marcador `job`
+- `beauty-core-backend\docs\bullmq.md`; linha 76; marcador `bullmq`
+- `beauty-core-backend\docs\business-continuity.md`; linha 50; marcador `worker`
+- `beauty-core-backend\docs\business-continuity.md`; linha 72; marcador `job`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 21; marcador `job`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 31; marcador `worker`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 43; marcador `bullmq`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 56; marcador `worker`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 58; marcador `worker`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 98; marcador `bullmq`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 102; marcador `worker`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 103; marcador `job`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 113; marcador `worker`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 155; marcador `bullmq`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 159; marcador `worker`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 161; marcador `job`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 171; marcador `worker`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 173; marcador `worker`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 221; marcador `bullmq`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 225; marcador `worker`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 240; marcador `worker`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 242; marcador `worker`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 280; marcador `bullmq`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 280; marcador `job`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 280; marcador `worker`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 302; marcador `worker`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 21; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 22; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 22; marcador `bullmq`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 22; marcador `job`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 22; marcador `worker`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 38; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 38; marcador `worker`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 41; marcador `job`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 20; marcador `job`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 21; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 21; marcador `job`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 21; marcador `worker`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 24; marcador `job`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 40; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 40; marcador `worker`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 47; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 64; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 64; marcador `worker`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 71; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block03g-backup-linux.md`; linha 5; marcador `job`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 10; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 10; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 10; marcador `bullmq`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 10; marcador `job`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 10; marcador `worker`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 11; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 11; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 11; marcador `bullmq`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 11; marcador `worker`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 12; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 12; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 12; marcador `worker`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 13; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 13; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 13; marcador `job`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 13; marcador `worker`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 15; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 15; marcador `bullmq`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 16; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 16; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 16; marcador `bullmq`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 16; marcador `job`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 16; marcador `worker`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 17; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 17; marcador `bullmq`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 17; marcador `job`
+- `beauty-core-backend\docs\chat03-block04a-backend-lint-diagnosis.md`; linha 29; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block04ad-services-critical-residual-context.md`; linha 169; marcador `job`
+- `beauty-core-backend\docs\chat03-block04ad-services-critical-residual-context.md`; linha 170; marcador `job`
+- `beauty-core-backend\docs\chat03-block04ad-services-critical-residual-context.md`; linha 171; marcador `job`
+- `beauty-core-backend\docs\chat03-block04ad-services-critical-residual-context.md`; linha 172; marcador `job`
+- `beauty-core-backend\docs\chat03-block04ad-services-critical-residual-context.md`; linha 173; marcador `job`
+- `beauty-core-backend\docs\chat03-block04ap-meta-provider-worker-hardening.md`; linha 1; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block04ap-meta-provider-worker-hardening.md`; linha 1; marcador `worker`
+- `beauty-core-backend\docs\chat03-block04ap-meta-provider-worker-hardening.md`; linha 7; marcador `bullmq`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`; linha 1; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`; linha 1; marcador `worker`
+- `beauty-core-backend\docs\chat03-block04ar-meta-worker-flow-test.md`; linha 1; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block04ar-meta-worker-flow-test.md`; linha 1; marcador `worker`
+- `beauty-core-backend\docs\chat03-block04ar-meta-worker-flow-test.md`; linha 6; marcador `bullmq`
+- `beauty-core-backend\docs\chat03-block04ar-meta-worker-flow-test.md`; linha 7; marcador `bullmq`
+- `beauty-core-backend\docs\chat03-block04as-retention-runtime-proof.md`; linha 10; marcador `job`
+- `beauty-core-backend\docs\chat03-block04at-final-closeout.md`; linha 9; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block04at-final-closeout.md`; linha 9; marcador `worker`
+- `beauty-core-backend\docs\chat03-block04at-final-closeout.md`; linha 18; marcador `job`
+- `beauty-core-backend\docs\chat03-block04au-bullmq-retention.md`; linha 1; marcador `bullmq`
+- `beauty-core-backend\docs\chat03-block04au-bullmq-retention.md`; linha 5; marcador `job`
+- `beauty-core-backend\docs\chat03-block04au-bullmq-retention.md`; linha 6; marcador `job`
+- `beauty-core-backend\docs\chat03-block04au-bullmq-retention.md`; linha 7; marcador `job`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 48; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 48; marcador `worker`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 49; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 49; marcador `worker`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 50; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 50; marcador `worker`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 53; marcador `bullmq`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 94; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 94; marcador `worker`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 98; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 99; marcador `bullmq`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 103; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 103; marcador `worker`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 28; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 31; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 43; marcador `\bWorker\b`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 43; marcador `worker`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 46; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 117; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 123; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 125; marcador `job`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 126; marcador `job`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 135; marcador `\bQueue\b`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 137; marcador `job`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 138; marcador `job`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 139; marcador `job`
+- Evidencias limitadas a 180 ocorrencias.
+
+### Idempotencia, deduplicacao, retry e backoff
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 20; marcador `backoff`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 20; marcador `retry`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 22; marcador `idempot`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 22; marcador `jobId`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 42; marcador `idempot`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 46; marcador `backoff`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 46; marcador `retry`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 49; marcador `idempot`
+- `beauty-core-backend\docs\architecture.md`; linha 154; marcador `idempot`
+- `beauty-core-backend\docs\architecture.md`; linha 160; marcador `idempot`
+- `beauty-core-backend\docs\architecture.md`; linha 181; marcador `backoff`
+- `beauty-core-backend\docs\architecture.md`; linha 181; marcador `idempot`
+- `beauty-core-backend\docs\architecture.md`; linha 181; marcador `jobId`
+- `beauty-core-backend\docs\architecture.md`; linha 181; marcador `retry`
+- `beauty-core-backend\docs\backend-guide.md`; linha 112; marcador `idempot`
+- `beauty-core-backend\docs\backend-guide.md`; linha 265; marcador `idempot`
+- `beauty-core-backend\docs\backend-guide.md`; linha 265; marcador `jobId`
+- `beauty-core-backend\docs\backend-guide.md`; linha 289; marcador `idempot`
+- `beauty-core-backend\docs\bullmq.md`; linha 4; marcador `backoff`
+- `beauty-core-backend\docs\bullmq.md`; linha 4; marcador `idempot`
+- `beauty-core-backend\docs\bullmq.md`; linha 4; marcador `retry`
+- `beauty-core-backend\docs\bullmq.md`; linha 9; marcador `retry`
+- `beauty-core-backend\docs\bullmq.md`; linha 32; marcador `backoff`
+- `beauty-core-backend\docs\bullmq.md`; linha 32; marcador `retry`
+- `beauty-core-backend\docs\bullmq.md`; linha 33; marcador `backoff`
+- `beauty-core-backend\docs\bullmq.md`; linha 33; marcador `retry`
+- `beauty-core-backend\docs\bullmq.md`; linha 35; marcador `backoff`
+- `beauty-core-backend\docs\bullmq.md`; linha 35; marcador `retry`
+- `beauty-core-backend\docs\bullmq.md`; linha 37; marcador `idempot`
+- `beauty-core-backend\docs\bullmq.md`; linha 38; marcador `idempot`
+- `beauty-core-backend\docs\bullmq.md`; linha 40; marcador `jobId`
+- `beauty-core-backend\docs\bullmq.md`; linha 67; marcador `retry`
+- `beauty-core-backend\docs\bullmq.md`; linha 68; marcador `backoff`
+- `beauty-core-backend\docs\bullmq.md`; linha 70; marcador `idempot`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 245; marcador `idempot`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 283; marcador `idempot`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 22; marcador `retry`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 38; marcador `idempot`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 20; marcador `idempot`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 24; marcador `retry`
+- `beauty-core-backend\docs\chat03-block04ao-raw-body-fix.md`; linha 9; marcador `idempot`
+- `beauty-core-backend\docs\chat03-block04ap-meta-provider-worker-hardening.md`; linha 7; marcador `retry`
+- `beauty-core-backend\docs\chat03-block04ap-meta-provider-worker-hardening.md`; linha 8; marcador `retry`
+- `beauty-core-backend\docs\chat03-block04ap-meta-provider-worker-hardening.md`; linha 10; marcador `idempot`
+- `beauty-core-backend\docs\chat03-block04ar-meta-worker-flow-test.md`; linha 6; marcador `retry`
+- `beauty-core-backend\docs\chat03-block04ar-meta-worker-flow-test.md`; linha 7; marcador `retry`
+- `beauty-core-backend\docs\chat03-block04ar-meta-worker-flow-test.md`; linha 11; marcador `retry`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 102; marcador `retry`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 125; marcador `jobId`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 126; marcador `jobId`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 137; marcador `jobId`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 138; marcador `jobId`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 139; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`; linha 704; marcador `retry`
+- `beauty-core-backend\docs\CHAT04_BLOCO01_BASELINE_FINAL_20260909-135604.md`; linha 801; marcador `retry`
+- `beauty-core-backend\docs\CHAT04_BLOCO07_REVISAO_ESCOPO_CI_20260909-144442.md`; linha 125; marcador `retry`
+- `beauty-core-backend\docs\CHAT04_BLOCO16_DIAGNOSTICO_CI_POS_CORRECOES_20260909-162801.md`; linha 118; marcador `dedup`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-163757.md`; linha 156; marcador `dedup`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-165000.md`; linha 168; marcador `dedup`
+- `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-165000.md`; linha 192; marcador `retry`
+- `beauty-core-backend\docs\CHAT04_BLOCO28_DIAGNOSTICO_LINT_GLOBAL_RESIDUAL_20260909-182401.md`; linha 55; marcador `retry`
+- `beauty-core-backend\docs\CHAT04_BLOCO29_RECONCILIACAO_LINT_PRODUCAO_20260909-183221.md`; linha 121; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO30_CONTEXTO_LINT_PRODUCAO_20260909-183737.md`; linha 46; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO30_CONTEXTO_LINT_PRODUCAO_20260909-183737.md`; linha 138; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO30_CONTEXTO_LINT_PRODUCAO_20260909-183737.md`; linha 173; marcador `attempts`
+- `beauty-core-backend\docs\CHAT04_BLOCO30_CONTEXTO_LINT_PRODUCAO_20260909-183737.md`; linha 189; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO30_CONTEXTO_LINT_PRODUCAO_20260909-183737.md`; linha 196; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO30_CONTEXTO_LINT_PRODUCAO_20260909-183737.md`; linha 198; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO30_CONTEXTO_LINT_PRODUCAO_20260909-183737.md`; linha 230; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO30_CONTEXTO_LINT_PRODUCAO_20260909-183737.md`; linha 259; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO30_CONTEXTO_LINT_PRODUCAO_20260909-183737.md`; linha 261; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO30_CONTEXTO_LINT_PRODUCAO_20260909-183737.md`; linha 269; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 75; marcador `attempts`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 77; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 79; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 83; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 135; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 136; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 144; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 150; marcador `attempts`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 157; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 161; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 187; marcador `attempts`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 195; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 196; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 205; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 207; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 228; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 232; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 248; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 250; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`; linha 257; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`; linha 1099; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`; linha 1111; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`; linha 1123; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`; linha 1135; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`; linha 1147; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`; linha 1177; marcador `attempts`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`; linha 1189; marcador `attempts`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`; linha 1201; marcador `attempts`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`; linha 1213; marcador `attempts`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`; linha 1225; marcador `attempts`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`; linha 1473; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO35_CONTEXTO_LINT_PRODUCAO_GRUPO03_20260909-210048.md`; linha 1485; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO60_CONTEXTO_LINT_PRODUCAO_GRUPO08_20260910-122901.md`; linha 174; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO60_CONTEXTO_LINT_PRODUCAO_GRUPO08_20260910-122901.md`; linha 186; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO60_CONTEXTO_LINT_PRODUCAO_GRUPO08_20260910-122901.md`; linha 270; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO60_CONTEXTO_LINT_PRODUCAO_GRUPO08_20260910-122901.md`; linha 282; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO63_CONTEXTO_LINT_PRODUCAO_GRUPO09_20260910-145245.md`; linha 366; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO63_CONTEXTO_LINT_PRODUCAO_GRUPO09_20260910-145245.md`; linha 378; marcador `jobId`
+- `beauty-core-backend\docs\CHAT04_BLOCO86_CORRECAO_LINT_PRODUCAO_GRUPO13_20260910-185138.md`; linha 1; marcador `dedup`
+- `beauty-core-backend\docs\chat38-documentation-report.md`; linha 87; marcador `idempot`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 17; marcador `idempot`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 21; marcador `backoff`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 21; marcador `idempot`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 21; marcador `jobId`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 21; marcador `retry`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 25; marcador `backoff`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 25; marcador `idempot`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 25; marcador `jobId`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 25; marcador `retry`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 43; marcador `backoff`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 43; marcador `idempot`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 43; marcador `jobId`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 43; marcador `retry`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 50; marcador `attempts`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 50; marcador `backoff`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 50; marcador `removeOn`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 51; marcador `idempot`
+- `beauty-core-backend\docs\chat41-bullmq-audit.md`; linha 51; marcador `jobId`
+- `beauty-core-backend\docs\chat41-premium-certification-final-report.md`; linha 22; marcador `idempot`
+- `beauty-core-backend\docs\chat41-premium-certification-final-report.md`; linha 70; marcador `backoff`
+- `beauty-core-backend\docs\chat41-premium-certification-final-report.md`; linha 70; marcador `idempot`
+- `beauty-core-backend\docs\chat41-premium-certification-final-report.md`; linha 70; marcador `jobId`
+- `beauty-core-backend\docs\chat-a-bloco00-baseline-20260911-190953.md`; linha 391; marcador `retry`
+- `beauty-core-backend\docs\chat-a-bloco01-reconciliacao-meta-20260911-191539.md`; linha 382; marcador `retry`
+- `beauty-core-backend\docs\chat-a-bloco01-reconciliacao-meta-20260911-192225.md`; linha 302; marcador `retry`
+- `beauty-core-backend\docs\chat-a-meta\chat-a-bloco01b-auditoria-semantica-20260911-192820.md`; linha 252; marcador `jobId`
+- `beauty-core-backend\docs\chat-a-meta\chat-a-bloco01b-auditoria-semantica-20260911-192820.md`; linha 271; marcador `retry`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02h-http-r2-20260912-120054.md`; linha 504; marcador `jobId`
+- `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02i-storage-final-gate-20260912-120629.md`; linha 560; marcador `jobId`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO00_BASELINE_20260911_135451.md`; linha 210; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO00_BASELINE_20260911_135451.md`; linha 351; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO00_BASELINE_20260911_135451.md`; linha 441; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO00_BASELINE_20260911_135451.md`; linha 451; marcador `idempot`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO00_BASELINE_20260911_135451.md`; linha 451; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01A_CONTRATO_20260911_140002.md`; linha 107; marcador `idempot`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01A_CONTRATO_20260911_140002.md`; linha 115; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01A_CONTRATO_20260911_140002.md`; linha 129; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01B_LEITURA_CONTRATOS_20260911_140251.md`; linha 529; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01B_LEITURA_CONTRATOS_20260911_140251.md`; linha 640; marcador `jobId`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01B_LEITURA_CONTRATOS_20260911_140251.md`; linha 643; marcador `attempts`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01B_LEITURA_CONTRATOS_20260911_140251.md`; linha 649; marcador `attempts`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01B_LEITURA_CONTRATOS_20260911_140251.md`; linha 651; marcador `jobId`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01B_LEITURA_CONTRATOS_20260911_140251.md`; linha 657; marcador `attempts`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01B_LEITURA_CONTRATOS_20260911_140251.md`; linha 672; marcador `attempts`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01B_LEITURA_CONTRATOS_20260911_140251.md`; linha 677; marcador `attempts`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO01B_LEITURA_CONTRATOS_20260911_140251.md`; linha 688; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02A_PROVIDER_20260911_143026.md`; linha 62; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02A_PROVIDER_20260911_143026.md`; linha 154; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02A_PROVIDER_20260911_143026.md`; linha 160; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02A_PROVIDER_20260911_143026.md`; linha 210; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02A_PROVIDER_20260911_143026.md`; linha 236; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02A_PROVIDER_20260911_143026.md`; linha 241; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02B_PROVIDER_TENANT_20260911_143414.md`; linha 25; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02B_PROVIDER_TENANT_20260911_143414.md`; linha 36; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02B_PROVIDER_TENANT_20260911_143414.md`; linha 42; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02C_REPARO_20260911_143618.md`; linha 15; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02C_REPARO_20260911_143618.md`; linha 19; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02C_REPARO_20260911_143618.md`; linha 25; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02E_VALIDACAO_20260911_144127.md`; linha 18; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02E_VALIDACAO_20260911_144127.md`; linha 22; marcador `retry`
+- `beauty-core-backend\docs\meta-whatsapp\audits\META_BLOCO02E_VALIDACAO_20260911_144127.md`; linha 28; marcador `retry`
+- `beauty-core-backend\docs\multi-tenant.md`; linha 180; marcador `idempot`
+- `beauty-core-backend\docs\production-checklist.md`; linha 46; marcador `retry`
+- `beauty-core-backend\docs\production-checklist.md`; linha 47; marcador `backoff`
+- `beauty-core-backend\docs\production-checklist.md`; linha 50; marcador `idempot`
+- `beauty-core-backend\docs\scheduler.md`; linha 44; marcador `jobId`
+- `beauty-core-backend\docs\sli.md`; linha 94; marcador `retry`
+- `beauty-core-backend\docs\tenant-validation-matrix.md`; linha 43; marcador `idempot`
+- Evidencias limitadas a 180 ocorrencias.
+
+### Status, falhas, persistencia e observabilidade
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`; linha 3; marcador `status`
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`; linha 13; marcador `log`
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`; linha 17; marcador `audit`
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`; linha 37; marcador `audit`
+- `beauty-core-backend\docs\adrs\0002-multi-tenant-strategy.md`; linha 3; marcador `status`
+- `beauty-core-backend\docs\adrs\0002-multi-tenant-strategy.md`; linha 49; marcador `audit`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`; linha 3; marcador `status`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`; linha 9; marcador `audit`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`; linha 9; marcador `log`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`; linha 22; marcador `log`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`; linha 23; marcador `log`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`; linha 38; marcador `audit`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`; linha 44; marcador `log`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`; linha 49; marcador `log`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`; linha 51; marcador `log`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`; linha 57; marcador `log`
+- `beauty-core-backend\docs\adrs\0003-auth-session-strategy.md`; linha 59; marcador `log`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 3; marcador `status`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 41; marcador `log`
+- `beauty-core-backend\docs\adrs\0005-backup-dr-strategy.md`; linha 3; marcador `status`
+- `beauty-core-backend\docs\adrs\0005-backup-dr-strategy.md`; linha 9; marcador `audit`
+- `beauty-core-backend\docs\adrs\0005-backup-dr-strategy.md`; linha 50; marcador `audit`
+- `beauty-core-backend\docs\api-admin.md`; linha 19; marcador `log`
+- `beauty-core-backend\docs\api-admin.md`; linha 25; marcador `log`
+- `beauty-core-backend\docs\api-admin.md`; linha 33; marcador `log`
+- `beauty-core-backend\docs\api-admin.md`; linha 37; marcador `log`
+- `beauty-core-backend\docs\api-admin.md`; linha 66; marcador `log`
+- `beauty-core-backend\docs\api-admin.md`; linha 67; marcador `audit`
+- `beauty-core-backend\docs\api-admin.md`; linha 107; marcador `log`
+- `beauty-core-backend\docs\api-admin.md`; linha 108; marcador `log`
+- `beauty-core-backend\docs\api-admin.md`; linha 173; marcador `status`
+- `beauty-core-backend\docs\api-admin.md`; linha 271; marcador `status`
+- `beauty-core-backend\docs\api-admin.md`; linha 272; marcador `audit`
+- `beauty-core-backend\docs\api-admin.md`; linha 296; marcador `audit`
+- `beauty-core-backend\docs\api-admin.md`; linha 321; marcador `audit`
+- `beauty-core-backend\docs\api-admin.md`; linha 348; marcador `audit`
+- `beauty-core-backend\docs\api-admin.md`; linha 352; marcador `audit`
+- `beauty-core-backend\docs\api-admin.md`; linha 353; marcador `status`
+- `beauty-core-backend\docs\api-admin.md`; linha 354; marcador `status`
+- `beauty-core-backend\docs\api-admin.md`; linha 362; marcador `audit`
+- `beauty-core-backend\docs\api-admin.md`; linha 377; marcador `trace`
+- `beauty-core-backend\docs\api-admin.md`; linha 383; marcador `audit`
+- `beauty-core-backend\docs\api-client.md`; linha 5; marcador `log`
+- `beauty-core-backend\docs\api-client.md`; linha 185; marcador `audit`
+- `beauty-core-backend\docs\api-client.md`; linha 285; marcador `status`
+- `beauty-core-backend\docs\api-client.md`; linha 292; marcador `status`
+- `beauty-core-backend\docs\architecture.md`; linha 67; marcador `audit`
+- `beauty-core-backend\docs\architecture.md`; linha 87; marcador `log`
+- `beauty-core-backend\docs\architecture.md`; linha 99; marcador `audit`
+- `beauty-core-backend\docs\architecture.md`; linha 114; marcador `log`
+- `beauty-core-backend\docs\architecture.md`; linha 140; marcador `audit`
+- `beauty-core-backend\docs\architecture.md`; linha 223; marcador `audit`
+- `beauty-core-backend\docs\architecture.md`; linha 223; marcador `log`
+- `beauty-core-backend\docs\architecture.md`; linha 233; marcador `metric`
+- `beauty-core-backend\docs\architecture.md`; linha 284; marcador `audit`
+- `beauty-core-backend\docs\backend-guide.md`; linha 7; marcador `audit`
+- `beauty-core-backend\docs\backend-guide.md`; linha 32; marcador `log`
+- `beauty-core-backend\docs\backend-guide.md`; linha 38; marcador `log`
+- `beauty-core-backend\docs\backend-guide.md`; linha 40; marcador `status`
+- `beauty-core-backend\docs\backend-guide.md`; linha 46; marcador `audit`
+- `beauty-core-backend\docs\backend-guide.md`; linha 51; marcador `status`
+- `beauty-core-backend\docs\backend-guide.md`; linha 94; marcador `audit`
+- `beauty-core-backend\docs\backend-guide.md`; linha 102; marcador `audit`
+- `beauty-core-backend\docs\backend-guide.md`; linha 113; marcador `audit`
+- `beauty-core-backend\docs\backend-guide.md`; linha 169; marcador `status`
+- `beauty-core-backend\docs\backend-guide.md`; linha 184; marcador `audit`
+- `beauty-core-backend\docs\backend-guide.md`; linha 188; marcador `audit`
+- `beauty-core-backend\docs\backend-guide.md`; linha 189; marcador `log`
+- `beauty-core-backend\docs\backend-guide.md`; linha 194; marcador `audit`
+- `beauty-core-backend\docs\backend-guide.md`; linha 206; marcador `trace`
+- `beauty-core-backend\docs\backend-guide.md`; linha 279; marcador `trace`
+- `beauty-core-backend\docs\backup-recovery.md`; linha 11; marcador `log`
+- `beauty-core-backend\docs\backup-recovery.md`; linha 17; marcador `audit`
+- `beauty-core-backend\docs\backup-recovery.md`; linha 60; marcador `log`
+- `beauty-core-backend\docs\backup-recovery.md`; linha 81; marcador `log`
+- `beauty-core-backend\docs\backup-recovery.md`; linha 87; marcador `log`
+- `beauty-core-backend\docs\bullmq.md`; linha 25; marcador `log`
+- `beauty-core-backend\docs\bullmq.md`; linha 45; marcador `log`
+- `beauty-core-backend\docs\bullmq.md`; linha 61; marcador `log`
+- `beauty-core-backend\docs\bullmq.md`; linha 73; marcador `log`
+- `beauty-core-backend\docs\business-continuity.md`; linha 28; marcador `log`
+- `beauty-core-backend\docs\business-continuity.md`; linha 61; marcador `log`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 20; marcador `audit`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 77; marcador `log`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 152; marcador `audit`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 160; marcador `log`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 218; marcador `audit`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 272; marcador `log`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 272; marcador `trace`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 278; marcador `audit`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 279; marcador `log`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 21; marcador `status`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 22; marcador `log`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 38; marcador `status`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 22; marcador `status`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 24; marcador `status`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 26; marcador `log`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 32; marcador `status`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 34; marcador `log`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 1; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 5; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 10; marcador `status`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 1; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 4; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 8; marcador `status`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 29; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03c-workflow-contract-report.md`; linha 1; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03c-workflow-contract-report.md`; linha 8; marcador `status`
+- `beauty-core-backend\docs\chat03-block03d-workflow-mapping-report.md`; linha 8; marcador `status`
+- `beauty-core-backend\docs\chat03-block03f-workflow-env-mapping-report.md`; linha 8; marcador `status`
+- `beauty-core-backend\docs\chat03-block03g-backup-linux.md`; linha 21; marcador `error`
+- `beauty-core-backend\docs\chat03-block03h-backup-linux-validation.md`; linha 8; marcador `status`
+- `beauty-core-backend\docs\chat03-block03h-backup-linux-validation.md`; linha 11; marcador `error`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 1; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 4; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 8; marcador `status`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 10; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 10; marcador `event`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 10; marcador `log`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 11; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 11; marcador `log`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 11; marcador `trace`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 12; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 12; marcador `log`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 12; marcador `metric`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 13; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 13; marcador `event`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 13; marcador `log`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 13; marcador `metric`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 13; marcador `status`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 13; marcador `trace`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 14; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 14; marcador `log`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 15; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 15; marcador `log`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 16; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 16; marcador `log`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 17; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 17; marcador `log`
+- `beauty-core-backend\docs\chat03-block03j-browser-e2e-preflight.md`; linha 8; marcador `status`
+- `beauty-core-backend\docs\chat03-block03j-browser-e2e-preflight.md`; linha 10; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03j-browser-e2e-preflight.md`; linha 22; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03j-browser-e2e-preflight.md`; linha 45; marcador `audit`
+- `beauty-core-backend\docs\chat03-block03k-browser-e2e-report.md`; linha 4; marcador `status`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 22; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 24; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 26; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 28; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 30; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 32; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 34; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 36; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 38; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 40; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 42; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 43; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 44; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 44; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 45; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 46; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 46; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 47; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 48; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 49; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 49; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 50; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 50; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 51; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 51; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 52; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 54; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 56; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 57; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 58; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 58; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 59; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 60; marcador `error`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 60; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 61; marcador `log`
+- `beauty-core-backend\docs\chat03-block04aa-services-critical-residual-lint.md`; linha 62; marcador `error`
+- Evidencias limitadas a 180 ocorrencias.
+
+### Contratos WhatsApp, Meta e webhooks
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`; linha 15; marcador `WhatsApp`
+- `beauty-core-backend\docs\adrs\0001-architecture-overview.md`; linha 37; marcador `WhatsApp`
+- `beauty-core-backend\docs\adrs\0004-bullmq-scheduler-strategy.md`; linha 9; marcador `WhatsApp`
+- `beauty-core-backend\docs\api-client.md`; linha 84; marcador `message`
+- `beauty-core-backend\docs\api-client.md`; linha 206; marcador `WhatsApp`
+- `beauty-core-backend\docs\api-client.md`; linha 352; marcador `WhatsApp`
+- `beauty-core-backend\docs\architecture.md`; linha 69; marcador `WhatsApp`
+- `beauty-core-backend\docs\architecture.md`; linha 175; marcador `WhatsApp`
+- `beauty-core-backend\docs\backend-guide.md`; linha 47; marcador `template`
+- `beauty-core-backend\docs\backend-guide.md`; linha 47; marcador `WhatsApp`
+- `beauty-core-backend\docs\bullmq.md`; linha 12; marcador `Meta`
+- `beauty-core-backend\docs\bullmq.md`; linha 18; marcador `WhatsApp`
+- `beauty-core-backend\docs\capacity-planning.md`; linha 18; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 21; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block01-baseline-report.md`; linha 38; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 1; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 1; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 5; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 10; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 10; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 11; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 11; marcador `phone_number_id`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 11; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 12; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 12; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 13; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 13; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 16; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 16; marcador `phone_number_id`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 16; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 20; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 21; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 23; marcador `message`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 23; marcador `phone_number_id`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 24; marcador `message`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 28; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 28; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 31; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block02-whatsapp-meta.md`; linha 32; marcador `webhook`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 38; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 39; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 40; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 43; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 43; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 45; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 47; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 48; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block03a-infra-workflows-report.md`; linha 48; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 17; marcador `template`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 18; marcador `template`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 19; marcador `template`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 20; marcador `template`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 21; marcador `template`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 62; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 63; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 64; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 67; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 67; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 69; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 71; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 72; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block03b-workflows-[sensitive data omitted]`; linha 72; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 10; marcador `template`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 10; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 11; marcador `template`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 11; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 12; marcador `template`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 12; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 13; marcador `template`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 13; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 15; marcador `template`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 15; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 16; marcador `template`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 16; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block03i-security-lgpd-report.md`; linha 25; marcador `template`
+- `beauty-core-backend\docs\chat03-block04a-backend-lint-diagnosis.md`; linha 30; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04ad-services-critical-residual-context.md`; linha 41; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04ad-services-critical-residual-context.md`; linha 46; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04ad-services-critical-residual-context.md`; linha 171; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04ag-services-critical-final-context.md`; linha 41; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04ag-services-critical-final-context.md`; linha 46; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04ak-chat03-scope-reconciliation.md`; linha 15; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04ak-chat03-scope-reconciliation.md`; linha 16; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04ao-raw-body-fix.md`; linha 1; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04ao-raw-body-fix.md`; linha 1; marcador `webhook`
+- `beauty-core-backend\docs\chat03-block04ap-meta-provider-worker-hardening.md`; linha 1; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04ap-meta-provider-worker-hardening.md`; linha 5; marcador `message`
+- `beauty-core-backend\docs\chat03-block04ap-meta-provider-worker-hardening.md`; linha 5; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`; linha 1; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`; linha 5; marcador `message`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`; linha 5; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`; linha 6; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`; linha 7; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`; linha 9; marcador `message`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`; linha 9; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`; linha 10; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aq-meta-worker-current-shape.md`; linha 10; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04ar-meta-worker-flow-test.md`; linha 1; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04ar-meta-worker-flow-test.md`; linha 5; marcador `message`
+- `beauty-core-backend\docs\chat03-block04at-final-closeout.md`; linha 9; marcador `webhook`
+- `beauty-core-backend\docs\chat03-block04at-final-closeout.md`; linha 9; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04at-final-closeout.md`; linha 21; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04au-bullmq-retention.md`; linha 8; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 20; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 20; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 48; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 49; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 50; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 83; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 84; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 85; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 86; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 87; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 88; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 88; marcador `webhook`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 88; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 89; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 89; marcador `webhook`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 89; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 90; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 90; marcador `webhook`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 90; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 91; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 91; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 94; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 98; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 101; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 101; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 102; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 102; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 103; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04aw-final-manifest-local-commit.md`; linha 103; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 28; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 30; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 30; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 35; marcador `template`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 35; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 40; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 41; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 42; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 42; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 43; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 46; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 47; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04b-lint-baseline-vs-diff-report.md`; linha 47; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04c-lint-changed-lines-report.md`; linha 13; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04c-lint-changed-lines-report.md`; linha 14; marcador `template`
+- `beauty-core-backend\docs\chat03-block04c-lint-changed-lines-report.md`; linha 14; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04c-lint-changed-lines-report.md`; linha 15; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04c-lint-changed-lines-report.md`; linha 15; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04c-lint-changed-lines-report.md`; linha 16; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04c-lint-changed-lines-report.md`; linha 16; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 6; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 11; marcador `template`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 19; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 19; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 25; marcador `message`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 26; marcador `message`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 30; marcador `message`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 39; marcador `message`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 117; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 120; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 123; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 130; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 142; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 142; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 145; marcador `message`
+- `beauty-core-backend\docs\chat03-block04d-lint-context-report.md`; linha 151; marcador `message`
+- `beauty-core-backend\docs\chat03-block04-final-gate-report.md`; linha 35; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04-final-gate-report.md`; linha 35; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04-final-gate-report.md`; linha 36; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04g-lint-changed-lines-report.md`; linha 9; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04j-final-technical-report.md`; linha 5; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04j-final-technical-report.md`; linha 5; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04k-commit-preflight.md`; linha 18; marcador `Meta`
+- `beauty-core-backend\docs\chat03-block04k-commit-preflight.md`; linha 18; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04k-commit-preflight.md`; linha 40; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04k-commit-preflight.md`; linha 41; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04k-commit-preflight.md`; linha 42; marcador `WhatsApp`
+- `beauty-core-backend\docs\chat03-block04k-commit-preflight.md`; linha 45; marcador `WhatsApp`
+- Evidencias limitadas a 180 ocorrencias.
+
+## Testes e ferramentas
+
+- Arquivos de teste identificados: 95
+  - `beauty-core-backend\docs\chat03-block03j-browser-e2e-preflight.md`
+  - `beauty-core-backend\docs\chat03-block03k-browser-e2e-report.md`
+  - `beauty-core-backend\docs\chat03-block04al-linux-backup-runtime-e2e.md`
+  - `beauty-core-backend\docs\chat03-block04an-lgpd-runtime-e2e.md`
+  - `beauty-core-backend\docs\chat03-block04ar-meta-worker-flow-test.md`
+  - `beauty-core-backend\docs\chat03-block04q-prisma-accessor-inspection.md`
+  - `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-163319.md`
+  - `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-163601.md`
+  - `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-163757.md`
+  - `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-164834.md`
+  - `beauty-core-backend\docs\CHAT04_BLOCO17_CORRECAO_CI_RAWBODY_VITEST_PUSH_20260909-165000.md`
+  - `beauty-core-backend\docs\CHAT04_BLOCO27_DIAGNOSTICO_LINT_TESTES_GRUPO04_20260909-182011.md`
+  - `beauty-core-backend\docs\CHAT04_BLOCO31_INSPECAO_CONTRATOS_PRODUCAO_20260909-184205.md`
+  - `beauty-core-backend\docs\chat41-tests-quality-audit.md`
+  - `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02e-testes-s3-20260912-105147.md`
+  - `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02h1-preflight-db-test-20260912-115343.md`
+  - `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02h2-configurar-db-test-20260912-115726.md`
+  - `beauty-core-backend\docs\chat-a-storage\chat-a-bloco02h2-configurar-db-test-20260912-115918.md`
+  - `beauty-core-backend\docs\chat-a-storage\chat-a-bloco03i-testes-uploader-local-20260912-130733.md`
+  - `beauty-core-backend\docs\testing.md`
+  - `beauty-core-backend\test\app.e2e-spec.ts`
+  - `beauty-core-backend\test\chat12-whatsapp.http`
+  - `beauty-core-backend\test\chat13-analytics.http`
+  - `beauty-core-backend\test\chat16-auth-cliente.http`
+  - `beauty-core-backend\test\chat29-cliente-area.http`
+  - `beauty-core-backend\test\chat30-refresh-sessoes.http`
+  - `beauty-core-backend\test\chat31-storage.http`
+  - `beauty-core-backend\test\chat32-bullmq-enterprise.http`
+  - `beauty-core-backend\test\chat32-runtime-queues.ps1`
+  - `beauty-core-backend\test\chat34-docker-prod.http`
+  - `beauty-core-backend\test\chat36-backup-lgpd.http`
+  - `beauty-core-backend\test\e2e\auditoria.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\auth-admin.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\auth-cliente.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\cliente-area.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\health.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\lgpd-runtime.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\meta-whatsapp-webhook.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\metrics.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\multiempresa.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\queues.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\refresh-throttle.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\roles.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\scheduler.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\sessoes.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\super-admin.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\swagger-validation.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\tenant.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\uploads.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\uploads-strict-roundtrip.e2e-spec.ts`
+  - `beauty-core-backend\test\e2e\whatsapp-queue-demo.e2e-spec.ts`
+  - `beauty-core-backend\test\env-test.guard.ts`
+  - `beauty-core-backend\test\files\contrato-chat31.pdf`
+  - `beauty-core-backend\test\files\download-chat31.pdf`
+  - `beauty-core-backend\test\files\malware.exe`
+  - `beauty-core-backend\test\files\shell.php`
+  - `beauty-core-backend\test\files\signed-download-chat31.pdf`
+  - `beauty-core-backend\test\helpers\auth.helper.ts`
+  - `beauty-core-backend\test\helpers\prisma.helper.ts`
+  - `beauty-core-backend\test\helpers\queue.helper.ts`
+  - `beauty-core-backend\test\helpers\tenant.helper.ts`
+  - `beauty-core-backend\test\helpers\upload.helper.ts`
+  - `beauty-core-backend\test\integration\r2-storage.live.spec.ts`
+  - `beauty-core-backend\test\jest-e2e.js`
+  - `beauty-core-backend\test\jest-e2e.json`
+  - `beauty-core-backend\test\jest-e2e.setup.ts`
+  - `beauty-core-backend\test\seeds\test-seed.ts`
+  - `beauty-core-backend\test\setup-e2e.ts`
+  - `beauty-core-backend\test\test-area-cliente.http`
+  - `beauty-core-backend\test\testes-arquivos.http`
+  - `beauty-core-backend\test\unit\agendamentos-concurrency.spec.ts`
+  - `beauty-core-backend\test\unit\agendamentos-options.spec.ts`
+  - `beauty-core-backend\test\unit\agendamentos-query.dto.spec.ts`
+  - `beauty-core-backend\test\unit\analytics-performance-limits.spec.ts`
+  - `beauty-core-backend\test\unit\area-cliente-privacy.spec.ts`
+  - `beauty-core-backend\test\unit\backup-external-upload.spec.ts`
+  - `beauty-core-backend\test\unit\chat03-bullmq-retention.spec.ts`
+  - `beauty-core-backend\test\unit\chat03-retention-runtime.spec.ts`
+  - `beauty-core-backend\test\unit\cliente-area-compatibility.spec.ts`
+  - `beauty-core-backend\test\unit\clientes-pacotes-concurrency.spec.ts`
+- Node.js detectado: `C:\Program Files\nodejs\node.exe`; nenhum teste foi executado.
+- npm detectado: `C:\Program Files\nodejs\npm.ps1`; nenhum comando npm foi executado.
+
+## Leitura dos gates
+
+- Evidencias de fila/processamento foram localizadas; a implementacao ainda precisa de validacao semantica e runtime.
+- Marcadores de confiabilidade foram localizados; sua cobertura e comportamento ainda nao foram aprovados.
+- Marcadores de status/falha/observabilidade foram localizados; falta comprovar transicoes e persistencia.
+- Referencias WhatsApp/Meta/webhook foram localizadas; nenhum envio real foi realizado.
+
+## Operacoes nao executadas
+
+- Nenhuma mensagem WhatsApp foi enviada.
+- Nenhuma chamada Meta foi realizada.
+- Nenhuma fila, worker ou scheduler foi iniciado.
+- Nenhum teste npm foi executado.
+- Migrations: nao executadas.
+- Stage/commit/push/merge/tag/release: nao executados.
+- Deploy: nao executado.
+- Segredos e valores de ambiente: nao lidos nem impressos.
+
+## Classificacao final do B02
+
+- `PASS_WITH_ATTENTION` - auditoria estatica concluida; a prontidao operacional do WhatsApp/BullMQ depende de validacao semantica, testes controlados e runtime sem envio comercial.
+
+## Integridade
+
+- Este relatorio foi gerado automaticamente pelo script B02.
+- O script nao altera codigo e cria apenas o relatorio desta auditoria.

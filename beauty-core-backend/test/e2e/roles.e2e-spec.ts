@@ -1,4 +1,6 @@
-﻿import request = require('supertest');
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import type { Server } from 'node:net';
 
 import {
   bootstrapE2eTestApp,
@@ -10,9 +12,11 @@ import { TEST_EMAILS, TEST_PASSWORD } from '../seeds/test-seed';
 
 describe('Roles E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
+    httpApp = ctx.app as INestApplication<Server>;
   });
 
   afterAll(async () => {
@@ -20,7 +24,7 @@ describe('Roles E2E', () => {
   });
 
   it('sem token deve retornar 401', async () => {
-    await request(ctx.app.getHttpServer()).get('/usuarios').expect(401);
+    await request(httpApp.getHttpServer()).get('/usuarios').expect(401);
   });
 
   it.each([
@@ -30,9 +34,9 @@ describe('Roles E2E', () => {
     ['PROFISSIONAL', TEST_EMAILS.profissional, [403]],
     ['SUPER_ADMIN', TEST_EMAILS.superAdmin, [200]],
   ])('%s em GET /usuarios', async (_role, email, expectedStatuses) => {
-    const login = await loginAdmin(ctx.app, email, TEST_PASSWORD);
+    const login = await loginAdmin(httpApp, email, TEST_PASSWORD);
 
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .get('/usuarios')
       .set('Authorization', bearer(login.access_token))
       .expect((res) => {

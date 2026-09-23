@@ -1,4 +1,6 @@
-﻿import request = require('supertest');
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import type { Server } from 'node:net';
 
 import {
   bootstrapE2eTestApp,
@@ -8,9 +10,11 @@ import {
 
 describe('Swagger / DTO Validation E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
+    httpApp = ctx.app as INestApplication<Server>;
   });
 
   afterAll(async () => {
@@ -18,7 +22,7 @@ describe('Swagger / DTO Validation E2E', () => {
   });
 
   it('DTO deve rejeitar campo arbitrário no login admin', async () => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .post('/auth/login')
       .send({
         email: 'admin.test@beautycore.com',
@@ -29,7 +33,7 @@ describe('Swagger / DTO Validation E2E', () => {
   });
 
   it('Swagger deve responder quando habilitado', async () => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .get('/api/docs')
       .expect((res) => {
         expect([200, 301, 302, 404]).toContain(res.status);

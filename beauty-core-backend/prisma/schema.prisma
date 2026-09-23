@@ -136,6 +136,7 @@ enum CanalWhatsApp {
   API_OFICIAL
   PROVEDOR_EXTERNO
   MODO_DEMONSTRACAO
+  META_CLOUD_API
 }
 
 enum TipoEventoSistema {
@@ -1072,6 +1073,10 @@ model ConfiguracaoWhatsApp {
   mensagemSaudacao     String?
   mensagemAusencia     String?
   usarModoDemonstracao Boolean       @default(true)
+  metaWabaId          String?
+  metaPhoneNumberId   String?
+  metaAccessTokenRef  String?
+  metaApiVersion      String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1079,6 +1084,7 @@ model ConfiguracaoWhatsApp {
   empresa Empresa @relation(fields: [empresaId], references: [id])
 
   @@index([empresaId])
+  @@index([metaPhoneNumberId])
 }
 
 model TemplateWhatsApp {
@@ -1354,4 +1360,3 @@ enum TipoArmazenamento {
   S3
   CLOUDINARY
 }
-

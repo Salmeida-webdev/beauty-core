@@ -1,0 +1,600 @@
+# Beauty Core - Chat B - B65 - Contexto infraestrutura dinamica final-target
+
+- Inicio: 2026-09-13T15:05:14.0202150-03:00
+- Fim: 2026-09-13T15:05:23.0702254-03:00
+- Script: B65-v1
+- Modo: somente leitura; o relatorio e o unico artefato criado.
+- Pasta unica de relatorios do Chat B: `beauty-core-backend\docs\chat-b\`
+
+## Objetivo
+
+- Registrar os trechos reais dos helpers dinamicos ainda com `any`.
+- Incluir factories de record/delegate, Proxy, patch, instantiate e allMethods.
+- Nao alterar codigo nem executar Prettier, Jest, build ou workflow.
+
+## Diagnosticos do ESLint
+
+- ESLint exit code: 1
+- 
+- C:\Users\cmted\Desktop\Plataformas Saas\Beauty-Core\beauty-core-backend\test\unit\coverage-under-70-final-target.generated.spec.ts
+-   235:40  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+-   235:44  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   235:65  error    Unsafe member access .data on an `any` value                                                                             @typescript-eslint/no-unsafe-member-access
+-   237:40  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+-   237:44  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   237:65  error    Unsafe member access .data on an `any` value                                                                             @typescript-eslint/no-unsafe-member-access
+-   241:40  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+-   241:44  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   243:17  error    Unsafe member access .create on an `any` value                                                                           @typescript-eslint/no-unsafe-member-access
+-   244:17  error    Unsafe member access .update on an `any` value                                                                           @typescript-eslint/no-unsafe-member-access
+-   246:33  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+-   298:27  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   303:44  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   303:51  error    Unsafe call of an `any` typed value                                                                                      @typescript-eslint/no-unsafe-call
+-   305:11  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   307:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   312:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   316:41  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+-   317:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   321:41  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+-   322:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   354:11  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   356:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   361:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   365:41  error    Async arrow function has no 'await' expression                                                                           @typescript-eslint/require-await
+-   368:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   383:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   394:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   441:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   446:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   455:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   468:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   476:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   484:9   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   489:7   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   495:18  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   532:16  error    Unsafe member access [name] on an `any` value                                                                            @typescript-eslint/no-unsafe-member-access
+-   539:14  error    Unsafe member access .logger on an `any` value                                                                           @typescript-eslint/no-unsafe-member-access
+-   550:3   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   554:46  warning  Unsafe argument of type `any` assigned to a parameter of type `number`                                                   @typescript-eslint/no-unsafe-argument
+-   554:55  error    Unsafe member access .length on an `any` value                                                                           @typescript-eslint/no-unsafe-member-access
+-   559:5   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   559:18  error    Unsafe construction of an `any` typed value                                                                              @typescript-eslint/no-unsafe-call
+-   562:7   error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   562:20  error    Unsafe construction of an `any` typed value                                                                              @typescript-eslint/no-unsafe-call
+-   576:39  error    Unsafe member access [name] on an `any` value                                                                            @typescript-eslint/no-unsafe-member-access
+-   578:34  warning  Unsafe argument of type `any` assigned to a parameter of type `{}`                                                       @typescript-eslint/no-unsafe-argument
+-   579:31  error    Unsafe member access [name] on an `any` value                                                                            @typescript-eslint/no-unsafe-member-access
+-   640:26  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   686:9   error    Unsafe assignment of an `any` value                                                                                      @typescript-eslint/no-unsafe-assignment
+-   813:60  error    The `Function` type accepts any function-like value.
+- Prefer explicitly defining any function parameters and return type  @typescript-eslint/no-unsafe-function-type
+-   817:36  error    Unsafe return of a value of type `any[]`                                                                                 @typescript-eslint/no-unsafe-return
+-   821:17  error    The `Function` type accepts any function-like value.
+- Prefer explicitly defining any function parameters and return type  @typescript-eslint/no-unsafe-function-type
+-   823:33  warning  Unsafe argument of type `any` assigned to a parameter of type `{}`                                                       @typescript-eslint/no-unsafe-argument
+-   825:42  error    Unsafe member access [key] on an `any` value                                                                             @typescript-eslint/no-unsafe-member-access
+-   882:68  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   888:34  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   888:34  error    Unsafe call of an `any` typed value                                                                                      @typescript-eslint/no-unsafe-call
+-   920:15  error    Unsafe assignment of an `any` value                                                                                      @typescript-eslint/no-unsafe-assignment
+-   920:21  error    A `require()` style import is forbidden                                                                                  @typescript-eslint/no-require-imports
+-   926:17  error    Unsafe assignment of an `any` value                                                                                      @typescript-eslint/no-unsafe-assignment
+-   926:23  error    A `require()` style import is forbidden                                                                                  @typescript-eslint/no-require-imports
+-   927:40  warning  Unsafe argument of type `any` assigned to a parameter of type `ArrayLike<unknown> | { [s: string]: unknown; }`           @typescript-eslint/no-unsafe-argument
+-   942:23  error    Unsafe assignment of an `any` value                                                                                      @typescript-eslint/no-unsafe-assignment
+-   959:31  error    Unsafe return of a value of type `any`                                                                                   @typescript-eslint/no-unsafe-return
+-   959:31  error    Unsafe call of an `any` typed value                                                                                      @typescript-eslint/no-unsafe-call
+-   959:40  error    Unsafe member access [method] on an `any` value                                                                          @typescript-eslint/no-unsafe-member-access
+- 
+- Ô£û 67 problems (63 errors, 4 warnings)
+- 
+
+## Contextos estruturais
+
+- Linhas 68-112:
+  - 68:   '../../src/modules/auth/guards/roles.guard',
+  - 69:   '../../src/queues/workers/notificacoes.worker',
+  - 70:   '../../src/queues/workers/whatsapp.worker',
+  - 71:   '../../src/queues/services/distributed-lock.service',
+  - 72: ];
+  - 73: 
+  - 74: function record(mode: Mode = 'happy', overrides: Record<string, any> = {}) {
+  - 75:   const empresaId = mode === 'crossTenant' ? EMPRESA_B : EMPRESA_A;
+  - 76: 
+  - 77:   return {
+  - 78:     id: UUID_A,
+  - 79:     empresaId,
+  - 80:     clienteId: UUID_A,
+  - 81:     usuarioId: UUID_A,
+  - 82:     profissionalId: UUID_A,
+  - 83:     servicoId: UUID_A,
+  - 84:     unidadeId: UUID_A,
+  - 85:     pacoteId: UUID_A,
+  - 86:     categoriaId: UUID_A,
+  - 87:     agendamentoId: UUID_A,
+  - 88:     arquivoId: UUID_A,
+  - 89:     mensagemId: UUID_A,
+  - 90: 
+  - 91:     nome: 'Registro Final Coverage',
+  - 92:     titulo: 'Título Final',
+  - 93:     descricao: 'Descrição Final',
+  - 94:     observacoes: 'Obs Final',
+  - 95:     telefone: mode === 'invalid' ? '' : '83999999999',
+  - 96:     email: mode === 'invalid' ? 'email-invalido' : 'teste@beautycore.local',
+  - 97:     senha: 'Teste@123456',
+  - 98:     role: mode === 'false' ? 'RECEPCAO' : 'ADMIN',
+  - 99: 
+  - 100:     status: mode === 'inactive' ? 'INATIVO' : 'ATIVO',
+  - 101:     tipo: mode === 'invalid' ? 'INVALIDO' : 'RECEITA',
+  - 102:     canal: 'SISTEMA',
+  - 103:     visibilidade: mode === 'public' ? 'PUBLICO' : 'PRIVADO',
+  - 104:     armazenamento: mode === 'invalid' ? 'S3' : 'LOCAL',
+  - 105: 
+  - 106:     ativo: mode !== 'inactive',
+  - 107:     privado: mode !== 'public',
+  - 108:     usado: mode === 'expired',
+  - 109: 
+  - 110:     valor: mode === 'negative' ? -100 : mode === 'zero' ? 0 : 100,
+  - 111:     preco: mode === 'negative' ? -100 : mode === 'zero' ? 0 : 100,
+  - 112:     quantidade: mode === 'zero' ? 0 : 1,
+- Linhas 190-276:
+  - 190:       ativo: mode !== 'inactive',
+  - 191:     },
+  - 192: 
+  - 193:     ...overrides,
+  - 194:   };
+  - 195: }
+  - 196: 
+  - 197: function delegate(mode: Mode) {
+  - 198:   const item = record(mode);
+  - 199: 
+  - 200:   const value = () => {
+  - 201:     if (mode === 'throw') throw new Error('Erro controlado final');
+  - 202:     if (mode === 'null') return null;
+  - 203:     return item;
+  - 204:   };
+  - 205: 
+  - 206:   const many = () => {
+  - 207:     if (mode === 'throw') throw new Error('Erro controlado final');
+  - 208:     if (mode === 'empty' || mode === 'null') return [];
+  - 209:     return [item];
+  - 210:   };
+  - 211: 
+  - 212:   const count = () => {
+  - 213:     if (mode === 'throw') throw new Error('Erro controlado final');
+  - 214:     if (mode === 'empty' || mode === 'null' || mode === 'zero') return 0;
+  - 215:     return 1;
+  - 216:   };
+  - 217: 
+  - 218:   return {
+  - 219:     findUnique: jest.fn(() => Promise.resolve(value())),
+  - 220:     findUniqueOrThrow: jest.fn(async () => {
+  - 221:       await Promise.resolve();
+  - 222:       const result = value();
+  - 223:       if (!result) throw new NotFoundException('Não encontrado');
+  - 224:       return result;
+  - 225:     }),
+  - 226:     findFirst: jest.fn(() => Promise.resolve(value())),
+  - 227:     findFirstOrThrow: jest.fn(async () => {
+  - 228:       await Promise.resolve();
+  - 229:       const result = value();
+  - 230:       if (!result) throw new NotFoundException('Não encontrado');
+  - 231:       return result;
+  - 232:     }),
+  - 233:     findMany: jest.fn(() => Promise.resolve(many())),
+  - 234:     count: jest.fn(() => Promise.resolve(count())),
+  - 235:     create: jest.fn(async (args?: any) => ({ ...item, ...(args?.data ?? {}) })),
+  - 236:     createMany: jest.fn(() => Promise.resolve({ count: count() })),
+  - 237:     update: jest.fn(async (args?: any) => ({ ...item, ...(args?.data ?? {}) })),
+  - 238:     updateMany: jest.fn(() => Promise.resolve({ count: count() })),
+  - 239:     delete: jest.fn(() => Promise.resolve(item)),
+  - 240:     deleteMany: jest.fn(() => Promise.resolve({ count: count() })),
+  - 241:     upsert: jest.fn(async (args?: any) => ({
+  - 242:       ...item,
+  - 243:       ...(args?.create ?? {}),
+  - 244:       ...(args?.update ?? {}),
+  - 245:     })),
+  - 246:     aggregate: jest.fn(async () => ({
+  - 247:       _sum: {
+  - 248:         valor: mode === 'empty' ? null : item.valor,
+  - 249:         pontos: mode === 'empty' ? null : item.pontos,
+  - 250:         quantidade: mode === 'empty' ? null : item.quantidade,
+  - 251:       },
+  - 252:       _count: {
+  - 253:         _all: count(),
+  - 254:         id: count(),
+  - 255:       },
+  - 256:       _avg: {
+  - 257:         valor: mode === 'empty' ? null : item.valor,
+  - 258:       },
+  - 259:       _min: {
+  - 260:         valor: mode === 'empty' ? null : item.valor,
+  - 261:         createdAt: new Date(),
+  - 262:       },
+  - 263:       _max: {
+  - 264:         valor: mode === 'empty' ? null : item.valor,
+  - 265:         createdAt: new Date(),
+  - 266:       },
+  - 267:     })),
+  - 268:     groupBy: jest.fn(async () => {
+  - 269:       await Promise.resolve();
+  - 270:       if (mode === 'empty' || mode === 'null') return [];
+  - 271: 
+  - 272:       return [
+  - 273:         {
+  - 274:           status: item.status,
+  - 275:           tipo: item.tipo,
+  - 276:           categoriaId: UUID_A,
+- Linhas 282-326:
+  - 282:           _avg: { valor: item.valor },
+  - 283:         },
+  - 284:       ];
+  - 285:     }),
+  - 286:   };
+  - 287: }
+  - 288: 
+  - 289: function rich(mode: Mode = 'happy') {
+  - 290:   const obj: Record<string, any> = {};
+  - 291:   const delegates = new Map<string, any>();
+  - 292:   const item = record(mode);
+  - 293: 
+  - 294:   return new Proxy(obj, {
+  - 295:     get(target, prop: string | symbol) {
+  - 296:       if (typeof prop !== 'string') return undefined;
+  - 297:       if (prop === 'then') return undefined;
+  - 298:       if (prop in target) return target[prop];
+  - 299: 
+  - 300:       if (prop === '$transaction') {
+  - 301:         target[prop] = jest.fn(async (input: any) => {
+  - 302:           if (mode === 'throw') throw new Error('Transaction final error');
+  - 303:           if (typeof input === 'function') return input(rich(mode));
+  - 304:           if (Array.isArray(input)) return Promise.all(input);
+  - 305:           return input;
+  - 306:         });
+  - 307:         return target[prop];
+  - 308:       }
+  - 309: 
+  - 310:       if (prop === '$connect' || prop === '$disconnect') {
+  - 311:         target[prop] = jest.fn(() => Promise.resolve(undefined));
+  - 312:         return target[prop];
+  - 313:       }
+  - 314: 
+  - 315:       if (prop === '$queryRaw' || prop === '$runCommandRaw') {
+  - 316:         target[prop] = jest.fn(async () => (mode === 'empty' ? [] : [item]));
+  - 317:         return target[prop];
+  - 318:       }
+  - 319: 
+  - 320:       if (prop === '$executeRaw') {
+  - 321:         target[prop] = jest.fn(async () => (mode === 'zero' ? 0 : 1));
+  - 322:         return target[prop];
+  - 323:       }
+  - 324: 
+  - 325:       if (prop === 'get') {
+  - 326:         target[prop] = jest.fn((key: string, fallback?: any) => {
+- Linhas 480-586:
+  - 480:         target[prop] = jest.fn(() => ({
+  - 481:           pipe: jest.fn(),
+  - 482:           on: jest.fn(),
+  - 483:         }));
+  - 484:         return target[prop];
+  - 485:       }
+  - 486: 
+  - 487:       if (!delegates.has(prop)) delegates.set(prop, delegate(mode));
+  - 488: 
+  - 489:       return delegates.get(prop);
+  - 490:     },
+  - 491:   });
+  - 492: }
+  - 493: 
+  - 494: function patch(instance: any, mode: Mode) {
+  - 495:   if (!instance) return instance;
+  - 496: 
+  - 497:   const names = [
+  - 498:     'prisma',
+  - 499:     'prismaService',
+  - 500:     'tenantValidator',
+  - 501:     'tenantValidatorService',
+  - 502:     'auditoriaService',
+  - 503:     'automacoesService',
+  - 504:     'queuesService',
+  - 505:     'configService',
+  - 506:     'jwtService',
+  - 507:     'sessoesService',
+  - 508:     'arquivosCleanupService',
+  - 509:     'arquivosService',
+  - 510:     'storageService',
+  - 511:     'storageFactory',
+  - 512:     'accessPolicy',
+  - 513:     'arquivoAccessPolicyService',
+  - 514:     'notificacoesService',
+  - 515:     'mensagensWhatsappService',
+  - 516:     'fidelidadeService',
+  - 517:     'financeiroService',
+  - 518:     'clientesService',
+  - 519:     'usuariosService',
+  - 520:     'dlqService',
+  - 521:     'deadLetterQueueService',
+  - 522:     'queueMetricsService',
+  - 523:     'queueMonitorService',
+  - 524:     'distributedLockService',
+  - 525:     'redis',
+  - 526:     'connection',
+  - 527:     'fs',
+  - 528:   ];
+  - 529: 
+  - 530:   for (const name of names) {
+  - 531:     try {
+  - 532:       instance[name] = rich(mode);
+  - 533:     } catch {
+  - 534:       /* Intentionally ignore expected probe failures. */
+  - 535:     }
+  - 536:   }
+  - 537: 
+  - 538:   try {
+  - 539:     instance.logger = {
+  - 540:       log: jest.fn(),
+  - 541:       error: jest.fn(),
+  - 542:       warn: jest.fn(),
+  - 543:       debug: jest.fn(),
+  - 544:       verbose: jest.fn(),
+  - 545:     };
+  - 546:   } catch {
+  - 547:     /* Intentionally ignore expected probe failures. */
+  - 548:   }
+  - 549: 
+  - 550:   return instance;
+  - 551: }
+  - 552: 
+  - 553: function instantiate(Exported: any, mode: Mode) {
+  - 554:   const deps = Array.from({ length: Math.max(Exported.length || 0, 24) }, () =>
+  - 555:     rich(mode),
+  - 556:   );
+  - 557: 
+  - 558:   try {
+  - 559:     return patch(new Exported(...deps), mode);
+  - 560:   } catch {
+  - 561:     try {
+  - 562:       return patch(new Exported(), mode);
+  - 563:     } catch {
+  - 564:       return null;
+  - 565:     }
+  - 566:   }
+  - 567: }
+  - 568: 
+  - 569: function allMethods(instance: any) {
+  - 570:   if (!instance) return [];
+  - 571: 
+  - 572:   const protoMethods = Object.getOwnPropertyNames(
+  - 573:     Object.getPrototypeOf(instance),
+  - 574:   )
+  - 575:     .filter((name) => name !== 'constructor')
+  - 576:     .filter((name) => typeof instance[name] === 'function');
+  - 577: 
+  - 578:   const ownMethods = Object.keys(instance).filter(
+  - 579:     (name) => typeof instance[name] === 'function',
+  - 580:   );
+  - 581: 
+  - 582:   return Array.from(new Set([...protoMethods, ...ownMethods]));
+  - 583: }
+  - 584: 
+  - 585: function job(mode: Mode) {
+  - 586:   return {
+- Linhas 630-692:
+  - 630:           cliente:
+  - 631:             mode === 'null'
+  - 632:               ? undefined
+  - 633:               : {
+  - 634:                   id: UUID_A,
+  - 635:                   sub: UUID_A,
+  - 636:                   empresaId: EMPRESA_A,
+  - 637:                   role: 'CLIENTE',
+  - 638:                 },
+  - 639:         }),
+  - 640:       getResponse: () => createResponseLike(),
+  - 641:     }),
+  - 642:   };
+  - 643: }
+  - 644: 
+  - 645: function methodArgs(method: string, mode: Mode) {
+  - 646:   const dto = {
+  - 647:     ...createDto(),
+  - 648:     nome: mode === 'invalid' ? '' : 'Nome Final',
+  - 649:     codigo: mode === 'invalid' ? '' : 'CUPOM10',
+  - 650:     tipo: mode === 'invalid' ? 'INVALIDO' : 'PERCENTUAL',
+  - 651:     valor: mode === 'negative' ? -10 : mode === 'zero' ? 0 : 10,
+  - 652:     pontos: mode === 'negative' ? -10 : mode === 'zero' ? 0 : 10,
+  - 653:     percentualDesconto: mode === 'negative' ? -10 : 10,
+  - 654:     valorDesconto: mode === 'negative' ? -10 : 10,
+  - 655:     dataInicio: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+  - 656:     dataFim: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  - 657:     dataVencimento:
+  - 658:       mode === 'expired'
+  - 659:         ? new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  - 660:         : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  - 661:   };
+  - 662: 
+  - 663:   const req = createRequestLike({
+  - 664:     user:
+  - 665:       mode === 'null'
+  - 666:         ? undefined
+  - 667:         : {
+  - 668:             id: UUID_A,
+  - 669:             sub: UUID_A,
+  - 670:             empresaId: mode === 'crossTenant' ? EMPRESA_B : EMPRESA_A,
+  - 671:             role: mode === 'false' ? 'RECEPCAO' : 'ADMIN',
+  - 672:             email: 'admin@beautycore.local',
+  - 673:           },
+  - 674:     cliente:
+  - 675:       mode === 'null'
+  - 676:         ? undefined
+  - 677:         : {
+  - 678:             id: UUID_A,
+  - 679:             sub: UUID_A,
+  - 680:             empresaId: mode === 'crossTenant' ? EMPRESA_B : EMPRESA_A,
+  - 681:             telefone: '83999999999',
+  - 682:             role: 'CLIENTE',
+  - 683:           },
+  - 684:   });
+  - 685: 
+  - 686:   const res = createResponseLike();
+  - 687:   const context = createExecutionContextLike();
+  - 688: 
+  - 689:   const empresaId = mode === 'crossTenant' ? EMPRESA_B : EMPRESA_A;
+  - 690:   const id = mode === 'invalid' ? 'id-invalido' : UUID_A;
+  - 691: 
+  - 692:   if (method === 'catch') {
+- Linhas 798-830:
+  - 798:     [id, req.user],
+  - 799:     [id, dto, req.user],
+  - 800:     ['ATIVO', empresaId],
+  - 801:     ['INATIVO', empresaId],
+  - 802:     ['PENDENTE', empresaId],
+  - 803:     ['CANCELADO', empresaId],
+  - 804:     [empresaId, 'ATIVO'],
+  - 805:     [empresaId, 'INATIVO'],
+  - 806:     ['ADMIN', 'GERENTE'],
+  - 807:     ['SUPER_ADMIN', 'ADMIN'],
+  - 808:     ['RECEPCAO', 'ADMIN'],
+  - 809:     ['CLIENTE', 'ADMIN'],
+  - 810:   ];
+  - 811: }
+  - 812: 
+  - 813: function walkFunctions(value: any, seen = new Set<any>()): Function[] {
+  - 814:   if (!value || seen.has(value)) return [];
+  - 815:   seen.add(value);
+  - 816: 
+  - 817:   if (typeof value === 'function') return [value];
+  - 818: 
+  - 819:   if (typeof value !== 'object') return [];
+  - 820: 
+  - 821:   const result: Function[] = [];
+  - 822: 
+  - 823:   for (const key of Object.keys(value)) {
+  - 824:     try {
+  - 825:       result.push(...walkFunctions(value[key], seen));
+  - 826:     } catch {
+  - 827:       /* Intentionally ignore expected probe failures. */
+  - 828:     }
+  - 829:   }
+  - 830: 
+- Linhas 868-970:
+  - 868:     ['ADMIN', 'GERENTE'],
+  - 869:     ['RECEPCAO', 'ADMIN'],
+  - 870:     [1000],
+  - 871:     [0],
+  - 872:     [-1],
+  - 873:     [null],
+  - 874:     [undefined],
+  - 875:     [new Error('Erro controlado')],
+  - 876:     [rich(mode)],
+  - 877:     [rich(mode), createRequestLike(), createResponseLike()],
+  - 878:   ];
+  - 879: 
+  - 880:   for (const file of files) {
+  - 881:     calls.push([createRequestLike(), file, jest.fn()]);
+  - 882:     calls.push([createRequestLike(), file, jest.fn((error: any) => error)]);
+  - 883:     calls.push([file]);
+  - 884:   }
+  - 885: 
+  - 886:   for (const args of calls) {
+  - 887:     try {
+  - 888:       await runWithTimeout(() => fn(...args), 700);
+  - 889:     } catch {
+  - 890:       /* Intentionally ignore expected probe failures. */
+  - 891:     }
+  - 892:   }
+  - 893: }
+  - 894: 
+  - 895: describe('Chat 33.4.3 - final target remaining below 70', () => {
+  - 896:   const modes: Mode[] = [
+  - 897:     'happy',
+  - 898:     'null',
+  - 899:     'empty',
+  - 900:     'false',
+  - 901:     'throw',
+  - 902:     'inactive',
+  - 903:     'crossTenant',
+  - 904:     'expired',
+  - 905:     'invalid',
+  - 906:     'public',
+  - 907:     'private',
+  - 908:     'zero',
+  - 909:     'negative',
+  - 910:     'undefined',
+  - 911:   ];
+  - 912: 
+  - 913:   it('deve manter lista de alvos finais', () => {
+  - 914:     expect(TARGET_PATHS.length).toBeGreaterThan(20);
+  - 915:   });
+  - 916: 
+  - 917:   for (const modulePath of TARGET_PATHS) {
+  - 918:     describe(modulePath, () => {
+  - 919:       it('deve importar módulo alvo', () => {
+  - 920:         const mod = require(modulePath);
+  - 921:         expect(mod).toBeDefined();
+  - 922:       });
+  - 923: 
+  - 924:       for (const mode of modes) {
+  - 925:         it('deve exercitar alvo em modo ' + mode, async () => {
+  - 926:           const mod = require(modulePath);
+  - 927:           const values = Object.values(mod);
+  - 928: 
+  - 929:           for (const exported of values) {
+  - 930:             if (typeof exported === 'function') {
+  - 931:               const name = String(exported.name ?? '');
+  - 932: 
+  - 933:               if (
+  - 934:                 name.endsWith('Service') ||
+  - 935:                 name.endsWith('Controller') ||
+  - 936:                 name.endsWith('Guard') ||
+  - 937:                 name.endsWith('Strategy') ||
+  - 938:                 name.endsWith('Filter') ||
+  - 939:                 name.endsWith('Interceptor') ||
+  - 940:                 name.endsWith('Worker')
+  - 941:               ) {
+  - 942:                 const instance = instantiate(exported, mode);
+  - 943: 
+  - 944:                 if (!instance) continue;
+  - 945: 
+  - 946:                 for (const method of allMethods(instance)) {
+  - 947:                   if (
+  - 948:                     method === 'onModuleInit' ||
+  - 949:                     method === 'onModuleDestroy' ||
+  - 950:                     method === 'beforeApplicationShutdown' ||
+  - 951:                     method === 'afterApplicationShutdown'
+  - 952:                   ) {
+  - 953:                     continue;
+  - 954:                   }
+  - 955: 
+  - 956:                   for (const args of methodArgs(method, mode).slice(0, 90)) {
+  - 957:                     try {
+  - 958:                       await runWithTimeout(
+  - 959:                         () => instance[method](...args),
+  - 960:                         800,
+  - 961:                       );
+  - 962:                     } catch {
+  - 963:                       /* Intentionally ignore expected probe failures. */
+  - 964:                     }
+  - 965:                   }
+  - 966:                 }
+  - 967: 
+  - 968:                 continue;
+  - 969:               }
+  - 970: 
+
+## Operacoes nao executadas
+
+- Nenhum arquivo foi alterado.
+- Prettier, Jest, build, E2E, migration e workflow nao foram executados.
+- Nenhum stage, commit, push, merge, tag, release ou deploy foi executado.
+- Nenhum segredo ou valor de ambiente foi lido ou impresso.
+
+## Classificacao final do B65
+
+- `PASS_WITH_ATTENTION` - contexto estrutural coletado para correcao tipada e seletiva.
+
+## Integridade
+
+- Este relatorio foi gerado automaticamente pelo script B65.
+- O script nao altera o projeto.

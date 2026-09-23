@@ -1,81 +1,92 @@
-﻿describe('TenantValidatorService Unit', () => {
-  const mod = require('../../src/shared/tenant/tenant-validator.service');
+﻿import { TenantValidatorService } from '../../src/shared/tenant/tenant-validator.service';
 
-  const ServiceClass =
-    mod.TenantValidatorService ??
-    Object.values(mod).find((value) => typeof value === 'function');
+import { NotFoundException } from '@nestjs/common';
 
-  function createPrismaMock() {
-    return {
-      empresa: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-        findMany: jest.fn(),
-      },
-      usuario: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-        findMany: jest.fn(),
-      },
-      cliente: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-        findMany: jest.fn(),
-      },
-      agendamento: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-      },
-      arquivo: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-      },
-      servico: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-      },
-      unidade: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-      },
-      pacote: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-      },
-      clientePacote: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-      },
-      movimentacaoFinanceira: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-      },
-      notificacao: {
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-      },
-    };
+type MockFunction = jest.Mock<Promise<unknown>, [unknown?]>;
+
+type MockDelegate = {
+  findUnique: MockFunction;
+  findFirst: MockFunction;
+  findMany?: MockFunction;
+};
+
+type PrismaMock = Record<string, MockDelegate>;
+
+type PublicMethod = (...args: unknown[]) => unknown;
+
+function createMockFunction(): MockFunction {
+  return jest.fn<Promise<unknown>, [unknown?]>();
+}
+
+function createDelegate(includeFindMany = false): MockDelegate {
+  const delegate: MockDelegate = {
+    findUnique: createMockFunction(),
+    findFirst: createMockFunction(),
+  };
+
+  if (includeFindMany) {
+    delegate.findMany = createMockFunction();
   }
 
+  return delegate;
+}
+
+function createPrismaMock(): PrismaMock {
+  return {
+    empresa: createDelegate(true),
+    usuario: createDelegate(true),
+    cliente: createDelegate(true),
+    agendamento: createDelegate(false),
+    arquivo: createDelegate(false),
+    servico: createDelegate(false),
+    unidade: createDelegate(false),
+    pacote: createDelegate(false),
+    clientePacote: createDelegate(false),
+    movimentacaoFinanceira: createDelegate(false),
+    notificacao: createDelegate(false),
+    cupom: createDelegate(false),
+    categoriaFinanceira: createDelegate(false),
+  };
+}
+
+function createService(prisma: PrismaMock): TenantValidatorService {
+  type PrismaDependency = ConstructorParameters<
+    typeof TenantValidatorService
+  >[0];
+
+  return new TenantValidatorService(prisma as unknown as PrismaDependency);
+}
+
+function getPublicMethods(service: TenantValidatorService): PublicMethod[] {
+  const prototype = Object.getPrototypeOf(service) as Record<string, unknown>;
+
+  return Object.getOwnPropertyNames(prototype)
+    .filter((name) => name !== 'constructor')
+    .map((name) => prototype[name])
+    .filter((value): value is PublicMethod => typeof value === 'function')
+    .map(
+      (method): PublicMethod =>
+        (...args: unknown[]) =>
+          Reflect.apply(method, service, args),
+    );
+}
+
+describe('TenantValidatorService Unit', () => {
   it('deve exportar e instanciar TenantValidatorService', () => {
-    expect(ServiceClass).toBeDefined();
+    const service = createService(createPrismaMock());
 
-    const service = new ServiceClass(createPrismaMock());
-
+    expect(TenantValidatorService).toBeDefined();
     expect(service).toBeDefined();
   });
 
-  it('deve expor métodos públicos de validação tenant', () => {
-    const service = new ServiceClass(createPrismaMock());
-
-    const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(service))
-      .filter((name) => name !== 'constructor')
-      .filter((name) => typeof service[name] === 'function');
+  it('deve expor metodos publicos de validacao tenant', () => {
+    const service = createService(createPrismaMock());
+    const methods = getPublicMethods(service);
 
     expect(methods.length).toBeGreaterThan(0);
   });
 
-  it('deve exercitar métodos públicos com registros pertencentes à mesma empresa', async () => {
+  it('deve exercitar metodos publicos com registros pertencentes a mesma empresa', async () => {
     const prisma = createPrismaMock();
 
     const empresa = {
@@ -91,75 +102,85 @@
       status: 'ATIVO',
     };
 
-    for (const delegate of Object.values(prisma) as any[]) {
-      if (delegate.findUnique) delegate.findUnique.mockResolvedValue(registro);
-      if (delegate.findFirst) delegate.findFirst.mockResolvedValue(registro);
-      if (delegate.findMany) delegate.findMany.mockResolvedValue([registro]);
+    for (const delegate of Object.values(prisma)) {
+      delegate.findUnique.mockResolvedValue(registro);
+      delegate.findFirst.mockResolvedValue(registro);
+      delegate.findMany?.mockResolvedValue([registro]);
     }
 
     prisma.empresa.findUnique.mockResolvedValue(empresa);
     prisma.empresa.findFirst.mockResolvedValue(empresa);
 
-    const service = new ServiceClass(prisma);
-
-    const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(service))
-      .filter((name) => name !== 'constructor')
-      .filter((name) => typeof service[name] === 'function');
+    const service = createService(prisma);
+    const methods = getPublicMethods(service);
 
     for (const method of methods) {
       try {
-        const result = await service[method]('registro-a', 'empresa-a');
+        const result = await Promise.resolve(method('registro-a', 'empresa-a'));
+
         if (result !== undefined) {
           expect(result).toBeDefined();
         }
       } catch {
         try {
-          const result = await service[method]({
-            id: 'registro-a',
-            empresaId: 'empresa-a',
-            usuarioId: 'usuario-a',
-            clienteId: 'cliente-a',
-          });
+          const result = await Promise.resolve(
+            method({
+              id: 'registro-a',
+              empresaId: 'empresa-a',
+              usuarioId: 'usuario-a',
+              clienteId: 'cliente-a',
+            }),
+          );
+
           if (result !== undefined) {
             expect(result).toBeDefined();
           }
         } catch {
-          // Alguns métodos possuem assinatura específica por entidade.
+          // Alguns metodos possuem assinatura especifica por entidade.
         }
       }
     }
   });
 
-  it('deve exercitar métodos públicos com empresa divergente', async () => {
+  it('deve exercitar metodos publicos com empresa divergente', async () => {
     const prisma = createPrismaMock();
 
-    const registro = {
+    const registroEmpresaB = {
       id: 'registro-b',
       empresaId: 'empresa-b',
       ativo: true,
       status: 'ATIVO',
     };
 
-    for (const delegate of Object.values(prisma) as any[]) {
-      if (delegate.findUnique) delegate.findUnique.mockResolvedValue(registro);
-      if (delegate.findFirst) delegate.findFirst.mockResolvedValue(registro);
-      if (delegate.findMany) delegate.findMany.mockResolvedValue([registro]);
+    for (const delegate of Object.values(prisma)) {
+      delegate.findFirst.mockImplementation((args) => {
+        const query = args as { where?: Record<string, unknown> } | undefined;
+        const where = query?.where;
+        const matchesEmpresaB =
+          where?.empresaId === registroEmpresaB.empresaId ||
+          where?.id === registroEmpresaB.empresaId;
+
+        return Promise.resolve(matchesEmpresaB ? registroEmpresaB : null);
+      });
     }
 
-    const service = new ServiceClass(prisma);
+    const service = createService(prisma);
+    const validacoesDaEmpresaA = [
+      () => service.validarEmpresaAtiva('empresa-a'),
+      () => service.validarCliente('empresa-a', 'registro-b'),
+      () => service.validarServico('empresa-a', 'registro-b'),
+      () => service.validarUnidade('empresa-a', 'registro-b'),
+      () => service.validarUsuario('empresa-a', 'registro-b'),
+      () => service.validarProfissional('empresa-a', 'registro-b'),
+      () => service.validarAgendamento('empresa-a', 'registro-b'),
+      () => service.validarPacote('empresa-a', 'registro-b'),
+      () => service.validarCupom('empresa-a', 'registro-b'),
+      () => service.validarArquivo('empresa-a', 'registro-b'),
+      () => service.validarCategoriaFinanceira('empresa-a', 'registro-b'),
+    ];
 
-    const methods = Object.getOwnPropertyNames(Object.getPrototypeOf(service))
-      .filter((name) => name !== 'constructor')
-      .filter((name) => typeof service[name] === 'function');
-
-    for (const method of methods) {
-      await expect(async () => {
-        try {
-          await service[method]('registro-b', 'empresa-a');
-        } catch {
-          // Divergência tenant pode lançar exceção; isso é esperado.
-        }
-      }).not.toThrow();
+    for (const validar of validacoesDaEmpresaA) {
+      await expect(validar()).rejects.toBeInstanceOf(NotFoundException);
     }
   });
 });

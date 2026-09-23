@@ -1,43 +1,11 @@
-﻿describe('Beauty Core Auth Guards Coverage', () => {
-  it('JwtAuthGuard deve ser importável e instanciável', () => {
-    const mod = require('../../src/modules/auth/guards/jwt-auth.guard');
-    expect(mod).toBeDefined();
+import { ClienteAuthGuard } from '../../src/modules/auth-cliente/guards/cliente-auth.guard';
+import { JwtOrClienteAuthGuard } from '../../src/modules/arquivos/guards/jwt-or-cliente-auth.guard';
+import { JwtAuthGuard } from '../../src/modules/auth/guards/jwt-auth.guard';
 
-    const GuardClass =
-      mod.JwtAuthGuard ??
-      Object.values(mod).find((value) => typeof value === 'function');
-    expect(GuardClass).toBeDefined();
-
-    expect(() => {
-      new GuardClass();
-    }).not.toThrow();
-  });
-
-  it('ClienteAuthGuard deve ser importável e instanciável', () => {
-    const mod = require('../../src/modules/auth-cliente/guards/cliente-auth.guard');
-    expect(mod).toBeDefined();
-
-    const GuardClass =
-      mod.ClienteAuthGuard ??
-      Object.values(mod).find((value) => typeof value === 'function');
-    expect(GuardClass).toBeDefined();
-
-    expect(() => {
-      new GuardClass();
-    }).not.toThrow();
-  });
-
-  it('JwtOrClienteAuthGuard deve ser importável e instanciável', () => {
-    const mod = require('../../src/modules/arquivos/guards/jwt-or-cliente-auth.guard');
-    expect(mod).toBeDefined();
-
-    const GuardClass =
-      mod.JwtOrClienteAuthGuard ??
-      Object.values(mod).find((value) => typeof value === 'function');
-    expect(GuardClass).toBeDefined();
-
-    expect(() => {
-      new GuardClass();
-    }).not.toThrow();
+describe('Authentication guards', () => {
+  it('exports concrete guards that can be instantiated', () => {
+    expect(new JwtAuthGuard()).toBeInstanceOf(JwtAuthGuard);
+    expect(new ClienteAuthGuard()).toBeInstanceOf(ClienteAuthGuard);
+    expect(new JwtOrClienteAuthGuard()).toBeInstanceOf(JwtOrClienteAuthGuard);
   });
 });

@@ -1,138 +1,248 @@
-﻿describe('UsuarioRolePolicy Unit', () => {
-  const mod = require('../../src/modules/usuarios/policies/usuario-role.policy');
+import { ForbiddenException } from '@nestjs/common';
+import { Role } from '@prisma/client';
+import { UsuarioRolePolicy } from '../../src/modules/usuarios/policies/usuario-role.policy';
 
-  function getCallableEntries(targetModule: any): Array<[string, Function]> {
-    const entries: Array<[string, Function]> = [];
+describe('UsuarioRolePolicy', () => {
+  describe('canCreateUser and assertCanCreateUser', () => {
+    it('applies the creation permissions for SUPER_ADMIN, ADMIN, and GERENTE', () => {
+      expect(
+        UsuarioRolePolicy.canCreateUser(Role.SUPER_ADMIN, Role.SUPER_ADMIN),
+      ).toBe(true);
+      expect(
+        UsuarioRolePolicy.canCreateUser(Role.SUPER_ADMIN, Role.PROFISSIONAL),
+      ).toBe(true);
+      expect(
+        UsuarioRolePolicy.canCreateUser(Role.SUPER_ADMIN, Role.CLIENTE),
+      ).toBe(false);
 
-    for (const [exportName, exportedValue] of Object.entries(targetModule)) {
-      const value: any = exportedValue;
+      expect(UsuarioRolePolicy.canCreateUser(Role.ADMIN, Role.GERENTE)).toBe(
+        true,
+      );
+      expect(UsuarioRolePolicy.canCreateUser(Role.ADMIN, Role.ADMIN)).toBe(
+        false,
+      );
+      expect(
+        UsuarioRolePolicy.canCreateUser(Role.ADMIN, Role.SUPER_ADMIN),
+      ).toBe(false);
 
-      if (typeof value === 'function') {
-        // Função exportada diretamente
-        entries.push([exportName, value]);
+      expect(UsuarioRolePolicy.canCreateUser(Role.GERENTE, Role.RECEPCAO)).toBe(
+        true,
+      );
+      expect(
+        UsuarioRolePolicy.canCreateUser(Role.GERENTE, Role.PROFISSIONAL),
+      ).toBe(true);
+      expect(UsuarioRolePolicy.canCreateUser(Role.GERENTE, Role.GERENTE)).toBe(
+        false,
+      );
+      expect(
+        UsuarioRolePolicy.canCreateUser(Role.RECEPCAO, Role.PROFISSIONAL),
+      ).toBe(false);
+    });
 
-        // Métodos estáticos da classe/função
-        for (const staticName of Object.getOwnPropertyNames(value)) {
-          if (['length', 'name', 'prototype'].includes(staticName)) continue;
-
-          const staticValue = value[staticName];
-
-          if (typeof staticValue === 'function') {
-            entries.push([
-              exportName + '.' + staticName,
-              staticValue.bind(value),
-            ]);
-          }
-        }
-
-        // Métodos de instância, caso existam
-        try {
-          const instance = new value();
-
-          for (const methodName of Object.getOwnPropertyNames(
-            Object.getPrototypeOf(instance),
-          )) {
-            if (methodName === 'constructor') continue;
-
-            const method = instance[methodName];
-
-            if (typeof method === 'function') {
-              entries.push([
-                exportName + '#' + methodName,
-                method.bind(instance),
-              ]);
-            }
-          }
-        } catch {
-          // Export pode não ser classe instanciável.
-        }
-      }
-
-      if (value && typeof value === 'object') {
-        for (const [methodName, method] of Object.entries(value)) {
-          if (typeof method === 'function') {
-            entries.push([exportName + '.' + methodName, method.bind(value)]);
-          }
-        }
-      }
-    }
-
-    const unique = new Map<string, Function>();
-
-    for (const [name, fn] of entries) {
-      unique.set(name, fn);
-    }
-
-    return Array.from(unique.entries());
-  }
-
-  function exercitarFuncao(fn: Function) {
-    const cenarios = [
-      ['SUPER_ADMIN', 'ADMIN'],
-      ['ADMIN', 'GERENTE'],
-      ['ADMIN', 'RECEPCAO'],
-      ['ADMIN', 'PROFISSIONAL'],
-      ['GERENTE', 'RECEPCAO'],
-      ['RECEPCAO', 'PROFISSIONAL'],
-      ['PROFISSIONAL', 'ADMIN'],
-      ['CLIENTE', 'ADMIN'],
-      [
-        { id: 'u1', role: 'SUPER_ADMIN', empresaId: null },
-        { id: 'u2', role: 'ADMIN', empresaId: 'empresa-a' },
-      ],
-      [
-        { id: 'u1', role: 'ADMIN', empresaId: 'empresa-a' },
-        { id: 'u2', role: 'GERENTE', empresaId: 'empresa-a' },
-      ],
-      [
-        { id: 'u1', role: 'GERENTE', empresaId: 'empresa-a' },
-        { id: 'u2', role: 'ADMIN', empresaId: 'empresa-b' },
-      ],
-      [{ role: 'ADMIN' }, 'GERENTE', 'RECEPCAO'],
-    ];
-
-    for (const args of cenarios) {
-      try {
-        const normalizedArgs = Array.isArray(args) ? args : [args];
-        const result = fn(...normalizedArgs);
-
-        if (result instanceof Promise) {
-          return result.catch(() => undefined);
-        }
-      } catch {
-        // Policies podem lançar exceções por contrato. Isso é esperado.
-      }
-    }
-
-    return undefined;
-  }
-
-  it('deve exportar a policy de roles', () => {
-    expect(mod).toBeDefined();
-    expect(Object.keys(mod).length).toBeGreaterThan(0);
+    it('allows permitted creation and rejects a role escalation', () => {
+      expect(() =>
+        UsuarioRolePolicy.assertCanCreateUser(Role.ADMIN, Role.RECEPCAO),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertCanCreateUser(Role.GERENTE, Role.ADMIN),
+      ).toThrow(ForbiddenException);
+    });
   });
 
-  it('deve localizar funções, métodos estáticos ou exports úteis quando existirem', () => {
-    const callables = getCallableEntries(mod);
+  describe('canManageUser and assertCanManageUser', () => {
+    it('applies the management hierarchy and excludes CLIENTE', () => {
+      expect(
+        UsuarioRolePolicy.canManageUser(Role.SUPER_ADMIN, Role.SUPER_ADMIN),
+      ).toBe(true);
+      expect(
+        UsuarioRolePolicy.canManageUser(Role.SUPER_ADMIN, Role.CLIENTE),
+      ).toBe(false);
+      expect(UsuarioRolePolicy.canManageUser(Role.ADMIN, Role.GERENTE)).toBe(
+        true,
+      );
+      expect(UsuarioRolePolicy.canManageUser(Role.ADMIN, Role.ADMIN)).toBe(
+        false,
+      );
+      expect(UsuarioRolePolicy.canManageUser(Role.GERENTE, Role.RECEPCAO)).toBe(
+        true,
+      );
+      expect(
+        UsuarioRolePolicy.canManageUser(Role.GERENTE, Role.PROFISSIONAL),
+      ).toBe(true);
+      expect(UsuarioRolePolicy.canManageUser(Role.GERENTE, Role.GERENTE)).toBe(
+        false,
+      );
+      expect(
+        UsuarioRolePolicy.canManageUser(Role.PROFISSIONAL, Role.RECEPCAO),
+      ).toBe(false);
+    });
 
-    expect(Array.isArray(callables)).toBe(true);
-
-    // Algumas policies podem exportar apenas constantes/classes sem métodos de instância.
-    // Nesse caso, o teste ainda valida import/export sem quebrar a suíte.
-    if (callables.length > 0) {
-      expect(callables[0][0]).toBeDefined();
-    }
+    it('allows permitted management and rejects management of a superior role', () => {
+      expect(() =>
+        UsuarioRolePolicy.assertCanManageUser(Role.GERENTE, Role.PROFISSIONAL),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertCanManageUser(Role.ADMIN, Role.SUPER_ADMIN),
+      ).toThrow(ForbiddenException);
+    });
   });
 
-  it('deve exercitar chamadas possíveis sem quebrar a suíte', async () => {
-    const callables = getCallableEntries(mod);
+  describe('canUpdateUserRole and assertCanUpdateUserRole', () => {
+    it('requires permission for both the current and new target roles', () => {
+      expect(
+        UsuarioRolePolicy.canUpdateUserRole(
+          Role.ADMIN,
+          Role.GERENTE,
+          Role.RECEPCAO,
+        ),
+      ).toBe(true);
+      expect(
+        UsuarioRolePolicy.canUpdateUserRole(
+          Role.ADMIN,
+          Role.ADMIN,
+          Role.GERENTE,
+        ),
+      ).toBe(false);
+      expect(
+        UsuarioRolePolicy.canUpdateUserRole(
+          Role.GERENTE,
+          Role.RECEPCAO,
+          Role.ADMIN,
+        ),
+      ).toBe(false);
+    });
 
-    for (const [, fn] of callables) {
-      await expect(async () => {
-        await exercitarFuncao(fn);
-      }).not.toThrow();
-    }
+    it('allows an authorized role update and rejects an unauthorized update', () => {
+      expect(() =>
+        UsuarioRolePolicy.assertCanUpdateUserRole(
+          Role.SUPER_ADMIN,
+          Role.ADMIN,
+          Role.GERENTE,
+        ),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertCanUpdateUserRole(
+          Role.GERENTE,
+          Role.ADMIN,
+          Role.RECEPCAO,
+        ),
+      ).toThrow(ForbiddenException);
+    });
+  });
 
-    expect(mod).toBeDefined();
+  describe('assertCannotChangeOwnRole', () => {
+    it('allows unchanged or other users and rejects changing the actor role', () => {
+      expect(() =>
+        UsuarioRolePolicy.assertCannotChangeOwnRole(
+          'user-1',
+          'user-1',
+          Role.ADMIN,
+          Role.ADMIN,
+        ),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertCannotChangeOwnRole(
+          'user-1',
+          'user-2',
+          Role.GERENTE,
+          Role.RECEPCAO,
+        ),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertCannotChangeOwnRole(
+          'user-1',
+          'user-1',
+          Role.ADMIN,
+        ),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertCannotChangeOwnRole(
+          'user-1',
+          'user-1',
+          Role.ADMIN,
+          Role.GERENTE,
+        ),
+      ).toThrow(ForbiddenException);
+    });
+  });
+
+  describe('empresa permissions', () => {
+    it('restricts company management and global company access to SUPER_ADMIN', () => {
+      expect(UsuarioRolePolicy.canManageEmpresa(Role.SUPER_ADMIN)).toBe(true);
+      expect(UsuarioRolePolicy.canManageEmpresa(Role.ADMIN)).toBe(false);
+      expect(UsuarioRolePolicy.canAccessEmpresasModule(Role.SUPER_ADMIN)).toBe(
+        true,
+      );
+      expect(UsuarioRolePolicy.canAccessEmpresasModule(Role.GERENTE)).toBe(
+        false,
+      );
+
+      expect(() =>
+        UsuarioRolePolicy.assertCanManageEmpresa(Role.SUPER_ADMIN),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertCanManageEmpresa(Role.ADMIN),
+      ).toThrow(ForbiddenException);
+      expect(() =>
+        UsuarioRolePolicy.assertCanAccessEmpresasModule(Role.SUPER_ADMIN),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertCanAccessEmpresasModule(Role.GERENTE),
+      ).toThrow(ForbiddenException);
+    });
+
+    it('requires a company for administrative actors that belong to a tenant', () => {
+      expect(() =>
+        UsuarioRolePolicy.assertAdminUserHasEmpresa(Role.ADMIN, 'empresa-a'),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertAdminUserHasEmpresa(Role.GERENTE, null),
+      ).toThrow(ForbiddenException);
+      expect(() =>
+        UsuarioRolePolicy.assertAdminUserHasEmpresa(Role.SUPER_ADMIN, null),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertAdminUserHasEmpresa(Role.CLIENTE, null),
+      ).not.toThrow();
+    });
+
+    it('requires valid tenant assignment for target roles and forbids CLIENTE', () => {
+      expect(() =>
+        UsuarioRolePolicy.assertTargetRoleHasValidEmpresa(
+          Role.SUPER_ADMIN,
+          null,
+        ),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertTargetRoleHasValidEmpresa(
+          Role.ADMIN,
+          'empresa-a',
+        ),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertTargetRoleHasValidEmpresa(Role.ADMIN, null),
+      ).toThrow(ForbiddenException);
+      expect(() =>
+        UsuarioRolePolicy.assertTargetRoleHasValidEmpresa(
+          Role.CLIENTE,
+          'empresa-a',
+        ),
+      ).toThrow(ForbiddenException);
+    });
+
+    it('keeps SUPER_ADMIN global while allowing tenant-bound non-super-admin roles', () => {
+      expect(() =>
+        UsuarioRolePolicy.assertSuperAdminHasNoEmpresa(Role.SUPER_ADMIN, null),
+      ).not.toThrow();
+      expect(() =>
+        UsuarioRolePolicy.assertSuperAdminHasNoEmpresa(
+          Role.SUPER_ADMIN,
+          'empresa-a',
+        ),
+      ).toThrow(ForbiddenException);
+      expect(() =>
+        UsuarioRolePolicy.assertSuperAdminHasNoEmpresa(Role.ADMIN, 'empresa-a'),
+      ).not.toThrow();
+    });
   });
 });

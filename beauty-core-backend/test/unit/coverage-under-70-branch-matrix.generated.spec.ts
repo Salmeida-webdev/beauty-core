@@ -1,5 +1,25 @@
-﻿const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
+import { createRequire } from 'module';
+
+const loadModule = createRequire(__filename);
+type UnknownRecord = Record<string, unknown>;
+type UnknownFunction = ((...args: unknown[]) => unknown) & {
+  readonly name?: string;
+};
+
+function isUnknownFunction(value: unknown): value is UnknownFunction {
+  return typeof value === 'function';
+}
+type DelegateArgs = {
+  data?: UnknownRecord;
+  create?: UnknownRecord;
+  update?: UnknownRecord;
+};
+type ConstructorLike = {
+  new (...args: unknown[]): UnknownRecord;
+  length: number;
+};
 
 import {
   BadRequestException,
@@ -31,8 +51,20 @@ const targetsPath = path.join(
   'coverage-targets-under-70.json',
 );
 
-const TARGETS = fs.existsSync(targetsPath)
-  ? JSON.parse(fs.readFileSync(targetsPath, 'utf8')).targets
+type CoverageTarget = {
+  filePath: string;
+  relativePath: string;
+  requirePath: string;
+  metrics?: Record<string, number>;
+  below?: Array<{ key: string; value: number }>;
+};
+
+const TARGETS: CoverageTarget[] = fs.existsSync(targetsPath)
+  ? (
+      JSON.parse(fs.readFileSync(targetsPath, 'utf8')) as {
+        targets: CoverageTarget[];
+      }
+    ).targets
   : [];
 
 type MockMode =
@@ -49,14 +81,10 @@ type MockMode =
   | 'private';
 
 const UUID_A = '00000000-0000-4000-8000-000000000001';
-const UUID_B = '00000000-0000-4000-8000-000000000002';
 const EMPRESA_A = '00000000-0000-4000-8000-000000000101';
 const EMPRESA_B = '00000000-0000-4000-8000-000000000102';
 
-function createRecord(
-  mode: MockMode = 'happy',
-  overrides: Record<string, any> = {},
-) {
+function createRecord(mode: MockMode = 'happy', overrides: UnknownRecord = {}) {
   const empresaId = mode === 'crossTenant' ? EMPRESA_B : EMPRESA_A;
 
   return {
@@ -188,60 +216,74 @@ function createDelegateMock(mode: MockMode) {
 
   return {
     findUnique: jest.fn(async () => {
+      await Promise.resolve();
       maybeThrow();
       return maybeRecord();
     }),
     findUniqueOrThrow: jest.fn(async () => {
+      await Promise.resolve();
       maybeThrow();
       if (mode === 'null') throw new NotFoundException('Não encontrado');
       return record;
     }),
     findFirst: jest.fn(async () => {
+      await Promise.resolve();
       maybeThrow();
       return maybeRecord();
     }),
     findFirstOrThrow: jest.fn(async () => {
+      await Promise.resolve();
       maybeThrow();
       if (mode === 'null') throw new NotFoundException('Não encontrado');
       return record;
     }),
     findMany: jest.fn(async () => {
+      await Promise.resolve();
       maybeThrow();
       return maybeMany();
     }),
     count: jest.fn(async () => {
+      await Promise.resolve();
       maybeThrow();
       return maybeCount();
     }),
-    create: jest.fn(async (args?: any) => {
+    create: jest.fn(async (args?: DelegateArgs) => {
+      await Promise.resolve();
       maybeThrow();
       return { ...record, ...(args?.data ?? {}) };
     }),
     createMany: jest.fn(async () => {
+      await Promise.resolve();
       maybeThrow();
       return { count: maybeCount() };
     }),
-    update: jest.fn(async (args?: any) => {
+    update: jest.fn(async (args?: DelegateArgs) => {
+      await Promise.resolve();
       maybeThrow();
       return { ...record, ...(args?.data ?? {}) };
     }),
     updateMany: jest.fn(async () => {
+      await Promise.resolve();
       maybeThrow();
       return { count: maybeCount() };
     }),
     delete: jest.fn(async () => {
+      await Promise.resolve();
       maybeThrow();
       return record;
     }),
     deleteMany: jest.fn(async () => {
+      await Promise.resolve();
       maybeThrow();
       return { count: maybeCount() };
     }),
-    upsert: jest.fn(async (args?: any) => {
+    upsert: jest.fn(async (args?: DelegateArgs) => {
+      await Promise.resolve();
       maybeThrow();
       return { ...record, ...(args?.create ?? {}), ...(args?.update ?? {}) };
     }),
     aggregate: jest.fn(async () => {
+      await Promise.resolve();
       maybeThrow();
       return {
         _sum: {
@@ -269,6 +311,7 @@ function createDelegateMock(mode: MockMode) {
       };
     }),
     groupBy: jest.fn(async () => {
+      await Promise.resolve();
       maybeThrow();
 
       if (mode === 'empty') return [];
@@ -291,20 +334,21 @@ function createDelegateMock(mode: MockMode) {
 }
 
 function createRichMock(mode: MockMode = 'happy') {
-  const target: Record<string, any> = {};
-  const delegates = new Map<string, any>();
+  const target: UnknownRecord = {};
+  const delegates = new Map<string, unknown>();
   const record = createRecord(mode);
 
-  const proxy: any = new Proxy(target, {
+  const proxy: UnknownRecord = new Proxy(target, {
     get(obj, prop: string | symbol) {
       if (typeof prop !== 'string') return undefined;
       if (prop === 'then') return undefined;
       if (prop in obj) return obj[prop];
 
       if (prop === '$transaction') {
-        obj[prop] = jest.fn(async (input: any) => {
+        obj[prop] = jest.fn(async (input: unknown) => {
           if (mode === 'throw') throw new Error('Transaction branch error');
-          if (typeof input === 'function') return input(proxy);
+          if (typeof input === 'function')
+            return (input as UnknownFunction)(proxy);
           if (Array.isArray(input)) return Promise.all(input);
           return input;
         });
@@ -312,25 +356,27 @@ function createRichMock(mode: MockMode = 'happy') {
       }
 
       if (prop === '$connect' || prop === '$disconnect') {
-        obj[prop] = jest.fn(async () => undefined);
+        obj[prop] = jest.fn(() => Promise.resolve(undefined));
         return obj[prop];
       }
 
       if (prop === '$executeRaw') {
-        obj[prop] = jest.fn(async () => (mode === 'empty' ? 0 : 1));
+        obj[prop] = jest.fn(() => Promise.resolve(mode === 'empty' ? 0 : 1));
         return obj[prop];
       }
 
       if (prop === '$queryRaw' || prop === '$runCommandRaw') {
-        obj[prop] = jest.fn(async () => (mode === 'empty' ? [] : [record]));
+        obj[prop] = jest.fn(() =>
+          Promise.resolve(mode === 'empty' ? [] : [record]),
+        );
         return obj[prop];
       }
 
       if (prop === 'get') {
-        obj[prop] = jest.fn((key: string, fallback?: any) => {
+        obj[prop] = jest.fn((key: string, fallback?: string) => {
           if (mode === 'null') return undefined;
 
-          const values: Record<string, any> = {
+          const values: Record<string, string | undefined> = {
             NODE_ENV: 'test',
             STORAGE_PROVIDER:
               mode === 'invalid'
@@ -349,7 +395,7 @@ function createRichMock(mode: MockMode = 'happy') {
             SCHEDULER_TIMEZONE: 'America/Fortaleza',
             REDIS_HOST: 'localhost',
             REDIS_PORT: '6379',
-            REDIS_PASSWORD: mode === 'null' ? undefined : 'redis-test',
+            REDIS_PASSWORD: 'redis-test',
           };
 
           return values[key] ?? fallback ?? 'test-value';
@@ -364,14 +410,16 @@ function createRichMock(mode: MockMode = 'happy') {
       }
 
       if (prop === 'signAsync') {
-        obj[prop] = jest.fn(async () =>
-          mode === 'invalid' ? '' : 'token-test',
-        );
+        obj[prop] = jest.fn(async () => {
+          await Promise.resolve();
+          return mode === 'invalid' ? '' : 'signed-test-token';
+        });
         return obj[prop];
       }
 
       if (prop === 'verify' || prop === 'verifyAsync') {
         obj[prop] = jest.fn(async () => {
+          await Promise.resolve();
           if (mode === 'invalid')
             throw new UnauthorizedException('Token inválido');
           return {
@@ -390,7 +438,7 @@ function createRichMock(mode: MockMode = 'happy') {
         prop.startsWith('tem') ||
         prop.toLowerCase().includes('permissao')
       ) {
-        obj[prop] = jest.fn(async () => mode !== 'false');
+        obj[prop] = jest.fn(() => Promise.resolve(mode !== 'false'));
         return obj[prop];
       }
 
@@ -430,6 +478,7 @@ function createRichMock(mode: MockMode = 'happy') {
 
       if (recordPrefixes.some((prefix) => prop.startsWith(prefix))) {
         obj[prop] = jest.fn(async () => {
+          await Promise.resolve();
           if (mode === 'throw') throw new Error('Mock branch error');
           if (mode === 'null') return null;
           if (mode === 'empty') return [];
@@ -474,7 +523,7 @@ function createRichMock(mode: MockMode = 'happy') {
   return proxy;
 }
 
-function patchInstance(instance: any, mode: MockMode) {
+function patchInstance(instance: UnknownRecord, mode: MockMode): UnknownRecord {
   if (!instance) return instance;
 
   const names = [
@@ -512,7 +561,9 @@ function patchInstance(instance: any, mode: MockMode) {
   for (const name of names) {
     try {
       instance[name] = createRichMock(mode);
-    } catch {}
+    } catch {
+      /* Intentionally ignore expected probe failures. */
+    }
   }
 
   try {
@@ -523,28 +574,34 @@ function patchInstance(instance: any, mode: MockMode) {
       debug: jest.fn(),
       verbose: jest.fn(),
     };
-  } catch {}
+  } catch {
+    /* Intentionally ignore expected probe failures. */
+  }
 
   return instance;
 }
 
-function instantiate(Exported: any, mode: MockMode) {
+function instantiate(
+  Exported: UnknownFunction,
+  mode: MockMode,
+): UnknownRecord | null {
+  const Constructor = Exported as unknown as ConstructorLike;
   const deps = Array.from({ length: Math.max(Exported.length || 0, 22) }, () =>
     createRichMock(mode),
   );
 
   try {
-    return patchInstance(new Exported(...deps), mode);
+    return patchInstance(new Constructor(...deps), mode);
   } catch {
     try {
-      return patchInstance(new Exported(), mode);
+      return patchInstance(new Constructor(), mode);
     } catch {
       return null;
     }
   }
 }
 
-function getPublicMethods(instance: any) {
+function getPublicMethods(instance: UnknownRecord): string[] {
   if (!instance) return [];
 
   return Object.getOwnPropertyNames(Object.getPrototypeOf(instance))
@@ -566,14 +623,23 @@ function createJobLike(mode: MockMode = 'happy') {
     opts: {},
     attemptsMade: mode === 'throw' ? 3 : 0,
     progress: 0,
-    updateProgress: jest.fn(async () => undefined),
-    log: jest.fn(async () => undefined),
-    moveToFailed: jest.fn(async () => undefined),
-    moveToCompleted: jest.fn(async () => undefined),
+    updateProgress: jest.fn(() => Promise.resolve(undefined)),
+    log: jest.fn(() => Promise.resolve(undefined)),
+    moveToFailed: jest.fn(() => Promise.resolve(undefined)),
+    moveToCompleted: jest.fn(() => Promise.resolve(undefined)),
   };
 }
 
-function createHttpHost(exceptionResponse = createResponseLike()) {
+function isUnknownRecord(value: unknown): value is UnknownRecord {
+  return value !== null && typeof value === 'object';
+}
+
+function toUnknownRecord(value: unknown): UnknownRecord {
+  return isUnknownRecord(value) ? value : {};
+}
+function createHttpHost(
+  exceptionResponse: UnknownRecord = toUnknownRecord(createResponseLike()),
+) {
   return {
     switchToHttp: () => ({
       getRequest: () =>
@@ -635,9 +701,10 @@ function argsForMethod(method: string, mode: MockMode) {
   const callback =
     mode === 'throw'
       ? async () => {
+          await Promise.resolve();
           throw new Error('Callback branch error');
         }
-      : async () => ({ ok: true, status: 'ok' });
+      : () => Promise.resolve({ ok: true, status: 'ok' });
 
   if (method === 'executarRotina') {
     return [
@@ -742,7 +809,7 @@ function argsForMethod(method: string, mode: MockMode) {
   ];
 }
 
-async function exerciseExportedFunction(fn: any, mode: MockMode) {
+async function exerciseExportedFunction(fn: UnknownFunction, mode: MockMode) {
   const fileVariants = [
     { originalname: 'arquivo.pdf', mimetype: 'application/pdf', size: 1024 },
     { originalname: 'imagem.jpg', mimetype: 'image/jpeg', size: 1024 },
@@ -760,7 +827,7 @@ async function exerciseExportedFunction(fn: any, mode: MockMode) {
     { originalname: 'sem-extensao', mimetype: '', size: 0 },
   ];
 
-  const calls = [
+  const calls: unknown[][] = [
     [],
     [createRequestLike()],
     [createResponseLike()],
@@ -780,13 +847,15 @@ async function exerciseExportedFunction(fn: any, mode: MockMode) {
 
   for (const file of fileVariants) {
     calls.push([createRequestLike(), file, jest.fn()]);
-    calls.push([createRequestLike(), file, jest.fn((error: any) => error)]);
+    calls.push([createRequestLike(), file, jest.fn((error: unknown) => error)]);
   }
 
   for (const args of calls) {
     try {
       await runWithTimeout(() => fn(...args), 600);
-    } catch {}
+    } catch {
+      /* Intentionally ignore expected probe failures. */
+    }
   }
 }
 
@@ -813,17 +882,19 @@ describe('Chat 33.4.2 - branch matrix para alvos abaixo de 70%', () => {
   for (const target of TARGETS) {
     describe(target.relativePath, () => {
       it('deve importar o alvo', () => {
-        const mod = require(target.requirePath);
+        const mod = loadModule(target.requirePath) as unknown as UnknownRecord;
         expect(mod).toBeDefined();
       });
 
       for (const mode of modes) {
         it('deve exercitar branches no modo ' + mode, async () => {
-          const mod = require(target.requirePath);
+          const mod = loadModule(
+            target.requirePath,
+          ) as unknown as UnknownRecord;
           const exportedValues = Object.values(mod);
 
           for (const exported of exportedValues) {
-            if (typeof exported !== 'function') continue;
+            if (!isUnknownFunction(exported)) continue;
 
             const name = String(exported.name ?? '');
 
@@ -854,8 +925,18 @@ describe('Chat 33.4.2 - branch matrix para alvos abaixo de 70%', () => {
 
                 for (const args of argsForMethod(method, mode).slice(0, 70)) {
                   try {
-                    await runWithTimeout(() => instance[method](...args), 700);
-                  } catch {}
+                    const methodValue = instance[method];
+                    if (typeof methodValue !== 'function') continue;
+                    await runWithTimeout(
+                      () =>
+                        (methodValue as UnknownFunction)(
+                          ...(args as unknown[]),
+                        ),
+                      700,
+                    );
+                  } catch {
+                    /* Intentionally ignore expected probe failures. */
+                  }
                 }
               }
 

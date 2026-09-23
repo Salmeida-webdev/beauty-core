@@ -1,5 +1,7 @@
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { StatusMensagemWhatsApp } from '@prisma/client';
+import type { Server } from 'node:net';
 
 import {
   bootstrapE2eTestApp,
@@ -16,6 +18,10 @@ type QueueResponse = {
 };
 
 function readQueueResponse(value: unknown): QueueResponse {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    throw new Error('Resposta da fila invalida.');
+  }
+
   const body = value as Record<string, unknown>;
   const getString = (key: string): string => {
     const item = body[key];
@@ -32,21 +38,21 @@ function readQueueResponse(value: unknown): QueueResponse {
   };
 }
 
-function requestApp(app: unknown) {
-  const application = app as {
-    getHttpServer: () => Parameters<typeof request>[0];
-  };
-  return request(application.getHttpServer());
+function requestApp(app: INestApplication<Server>) {
+  return request(app.getHttpServer());
 }
+
 describe('WhatsApp queue demo E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
   let adminToken: string;
 
   beforeAll(async () => {
     ctx = await bootstrapE2eTestApp();
-    adminToken = (await loginAdmin(ctx.app)).access_token;
+    httpApp = ctx.app as INestApplication<Server>;
+    adminToken = (await loginAdmin(httpApp)).access_token;
 
-    await requestApp(ctx.app)
+    await requestApp(httpApp)
       .post('/configuracao-whatsapp')
       .set('Authorization', bearer(adminToken))
       .send({
@@ -69,13 +75,13 @@ describe('WhatsApp queue demo E2E', () => {
       mensagem: 'Teste controlado da fila WhatsApp em modo demonstracao.',
     };
 
-    const primeira = await requestApp(ctx.app)
+    const primeira = await requestApp(httpApp)
       .post('/mensagens-whatsapp/enviar')
       .set('Authorization', bearer(adminToken))
       .send(payload)
       .expect(201);
 
-    const segunda = await requestApp(ctx.app)
+    const segunda = await requestApp(httpApp)
       .post('/mensagens-whatsapp/enviar')
       .set('Authorization', bearer(adminToken))
       .send(payload)

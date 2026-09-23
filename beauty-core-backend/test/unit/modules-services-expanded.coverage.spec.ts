@@ -43,7 +43,9 @@ describe('Chat 33.3 - Modules Services Expanded Coverage', () => {
         for (const ClassRef of classes) {
           const instance = createInstance(ClassRef);
 
-          expect(instance).toBeDefined();
+          if (instance === null) {
+            throw new Error(`Não foi possível instanciar ${relative}.`);
+          }
 
           const methodCount = await exerciseInstance(instance, 14);
 

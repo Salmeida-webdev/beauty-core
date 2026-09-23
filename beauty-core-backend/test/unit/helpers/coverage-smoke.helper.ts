@@ -1,4 +1,19 @@
-﻿/**
+import { createRequire } from 'node:module';
+const requireModule = createRequire(__filename);
+
+type ConstructorLike = {
+  new (...args: unknown[]): UnknownRecord;
+  length: number;
+};
+type UnknownRecord = Record<string, unknown>;
+
+function asUnknownRecord(value: unknown): UnknownRecord {
+  if (typeof value === 'object' && value !== null)
+    return value as UnknownRecord;
+  return {};
+}
+
+/**
  * CHAT_33_3_BULLMQ_IOREDIS_MOCKS
  *
  * Evita conexões reais Redis/BullMQ nos testes unitários de smoke coverage.
@@ -84,27 +99,69 @@ jest.mock('bullmq', () => {
       this.name = name;
     }
 
-    add = jest.fn(async () => ({ id: 'job-test', name: this.name }));
-    getJob = jest.fn(async () => ({ id: 'job-test', data: {}, opts: {} }));
-    getJobs = jest.fn(async () => []);
-    getJobCounts = jest.fn(async () => ({
-      waiting: 0,
-      active: 0,
-      completed: 0,
-      failed: 0,
-      delayed: 0,
-      paused: 0,
-    }));
-    getWaiting = jest.fn(async () => []);
-    getActive = jest.fn(async () => []);
-    getCompleted = jest.fn(async () => []);
-    getFailed = jest.fn(async () => []);
-    getDelayed = jest.fn(async () => []);
-    clean = jest.fn(async () => []);
-    obliterate = jest.fn(async () => undefined);
-    pause = jest.fn(async () => undefined);
-    resume = jest.fn(async () => undefined);
-    close = jest.fn(async () => undefined);
+    add = jest.fn(async () => {
+      await Promise.resolve();
+      return { id: 'job-test', name: this.name };
+    });
+    getJob = jest.fn(async () => {
+      await Promise.resolve();
+      return { id: 'job-test', data: {}, opts: {} };
+    });
+    getJobs = jest.fn(async () => {
+      await Promise.resolve();
+      return [];
+    });
+    getJobCounts = jest.fn(async () => {
+      await Promise.resolve();
+      return {
+        waiting: 0,
+        active: 0,
+        completed: 0,
+        failed: 0,
+        delayed: 0,
+        paused: 0,
+      };
+    });
+    getWaiting = jest.fn(async () => {
+      await Promise.resolve();
+      return [];
+    });
+    getActive = jest.fn(async () => {
+      await Promise.resolve();
+      return [];
+    });
+    getCompleted = jest.fn(async () => {
+      await Promise.resolve();
+      return [];
+    });
+    getFailed = jest.fn(async () => {
+      await Promise.resolve();
+      return [];
+    });
+    getDelayed = jest.fn(async () => {
+      await Promise.resolve();
+      return [];
+    });
+    clean = jest.fn(async () => {
+      await Promise.resolve();
+      return [];
+    });
+    obliterate = jest.fn(async () => {
+      await Promise.resolve();
+      return undefined;
+    });
+    pause = jest.fn(async () => {
+      await Promise.resolve();
+      return undefined;
+    });
+    resume = jest.fn(async () => {
+      await Promise.resolve();
+      return undefined;
+    });
+    close = jest.fn(async () => {
+      await Promise.resolve();
+      return undefined;
+    });
     on = jest.fn(() => this);
   }
 
@@ -112,21 +169,33 @@ jest.mock('bullmq', () => {
     constructor() {}
 
     on = jest.fn(() => this);
-    close = jest.fn(async () => undefined);
+    close = jest.fn(async () => {
+      await Promise.resolve();
+      return undefined;
+    });
   }
 
   class QueueEventsMock {
     constructor() {}
 
     on = jest.fn(() => this);
-    close = jest.fn(async () => undefined);
+    close = jest.fn(async () => {
+      await Promise.resolve();
+      return undefined;
+    });
   }
 
   class FlowProducerMock {
     constructor() {}
 
-    add = jest.fn(async () => ({ job: { id: 'flow-job-test' } }));
-    close = jest.fn(async () => undefined);
+    add = jest.fn(async () => {
+      await Promise.resolve();
+      return { job: { id: 'flow-job-test' } };
+    });
+    close = jest.fn(async () => {
+      await Promise.resolve();
+      return undefined;
+    });
   }
 
   return {
@@ -139,6 +208,8 @@ jest.mock('bullmq', () => {
 });
 import * as fs from 'fs';
 import * as path from 'path';
+import { Logger } from '@nestjs/common';
+type UnknownFunction = (...args: unknown[]) => unknown;
 
 export const UUID_A = '00000000-0000-4000-8000-000000000001';
 export const UUID_B = '00000000-0000-4000-8000-000000000002';
@@ -146,8 +217,12 @@ export const EMPRESA_A = '00000000-0000-4000-8000-000000000101';
 export const EMPRESA_B = '00000000-0000-4000-8000-000000000102';
 
 export function installCoverageSmokeSilencer() {
-  const originalStdoutWrite = process.stdout.write.bind(process.stdout);
-  const originalStderrWrite = process.stderr.write.bind(process.stderr);
+  const originalStdoutWrite = process.stdout.write.bind(
+    process.stdout,
+  ) as unknown as UnknownFunction;
+  const originalStderrWrite = process.stderr.write.bind(
+    process.stderr,
+  ) as unknown as UnknownFunction;
 
   const noisyPatterns = [
     '[FinanceiroService]',
@@ -181,27 +256,22 @@ export function installCoverageSmokeSilencer() {
   }
 
   beforeAll(() => {
-    jest.spyOn(process.stdout, 'write').mockImplementation(((
-      chunk: unknown,
-      ...args: unknown[]
-    ) => {
-      if (isNoisyLog(chunk)) return true;
-      return originalStdoutWrite(chunk as any, ...(args as any));
-    }) as any);
+    jest
+      .spyOn(process.stdout, 'write')
+      .mockImplementation((chunk: unknown, ...args: unknown[]) => {
+        if (isNoisyLog(chunk)) return true;
+        return Boolean(originalStdoutWrite(chunk, ...args));
+      });
 
-    jest.spyOn(process.stderr, 'write').mockImplementation(((
-      chunk: unknown,
-      ...args: unknown[]
-    ) => {
-      if (isNoisyLog(chunk)) return true;
-      return originalStderrWrite(chunk as any, ...(args as any));
-    }) as any);
+    jest
+      .spyOn(process.stderr, 'write')
+      .mockImplementation((chunk: unknown, ...args: unknown[]) => {
+        if (isNoisyLog(chunk)) return true;
+        return Boolean(originalStderrWrite(chunk, ...args));
+      });
 
     try {
-      const common = require('@nestjs/common');
-      const Logger = common.Logger;
-
-      if (Logger && typeof Logger.overrideLogger === 'function') {
+      if (typeof Logger.overrideLogger === 'function') {
         Logger.overrideLogger(['error']);
       }
     } catch {
@@ -217,10 +287,7 @@ export function installCoverageSmokeSilencer() {
     }
 
     try {
-      const common = require('@nestjs/common');
-      const Logger = common.Logger;
-
-      if (Logger && typeof Logger.overrideLogger === 'function') {
+      if (typeof Logger.overrideLogger === 'function') {
         Logger.overrideLogger(true);
       }
     } catch {
@@ -348,50 +415,39 @@ export function createRecord(overrides: Record<string, any> = {}) {
 
 export function createDelegateMock(record = createRecord()) {
   return {
-    findUnique: jest.fn(async () => record),
-    findUniqueOrThrow: jest.fn(async () => record),
-    findFirst: jest.fn(async () => record),
-    findFirstOrThrow: jest.fn(async () => record),
-    findMany: jest.fn(async () => [record]),
-    count: jest.fn(async () => 1),
+    findUnique: jest.fn(async () => {
+      await Promise.resolve();
+      return record;
+    }),
+    findUniqueOrThrow: jest.fn(async () => {
+      await Promise.resolve();
+      return record;
+    }),
+    findFirst: jest.fn(async () => {
+      await Promise.resolve();
+      return record;
+    }),
+    findFirstOrThrow: jest.fn(async () => {
+      await Promise.resolve();
+      return record;
+    }),
+    findMany: jest.fn(async () => {
+      await Promise.resolve();
+      return [record];
+    }),
+    count: jest.fn(async () => {
+      await Promise.resolve();
+      return 1;
+    }),
 
-    aggregate: jest.fn(async () => ({
-      _sum: {
-        valor: 100,
-        pontos: 10,
-        saldoPontos: 100,
-        quantidade: 1,
-      },
-      _count: {
-        _all: 1,
-        id: 1,
-      },
-      _avg: {
-        valor: 100,
-        pontos: 10,
-      },
-      _min: {
-        valor: 100,
-        createdAt: new Date(),
-      },
-      _max: {
-        valor: 100,
-        createdAt: new Date(),
-      },
-    })),
-
-    groupBy: jest.fn(async () => [
-      {
-        status: 'ATIVO',
-        tipo: 'RECEITA',
-        categoriaId: UUID_A,
-        profissionalId: UUID_A,
-        servicoId: UUID_A,
-        unidadeId: UUID_A,
-        createdAt: new Date(),
+    aggregate: jest.fn(async () => {
+      await Promise.resolve();
+      return {
         _sum: {
           valor: 100,
           pontos: 10,
+          saldoPontos: 100,
+          quantidade: 1,
         },
         _count: {
           _all: 1,
@@ -399,39 +455,95 @@ export function createDelegateMock(record = createRecord()) {
         },
         _avg: {
           valor: 100,
+          pontos: 10,
         },
-      },
-    ]),
+        _min: {
+          valor: 100,
+          createdAt: new Date(),
+        },
+        _max: {
+          valor: 100,
+          createdAt: new Date(),
+        },
+      };
+    }),
 
-    create: jest.fn(async (args?: any) => ({
-      ...record,
-      ...(args?.data ?? {}),
-    })),
+    groupBy: jest.fn(async () => {
+      await Promise.resolve();
+      return [
+        {
+          status: 'ATIVO',
+          tipo: 'RECEITA',
+          categoriaId: UUID_A,
+          profissionalId: UUID_A,
+          servicoId: UUID_A,
+          unidadeId: UUID_A,
+          createdAt: new Date(),
+          _sum: {
+            valor: 100,
+            pontos: 10,
+          },
+          _count: {
+            _all: 1,
+            id: 1,
+          },
+          _avg: {
+            valor: 100,
+          },
+        },
+      ];
+    }),
 
-    createMany: jest.fn(async () => ({ count: 1 })),
+    create: jest.fn(async (args?: UnknownRecord) => {
+      await Promise.resolve();
+      return {
+        ...record,
+        ...asUnknownRecord(args?.data),
+      };
+    }),
 
-    update: jest.fn(async (args?: any) => ({
-      ...record,
-      ...(args?.data ?? {}),
-    })),
+    createMany: jest.fn(async () => {
+      await Promise.resolve();
+      return { count: 1 };
+    }),
 
-    updateMany: jest.fn(async () => ({ count: 1 })),
+    update: jest.fn(async (args?: UnknownRecord) => {
+      await Promise.resolve();
+      return {
+        ...record,
+        ...asUnknownRecord(args?.data),
+      };
+    }),
 
-    delete: jest.fn(async () => record),
-    deleteMany: jest.fn(async () => ({ count: 1 })),
+    updateMany: jest.fn(async () => {
+      await Promise.resolve();
+      return { count: 1 };
+    }),
 
-    upsert: jest.fn(async (args?: any) => ({
-      ...record,
-      ...(args?.create ?? {}),
-      ...(args?.update ?? {}),
-    })),
+    delete: jest.fn(async () => {
+      await Promise.resolve();
+      return record;
+    }),
+    deleteMany: jest.fn(async () => {
+      await Promise.resolve();
+      return { count: 1 };
+    }),
+
+    upsert: jest.fn(async (args?: UnknownRecord) => {
+      await Promise.resolve();
+      return {
+        ...record,
+        ...asUnknownRecord(args?.create),
+        ...asUnknownRecord(args?.update),
+      };
+    }),
   };
 }
 
 export function createUniversalMock() {
   const record = createRecord();
-  const delegates = new Map<string, any>();
-  const methods = new Map<string, jest.Mock>();
+  const delegates = new Map<string, UnknownRecord>();
+  const methods = new Map<string, UnknownFunction>();
 
   const target: Record<string, any> = {};
 
@@ -445,9 +557,12 @@ export function createUniversalMock() {
         if (!methods.has(prop)) {
           methods.set(
             prop,
-            jest.fn(async (input: any) => {
-              if (typeof input === 'function') return input(proxy);
-              if (Array.isArray(input)) return Promise.all(input);
+            jest.fn(async (input: unknown) => {
+              await Promise.resolve();
+              if (typeof input === 'function')
+                return (input as UnknownFunction)(proxy);
+              if (Array.isArray(input))
+                return Promise.all(input as Iterable<unknown>);
               return input;
             }),
           );
@@ -460,7 +575,10 @@ export function createUniversalMock() {
         if (!methods.has(prop))
           methods.set(
             prop,
-            jest.fn(async () => undefined),
+            jest.fn(async () => {
+              await Promise.resolve();
+              return undefined;
+            }),
           );
         return methods.get(prop);
       }
@@ -473,7 +591,10 @@ export function createUniversalMock() {
         if (!methods.has(prop))
           methods.set(
             prop,
-            jest.fn(async () => []),
+            jest.fn(async () => {
+              await Promise.resolve();
+              return [];
+            }),
           );
         return methods.get(prop);
       }
@@ -512,7 +633,7 @@ export function createUniversalMock() {
                 SIGNED_URL_EXPIRES_IN_SECONDS: '900',
               };
 
-              return values[key] ?? fallback ?? 'test-value';
+              return String(values[key] ?? fallback ?? 'test-value');
             }),
           );
         }
@@ -533,7 +654,10 @@ export function createUniversalMock() {
         if (!methods.has(prop))
           methods.set(
             prop,
-            jest.fn(async () => 'token-test'),
+            jest.fn(async () => {
+              await Promise.resolve();
+              return 'token-test';
+            }),
           );
         return methods.get(prop);
       }
@@ -563,7 +687,10 @@ export function createUniversalMock() {
         if (!methods.has(prop))
           methods.set(
             prop,
-            jest.fn(async () => record),
+            jest.fn(async () => {
+              await Promise.resolve();
+              return record;
+            }),
           );
         return methods.get(prop);
       }
@@ -576,7 +703,10 @@ export function createUniversalMock() {
         if (!methods.has(prop))
           methods.set(
             prop,
-            jest.fn(async () => true),
+            jest.fn(async () => {
+              await Promise.resolve();
+              return true;
+            }),
           );
         return methods.get(prop);
       }
@@ -594,11 +724,14 @@ export function createUniversalMock() {
         if (!methods.has(prop)) {
           methods.set(
             prop,
-            jest.fn(async () => ({
-              id: 'job-test',
-              status: 'ok',
-              ...record,
-            })),
+            jest.fn(async () => {
+              await Promise.resolve();
+              return {
+                ...record,
+                id: 'job-test',
+                status: 'ok',
+              };
+            }),
           );
         }
 
@@ -618,7 +751,10 @@ export function createUniversalMock() {
         if (!methods.has(prop))
           methods.set(
             prop,
-            jest.fn(async () => [record]),
+            jest.fn(async () => {
+              await Promise.resolve();
+              return [record];
+            }),
           );
         return methods.get(prop);
       }
@@ -639,7 +775,10 @@ export function createUniversalMock() {
         if (!methods.has(prop))
           methods.set(
             prop,
-            jest.fn(async () => record),
+            jest.fn(async () => {
+              await Promise.resolve();
+              return record;
+            }),
           );
         return methods.get(prop);
       }
@@ -651,8 +790,7 @@ export function createUniversalMock() {
       return delegates.get(prop);
     },
   });
-
-  return proxy;
+  return proxy as UnknownRecord;
 }
 
 export function createDto(overrides: Record<string, any> = {}) {
@@ -738,8 +876,8 @@ export function createRequestLike(overrides: Record<string, any> = {}) {
   };
 }
 
-export function createResponseLike() {
-  const res: any = {
+export function createResponseLike(): UnknownRecord {
+  const res: UnknownRecord = {
     status: jest.fn(() => res),
     json: jest.fn(() => res),
     send: jest.fn(() => res),
@@ -839,42 +977,58 @@ export function discoverFiles(
   return results.sort();
 }
 
-export function loadExportedClasses(filePath: string, suffix: string): any[] {
+export function loadExportedClasses(
+  filePath: string,
+  suffix: string,
+): UnknownFunction[] {
   try {
-    const mod = require(filePath);
+    const mod = requireModule(filePath) as UnknownRecord;
 
-    return Object.values(mod).filter((value: any) => {
-      return (
-        typeof value === 'function' && String(value.name ?? '').endsWith(suffix)
-      );
+    return Object.values(mod).filter((value): value is UnknownFunction => {
+      if (typeof value !== 'function') return false;
+      const functionName = value.name;
+      return typeof functionName === 'string' && functionName.endsWith(suffix);
     });
   } catch {
     return [];
   }
 }
 
-export function createInstance(ClassRef: any) {
-  const dependencyCount = Math.max(ClassRef.length || 0, 12);
-  const dependencies = Array.from({ length: dependencyCount }, () =>
-    createUniversalMock(),
+export function createInstance(ClassRef: unknown): UnknownRecord | null {
+  if (typeof ClassRef !== 'function') return null;
+  const Constructor = ClassRef as ConstructorLike;
+  const dependencyCount = Math.max(Constructor.length || 0, 12);
+  const dependencies: UnknownRecord[] = Array.from(
+    { length: dependencyCount },
+    () => createUniversalMock(),
   );
 
   try {
-    return new ClassRef(...dependencies);
+    return new Constructor(...dependencies);
   } catch {
     return null;
   }
 }
 
-export function getPublicMethods(instance: any): string[] {
-  if (!instance) return [];
+export function getPublicMethods(instance: unknown): string[] {
+  if (
+    !instance ||
+    (typeof instance !== 'object' && typeof instance !== 'function')
+  )
+    return [];
+  const object = instance as UnknownRecord;
+  const prototype = Object.getPrototypeOf(object) as object | null;
+  if (!prototype) return [];
 
-  return Object.getOwnPropertyNames(Object.getPrototypeOf(instance))
+  return Object.getOwnPropertyNames(prototype)
     .filter((name) => name !== 'constructor')
-    .filter((name) => typeof instance[name] === 'function');
+    .filter((name) => typeof object[name] === 'function');
 }
 
-export async function runWithTimeout(fn: () => any, timeoutMs = 300) {
+export async function runWithTimeout(
+  fn: UnknownFunction,
+  timeoutMs = 300,
+): Promise<unknown> {
   let timer: ReturnType<typeof setTimeout> | undefined;
 
   try {
@@ -892,7 +1046,7 @@ export async function runWithTimeout(fn: () => any, timeoutMs = 300) {
 }
 
 export async function exerciseInstance(
-  instance: any,
+  instance: UnknownRecord,
   maxScenariosPerMethod = 12,
 ) {
   const methods = getPublicMethods(instance);
@@ -914,10 +1068,13 @@ export async function exerciseInstance(
     if (method === 'executarRotina') {
       try {
         await runWithTimeout(() =>
-          instance[method]('rotina_teste', async () => ({
-            ok: true,
-            status: 'ok',
-          })),
+          (instance[method] as UnknownFunction)('rotina_teste', async () => {
+            await Promise.resolve();
+            return {
+              ok: true,
+              status: 'ok',
+            };
+          }),
         );
       } catch {
         // Exceções de domínio são esperadas em smoke coverage.
@@ -928,7 +1085,9 @@ export async function exerciseInstance(
 
     for (const args of scenarios.slice(0, maxScenariosPerMethod)) {
       try {
-        await runWithTimeout(() => instance[method](...args));
+        await runWithTimeout(() =>
+          (instance[method] as UnknownFunction)(...args),
+        );
       } catch {
         // Exceções de domínio são esperadas em smoke coverage.
       }

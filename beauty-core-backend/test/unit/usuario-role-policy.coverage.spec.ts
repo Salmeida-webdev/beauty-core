@@ -1,108 +1,110 @@
-﻿describe('UsuarioRolePolicy Coverage', () => {
-  const mod = require('../../src/modules/usuarios/policies/usuario-role.policy');
+import { ForbiddenException } from '@nestjs/common';
+import { Role } from '@prisma/client';
+import { UsuarioRolePolicy } from '../../src/modules/usuarios/policies/usuario-role.policy';
 
-  function collectCallables(targetModule: any): Array<[string, Function]> {
-    const callables: Array<[string, Function]> = [];
-
-    for (const [exportName, exportedValue] of Object.entries(targetModule)) {
-      const value: any = exportedValue;
-
-      if (typeof value === 'function') {
-        callables.push([exportName, value]);
-
-        for (const staticName of Object.getOwnPropertyNames(value)) {
-          if (['length', 'name', 'prototype'].includes(staticName)) continue;
-
-          if (typeof value[staticName] === 'function') {
-            callables.push([
-              exportName + '.' + staticName,
-              value[staticName].bind(value),
-            ]);
-          }
-        }
-
-        try {
-          const instance = new value();
-
-          for (const methodName of Object.getOwnPropertyNames(
-            Object.getPrototypeOf(instance),
-          )) {
-            if (methodName === 'constructor') continue;
-
-            if (typeof instance[methodName] === 'function') {
-              callables.push([
-                exportName + '#' + methodName,
-                instance[methodName].bind(instance),
-              ]);
-            }
-          }
-        } catch {
-          // Export não instanciável.
-        }
-      }
-
-      if (value && typeof value === 'object') {
-        for (const [methodName, method] of Object.entries(value)) {
-          if (typeof method === 'function') {
-            callables.push([exportName + '.' + methodName, method.bind(value)]);
-          }
-        }
-      }
-    }
-
-    const unique = new Map<string, Function>();
-
-    for (const [name, fn] of callables) {
-      unique.set(name, fn);
-    }
-
-    return Array.from(unique.entries());
-  }
-
-  it('deve carregar o módulo de policy sem erro', () => {
-    expect(mod).toBeDefined();
-    expect(Object.keys(mod).length).toBeGreaterThan(0);
+describe('UsuarioRolePolicy', () => {
+  it('applies creation, management, and update matrices', () => {
+    expect(UsuarioRolePolicy.canCreateUser(Role.SUPER_ADMIN, Role.ADMIN)).toBe(
+      true,
+    );
+    expect(UsuarioRolePolicy.canCreateUser(Role.ADMIN, Role.GERENTE)).toBe(
+      true,
+    );
+    expect(UsuarioRolePolicy.canCreateUser(Role.GERENTE, Role.ADMIN)).toBe(
+      false,
+    );
+    expect(UsuarioRolePolicy.canManageUser(Role.ADMIN, Role.PROFISSIONAL)).toBe(
+      true,
+    );
+    expect(
+      UsuarioRolePolicy.canManageUser(Role.RECEPCAO, Role.PROFISSIONAL),
+    ).toBe(false);
+    expect(
+      UsuarioRolePolicy.canUpdateUserRole(
+        Role.ADMIN,
+        Role.GERENTE,
+        Role.PROFISSIONAL,
+      ),
+    ).toBe(true);
+    expect(
+      UsuarioRolePolicy.canUpdateUserRole(
+        Role.GERENTE,
+        Role.ADMIN,
+        Role.PROFISSIONAL,
+      ),
+    ).toBe(false);
   });
 
-  it('deve exercitar funções detectadas, incluindo estáticas', async () => {
-    const callables = collectCallables(mod);
+  it('throws when authorization assertions are violated', () => {
+    expect(() =>
+      UsuarioRolePolicy.assertCanCreateUser(Role.GERENTE, Role.ADMIN),
+    ).toThrow(ForbiddenException);
+    expect(() =>
+      UsuarioRolePolicy.assertCanManageUser(Role.RECEPCAO, Role.ADMIN),
+    ).toThrow(ForbiddenException);
+    expect(() =>
+      UsuarioRolePolicy.assertCanUpdateUserRole(
+        Role.GERENTE,
+        Role.ADMIN,
+        Role.PROFISSIONAL,
+      ),
+    ).toThrow(ForbiddenException);
+  });
 
-    for (const [, fn] of callables) {
-      await expect(async () => {
-        const cenarios = [
-          ['SUPER_ADMIN', 'ADMIN'],
-          ['ADMIN', 'GERENTE'],
-          ['ADMIN', 'RECEPCAO'],
-          ['ADMIN', 'PROFISSIONAL'],
-          ['GERENTE', 'ADMIN'],
-          [
-            { id: 'u1', role: 'SUPER_ADMIN', empresaId: null },
-            { id: 'u2', role: 'ADMIN', empresaId: 'empresa-a' },
-          ],
-          [
-            { id: 'u1', role: 'ADMIN', empresaId: 'empresa-a' },
-            { id: 'u2', role: 'GERENTE', empresaId: 'empresa-a' },
-          ],
-          [
-            { id: 'u1', role: 'GERENTE', empresaId: 'empresa-a' },
-            { id: 'u2', role: 'ADMIN', empresaId: 'empresa-b' },
-          ],
-        ];
+  it('validates self-role changes and empresa access', () => {
+    expect(() =>
+      UsuarioRolePolicy.assertCannotChangeOwnRole(
+        'user-1',
+        'user-1',
+        Role.ADMIN,
+        Role.GERENTE,
+      ),
+    ).toThrow(ForbiddenException);
+    expect(() =>
+      UsuarioRolePolicy.assertCannotChangeOwnRole(
+        'user-1',
+        'user-1',
+        Role.ADMIN,
+        Role.ADMIN,
+      ),
+    ).not.toThrow();
+    expect(UsuarioRolePolicy.canManageEmpresa(Role.SUPER_ADMIN)).toBe(true);
+    expect(UsuarioRolePolicy.canAccessEmpresasModule(Role.ADMIN)).toBe(false);
+    expect(() => UsuarioRolePolicy.assertCanManageEmpresa(Role.ADMIN)).toThrow(
+      ForbiddenException,
+    );
+    expect(() =>
+      UsuarioRolePolicy.assertCanAccessEmpresasModule(Role.ADMIN),
+    ).toThrow(ForbiddenException);
+  });
 
-        for (const args of cenarios) {
-          try {
-            const result = fn(...args);
-
-            if (result instanceof Promise) {
-              await result.catch(() => undefined);
-            }
-          } catch {
-            // Exceções de autorização fazem parte do contrato esperado.
-          }
-        }
-      }).not.toThrow();
-    }
-
-    expect(mod).toBeDefined();
+  it('enforces empresa requirements for administrative roles', () => {
+    expect(() =>
+      UsuarioRolePolicy.assertAdminUserHasEmpresa(Role.ADMIN),
+    ).toThrow(ForbiddenException);
+    expect(() =>
+      UsuarioRolePolicy.assertAdminUserHasEmpresa(Role.ADMIN, 'empresa-1'),
+    ).not.toThrow();
+    expect(() =>
+      UsuarioRolePolicy.assertTargetRoleHasValidEmpresa(Role.SUPER_ADMIN),
+    ).not.toThrow();
+    expect(() =>
+      UsuarioRolePolicy.assertTargetRoleHasValidEmpresa(
+        Role.CLIENTE,
+        'empresa-1',
+      ),
+    ).toThrow(ForbiddenException);
+    expect(() =>
+      UsuarioRolePolicy.assertTargetRoleHasValidEmpresa(Role.ADMIN),
+    ).toThrow(ForbiddenException);
+    expect(() =>
+      UsuarioRolePolicy.assertSuperAdminHasNoEmpresa(
+        Role.SUPER_ADMIN,
+        'empresa-1',
+      ),
+    ).toThrow(ForbiddenException);
+    expect(() =>
+      UsuarioRolePolicy.assertSuperAdminHasNoEmpresa(Role.SUPER_ADMIN),
+    ).not.toThrow();
   });
 });

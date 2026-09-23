@@ -1,4 +1,6 @@
-﻿import request = require('supertest');
+import { INestApplication } from '@nestjs/common';
+import request from 'supertest';
+import type { Server } from 'node:net';
 
 import {
   bootstrapE2eTestApp,
@@ -8,6 +10,7 @@ import {
 
 describe('Metrics E2E', () => {
   let ctx: E2eContext;
+  let httpApp: INestApplication<Server>;
   const metricsToken = 'test-metrics-token-12345678901234567890';
   let originalMetricsToken: string | undefined;
   let originalMetricsPublic: string | undefined;
@@ -20,6 +23,7 @@ describe('Metrics E2E', () => {
     delete process.env.METRICS_PUBLIC;
 
     ctx = await bootstrapE2eTestApp();
+    httpApp = ctx.app as INestApplication<Server>;
   });
 
   afterAll(async () => {
@@ -39,18 +43,18 @@ describe('Metrics E2E', () => {
   });
 
   it('deve bloquear /metrics sem token', async () => {
-    await request(ctx.app.getHttpServer()).get('/metrics').expect(401);
+    await request(httpApp.getHttpServer()).get('/metrics').expect(401);
   });
 
   it('deve bloquear /metrics com token invalido', async () => {
-    await request(ctx.app.getHttpServer())
+    await request(httpApp.getHttpServer())
       .get('/metrics')
       .set('x-metrics-token', 'token-invalido')
       .expect(401);
   });
 
   it('deve permitir /metrics com x-metrics-token valido', async () => {
-    const response = await request(ctx.app.getHttpServer())
+    const response = await request(httpApp.getHttpServer())
       .get('/metrics')
       .set('x-metrics-token', metricsToken)
       .expect(200);
@@ -59,7 +63,7 @@ describe('Metrics E2E', () => {
   });
 
   it('deve permitir /metrics com Bearer token valido', async () => {
-    const response = await request(ctx.app.getHttpServer())
+    const response = await request(httpApp.getHttpServer())
       .get('/metrics')
       .set('Authorization', 'Bearer ' + metricsToken)
       .expect(200);
