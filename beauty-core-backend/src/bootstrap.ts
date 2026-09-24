@@ -9,7 +9,44 @@ const valueOrDefault = (name: string, fallback: string): string => {
 };
 
 async function main(): Promise<void> {
+  const superAdminEmail = valueOrDefault(
+    'SEED_SUPER_ADMIN_EMAIL',
+    'segundoalmeidawebdev@gmail.com',
+  );
+  const superAdminPassword = valueOrDefault(
+    'SEED_SUPER_ADMIN_PASSWORD',
+    'Segundo@1234',
+  );
+  const existingSuperAdmin = await prisma.usuario.findUnique({
+    where: { email: superAdminEmail },
+    select: { id: true },
+  });
+
+  if (existingSuperAdmin) {
+    await prisma.usuario.update({
+      where: { id: existingSuperAdmin.id },
+      data: {
+        nome: valueOrDefault('SEED_SUPER_ADMIN_NOME', 'Segundo Almeida'),
+        role: Role.SUPER_ADMIN,
+        empresaId: null,
+        ativo: true,
+      },
+    });
+  } else {
+    await prisma.usuario.create({
+      data: {
+        nome: valueOrDefault('SEED_SUPER_ADMIN_NOME', 'Segundo Almeida'),
+        email: superAdminEmail,
+        senha: await bcrypt.hash(superAdminPassword, 10),
+        role: Role.SUPER_ADMIN,
+        empresaId: null,
+        ativo: true,
+      },
+    });
+  }
+
   const existingUser = await prisma.usuario.findFirst({
+    where: { role: Role.ADMIN },
     select: { id: true },
   });
 
